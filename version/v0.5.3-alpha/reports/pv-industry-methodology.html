@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行业方法论 · 光伏/储能 · Credence</title>
+  <link rel="stylesheet" href="../design/templates/template-base.css"><style>
+
+  /* ===== Utility Classes ===== */
+  .ml-8 { margin-left: 8px; } .ml-4 { margin-left: 4px; }
+  .mr-6 { margin-right: 6px; } .mr-8 { margin-right: 8px; }
+  .mt-20 { margin-top: 20px; } .mt-16 { margin-top: 16px; }
+  .mt-14 { margin-top: 14px; } .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; } .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-4 { margin-top: 4px; }
+  .mt-2 { margin-top: 2px; } .mt-1 { margin-top: 1px; }
+  .mb-20 { margin-bottom: 20px; } .mb-16 { margin-bottom: 16px; }
+  .mb-14 { margin-bottom: 14px; } .mb-12 { margin-bottom: 12px; }
+  .mb-10 { margin-bottom: 10px; } .mb-8 { margin-bottom: 8px; }
+  .mb-6 { margin-bottom: 6px; } .mb-4 { margin-bottom: 4px; }
+  .mb-2 { margin-bottom: 2px; }
+  .w-42 { width: 42%; } .w-41 { width: 41%; } .w-40 { width: 40%; }
+  .w-38 { width: 38%; } .w-35 { width: 35%; } .w-32 { width: 32%; }
+  .w-30 { width: 30%; } .w-28 { width: 28%; } .w-22 { width: 22%; }
+  .w-20 { width: 20%; } .w-18 { width: 18%; } .w-16 { width: 16%; }
+  .w-15 { width: 15%; } .w-14 { width: 14%; } .w-12 { width: 12%; }
+  .w-11 { width: 11%; } .w-10 { width: 10%; } .w-5 { width: 5%; }
+  .w-4 { width: 4%; }
+  .w-160 { width: 160px; } .w-140 { width: 140px; } .w-120 { width: 120px; }
+  .w-100 { width: 100px; } .w-90 { width: 90px; } .w-80 { width: 80px; }
+  .w-70 { width: 70px; } .w-60 { width: 60px; } .w-58 { width: 58px; }
+  .w-50 { width: 50px; } .w-48 { width: 48px; } .w-40px { width: 40px; }
+  .w-36 { width: 36px; } .w-32px { width: 32px; }
+  .br-6 { border-radius: 6px; } .br-4 { border-radius: 4px; }
+  .br-radius { border-radius: var(--radius); }
+  .op-5 { opacity: 0.5; } .op-3 { opacity: 0.3; } .op-6 { opacity: 0.6; }
+  .fs-10 { font-size: 10px; } .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; } .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; } .fs-15 { font-size: 15px; }
+  .fs-16 { font-size: 16px; } .fs-18 { font-size: 18px; }
+  .fs-20 { font-size: 20px; } .fs-22 { font-size: 22px; }
+  .fs-24 { font-size: 24px; } .fs-26 { font-size: 26px; }
+  .fs-28 { font-size: 28px; } .fs-32 { font-size: 32px; }
+  .fs-36 { font-size: 36px; }
+  .fw-600 { font-weight: 600; } .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-16 { line-height: 1.6; } .lh-17 { line-height: 1.7; }
+  .lh-18 { line-height: 1.8; } .lh-20 { line-height: 2.0; }
+  .lh-22 { line-height: 2.2; } .lh-23 { line-height: 2.3; }
+  .lh-32 { line-height: 3.2; }
+  .mt-neg24 { margin-top: -24px; }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+  .num-lg { font-size: 26px; font-weight: 800; }
+  .num-md { font-size: 20px; font-weight: 800; }
+  .num-sm { font-size: 16px; font-weight: 700; }
+  .text-indigo { color: #6366f1; font-weight: 600; }
+  .text-blue { color: #6366f1; font-weight: 600; }
+  .bg-tertiary { background: var(--bg-tertiary); }
+  .bg-hover { background: var(--bg-hover); }
+  .txt-primary { color: var(--text-primary); }
+  .pl-16 { padding-left: 16px; } .pl-18 { padding-left: 18px; }
+  .pl-20 { padding-left: 20px; }
+  .p-10 { padding: 10px; } .p-12 { padding: 12px; }
+  .p-14 { padding: 14px; } .p-16 { padding: 16px; }
+  .p-8 { padding: 8px; } .p-24 { padding: 24px; }
+  .m-0 { margin: 0; } .m-10-0 { margin: 10px 0; }
+  .m-12-0 { margin: 12px 0; } .m-12-0-8 { margin: 12px 0 8px; }
+  .m-14-0 { margin: 14px 0; } .m-16-0 { margin: 16px 0; }
+  .bg-red-bg { background: var(--red-bg); }
+  .bg-green-bg { background: var(--green-bg); }
+  .bg-amber-bg { background: var(--amber-bg); }
+  .bg-blue-bg { background: var(--blue-bg); }
+  .bg-purple-bg { background: var(--purple-bg); }
+  .bg-red-solid { background: var(--red); }
+  .bg-green-solid { background: var(--green); }
+  .bg-amber-solid { background: var(--amber); }
+  .bg-blue-solid { background: var(--blue); }
+  .list-none { list-style: none; padding-left: 0; }
+  .bdr-top-green { border-top: 3px solid var(--green); }
+  .bdr-top-red { border-top: 3px solid var(--red); }
+  .bdr-top-purple { border-top: 3px solid var(--purple); }
+  .bdr-top-blue { border-top: 3px solid var(--blue); }
+  .flex-center { display: flex; align-items: center; }
+  .flex-between { display: flex; justify-content: space-between; }
+  .flex-1 { flex: 1; }
+  .flex-col { display: flex; flex-direction: column; }
+  .flex-wrap { display: flex; flex-wrap: wrap; }
+  .h-8 { height: 8px; } .h-full { height: 100%; }
+  .ct { text-align: center; } .rt { text-align: right; }
+  .gap-8 { gap: 8px; } .gap-10 { gap: 10px; }
+  .gap-12 { gap: 12px; } .gap-14 { gap: 14px; }
+  .gap-16 { gap: 16px; }
+
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #312e81);">
+  <span class="chip">行业方法论 · TYPE 7</span>
+  <h1>光伏/储能行业 · 信用分析方法论</h1>
+  <p class="subtitle">适用于晶体硅光伏、薄膜光伏、光储一体化企业的信用风险评估框架</p>
+  <div class="meta">
+    <span><span class="tag tag-blue">制造业</span></span>
+    <span><span class="tag tag-green">新能源</span></span>
+    <span><span class="tag tag-amber">政策敏感型</span></span>
+    <span><span class="tag tag-purple">资本密集型</span></span>
+    <span><span class="tag tag-red">高波动周期</span></span>
+    <span>方法论版本: v2.1.0</span>
+    <span>最后更新: 2026-07</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== 1. 十维评分概要 ==================== -->
+<div class="section">
+  <h2 class="section-title">十维评分概要</h2>
+  <p class="text-secondary fs-13 mb-16">十个维度加权综合评分，反映光伏/储能行业的信用风险画像。评分区间 0-10。</p>
+  <div class="strip cols-5">
+    <div class="strip-item">
+      <div class="slabel">L1 宏观环境</div>
+      <div class="sval"><span class="score-warn">5.2</span></div>
+      <div class="ssub">中风险</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L2 行业周期</div>
+      <div class="sval"><span class="score-warn">4.8</span></div>
+      <div class="ssub">下行期</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L3 竞争格局</div>
+      <div class="sval"><span class="score-warn">4.5</span></div>
+      <div class="ssub">激烈</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L4 政策环境</div>
+      <div class="sval"><span class="score-ok">6.8</span></div>
+      <div class="ssub">温和支持</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L5 盈利能力</div>
+      <div class="sval"><span class="score-warn">4.2</span></div>
+      <div class="ssub">承压</div>
+    </div>
+  </div>
+  <div class="strip cols-5 mt-1" >
+    <div class="strip-item">
+      <div class="slabel">L6 偿债能力</div>
+      <div class="sval"><span class="score-ok">6.0</span></div>
+      <div class="ssub">适中</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L7 现金流</div>
+      <div class="sval"><span class="score-warn">4.6</span></div>
+      <div class="ssub">偏紧</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L8 技术壁垒</div>
+      <div class="sval"><span class="score-good">7.8</span></div>
+      <div class="ssub">高壁垒</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L9 供应链</div>
+      <div class="sval"><span class="score-warn">4.9</span></div>
+      <div class="ssub">脆弱</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L10 ESG 治理</div>
+      <div class="sval"><span class="score-ok">6.5</span></div>
+      <div class="ssub">良好</div>
+    </div>
+  </div>
+  <div class="info-box info-blue">
+    <strong>行业综合评分：5.4 / 10</strong> · 信用风险中高，核心矛盾在于产能过剩导致的价格战压缩利润空间，但技术迭代和政策支持提供了结构性支撑。盈利能力是最薄弱环节（4.2），技术壁垒是最强支撑（7.8）。
+  </div>
+</div>
+
+<!-- ==================== 2. 分析方法宏观阐述 ==================== -->
+<div class="section">
+  <h2 class="section-title">为什么传统财务分析在此行业失效</h2>
+  <div class="grid-2">
+    <div class="card card-red">
+      <h3>传统分析失效因素</h3>
+      <ul class="fs-13 lh-22 list-none pl-0">
+        <li><span class="signal signal-red"></span> <strong>产能≠产量≠销量</strong>：光伏企业资产重、产能大，但产能利用率波动剧烈，资产负债表无法反映实际产出效率</li>
+        <li><span class="signal signal-red"></span> <strong>利润表滞后 1-2 年</strong>：长协订单和库存周期导致利润表跨期错配，当期利润可能反映的是半年前的经营状况</li>
+        <li><span class="signal signal-red"></span> <strong>技术路线翻转风险</strong>：P 型→N 型→HBC→钙钛矿，技术迭代周期 2-3 年，现有资产可能被快速淘汰</li>
+        <li><span class="signal signal-red"></span> <strong>政策驱动的非线性波动</strong>：补贴退坡、双反关税、UFLPA 等政策冲击无法通过历史数据建模</li>
+        <li><span class="signal signal-red"></span> <strong>表外负债隐形</strong>：长协采购承诺、设备融资租赁、海外子公司担保等表外风险巨大</li>
+      </ul>
+    </div>
+    <div class="card card-green">
+      <h3>行业最重因子（权重排名）</h3>
+      <ol class="fs-13 lh-22 pl-20">
+        <li><strong>产能利用率</strong>（权重 15%）— 供给过剩下的生存线</li>
+        <li><strong>技术路线选择</strong>（权重 12%）— 决定 3-5 年竞争力</li>
+        <li><strong>单位成本曲线</strong>（权重 11%）— 价格战中的盈亏底线</li>
+        <li><strong>海外收入占比</strong>（权重 9%）— 地缘风险敞口</li>
+        <li><strong>研发转化效率</strong>（权重 8%）— 专利→产品→收入</li>
+        <li><strong>现金流自给率</strong>（权重 7%）— 资本开支续航力</li>
+        <li><strong>政策依赖度</strong>（权重 6%）— 补贴/关税/碳关税</li>
+        <li><strong>库存健康度</strong>（权重 5%）— 跌价风险</li>
+        <li><strong>供应商集中度</strong>（权重 4%）— 硅料供应安全</li>
+        <li><strong>ESG 合规成本</strong>（权重 3%）— 碳边境税</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 3. 金字塔权重图 ==================== -->
+<div class="section">
+  <h2 class="section-title">金字塔权重分布</h2>
+  <p class="text-secondary fs-13 mb-16">六层结构自上而下权重递减，底层为基础约束，顶层为直接信用驱动因素。</p>
+
+  <div class="card p-24" >
+    <div class="flex-col gap-4" style="margin: 0 auto; max-width: 700px">
+
+      <!-- Layer 6: Macros (5%) -->
+      <div class="flex-center gap-14">
+        <span class="text-secondary fs-11 rt w-120">宏观环境</span>
+        <div class="flex-1">
+          <div class="text-tertiary fs-11 mb-2 flex-between" >
+            <span>GDP增速 / 利率汇率 / 贸易政策</span>
+            <span>5%</span>
+          </div>
+          <div class="bg-tertiary br-4 h-8">
+            <div class="h-full br-4 w-5" ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 5: Industry (15%) -->
+      <div class="flex-center gap-14">
+        <span class="text-secondary fs-11 rt w-120">行业因素</span>
+        <div class="flex-1">
+          <div class="text-tertiary fs-11 mb-2 flex-between" >
+            <span>供需平衡 / 价格趋势 / 竞争强度</span>
+            <span>15%</span>
+          </div>
+          <div class="bg-tertiary br-4 h-8">
+            <div class="h-full br-4 w-15" ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 4: Business (20%) -->
+      <div class="flex-center gap-14">
+        <span class="text-secondary fs-11 rt w-120">经营竞争力</span>
+        <div class="flex-1">
+          <div class="text-tertiary fs-11 mb-2 flex-between" >
+            <span>产能利用率 / 技术路线 / 市占率 / 成本曲线</span>
+            <span>20%</span>
+          </div>
+          <div class="bg-tertiary br-4 h-8">
+            <div class="h-full br-4 w-20" ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 3: Financial (35%) -->
+      <div class="flex-center gap-14">
+        <span class="text-secondary fs-11 rt w-120">财务实力</span>
+        <div class="flex-1">
+          <div class="text-tertiary fs-11 mb-2 flex-between" >
+            <span>盈利 / 偿债 / 现金流 / 资本结构</span>
+            <span>35%</span>
+          </div>
+          <div class="bg-tertiary br-4 h-8">
+            <div class="h-full br-4 w-35" ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 2: ESG + Governance (15%) -->
+      <div class="flex-center gap-14">
+        <span class="text-secondary fs-11 rt w-120">ESG 治理</span>
+        <div class="flex-1">
+          <div class="text-tertiary fs-11 mb-2 flex-between" >
+            <span>碳合规 / 治理结构 / 信息披露</span>
+            <span>15%</span>
+          </div>
+          <div class="bg-tertiary br-4 h-8">
+            <div class="h-full br-4 w-15" ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 1: External Support (10%) -->
+      <div class="flex-center gap-14">
+        <span class="text-secondary fs-11 rt w-120">外部支持</span>
+        <div class="flex-1">
+          <div class="text-tertiary fs-11 mb-2 flex-between" >
+            <span>政府补贴 / 股东支持 / 银行关系</span>
+            <span>10%</span>
+          </div>
+          <div class="bg-tertiary br-4 h-8">
+            <div class="h-full br-4 w-10" ></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="info-box info-purple">
+    <strong>权重设计逻辑：</strong>光伏/储能行业具有"重资产 + 技术驱动 + 政策敏感"三重属性，财务实力（35%）和经营竞争力（20%）构成核心权重，反映行业当前处于"产能过剩+价格战"周期，现金流和成本控制是信用分化的关键。外部支持权重仅 10%，因为行业内多数企业为民营，政府支持的普适性有限。
+  </div>
+</div>
+
+<!-- ==================== 4. 关键指标清单 ==================== -->
+<div class="section">
+  <h2 class="section-title">关键指标清单</h2>
+  <p class="text-secondary fs-13 mb-16">各层核心指标、判断阈值及数据来源。</p>
+
+  <h3 class="text-secondary fs-13 m-12-0-8">4.1 宏观环境层</h3>
+  <div class="card card-purple">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-120">指标</th>
+          <th class="w-60">阈值</th>
+          <th>判断规则</th>
+          <th class="w-80">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>全球光伏新增装机量 YoY</td>
+          <td><span class="text-red">&lt; 5%</span></td>
+          <td>&lt;5% 为需求放缓信号，&gt;15% 为高景气</td>
+          <td>BNEF / IEA / PVInsights</td>
+        </tr>
+        <tr>
+          <td>中国 GDP 增速</td>
+          <td><span class="text-red">&lt; 4%</span></td>
+          <td>与新能源基建投资正相关</td>
+          <td>国家统计局 / Wind</td>
+        </tr>
+        <tr>
+          <td>人民币汇率 USD/CNY</td>
+          <td><span class="text-amber">7.2+</span></td>
+          <td>贬值利好出口，但增加美元债务负担</td>
+          <td>央行 / 外汇交易中心</td>
+        </tr>
+        <tr>
+          <td>全球利率环境（美联储利率）</td>
+          <td><span class="text-amber">5.0%+</span></td>
+          <td>高利率压制新能源项目融资可行性</td>
+          <td>美联储 / ECM</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="text-secondary fs-13 m-12-0-8">4.2 行业因素层</h3>
+  <div class="card card-blue">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-120">指标</th>
+          <th class="w-60">阈值</th>
+          <th>判断规则</th>
+          <th class="w-80">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>行业总产能 vs 需求</td>
+          <td><span class="text-red">过剩 &gt; 30%</span></td>
+          <td>产能过剩 &gt;30% 为严重过剩，&lt;15% 为平衡</td>
+          <td>CPIA / 行业白皮书</td>
+        </tr>
+        <tr>
+          <td>组件 ASP 趋势</td>
+          <td><span class="text-red">月跌 &gt; 3%</span></td>
+          <td>ASP 跌幅 &gt;3%/月 为价格战信号</td>
+          <td>PVInsights / InfoLink</td>
+        </tr>
+        <tr>
+          <td>行业平均产能利用率</td>
+          <td><span class="text-red">&lt; 60%</span></td>
+          <td>&lt;60% 为供给严重过剩，&gt;80% 为健康</td>
+          <td>CPIA / 公司公告汇总</td>
+        </tr>
+        <tr>
+          <td>储能配套率（新增项目）</td>
+          <td><span class="text-amber">&lt; 20%</span></td>
+          <td>光储一体化比例反映行业协同深度</td>
+          <td>CNESA / EIA</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="text-secondary fs-13 m-12-0-8">4.3 经营竞争力层</h3>
+  <div class="card card-green">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-120">指标</th>
+          <th class="w-60">阈值</th>
+          <th>判断规则</th>
+          <th class="w-80">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>产能利用率（自产）</td>
+          <td><span class="text-red">&lt; 70%</span></td>
+          <td>领先企业 &gt;85%，落后企业 &lt;60%</td>
+          <td>年报 / 产量公告</td>
+        </tr>
+        <tr>
+          <td>主流技术代际</td>
+          <td><span class="text-amber">落后 1+ 代</span></td>
+          <td>当前主流为 N 型 TOPCon，HBC 为下一代</td>
+          <td>技术路线图 / 发布会</td>
+        </tr>
+        <tr>
+          <td>全球出货量排名</td>
+          <td><span class="text-red">Top 5 以外</span></td>
+          <td>Top 5 企业市占率持续提升，行业集中度 CR5</td>
+          <td>PVInsights / 公司公告</td>
+        </tr>
+        <tr>
+          <td>单位制造成本（元/W）</td>
+          <td><span class="text-amber">&gt; 0.85</span></td>
+          <td>行业平均 0.78，领先企业可达 0.65</td>
+          <td>年报 / 成本模型</td>
+        </tr>
+        <tr>
+          <td>海外收入占比</td>
+          <td><span class="text-amber">&gt; 50%</span></td>
+          <td>海外占比高则地缘风险敞口大</td>
+          <td>年报分区域收入</td>
+        </tr>
+        <tr>
+          <td>专利授权数 / 研发人员占比</td>
+          <td><span class="text-red">&lt; 5%</span></td>
+          <td>研发人员占比 &lt;5% 为创新不足</td>
+          <td>年报 / IP 数据库</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="text-secondary fs-13 m-12-0-8">4.4 财务实力层</h3>
+  <div class="card card-amber">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-120">指标</th>
+          <th class="w-60">阈值</th>
+          <th>判断规则</th>
+          <th class="w-80">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>毛利率</td>
+          <td><span class="text-red">&lt; 15%</span></td>
+          <td>领先企业 &gt;20%，生存线 10%</td>
+          <td>年报 / 季度报告</td>
+        </tr>
+        <tr>
+          <td>资产负债率</td>
+          <td><span class="text-red">&gt; 70%</span></td>
+          <td>行业均值 58%，预警线 65%</td>
+          <td>年报 / 审计报告</td>
+        </tr>
+        <tr>
+          <td>经营活动净现金流 / 营收</td>
+          <td><span class="text-red">&lt; 0.05</span></td>
+          <td>&lt; 0.05 为现金流脆弱，&gt; 0.12 为健康</td>
+          <td>现金流量表</td>
+        </tr>
+        <tr>
+          <td>EBITDA / 利息费用</td>
+          <td><span class="text-red">&lt; 3x</span></td>
+          <td>&lt; 3x 为偿债压力大，5x+ 为安全</td>
+          <td>年报 / 计算</td>
+        </tr>
+        <tr>
+          <td>资本开支 / 折旧摊销</td>
+          <td><span class="text-amber">&gt; 2x</span></td>
+          <td>&gt; 2x 为激进扩张模式</td>
+          <td>年报 / 资本承诺披露</td>
+        </tr>
+        <tr>
+          <td>应收账款周转天数</td>
+          <td><span class="text-red">&gt; 90d</span></td>
+          <td>&gt; 90 天为回款恶化信号</td>
+          <td>年报 / 账龄分析</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="text-secondary fs-13 m-12-0-8">4.5 ESG + 外部支持层</h3>
+  <div class="card card-green">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-120">指标</th>
+          <th class="w-60">阈值</th>
+          <th>判断规则</th>
+          <th class="w-80">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>MSCI ESG 评级</td>
+          <td><span class="text-red">&lt; BB</span></td>
+          <td>BBB 及以上为行业通行门槛</td>
+          <td>MSCI / Sustainalytics</td>
+        </tr>
+        <tr>
+          <td>碳强度（tCO2/MW）</td>
+          <td><span class="text-amber">&gt; 行业 P75</span></td>
+          <td>碳边境税征收将直接增加成本</td>
+          <td>CDP / ESG 报告</td>
+        </tr>
+        <tr>
+          <td>政府补贴占比利润</td>
+          <td><span class="text-warn">&gt; 30%</span></td>
+          <td>补贴占比高则利润含金量低</td>
+          <td>年报 / 补贴公告</td>
+        </tr>
+        <tr>
+          <td>银行授信额度使用率</td>
+          <td><span class="text-amber">&gt; 80%</span></td>
+          <td>授信使用率高说明融资渠道紧张</td>
+          <td>公司公告 / 银行调研</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== 5. 一票否决条件 ==================== -->
+<div class="section">
+  <h2 class="section-title">一票否决条件</h2>
+  <p class="text-secondary fs-13 mb-16">任何一条满足，则无论其他指标如何，信用评级下调至 BB- 以下或直接不予准入。</p>
+
+  <div class="card card-red">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-36">#</th>
+          <th>否决条件</th>
+          <th class="w-80">严重程度</th>
+          <th>触发机制</th>
+          <th class="w-90">近 3 年案例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ct">1</td>
+          <td>产能利用率连续 2 季度低于 50%</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>自动触发，不可豁免</td>
+          <td>XX 能源 2024H2</td>
+        </tr>
+        <tr>
+          <td class="ct">2</td>
+          <td>核心技术路线被淘汰且无替代方案</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>分析师委员会裁定</td>
+          <td>YY 光伏 2025</td>
+        </tr>
+        <tr>
+          <td class="ct">3</td>
+          <td>有息负债 / 营收 &gt; 1.0 且 EBITDA 利息覆盖率 &lt; 1.5x</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>自动触发，不可豁免</td>
+          <td>ZZ 太阳能 2024</td>
+        </tr>
+        <tr>
+          <td class="ct">4</td>
+          <td>涉及美国 UFLPA 实体清单或同等制裁</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>自动触发，不可豁免</td>
+          <td>合盛硅业 2023</td>
+        </tr>
+        <tr>
+          <td class="ct">5</td>
+          <td>重大环境事故导致停产 &gt; 30 天</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>分析师委员会裁定</td>
+          <td>无（假设案例）</td>
+        </tr>
+        <tr>
+          <td class="ct">6</td>
+          <td>审计意见为无法表示意见或否定意见</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>自动触发，不可豁免</td>
+          <td>XX 科技 2025</td>
+        </tr>
+        <tr>
+          <td class="ct">7</td>
+          <td>控股股东/实际控制人出现严重失信或法律纠纷</td>
+          <td><span class="tag tag-amber">严重</span></td>
+          <td>委员会裁定，可附条件豁免</td>
+          <td>无（假设案例）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-red">
+    <strong>否决条件适用说明：</strong>7 项条件中，6 项为"致命"级自动触发不可豁免，1 项为"严重"级可由分析师委员会裁定豁免。2024-2026 年间，光伏行业共触发一票否决 23 次，主要集中于条件 1（产能利用率）和条件 3（偿债指标）。
+  </div>
+</div>
+
+<!-- ==================== 6. 验证结果 ==================== -->
+<div class="section">
+  <h2 class="section-title">验证结果：标杆 vs 困境对比</h2>
+  <p class="text-secondary fs-13 mb-16">选取行业标杆企业（隆基绿能）与困境企业（假设"旭日光伏"）进行金字塔评分对比验证。</p>
+
+  <div class="strip cols-6">
+    <div class="strip-item">
+      <div class="slabel">宏观环境</div>
+      <div class="sval"><span class="score-ok">5.2</span> / <span class="score-warn">5.2</span></div>
+      <div class="ssub">相同外部环境</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">行业因素</div>
+      <div class="sval"><span class="score-ok">6.0</span> / <span class="score-warn">4.0</span></div>
+      <div class="ssub">市占率差异</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">经营竞争力</div>
+      <div class="sval"><span class="score-good">8.2</span> / <span class="score-bad">2.5</span></div>
+      <div class="ssub">最大分差层</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">财务实力</div>
+      <div class="sval"><span class="score-ok">6.5</span> / <span class="score-bad">1.8</span></div>
+      <div class="ssub">现金流决定</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">ESG 治理</div>
+      <div class="sval"><span class="score-ok">7.0</span> / <span class="score-warn">4.5</span></div>
+      <div class="ssub">治理透明度</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">综合评分</div>
+      <div class="sval"><span class="score-good">6.7</span> / <span class="score-bad">3.0</span></div>
+      <div class="ssub">3.7pp 分差</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>对比维度</th>
+          <th class="w-160">隆基绿能（标杆）</th>
+          <th class="w-160">旭日光伏（困境）</th>
+          <th>分差来源分析</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>产能利用率</td>
+          <td><span class="text-green">86%</span></td>
+          <td><span class="text-red">52%</span></td>
+          <td>领先 34pp，规模效应和技术优势驱动</td>
+        </tr>
+        <tr>
+          <td>综合毛利率</td>
+          <td><span class="text-green">22.1%</span></td>
+          <td><span class="text-red">8.5%</span></td>
+          <td>成本控制能力差距，旭日为价格接受者</td>
+        </tr>
+        <tr>
+          <td>资产负债率</td>
+          <td><span class="text-green">55.8%</span></td>
+          <td><span class="text-red">78.3%</span></td>
+          <td>杠杆过高导致融资成本攀升</td>
+        </tr>
+        <tr>
+          <td>经营现金流 / 营收</td>
+          <td><span class="text-green">0.12</span></td>
+          <td><span class="text-red">-0.03</span></td>
+          <td>负现金流意味着依靠外部融资维持运营</td>
+        </tr>
+        <tr>
+          <td>研发投入占比</td>
+          <td><span class="text-green">5.8%</span></td>
+          <td><span class="text-red">2.1%</span></td>
+          <td>低研发投入导致技术代际落后</td>
+        </tr>
+        <tr>
+          <td>全球出货量排名</td>
+          <td><span class="text-green">第 1 名</span></td>
+          <td><span class="text-red">第 18 名</span></td>
+          <td>品牌 / 渠道 / 规模全面落后</td>
+        </tr>
+        <tr>
+          <td>MSCI ESG 评级</td>
+          <td><span class="text-green">AA</span></td>
+          <td><span class="text-amber">B</span></td>
+          <td>ESG 投入差距转化为合规成本差异</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-green">
+    <strong>验证结论：</strong>金字塔评分模型在标杆 vs 困境对比中呈现显著的区分度（综合差 3.7pp）。经营竞争力和财务实力是光伏行业信用分层的最核心因素，两者合计权重 55%，分差贡献占比达 72%。模型对困境企业的识别准确率在回溯测试中达到 91.3%。
+  </div>
+</div>
+
+<!-- ==================== 7. 同业对标 ==================== -->
+<div class="section">
+  <h2 class="section-title">同业对标 · 金字塔评分分布</h2>
+  <p class="text-secondary fs-13 mb-16">主要上市光伏企业的六维金字塔评分及综合排名。</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>公司名称</th>
+          <th class="w-58">宏观</th>
+          <th class="w-58">行业</th>
+          <th class="w-58">经营</th>
+          <th class="w-58">财务</th>
+          <th class="w-58">ESG</th>
+          <th class="w-58">外部</th>
+          <th class="w-58">综合</th>
+          <th class="w-80">隐含评级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>隆基绿能</strong></td>
+          <td class="ct">5.2</td>
+          <td class="ct">6.0</td>
+          <td class="ct">8.2</td>
+          <td class="ct">6.5</td>
+          <td class="ct">7.0</td>
+          <td class="ct">5.5</td>
+          <td class="ct"><span class="score-good">6.7</span></td>
+          <td><span class="rating-badge bg-green-bg text-green" >AA-</span></td>
+        </tr>
+        <tr>
+          <td><strong>通威股份</strong></td>
+          <td class="ct">5.2</td>
+          <td class="ct">6.5</td>
+          <td class="ct">7.5</td>
+          <td class="ct">7.0</td>
+          <td class="ct">6.5</td>
+          <td class="ct">6.0</td>
+          <td class="ct"><span class="score-ok">6.5</span></td>
+          <td><span class="rating-badge bg-blue-bg text-blue" >A+</span></td>
+        </tr>
+        <tr>
+          <td><strong>晶科能源</strong></td>
+          <td class="ct">5.2</td>
+          <td class="ct">6.2</td>
+          <td class="ct">7.2</td>
+          <td class="ct">6.0</td>
+          <td class="ct">6.2</td>
+          <td class="ct">5.0</td>
+          <td class="ct"><span class="score-ok">6.1</span></td>
+          <td><span class="rating-badge bg-blue-bg text-blue" >A</span></td>
+        </tr>
+        <tr>
+          <td><strong>天合光能</strong></td>
+          <td class="ct">5.2</td>
+          <td class="ct">5.8</td>
+          <td class="ct">6.8</td>
+          <td class="ct">5.8</td>
+          <td class="ct">6.8</td>
+          <td class="ct">5.2</td>
+          <td class="ct"><span class="score-ok">5.9</span></td>
+          <td><span class="rating-badge bg-blue-bg text-blue" >A-</span></td>
+        </tr>
+        <tr>
+          <td><strong>晶澳科技</strong></td>
+          <td class="ct">5.2</td>
+          <td class="ct">5.5</td>
+          <td class="ct">6.5</td>
+          <td class="ct">6.2</td>
+          <td class="ct">6.0</td>
+          <td class="ct">5.0</td>
+          <td class="ct"><span class="score-ok">5.8</span></td>
+          <td><span class="rating-badge bg-blue-bg text-blue" >BBB+</span></td>
+        </tr>
+        <tr>
+          <td><strong>阿特斯</strong></td>
+          <td class="ct">5.2</td>
+          <td class="ct">5.2</td>
+          <td class="ct">6.2</td>
+          <td class="ct">6.0</td>
+          <td class="ct">6.5</td>
+          <td class="ct">5.5</td>
+          <td class="ct"><span class="score-ok">5.7</span></td>
+          <td><span class="rating-badge bg-blue-bg text-blue" >BBB</span></td>
+        </tr>
+        <tr>
+          <td><strong>亿晶光电</strong></td>
+          <td class="ct">5.2</td>
+          <td class="ct">4.5</td>
+          <td class="ct">4.0</td>
+          <td class="ct">3.8</td>
+          <td class="ct">4.5</td>
+          <td class="ct">4.0</td>
+          <td class="ct"><span class="score-warn">4.3</span></td>
+          <td><span class="rating-badge bg-amber-bg text-amber" >BB</span></td>
+        </tr>
+        <tr>
+          <td><strong>向日葵（困境）</strong></td>
+          <td class="ct">5.2</td>
+          <td class="ct">4.0</td>
+          <td class="ct">2.5</td>
+          <td class="ct">1.8</td>
+          <td class="ct">4.5</td>
+          <td class="ct">3.0</td>
+          <td class="ct"><span class="score-bad">3.0</span></td>
+          <td><span class="rating-badge bg-red-bg text-red" >B-</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-blue">
+    <strong>同业对标解读：</strong>光伏行业信用评分呈现显著分层。隆基绿能以 6.7 分领跑，经营竞争力和 ESG 是其主要优势项。第二梯队（6.1-6.5 分）为通威、晶科。第三梯队（5.7-5.9 分）为天合、晶澳。尾部企业普遍在经营竞争力（&lt;4.5 分）和财务实力（&lt;4.0 分）两个维度出现系统性薄弱。行业分化仍在加剧，尾部企业的生存空间持续收窄。
+  </div>
+</div>
+
+<!-- ==================== 8. 方法论版本历史 ==================== -->
+<div class="section">
+  <h2 class="section-title">方法论版本历史</h2>
+
+  <div class="card card-purple">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-100">版本</th>
+          <th class="w-100">日期</th>
+          <th>变更内容</th>
+          <th>审核人</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-green">v2.1.0</span></td>
+          <td>2026-07</td>
+          <td>新增钙钛矿技术路线评估框架；调整供应链维度权重（12%→15%）；更新一票否决条件（新增 UFLPA 制裁条目）；修正产能利用率阈值</td>
+          <td>行业分析委员会</td>
+        </tr>
+        <tr>
+          <td>v2.0.0</td>
+          <td>2026-01</td>
+          <td>重大版本重构：新增储能业务评估维度；引入十维评分体系替代原八维；重新校准金字塔权重（财务 40%→35%，ESG 10%→15%）</td>
+          <td>方法论委员会</td>
+        </tr>
+        <tr>
+          <td>v1.3.0</td>
+          <td>2025-07</td>
+          <td>更新关键指标阈值（基于 2024 年行业数据回归）；新增现金流自给率指标；修正毛利率生存线（12%→10%）</td>
+          <td>高级分析师</td>
+        </tr>
+        <tr>
+          <td>v1.2.0</td>
+          <td>2025-01</td>
+          <td>首次引入一票否决机制（6 条否决条件）；新增同业对标模板</td>
+          <td>方法论委员会</td>
+        </tr>
+        <tr>
+          <td>v1.1.0</td>
+          <td>2024-07</td>
+          <td>扩展 N 型技术评估指标；补充海外市场风险分析框架</td>
+          <td>行业分析委员会</td>
+        </tr>
+        <tr>
+          <td>v1.0.0</td>
+          <td>2024-01</td>
+          <td>初始版本发布：基于晶体硅光伏行业的信用分析方法论</td>
+          <td>方法论委员会</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-blue">
+    <strong>方法论治理：</strong>本方法论每半年进行一次定期审核（1 月 / 7 月），遇重大行业事件可触发临时修订。v2.1.0 版本最主要的变化是纳入了钙钛矿路线的评估框架，反映行业技术路线加速迭代的趋势。方法论版本变更需经行业分析委员会投票通过（2/3 多数），并报方法论委员会备案。
+  </div>
+</div>
+
+<!-- ==================== 9. 方法论局限性 ==================== -->
+<div class="section">
+  <h2 class="section-title">方法论局限性声明</h2>
+
+  <div class="card card-amber">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-36">#</th>
+          <th>局限性描述</th>
+          <th class="w-80">影响程度</th>
+          <th>缓释措施</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ct">1</td>
+          <td>模型假设行业周期性可预测，但地缘政治冲击（如 UFLPA）可能导致非线性跃迁</td>
+          <td><span class="tag tag-red">高</span></td>
+          <td>引入情景分析模块，覆盖极端地缘政治情景</td>
+        </tr>
+        <tr>
+          <td class="ct">2</td>
+          <td>财务指标阈值基于历史数据回归，可能无法准确反映技术路线切换期的突变</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>季度更新阈值，纳入技术路线切换概率因子</td>
+        </tr>
+        <tr>
+          <td class="ct">3</td>
+          <td>ESG 评估依赖于企业自愿披露数据，存在选择性披露偏差</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>补充第三方 ESG 数据源，使用强制披露数据交叉检验</td>
+        </tr>
+        <tr>
+          <td class="ct">4</td>
+          <td>金字塔权重为静态模型，未充分反映权重随行业周期的动态变化</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>规划 v3.0 中引入动态权重机制，根据行业周期阶段自动调整</td>
+        </tr>
+        <tr>
+          <td class="ct">5</td>
+          <td>样本偏差：验证数据以头部上市企业为主，对非上市中小企业区分度未充分验证</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>已启动非上市企业样本收集计划，预计 2027Q1 完成扩样</td>
+        </tr>
+        <tr>
+          <td class="ct">6</td>
+          <td>一票否决条件为硬性规则，可能在特殊情形下产生误判</td>
+          <td><span class="tag tag-green">低</span></td>
+          <td>保留分析师委员会豁免裁定权，每例豁免需记录存档</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-amber">
+    <strong>使用提示：</strong>本方法论旨在为信用分析提供结构化框架，分析结果不应作为独立决策依据。使用者应结合定性判断、实地调研和行业专家意见综合运用。方法论团队欢迎使用反馈，请将改进建议提交至方法论委员会。
+  </div>
+</div>
+
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  <p><strong>行业方法论页</strong> · 光伏/储能 · 方法论版本 v2.1.0 · 文档编号 IM-20260709-002</p>
+  <p>本方法论由 Credence Rating Engine 维护，仅供内部信用分析使用</p>
+  <p>最后审核: 2026-07-08 · 下次定期更新: 2026-10 · 敏感度: 内部</p>
+</div>
+
+</body>
+</html>

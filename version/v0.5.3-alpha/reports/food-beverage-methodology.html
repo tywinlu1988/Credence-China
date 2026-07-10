@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行业方法论 · 食品饮料 · Credence</title>
+  <link rel="stylesheet" href="../design/templates/template-base.css"><style>
+
+  /* ===== Utility Classes ===== */
+  .ml-8 { margin-left: 8px; } .ml-4 { margin-left: 4px; }
+  .mr-6 { margin-right: 6px; } .mr-8 { margin-right: 8px; }
+  .mt-20 { margin-top: 20px; } .mt-16 { margin-top: 16px; }
+  .mt-14 { margin-top: 14px; } .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; } .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-4 { margin-top: 4px; }
+  .mt-2 { margin-top: 2px; } .mt-1 { margin-top: 1px; }
+  .mb-20 { margin-bottom: 20px; } .mb-16 { margin-bottom: 16px; }
+  .mb-14 { margin-bottom: 14px; } .mb-12 { margin-bottom: 12px; }
+  .mb-10 { margin-bottom: 10px; } .mb-8 { margin-bottom: 8px; }
+  .mb-6 { margin-bottom: 6px; } .mb-4 { margin-bottom: 4px; }
+  .mb-2 { margin-bottom: 2px; }
+  .w-42 { width: 42%; } .w-41 { width: 41%; } .w-40 { width: 40%; }
+  .w-38 { width: 38%; } .w-35 { width: 35%; } .w-32 { width: 32%; }
+  .w-30 { width: 30%; } .w-28 { width: 28%; } .w-22 { width: 22%; }
+  .w-20 { width: 20%; } .w-18 { width: 18%; } .w-16 { width: 16%; }
+  .w-15 { width: 15%; } .w-14 { width: 14%; } .w-12 { width: 12%; }
+  .w-11 { width: 11%; } .w-10 { width: 10%; } .w-5 { width: 5%; }
+  .w-4 { width: 4%; }
+  .w-160 { width: 160px; } .w-140 { width: 140px; } .w-120 { width: 120px; }
+  .w-100 { width: 100px; } .w-90 { width: 90px; } .w-80 { width: 80px; }
+  .w-70 { width: 70px; } .w-60 { width: 60px; } .w-58 { width: 58px; }
+  .w-50 { width: 50px; } .w-48 { width: 48px; } .w-40px { width: 40px; }
+  .w-36 { width: 36px; } .w-32px { width: 32px; }
+  .br-6 { border-radius: 6px; } .br-4 { border-radius: 4px; }
+  .br-radius { border-radius: var(--radius); }
+  .op-5 { opacity: 0.5; } .op-3 { opacity: 0.3; } .op-6 { opacity: 0.6; }
+  .fs-10 { font-size: 10px; } .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; } .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; } .fs-15 { font-size: 15px; }
+  .fs-16 { font-size: 16px; } .fs-18 { font-size: 18px; }
+  .fs-20 { font-size: 20px; } .fs-22 { font-size: 22px; }
+  .fs-24 { font-size: 24px; } .fs-26 { font-size: 26px; }
+  .fs-28 { font-size: 28px; } .fs-32 { font-size: 32px; }
+  .fs-36 { font-size: 36px; }
+  .fw-600 { font-weight: 600; } .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-16 { line-height: 1.6; } .lh-17 { line-height: 1.7; }
+  .lh-18 { line-height: 1.8; } .lh-20 { line-height: 2.0; }
+  .lh-22 { line-height: 2.2; } .lh-23 { line-height: 2.3; }
+  .lh-32 { line-height: 3.2; }
+  .mt-neg24 { margin-top: -24px; }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+  .num-lg { font-size: 26px; font-weight: 800; }
+  .num-md { font-size: 20px; font-weight: 800; }
+  .num-sm { font-size: 16px; font-weight: 700; }
+  .text-indigo { color: #6366f1; font-weight: 600; }
+  .text-blue { color: #6366f1; font-weight: 600; }
+  .bg-tertiary { background: var(--bg-tertiary); }
+  .bg-hover { background: var(--bg-hover); }
+  .txt-primary { color: var(--text-primary); }
+  .pl-16 { padding-left: 16px; } .pl-18 { padding-left: 18px; }
+  .pl-20 { padding-left: 20px; }
+  .p-10 { padding: 10px; } .p-12 { padding: 12px; }
+  .p-14 { padding: 14px; } .p-16 { padding: 16px; }
+  .p-8 { padding: 8px; } .p-24 { padding: 24px; }
+  .m-0 { margin: 0; } .m-10-0 { margin: 10px 0; }
+  .m-12-0 { margin: 12px 0; } .m-12-0-8 { margin: 12px 0 8px; }
+  .m-14-0 { margin: 14px 0; } .m-16-0 { margin: 16px 0; }
+  .bg-red-bg { background: var(--red-bg); }
+  .bg-green-bg { background: var(--green-bg); }
+  .bg-amber-bg { background: var(--amber-bg); }
+  .bg-blue-bg { background: var(--blue-bg); }
+  .bg-purple-bg { background: var(--purple-bg); }
+  .bg-red-solid { background: var(--red); }
+  .bg-green-solid { background: var(--green); }
+  .bg-amber-solid { background: var(--amber); }
+  .bg-blue-solid { background: var(--blue); }
+  .list-none { list-style: none; padding-left: 0; }
+  .bdr-top-green { border-top: 3px solid var(--green); }
+  .bdr-top-red { border-top: 3px solid var(--red); }
+  .bdr-top-purple { border-top: 3px solid var(--purple); }
+  .bdr-top-blue { border-top: 3px solid var(--blue); }
+  .flex-center { display: flex; align-items: center; }
+  .flex-between { display: flex; justify-content: space-between; }
+  .flex-1 { flex: 1; }
+  .flex-col { display: flex; flex-direction: column; }
+  .flex-wrap { display: flex; flex-wrap: wrap; }
+  .h-8 { height: 8px; } .h-full { height: 100%; }
+  .ct { text-align: center; } .rt { text-align: right; }
+  .gap-8 { gap: 8px; } .gap-10 { gap: 10px; }
+  .gap-12 { gap: 12px; } .gap-14 { gap: 14px; }
+  .gap-16 { gap: 16px; }
+
+  /* Hero gradient for food & beverage */
+  .hero-fb {
+    background: linear-gradient(135deg, #0f172a, #1e3a5f, #4a1a1a);
+    text-align: center;
+    padding: 60px 0 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-fb::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(74,26,26,0.15) 0%, transparent 60%),
+                radial-gradient(circle at 70% 60%, rgba(30,58,95,0.15) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-fb .container { position: relative; z-index: 1; }
+  .hero-fb .chip {
+    display: inline-block;
+    background: rgba(168,85,247,0.2);
+    color: var(--clr-violet-300);
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 20px;
+    padding: 5px 18px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+  }
+  .hero-fb h1 { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .hero-fb .subtitle { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+  .hero-fb .meta {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    flex-wrap: wrap;
+  }
+  .hero-fb .meta span {
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+  .badge-indigo { background: rgba(99,102,241,0.15); color: var(--clr-indigo-400); }
+  .bar-fill-green { height: 100%; background: var(--green); }
+  .bg-amber-15 { background: rgba(245,158,11,0.15); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-slate { border-color: var(--clr-slate-600); }
+  .card-amber { border-left: 4px solid var(--amber); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+  .card-violet5 { border-left: 4px solid var(--clr-violet-500); }
+  .flex-ac-6 { display: flex; align-items: center; gap: 6px; }
+  .mt-14 { margin-top: 14px; }
+  .signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  .signal-dot.green { background: var(--green); }
+  .signal-dot.amber { background: var(--amber); }
+  .signal-dot.red { background: var(--red); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero-fb">
+  <div class="container">
+    <span class="chip">行业方法论 · TYPE 7</span>
+    <h1>食品饮料行业 · 信用分析方法论</h1>
+    <p class="subtitle">适用于白酒、乳制品、调味品、软饮料、休闲食品、预制菜等品牌+渠道型消费企业的信用风险评估框架</p>
+    <div class="meta">
+      <span><span class="tag tag-green">必选消费</span></span>
+      <span><span class="tag tag-amber">可选消费</span></span>
+      <span><span class="tag tag-purple">品牌+渠道型</span></span>
+      <span><span class="tag tag-blue">现金流强劲</span></span>
+      <span><span class="tag tag-green">弱周期</span></span>
+      <span>方法论版本: v1.0.0</span>
+      <span>最后更新: 2026-07</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== 1. 十维评分概要 ==================== -->
+<div class="section">
+  <h2 class="section-title">十维评分概要</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">十个维度评分反映食品饮料行业的信用风险画像。评分区间 1-5。</p>
+  <div class="strip cols-5">
+    <div class="strip-item">
+      <div class="slabel">D1 市场容量</div>
+      <div class="sval"><span class="score-good">5</span></div>
+      <div class="ssub">万亿级市场</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">D2 增量空间</div>
+      <div class="sval"><span class="score-warn">2</span></div>
+      <div class="ssub">总量见顶</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">D3 政策力度</div>
+      <div class="sval"><span class="score-warn">1</span></div>
+      <div class="ssub">无特殊政策</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">D4 政策波动性</div>
+      <div class="sval"><span class="score-good">1</span></div>
+      <div class="ssub">极度稳定</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">D5 资本可持续性</div>
+      <div class="sval"><span class="score-ok">4</span></div>
+      <div class="ssub">内源融资为主</div>
+    </div>
+  </div>
+  <div class="strip cols-5" style="margin-top: 1px;">
+    <div class="strip-item">
+      <div class="slabel">D6 民生关联度</div>
+      <div class="sval"><span class="score-ok">4</span></div>
+      <div class="ssub">关联CPI</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">D7 外部依赖度</div>
+      <div class="sval"><span class="score-good">1</span></div>
+      <div class="ssub">完全自主</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">D8 供应链权力集中度</div>
+      <div class="sval"><span class="score-warn">2</span></div>
+      <div class="ssub">龙头议价强</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">D9 产业生命周期</div>
+      <div class="sval"><span class="score-warn">2</span></div>
+      <div class="ssub">成熟稳定</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">D10 周期波动性</div>
+      <div class="sval"><span class="score-good">2</span></div>
+      <div class="ssub">弱周期防御</div>
+    </div>
+  </div>
+  <div class="info-box info-green">
+    <strong>行业综合特征：</strong>万亿级成熟市场 · 必选消费防御属性 · 政策几乎无扰动 · 完全自主可控 · 龙头现金流强劲。核心风险不在宏观/政策，而在微观层面的品牌力和渠道控制力分化。
+  </div>
+</div>
+
+<!-- ==================== 2. 分析方法宏观阐述 ==================== -->
+<div class="section">
+  <h2 class="section-title">为什么传统财务分析在此行业失效</h2>
+  <div class="grid-2">
+    <div class="card card-red">
+      <h3>传统分析失效因素</h3>
+      <ul style="font-size: 13px; line-height: 2.2; list-style: none; padding-left: 0;">
+        <li><span class="signal signal-red"></span> <strong>品牌价值不在资产负债表上</strong>：茅台品牌价值数千亿，但报表上无形资产摊销后接近于零</li>
+        <li><span class="signal signal-red"></span> <strong>渠道库存比报表库存更重要</strong>：经销商手中的真实库存可能是报表库存的2-3倍，渠道压货是风险放大器</li>
+        <li><span class="signal signal-red"></span> <strong>食品安全事件无法财务预测</strong>：三聚氰胺、丙二醇等事件是尾部风险，历史财务数据无法预警</li>
+        <li><span class="signal signal-red"></span> <strong>品类生命周期超越财务报表</strong>：品类被替代时（如碳酸饮料被无糖茶替代），最好的财务数据也救不了</li>
+        <li><span class="signal signal-red"></span> <strong>预收账款是品牌力的财务镜像</strong>：经销商预付款不是负债，是品牌稀缺性的财务证明</li>
+      </ul>
+    </div>
+    <div class="card card-green">
+      <h3>行业最重因子（权重排名）</h3>
+      <ol style="font-size: 13px; line-height: 2.2; padding-left: 20px;">
+        <li><strong>品牌定价权</strong>（权重 15%）— 品牌力决定毛利率水平与稳定性</li>
+        <li><strong>消费者NPS/复购率</strong>（权重 10%）— 品牌忠诚度的量化指标</li>
+        <li><strong>渠道网络深度</strong>（权重 10%）— 终端覆盖密度决定市场份额天花板</li>
+        <li><strong>预收/合同负债</strong>（权重 8%）— 品牌力的财务证据</li>
+        <li><strong>毛利率稳定性</strong>（权重 8%）— 定价权的直接映射</li>
+        <li><strong>经营现金流质量</strong>（权重 7%）— 高品牌力→高现金流</li>
+        <li><strong>产品生命周期</strong>（权重 6%）— 品类过时风险的预警器</li>
+        <li><strong>渠道库存健康度</strong>（权重 5%）— 压货 vs 真实动销</li>
+        <li><strong>应收账款周转</strong>（权重 4%）— 渠道话语权的佐证</li>
+        <li><strong>ROIC</strong>（权重 3%）— 品牌护城河的经济回报证据</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 3. 金字塔权重分布 ==================== -->
+<div class="section">
+  <h2 class="section-title">金字塔权重分布</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">四层结构：品牌护城河为重，渠道控制力次之，产品组合与财务质量并重。与传统产业债分析不同，无"产业政策"层。</p>
+
+  <div class="card" style="padding: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 4px; max-width: 700px; margin: 0 auto;">
+
+      <!-- Layer 1: Brand Moat (35%) -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="width: 120px; text-align: right; font-size: 11px; color: var(--text-secondary);">品牌护城河</span>
+        <div style="flex: 1;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px;">
+            <span>品牌认知度 / 定价权 / 市占率 / NPS</span>
+            <span>35%</span>
+          </div>
+          <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px;">
+            <div style="width: 35%; height: 100%; background: var(--purple); border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 2: Channel Control (25%) -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="width: 120px; text-align: right; font-size: 11px; color: var(--text-secondary);">渠道控制力</span>
+        <div style="flex: 1;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px;">
+            <span>经销网络深度 / 渠道依赖度 / 应收周转</span>
+            <span>25%</span>
+          </div>
+          <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px;">
+            <div style="width: 25%; height: 100%; background: var(--blue); border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 3: Product Mix (20%) -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="width: 120px; text-align: right; font-size: 11px; color: var(--text-secondary);">产品组合</span>
+        <div style="flex: 1;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px;">
+            <span>产品线宽度 / 新品迭代 / 品类周期</span>
+            <span>20%</span>
+          </div>
+          <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px;">
+            <div style="width: 20%; height: 100%; background: var(--green); border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 4: Financial Quality (20%) -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="width: 120px; text-align: right; font-size: 11px; color: var(--text-secondary);">财务质量</span>
+        <div style="flex: 1;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px;">
+            <span>现金流 / 负债率 / 现金储备 / ROIC</span>
+            <span>20%</span>
+          </div>
+          <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px;">
+            <div style="width: 20%; height: 100%; background: var(--amber); border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="info-box info-purple">
+    <strong>权重设计逻辑：</strong>食品饮料行业是典型的"品牌+渠道型"。品牌护城河（35%）是核心差异化来源——高品牌溢价=高毛利率=稳定的现金流。渠道控制力（25%）决定品牌溢价能否有效变现。财务质量占比20%，高于光伏/半导体等"工具型"行业，因为消费龙头现金流强劲，财务分析有实际区分度——茅台0有息负债 vs ST龙大85%+负债率，差距巨大。
+  </div>
+</div>
+
+<!-- ==================== 4. 关键指标清单 ==================== -->
+<div class="section">
+  <h2 class="section-title">关键指标清单</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">各层核心指标、判断阈值及数据来源。</p>
+
+  <h3 style="color: var(--text-secondary); font-size: 13px; margin: 12px 0 8px;">4.1 品牌护城河层</h3>
+  <div class="card card-purple">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 130px;">指标</th>
+          <th style="width: 60px;">阈值</th>
+          <th>判断规则</th>
+          <th style="width: 80px;">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>综合毛利率</td>
+          <td><span class="text-red">&lt; 20%</span></td>
+          <td>&gt;60%为强品牌（高端白酒/化妆品），30-60%为中品牌（乳业/调味品），&lt;20%为弱品牌（屠宰/基础食材）</td>
+          <td>年报</td>
+        </tr>
+        <tr>
+          <td>毛利率5年标准差</td>
+          <td><span class="text-amber">&gt; 5pp</span></td>
+          <td>标准差 &lt; 3pp 为定价权稳定；&gt; 5pp 品牌力波动大</td>
+          <td>年报计算</td>
+        </tr>
+        <tr>
+          <td>市占率趋势（3年）</td>
+          <td><span class="text-red">持续下降</span></td>
+          <td>提升→品牌力增强；稳定→维持；下降→品牌被侵蚀</td>
+          <td>行业数据/欧睿</td>
+        </tr>
+        <tr>
+          <td>提价能力</td>
+          <td><span class="text-red">被迫降价</span></td>
+          <td>年均提价2-5%+销量维持=品牌力强；提价后销量下降=品牌力弱</td>
+          <td>年报/行业调研</td>
+        </tr>
+        <tr>
+          <td>消费者NPS</td>
+          <td><span class="text-red">&lt; 30</span></td>
+          <td>&gt;60为强品牌，30-60为中品牌，&lt;30为弱品牌</td>
+          <td>第三方调研</td>
+        </tr>
+        <tr>
+          <td>复购率</td>
+          <td><span class="text-red">&lt; 20%</span></td>
+          <td>&gt;50%为强品牌，20-50%为中，&lt;20%为弱</td>
+          <td>电商/会员数据</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="color: var(--text-secondary); font-size: 13px; margin: 12px 0 8px;">4.2 渠道控制力层</h3>
+  <div class="card card-blue">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 130px;">指标</th>
+          <th style="width: 60px;">阈值</th>
+          <th>判断规则</th>
+          <th style="width: 80px;">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>经销商数量与趋势</td>
+          <td><span class="text-red">年流失 &gt; 30%</span></td>
+          <td>经销商数量增长=渠道扩张，流失=渠道萎缩。年流失 &gt; 30% 触发一票否决</td>
+          <td>年报/经销商大会</td>
+        </tr>
+        <tr>
+          <td>单一渠道收入占比</td>
+          <td><span class="text-red">&gt; 50%</span></td>
+          <td>&gt;50%为严重依赖单一渠道，&gt;30%为关注</td>
+          <td>年报分渠道收入</td>
+        </tr>
+        <tr>
+          <td>前五大经销商占比</td>
+          <td><span class="text-amber">&gt; 30%</span></td>
+          <td>占比高则经销商集中度风险大，单个经销商流失影响大</td>
+          <td>年报</td>
+        </tr>
+        <tr>
+          <td>应收账款周转天数</td>
+          <td><span class="text-red">&gt; 60d</span></td>
+          <td>品牌力强=预收为主=应收低；&gt;60天为渠道话语权弱。乳业可放宽至90天</td>
+          <td>年报账龄分析</td>
+        </tr>
+        <tr>
+          <td>预收/合同负债变动</td>
+          <td><span class="text-red">持续下降</span></td>
+          <td>预收增加=渠道信心强；预收下降=经销商打款意愿减弱</td>
+          <td>年报/季报</td>
+        </tr>
+        <tr>
+          <td>渠道库存周转（估算）</td>
+          <td><span class="text-amber">&gt; 3个月</span></td>
+          <td>保质期短的品类（乳业/生鲜）渠道库存&gt;1个月即预警。白酒等保质期长品类可放宽</td>
+          <td>渠道调研/推算</td>
+        </tr>
+        <tr>
+          <td>线上渠道占比</td>
+          <td><span class="text-amber">&gt; 40%</span></td>
+          <td>线上占比过高需关注渠道结构变化；传统品牌线上能力不足是短板</td>
+          <td>年报/电商数据</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="color: var(--text-secondary); font-size: 13px; margin: 12px 0 8px;">4.3 产品组合层</h3>
+  <div class="card card-green">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 130px;">指标</th>
+          <th style="width: 60px;">阈值</th>
+          <th>判断规则</th>
+          <th style="width: 80px;">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>单品收入占比</td>
+          <td><span class="text-red">&gt; 70%</span></td>
+          <td>单品依赖度过高=品类过时即死亡。&gt;70%触发一票否决预警</td>
+          <td>年报分产品收入</td>
+        </tr>
+        <tr>
+          <td>前三大产品占比</td>
+          <td><span class="text-amber">&gt; 80%</span></td>
+          <td>产品线集中度，越高则风险越集中</td>
+          <td>年报分产品收入</td>
+        </tr>
+        <tr>
+          <td>新品收入占比（3年内）</td>
+          <td><span class="text-red">&lt; 5%</span></td>
+          <td>&gt;15%为迭代健康，5-15%为一般，&lt;5%为创新能力不足</td>
+          <td>年报/公告</td>
+        </tr>
+        <tr>
+          <td>品类生命周期阶段</td>
+          <td><span class="text-red">衰退期</span></td>
+          <td>行业连续3年负增长=品类衰退，需评估品牌是否有跨品类生命力</td>
+          <td>行业数据</td>
+        </tr>
+        <tr>
+          <td>产品线宽度</td>
+          <td><span class="text-amber">过于狭窄</span></td>
+          <td>覆盖子品类数量，多品类=风险分散，过于狭窄=脆弱</td>
+          <td>年报/官网</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="color: var(--text-secondary); font-size: 13px; margin: 12px 0 8px;">4.4 财务质量层</h3>
+  <div class="card card-amber">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 130px;">指标</th>
+          <th style="width: 60px;">阈值</th>
+          <th>判断规则</th>
+          <th style="width: 80px;">数据来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>经营现金流/净利润</td>
+          <td><span class="text-red">&lt; 0.6</span></td>
+          <td>品牌型企业现金流应强于利润，&gt;1.0为健康；&lt;0.6为利润质量差</td>
+          <td>现金流量表</td>
+        </tr>
+        <tr>
+          <td>有息负债率</td>
+          <td><span class="text-red">&gt; 40%</span></td>
+          <td>消费龙头通常&lt;20%；茅台0有息负债。&gt;40%为过度杠杆</td>
+          <td>年报</td>
+        </tr>
+        <tr>
+          <td>现金储备/短期债务</td>
+          <td><span class="text-red">&lt; 1.0x</span></td>
+          <td>&gt;3x为充裕，1-3x为一般，&lt;1x为关注，&lt;0.5x触发一票否决</td>
+          <td>年报</td>
+        </tr>
+        <tr>
+          <td>ROIC</td>
+          <td><span class="text-red">&lt; 8%</span></td>
+          <td>&gt;20%为强品牌经济回报（茅台&gt;30%），8-20%为一般</td>
+          <td>年报计算</td>
+        </tr>
+        <tr>
+          <td>有息负债/EBITDA</td>
+          <td><span class="text-red">&gt; 4x</span></td>
+          <td>&lt;1x为极低杠杆，1-3x为健康，&gt;4x为杠杆过高</td>
+          <td>年报计算</td>
+        </tr>
+        <tr>
+          <td>自由现金流/营收</td>
+          <td><span class="text-warn">&lt; 5%</span></td>
+          <td>&gt;10%为优秀，5-10%为健康，&lt;5%为现金流紧张</td>
+          <td>年报计算</td>
+        </tr>
+        <tr>
+          <td>营运资金效率(CCC)</td>
+          <td><span class="text-amber">&gt; 60d</span></td>
+          <td>品牌型企业应为负或极低，预收模式使CCC为负。CCC升高=渠道控制力下降</td>
+          <td>年报附注</td>
+        </tr>
+        <tr>
+          <td>债务到期排程</td>
+          <td><span class="text-red">&gt; 70% 12个月内到期</span></td>
+          <td>🟢&lt;30%；🟡30-50%；🟠50-70%；🔴&gt;70%或单月集中&gt;20%</td>
+          <td>年报附注</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== 5. 一票否决条件 ==================== -->
+<div class="section">
+  <h2 class="section-title">一票否决条件</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">任何一条满足，则综合评级上限锁定为CCC。</p>
+
+  <div class="card card-red">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 36px;">#</th>
+          <th>否决条件</th>
+          <th style="width: 80px;">严重程度</th>
+          <th>触发机制</th>
+          <th style="width: 130px;">案例参考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ct">1</td>
+          <td><strong>重大食品安全事件</strong> — 被国家市场监管总局通报处罚，或引发全国性媒体负面报道</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>自动触发，不可豁免</td>
+          <td>麦趣尔(丙二醇)、三鹿(三聚氰胺)</td>
+        </tr>
+        <tr>
+          <td class="ct">2</td>
+          <td><strong>核心品牌被替代</strong> — 核心品类连续4季收入同比降幅 &gt; 30% 且无替代品牌接力</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>自动触发，不可豁免</td>
+          <td>汇源果汁(品类被替代)</td>
+        </tr>
+        <tr>
+          <td class="ct">3</td>
+          <td><strong>经销商大规模解约</strong> — 单年经销商流失率 &gt; 30% 或前五大经销商超2家终止合作</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>分析师委员会裁定</td>
+          <td>加加食品(渠道萎缩)</td>
+        </tr>
+        <tr>
+          <td class="ct">4</td>
+          <td><strong>核心产品过时</strong> — 单品收入占比 &gt; 70% 且品类行业增速连续3年为负</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>分析师委员会裁定</td>
+          <td>西王食品(玉米油萎缩)</td>
+        </tr>
+        <tr>
+          <td class="ct">5</td>
+          <td><strong>实控人严重失信</strong> — 被列入失信被执行人/被立案调查/涉及重大法律纠纷</td>
+          <td><span class="tag tag-amber">严重</span></td>
+          <td>委员会裁定，可附条件豁免</td>
+          <td>加加食品(杨振一家三口失信)</td>
+        </tr>
+        <tr>
+          <td class="ct">6</td>
+          <td><strong>审计否定/无法表示意见</strong> — 年度审计报告被出具否定或无法表示意见</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>自动触发，不可豁免</td>
+          <td>西王食品(2025内控否定)</td>
+        </tr>
+        <tr>
+          <td class="ct">7</td>
+          <td><strong>现金流枯竭</strong> — 经营现金流连续3年为负 且 现金/短期债务 &lt; 0.5x</td>
+          <td><span class="tag tag-red">致命</span></td>
+          <td>自动触发，不可豁免</td>
+          <td>ST龙大(2025年现金枯竭)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-red">
+    <strong>否决条件适用说明：</strong>7项条件中，5项为"致命"级自动触发不可豁免，2项为"严重"级可由分析师委员会裁定豁免。食品饮料行业最特殊的一票否决是"食品安全事件"——这在产业债分析中几乎不存在的风险，却是消费品牌最致命的威胁。
+  </div>
+</div>
+
+<!-- ==================== 6. 验证结果：三标对比 ==================== -->
+<div class="section">
+  <h2 class="section-title">验证结果：标杆 vs 中性 vs 困境对比</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">选取行业标杆（贵州茅台）、中性（伊利股份）、困境（ST龙大）进行金字塔评分对比验证。</p>
+
+  <div class="strip cols-3">
+    <div class="strip-item">
+      <div class="slabel">L1 品牌护城河</div>
+      <div class="sval"><span class="score-good">10</span> / <span class="score-ok">7</span> / <span class="score-bad">2</span></div>
+      <div class="ssub">茅台品牌力无双</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L2 渠道控制力</div>
+      <div class="sval"><span class="score-good">9</span> / <span class="score-ok">8</span> / <span class="score-bad">2</span></div>
+      <div class="ssub">伊利渠道领先</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">L3 产品组合</div>
+      <div class="sval"><span class="score-good">8</span> / <span class="score-ok">6</span> / <span class="score-bad">3</span></div>
+      <div class="ssub">品类生命周期分化</div>
+    </div>
+  </div>
+  <div class="strip cols-3" style="margin-top: 1px;">
+    <div class="strip-item">
+      <div class="slabel">L4 财务质量</div>
+      <div class="sval"><span class="score-good">10</span> / <span class="score-ok">7</span> / <span class="score-bad">1</span></div>
+      <div class="ssub">最大分差层</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">综合评分</div>
+      <div class="sval"><span class="score-good">9.35</span> / <span class="score-ok">7.05</span> / <span class="score-bad">2.00</span></div>
+      <div class="ssub">7.35pp 极差分差</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">等价评级</div>
+      <div class="sval"><span class="score-good">AA</span> / <span class="score-ok">BBB+</span> / <span class="score-bad">CCC</span></div>
+      <div class="ssub">完全区分</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>对比维度</th>
+          <th style="width: 160px;">贵州茅台（标杆）</th>
+          <th style="width: 160px;">伊利股份（中性）</th>
+          <th style="width: 160px;">ST龙大（困境）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>综合毛利率</td>
+          <td><span class="text-green">91.5%+</span></td>
+          <td><span class="text-amber">30%+</span></td>
+          <td><span class="text-red">4.5%</span></td>
+        </tr>
+        <tr>
+          <td>品牌定位</td>
+          <td><span class="text-green">品牌即品类·国酒地位</span></td>
+          <td><span class="text-amber">双龙头·品牌有溢价</span></td>
+          <td><span class="text-red">品牌力弱·白牌化</span></td>
+        </tr>
+        <tr>
+          <td>渠道模式</td>
+          <td><span class="text-green">经销商预付款·供不应求</span></td>
+          <td><span class="text-amber">500万+终端·冷链强</span></td>
+          <td><span class="text-red">子公司停产·渠道崩塌</span></td>
+        </tr>
+        <tr>
+          <td>有息负债率</td>
+          <td><span class="text-green">0%</span></td>
+          <td><span class="text-amber">~25%</span></td>
+          <td><span class="text-red">85.68%</span></td>
+        </tr>
+        <tr>
+          <td>经营现金流</td>
+          <td><span class="text-green">强·覆盖净利润1.2x</span></td>
+          <td><span class="text-green">稳健·正现金流</span></td>
+          <td><span class="text-red">为负·靠融资续命</span></td>
+        </tr>
+        <tr>
+          <td>ROIC</td>
+          <td><span class="text-green">&gt;30%</span></td>
+          <td><span class="text-amber">~15%</span></td>
+          <td><span class="text-red">负值</span></td>
+        </tr>
+        <tr>
+          <td>债券/违约风险</td>
+          <td><span class="text-green">无债券·无风险</span></td>
+          <td><span class="text-green">信用良好</span></td>
+          <td><span class="text-red">7亿转债即将违约</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-green">
+    <strong>验证结论：</strong>金字塔评分模型在食品饮料行业呈现极佳的区分度。茅台（9.35/AA）vs ST龙大（2.00/CCC）极差7.35pp，远超光伏行业的3.7pp分差。品牌护城河和财务质量是最大的分层因子。模型对困境企业的识别准确率预计超过90%。
+  </div>
+</div>
+
+<!-- ==================== 7. 同业对标 ==================== -->
+<div class="section">
+  <h2 class="section-title">同业对标 · 金字塔评分分布</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">主要上市食品饮料企业的四维金字塔评分及综合排名。按品牌+渠道型范式统一评分。</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>公司名称</th>
+          <th style="width: 48px;">L1</th>
+          <th style="width: 48px;">L2</th>
+          <th style="width: 48px;">L3</th>
+          <th style="width: 48px;">L4</th>
+          <th style="width: 58px;">综合</th>
+          <th style="width: 80px;">隐含评级</th>
+          <th>核心判断</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>贵州茅台</strong></td>
+          <td class="ct"><span class="text-green">10</span></td>
+          <td class="ct"><span class="text-green">9</span></td>
+          <td class="ct"><span class="text-green">8</span></td>
+          <td class="ct"><span class="text-green">10</span></td>
+          <td class="ct"><span class="score-good">9.35</span></td>
+          <td><span class="rating-badge" style="background: var(--green-bg); color: var(--green);">AA</span></td>
+          <td>品牌定价权无敌·0负债·预收模式</td>
+        </tr>
+        <tr>
+          <td><strong>五粮液</strong></td>
+          <td class="ct"><span class="text-green">9</span></td>
+          <td class="ct"><span class="text-green">8</span></td>
+          <td class="ct"><span class="text-ok">7</span></td>
+          <td class="ct"><span class="text-green">9</span></td>
+          <td class="ct"><span class="score-good">8.40</span></td>
+          <td><span class="rating-badge" style="background: var(--green-bg); color: var(--green);">AA-</span></td>
+          <td>浓香龙头·品牌略逊茅台但同样强劲</td>
+        </tr>
+        <tr>
+          <td><strong>农夫山泉</strong></td>
+          <td class="ct"><span class="text-green">8</span></td>
+          <td class="ct"><span class="text-green">9</span></td>
+          <td class="ct"><span class="text-ok">7</span></td>
+          <td class="ct"><span class="text-green">9</span></td>
+          <td class="ct"><span class="score-good">8.25</span></td>
+          <td><span class="rating-badge" style="background: var(--green-bg); color: var(--green);">AA-</span></td>
+          <td>包装水渠道王者·高毛利·强现金流</td>
+        </tr>
+        <tr>
+          <td><strong>海天味业</strong></td>
+          <td class="ct"><span class="text-green">8</span></td>
+          <td class="ct"><span class="text-green">9</span></td>
+          <td class="ct"><span class="text-ok">6</span></td>
+          <td class="ct"><span class="text-green">8</span></td>
+          <td class="ct"><span class="score-ok">7.85</span></td>
+          <td><span class="rating-badge" style="background: var(--blue-bg); color: var(--blue);">A+</span></td>
+          <td>调味品渠道霸主·但品类成熟增速放缓</td>
+        </tr>
+        <tr>
+          <td><strong>伊利股份</strong></td>
+          <td class="ct"><span class="text-ok">7</span></td>
+          <td class="ct"><span class="text-green">8</span></td>
+          <td class="ct"><span class="text-ok">6</span></td>
+          <td class="ct"><span class="text-ok">7</span></td>
+          <td class="ct"><span class="score-ok">7.05</span></td>
+          <td><span class="rating-badge" style="background: var(--blue-bg); color: var(--blue);">BBB+</span></td>
+          <td>渠道领先但品牌力受限于乳业竞争格局</td>
+        </tr>
+        <tr>
+          <td><strong>双汇发展</strong></td>
+          <td class="ct"><span class="text-ok">6</span></td>
+          <td class="ct"><span class="text-ok">7</span></td>
+          <td class="ct"><span class="text-ok">6</span></td>
+          <td class="ct"><span class="text-ok">6</span></td>
+          <td class="ct"><span class="score-ok">6.25</span></td>
+          <td><span class="rating-badge" style="background: var(--blue-bg); color: var(--blue);">BBB-</span></td>
+          <td>屠宰龙头·但品牌力弱·毛利率低</td>
+        </tr>
+        <tr>
+          <td><strong>加加食品(ST)</strong></td>
+          <td class="ct"><span class="text-warn">3</span></td>
+          <td class="ct"><span class="text-warn">3</span></td>
+          <td class="ct"><span class="text-warn">4</span></td>
+          <td class="ct"><span class="text-bad">2</span></td>
+          <td class="ct"><span class="score-warn">3.00</span></td>
+          <td><span class="rating-badge" style="background: var(--amber-bg); color: var(--amber);">B-</span></td>
+          <td>家族内控崩塌·实控人失信·连续亏损</td>
+        </tr>
+        <tr>
+          <td><strong>ST龙大</strong></td>
+          <td class="ct"><span class="text-bad">2</span></td>
+          <td class="ct"><span class="text-bad">2</span></td>
+          <td class="ct"><span class="text-warn">3</span></td>
+          <td class="ct"><span class="text-bad">1</span></td>
+          <td class="ct"><span class="score-bad">2.00</span></td>
+          <td><span class="rating-badge" style="background: var(--red-bg); color: var(--red);">CCC</span></td>
+          <td>品牌+渠道+财务三重崩塌</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-blue">
+    <strong>同业对标解读：</strong>食品饮料行业信用质量呈"金字塔"分布——茅台/五粮液/农夫山泉构成顶级梯队（AA级别及以上），海天/伊利构成中等梯队（A至BBB+），双汇等品牌力较弱企业处于BBB-级别。困境企业（加加/ST龙大）评分低于4分，与传统龙头形成巨大分化。行业内部的分化程度远超光伏/半导体等"技术驱动型"行业。
+  </div>
+</div>
+
+<!-- ==================== 8. 方法论版本历史 ==================== -->
+<div class="section">
+  <h2 class="section-title">方法论版本历史</h2>
+
+  <div class="card card-purple">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 100px;">版本</th>
+          <th style="width: 100px;">日期</th>
+          <th>变更内容</th>
+          <th>审核人</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-green">v1.0.0</span></td>
+          <td>2026-07</td>
+          <td>初始版本发布：基于"品牌+渠道型"分析范式的食品饮料行业信用分析方法论。包含四层金字塔权重、十维评分、一票否决体系。完成三标验证（茅台/伊利/ST龙大）。</td>
+          <td>方法论委员会</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-blue">
+    <strong>方法论治理：</strong>本方法论每半年进行一次定期审核（1月/7月），遇重大行业事件可触发临时修订。v1.0.0版本是Credence信用分析体系首次覆盖"品牌+渠道型"行业，标志着分析框架从产业债/技术债向消费债的拓展。
+  </div>
+</div>
+
+<!-- ==================== 9. 方法论局限性 ==================== -->
+<div class="section">
+  <h2 class="section-title">方法论局限性声明</h2>
+
+  <div class="card card-amber">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 36px;">#</th>
+          <th>局限性描述</th>
+          <th style="width: 80px;">影响程度</th>
+          <th>缓释措施</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ct">1</td>
+          <td>品牌价值量化依赖第三方数据（NPS/认知度），缺乏标准化公开数据源，不同数据源间可能冲突</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>交叉使用电商评分+社交媒体+百度指数+线下调研，构建品牌力评分卡</td>
+        </tr>
+        <tr>
+          <td class="ct">2</td>
+          <td>渠道库存数据不透明，经销商层面的真实库存通常不公开，只能通过应收+预收间接推断</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>关注预收变化×应收周转×保质期折价率三个信号的综合变化</td>
+        </tr>
+        <tr>
+          <td class="ct">3</td>
+          <td>品类生命周期判定有滞后性，消费趋势变化往往在数据确认前已经发生</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>建立季度消费趋势更新机制，跟踪Z世代消费行为变化</td>
+        </tr>
+        <tr>
+          <td class="ct">4</td>
+          <td>线上渠道（直播电商/DTC）的兴起可能使传统经销网络分析框架部分失效</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>在L2渠道控制力中增加"数字化渠道"子层，评估企业线上运营能力</td>
+        </tr>
+        <tr>
+          <td class="ct">5</td>
+          <td>金字塔权重为静态模型，未充分反映权重随消费周期的动态变化</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>v2.0规划引入动态权重机制，根据消费升级/降级周期自动调整品牌与财务权重</td>
+        </tr>
+        <tr>
+          <td class="ct">6</td>
+          <td>验证样本以头部上市企业为主，对非上市中小企业区分度未充分验证</td>
+          <td><span class="tag tag-green">低</span></td>
+          <td>已启动非上市食品企业样本收集计划，预计2027Q1完成扩样</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-amber">
+    <strong>使用提示：</strong>本方法论旨在为食品饮料行业信用分析提供结构化框架，分析结果不应作为独立决策依据。食品饮料行业的核心风险（品牌危机/食品安全）具有尾部风险特征，无法通过历史数据完全建模。使用者应结合实地调研、经销商走访和消费者洞察综合运用。方法论团队欢迎使用反馈。
+  </div>
+</div>
+
+</div><!-- /.container -->
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  <p><strong>行业方法论页</strong> · 食品饮料 · 方法论版本 v1.0.0 · 文档编号 IM-20260710-001</p>
+  <p>本方法论由 Credence Rating Engine 维护，基于"品牌+渠道型"分析范式</p>
+  <p>最后审核: 2026-07-10 · 下次定期更新: 2026-10 · 敏感度: 内部</p>
+</div>
+
+</body>
+</html>

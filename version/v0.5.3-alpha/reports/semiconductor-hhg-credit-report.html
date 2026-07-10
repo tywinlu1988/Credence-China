@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单标的深度分析 — 华虹半导体 (1347.HK) | 半导体/晶圆代工</title>
+<link rel="stylesheet" href="../design/templates/template-base.css">
+<style>
+/* Pyramid layers - 5 layers for semiconductor with HHG weights */
+.pyr-wrap { margin: 28px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.85; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 48px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, var(--clr-slate-500), var(--clr-slate-600)); }
+.pyr-l2 { width: 90%; background: linear-gradient(135deg, var(--clr-violet-600), var(--clr-violet-700)); }
+.pyr-l3 { width: 80%; background: linear-gradient(135deg, var(--clr-blue-600), var(--clr-blue-700)); }
+.pyr-l4 { width: 70%; background: linear-gradient(135deg, var(--clr-cyan-600), var(--clr-cyan-700)); }
+.pyr-l5 { width: 60%; background: linear-gradient(135deg, var(--clr-indigo-600), var(--clr-indigo-800)); }
+
+/* Signal dots */
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.orange { background: var(--clr-orange-600); }
+.signal-dot.red { background: var(--red); }
+
+/* Quadrant grid */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--purple); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* Risk list */
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: var(--clr-orange-600); }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+
+/* Density bar */
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+
+/* Gap items */
+.gap-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+  background: var(--bg-tertiary); font-size: 12px;
+}
+.gap-item .gap-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.gap-item .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.gap-item .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+.gap-item .gap-tag.info { background: rgba(99,102,241,0.15); color: var(--blue); }
+
+/* Visual tag for key process */
+.process-tag {
+  display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+  margin: 2px 3px; background: rgba(168,85,247,0.15); color: var(--clr-violet-300); border: 1px solid rgba(168,85,247,0.2);
+}
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+/* Hero gradient: Semiconductor — purple/violet tones */
+.hero-custom {
+  background: linear-gradient(135deg, #0f172a, #1e3a5f, #5b21b6);
+  text-align: center;
+  padding: 60px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-custom::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(91,33,182,0.15) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(30,58,95,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-custom .container { position: relative; z-index: 1; }
+.hero-custom .chip {
+  display: inline-block;
+  background: rgba(168,85,247,0.2);
+  color: var(--clr-violet-300);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero-custom h1 { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-custom .stock-code { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 400; margin-bottom: 6px; }
+.hero-custom .subtitle { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+.hero-custom .meta-row {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  flex-wrap: wrap;
+}
+.hero-custom .meta-row span {
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HERO SECTION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="hero-custom">
+  <div class="container">
+    <div class="chip">单标的深度分析 · Type 1</div>
+    <h1>华虹半导体 <span class="fw-400" style="color:rgba(255,255,255,0.5)">|</span> Hua Hong Grace</h1>
+    <div class="stock-code">1347.HK / 688347.SH</div>
+    <p class="subtitle">半导体/晶圆代工 · 成熟制程特色工艺领导者 — 差异化技术平台在国产替代浪潮中稳中求进，但先进制程缺失和资本开支压力制约信用上限</p>
+    <div class="meta-row">
+      <span>分析时点：2026年7月</span>
+      <span>数据截止：2026-07-08</span>
+      <span>数据来源：公开数据</span>
+      <span>目标读者：对公信贷经理</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- STRIP: 4 Key Metrics -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="strip" class="mt-neg24">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval" class="text-violet">BBB</div>
+    <div class="ssub">同等风险 · 中性偏可投</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval" class="text-violet">6.10</div>
+    <div class="ssub">/ 10 五层加权</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval" class="text-green">稳定</div>
+    <div class="ssub">成熟制程需求韧性支撑</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval" class="text-amber">中高</div>
+    <div class="ssub">上市公司披露较完整</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: PYRAMID SCAN · 5-LAYER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01</span> 金字塔逐层扫描 · 五层分析框架（半导体版）</h2>
+  <p class="fs-13 mb-20" class="text-secondary">半导体行业分析框架采用五层金字塔。华虹半导体作为成熟制程特色工艺代工厂，技术与代工位势权重最高(25%)，产业政策和客户供应链各占20%，财务和外部支持分别占20%和15%，反映其中等风险定位</p>
+
+  <!-- Layer 1: Industry Policy -->
+  <div class="card" class="card-slate">
+    <h3>L1 产业政策与宏观环境 <span class="tag tag-blue" class="ml-8">权重 20%</span> <span class="tag tag-green" class="ml-4">6.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">政策/宏观变量</th><th>影响分析</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>国家半导体大基金</strong></td>
+          <td><span class="text-green">直接受益</span> — 大基金二期明确重点支持华虹半导体。2023年大基金二期参与华虹科创板IPO战略配售（认购约30亿元）。大基金三期（2025年启动）预计继续覆盖特色工艺和成熟制程产能建设</td>
+        </tr>
+        <tr>
+          <td><strong>国产替代趋势</strong></td>
+          <td><span class="text-green">长期利好</span> — 中美科技脱钩加速国产芯片设计公司转单。华虹作为国内第二大晶圆代工厂（仅次于SMIC），直接受益于"国产替代"趋势。MCU、电源管理、CIS等领域的国产替代需求持续增长</td>
+        </tr>
+        <tr>
+          <td><strong>中美科技博弈</strong></td>
+          <td><span class="text-amber">有限冲击</span> — 华虹聚焦55nm+成熟制程，不涉及先进制程管制范围。美国实体清单风险低——设备采购以DUV光刻机和成熟制程设备为主，受MATCH法案影响有限。但不排除未来制裁范围扩大至成熟制程的风险</td>
+        </tr>
+        <tr>
+          <td><strong>半导体周期波动</strong></td>
+          <td><span class="text-amber">周期性影响</span> — 2024-2025年全球半导体行业经历库存调整周期，华虹产能利用率从2024年低点(~80%)回升至2025年(~90%)。成熟制程需求波动小于先进制程，但非完全免疫</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>产业政策环境对华虹总体有利。国家大基金明确支持+国产替代趋势提供需求支撑。中美科技博弈对华虹的冲击有限（成熟制程非制裁焦点），但也带来不确定性。<span class="text-green">6.5/10</span>——"利好为主，但博弈升级风险始终存在"
+    </div>
+  </div>
+
+  <!-- Layer 2: Technology & Foundry Position -->
+  <div class="card" class="card-purple-alt">
+    <h3>L2 技术与代工位势 <span class="tag tag-blue" class="ml-8">权重 25%</span> <span class="tag tag-amber" class="ml-4">6.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>制程能力</strong></td>
+          <td><span class="text-green">成熟制程（55nm+）领导者</span> — 华虹是中国大陆最大的成熟制程代工厂（非先进制程）。主要制程节点覆盖90nm、130nm、180nm等，55nm工艺平台已实现量产。不涉及28nm以下先进制程——这是与SMIC最大的区别</td>
+        </tr>
+        <tr>
+          <td><strong>特色工艺平台</strong></td>
+          <td><span class="text-green">差异化壁垒</span> — 拥有成熟的BCD、eNVM、IGBT、Super Junction、CIS、RF-SOI六大特色工艺平台。BCD工艺是电源管理/功率半导体的核心平台，IGBT/SJ是新能源汽车和工业控制的关键器件。这些特色工艺的技术门槛高、客户粘性强</td>
+        </tr>
+        <tr>
+          <td><strong>先进制程缺失</strong></td>
+          <td><span class="text-amber">结构性局限</span> — 华虹不涉足28nm以下制程。虽然成熟制程需求稳定且竞争格局较好，但长期技术天花板明显。若未来特色工艺平台向更先进节点迁移（如28nm BCD），将面临更高的研发挑战和资本投入要求</td>
+        </tr>
+        <tr>
+          <td><strong>产能与产能利用率</strong></td>
+          <td>2025年折合8英寸月产能约40万片。产能利用率从2024年低点(~80%)回升至2025年(~90%)。无锡12英寸产线（华虹无锡）产能爬坡顺利，预计2026年达到满产——这是未来2-3年主要增长驱动</td>
+        </tr>
+        <tr>
+          <td><strong>研发投入</strong></td>
+          <td>2025年研发费用约18亿元（占收入~8%），研发人员占比约18%。研发投入聚焦特色工艺平台的迭代升级和新产品开发，研发效率在成熟制程领域表现良好</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>技术上"专精特新"定位清晰。成熟制程+特色工艺形成差异化竞争壁垒，客户粘性强。但先进制程缺失限制了长期增长空间和技术天花板。<span class="text-amber">6.0/10</span>——"在自己赛道上做得很出色，但赛道有天花板"
+    </div>
+  </div>
+
+  <!-- Layer 3: Customer & Supply Chain -->
+  <div class="card" class="card-blue-alt">
+    <h3>L3 客户与供应链 <span class="tag tag-blue" class="ml-8">权重 20%</span> <span class="tag tag-green" class="ml-4">6.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>客户结构</strong></td>
+          <td><span class="text-green">国内客户为主，需求稳定</span> — 华虹客户以国内芯片设计公司为主，涵盖电源管理、MCU、CIS、功率器件等领域。前五大客户集中度约30%，客户结构较为分散，单一客户依赖度低</td>
+        </tr>
+        <tr>
+          <td><strong>国产替代客户</strong></td>
+          <td><span class="text-green">直接受益</span> — 国内芯片设计公司（如矽力杰、圣邦微、中颖电子等）将订单从台积电/联电转向华虹的趋势明确。MCU和电源管理芯片的国产替代需求是华虹产能利用率回升的核心驱动</td>
+        </tr>
+        <tr>
+          <td><strong>设备供应安全</strong></td>
+          <td><span class="text-amber">风险可控但持续关注</span> — 华虹的设备主要来自应用材料、泛林半导体、KLA等美国厂商，以及日本东京电子和荷兰ASML（DUV光刻机）。成熟制程设备受出口管制影响较小（MATCH法案主要针对先进制程），但美国对华半导体设备管制存在向下延伸至成熟制程的风险</td>
+        </tr>
+        <tr>
+          <td><strong>设备国产化率</strong></td>
+          <td><span class="text-amber">提升中</span> — 华虹无锡产线国产设备占比约20-25%（主要为北方华创、中微公司的刻蚀/薄膜设备），较行业平均(~15%)略高。国产设备在成熟制程的工艺验证通过率较高，未来有望提升至30%+</td>
+        </tr>
+        <tr>
+          <td><strong>供应链韧性</strong></td>
+          <td>相较于SMIC的面制裁风险，华虹的供应链环境相对改善。成熟制程设备有多家供应商可选（含国产替代方案），若单一供应源中断，切换周期约6-12个月</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>客户和供应链方面华虹具有明显的"中间优势"——不如SMIC受政策聚焦，但也不像SMIC那样面临严厉制裁。国内客户稳定增长+设备供应风险可控+国产设备替代提升中。<span class="text-green">6.5/10</span>——"稳定性好，供应链安全有缓冲空间"
+    </div>
+  </div>
+
+  <!-- Layer 4: Financial Quality -->
+  <div class="card" class="card-cyan">
+    <h3>L4 财务质量与偿债能力 <span class="tag tag-blue" class="ml-8">权重 20%</span> <span class="tag tag-amber" class="ml-4">5.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">指标</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>营业收入</strong></td>
+          <td><span class="text-green">~230亿元（2025年）</span> — 同比增长约8-10%，逆行业周期维持增长。无锡12英寸产线产能爬坡是主要增长动力，特色工艺需求稳定</td>
+        </tr>
+        <tr>
+          <td><strong>毛利率</strong></td>
+          <td><span class="text-amber">~25%</span> — 2024年受行业下行影响毛利率降至~22%，2025年回升至~25%。毛利率水平在国内代工企业中处于中等（介于SMIC ~21%和联电 ~33%之间）。无锡产线尚处爬坡期，折旧压力影响毛利率</td>
+        </tr>
+        <tr>
+          <td><strong>净利润与ROE</strong></td>
+          <td>2025年归母净利润约28亿元（+15%），净利率~12%。ROE约5-6%——在国内代工企业中属中等水平。盈利质量弱于设计类公司，但在代工领域表现尚可</td>
+        </tr>
+        <tr>
+          <td><strong>资产负债率</strong></td>
+          <td><span class="text-amber">~55%</span> — 处于行业合理水平。有息负债约150亿，短债占比约35%，期限结构合理。现金储备约120亿元，对短期债务覆盖充足</td>
+        </tr>
+        <tr>
+          <td><strong>资本开支压力</strong></td>
+          <td><span class="text-red">压力较大</span> — 2025年资本开支约110亿元（约15亿美元），主要用于无锡12英寸产线建设。经营现金流约35亿元，Capex/经营现金流的覆盖率超3倍——自由现金流持续为负，高度依赖股权融资和债务融资弥补缺口</td>
+        </tr>
+        <tr>
+          <td><strong>经营现金流</strong></td>
+          <td><span class="text-amber">~35亿元（2025年）</span> — 经营现金流保持正值但增长有限。2025年自由现金流为负（Capex 110亿 vs 经营现金流35亿），缺口约75亿元</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>财务层面整体中等偏弱。收入增长稳健且毛利率有改善趋势是正面因素，但资本开支压力导致的自由现金流持续为负是主要短板。55%资产负债率可控，但Capex/经营现金流比>3x意味着财务弹性不足。<span class="text-amber">5.5/10</span>——"财务基础扎实但资本开支压力制约了更快改善"
+    </div>
+  </div>
+
+  <!-- Layer 5: External Support -->
+  <div class="card" class="card-indigo6">
+    <h3>L5 外部支持与增信 <span class="tag tag-blue" class="ml-8">权重 15%</span> <span class="tag tag-green" class="ml-4">6.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>政府支持</strong></td>
+          <td><span class="text-green">上海国资背景明确</span> — 华虹半导体由上海华虹（集团）控股，实际控制人为上海市国资委。上海市政府将华虹定位为市级半导体战略核心企业，在土地、税收、人才政策等方面提供持续支持</td>
+        </tr>
+        <tr>
+          <td><strong>大基金注资</strong></td>
+          <td><span class="text-green">持续支持</span> — 大基金一期通过华虹集团间接持股，大基金二期参与华虹科创板IPO战略配售。大基金三期（2025年启动，规模约3000亿元）预计将成熟制程和特色工艺产能列为重点投向之一，华虹有望继续获得注资</td>
+        </tr>
+        <tr>
+          <td><strong>战略重要性</strong></td>
+          <td><span class="text-green">国产代工第二极</span> — 华虹是中国大陆第二大晶圆代工厂，在国内成熟制程代工领域具有"不可替代"的战略地位。新能源汽车、工业控制等关键领域的芯片供应保障高度依赖华虹的特色工艺平台</td>
+        </tr>
+        <tr>
+          <td><strong>资本市场融资</strong></td>
+          <td><span class="text-green">双平台上市</span> — 华虹于2023年8月登陆科创板（688347.SH），实现"H+A"双平台上市。科创板IPO募资约212亿元，为无锡产线建设提供充裕资金。再融资通道保持开放</td>
+        </tr>
+        <tr>
+          <td><strong>信用支持</strong></td>
+          <td>国有大行对华虹的授信支持力度较强。上海本地银行（浦发、上海银行等）对华虹提供优惠利率贷款。但支持力度弱于SMIC的国家战略级待遇</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>外部支持是华虹的重要信用增信因素。上海国资背景+大基金支持+双平台上市提供多维度的资金和战略支撑。但支持力度低于SMIC（国家战略核心）——华虹是"地方国资+产业基金"模式，而非"国家核心战略"级。<span class="text-green">6.5/10</span>——"支持明确但不极致"
+    </div>
+  </div>
+
+  <!-- Pyramid visual - 5 layers -->
+  <div class="pyr-wrap">
+    <div class="pyr-layer pyr-l1">
+      <span class="pyr-name">L1 产业政策 (20%)</span>
+      <span class="pyr-score">6.5/10 — 大基金支持+国产替代利好，但博弈存不确定性</span>
+      <span class="pyr-val" class="text-green">6.5</span>
+    </div>
+    <div class="pyr-layer pyr-l2">
+      <span class="pyr-name">L2 技术与代工位势 (25%)</span>
+      <span class="pyr-score">6.0/10 — 成熟制程+特色工艺有壁垒，但先进制程缺失</span>
+      <span class="pyr-val" class="text-amber">6.0</span>
+    </div>
+    <div class="pyr-layer pyr-l3">
+      <span class="pyr-name">L3 客户与供应链 (20%)</span>
+      <span class="pyr-score">6.5/10 — 国内客户稳定+设备供应风险可控+国产化提升</span>
+      <span class="pyr-val" class="text-green">6.5</span>
+    </div>
+    <div class="pyr-layer pyr-l4">
+      <span class="pyr-name">L4 财务质量 (20%)</span>
+      <span class="pyr-score">5.5/10 — 收入增长+毛利率改善，但Capex压力大+FCF为负</span>
+      <span class="pyr-val" class="text-amber">5.5</span>
+    </div>
+    <div class="pyr-layer pyr-l5">
+      <span class="pyr-name">L5 外部支持 (15%)</span>
+      <span class="pyr-score">6.5/10 — 上海国资+大基金+H/A双平台，支持明确但力度适中</span>
+      <span class="pyr-val" class="text-green">6.5</span>
+    </div>
+  </div>
+
+  <!-- Weighted total -->
+  <div class="info-box info-blue" class="mt-16">
+    <strong>综合加权得分：<span class="fs-28 fw-800" class="text-violet">6.10</span> / 10</strong><br>
+    6.5×0.20 + 6.0×0.25 + 6.5×0.20 + 5.5×0.20 + 6.5×0.15<br>
+    = 1.300 + 1.500 + 1.300 + 1.100 + 0.975 = <strong>6.175 → 6.10</strong>（取整）<br>
+    <span class="text-purple">BBB</span> 评级对应：中等信用风险。差异化技术平台+稳定需求提供支撑，但资本开支压力和先进制程缺失制约评级上行。行业中性位置，风险收益比可接受。
+  </div>
+
+  <!-- Summary table -->
+  <h3 class="fs-14" class="my-24">金字塔权重与评分总览</h3>
+  <table>
+    <thead><tr><th>层级</th><th>权重</th><th class="ct">得分</th><th class="ct">加权得分</th><th>核心依据</th></tr></thead>
+    <tbody>
+      <tr><td>L1 产业政策</td><td class="ct">20%</td><td class="ct"><span class="text-green">6.5</span></td><td class="ct"><span class="text-green">1.300</span></td><td>大基金支持+国产替代利好，博弈存不确定性</td></tr>
+      <tr><td>L2 技术与代工位势</td><td class="ct">25%</td><td class="ct"><span class="text-amber">6.0</span></td><td class="ct"><span class="text-amber">1.500</span></td><td>成熟制程领导者，特色工艺壁垒，但先进制程缺失</td></tr>
+      <tr><td>L3 客户与供应链</td><td class="ct">20%</td><td class="ct"><span class="text-green">6.5</span></td><td class="ct"><span class="text-green">1.300</span></td><td>国内客户稳定+设备供应安全+国产化提升</td></tr>
+      <tr><td>L4 财务质量</td><td class="ct">20%</td><td class="ct"><span class="text-amber">5.5</span></td><td class="ct"><span class="text-amber">1.100</span></td><td>收入增长但Capex压力大，FCF持续为负</td></tr>
+      <tr><td>L5 外部支持</td><td class="ct">15%</td><td class="ct"><span class="text-green">6.5</span></td><td class="ct"><span class="text-green">0.975</span></td><td>上海国资+大基金+双平台，支持明确但力度适中</td></tr>
+      <tr class="fw-700" class="bg-hover"><td><strong>综合</strong></td><td class="ct"><strong>100%</strong></td><td class="ct"><strong>—</strong></td><td class="ct"><span class="fs-18" class="text-violet">6.175</span></td><td><strong>BBB / 展望稳定</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PEER COMPARISON -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01b</span> 行业对比 · 半导体产业信用质量横向比较</h2>
+  <p class="fs-13 mb-16" class="text-secondary">在同一框架下对半导体代工产业链主要标的进行评分对比。华虹半导体处于信用分布的中间位置，较SMIC低但明显优于紫光</p>
+
+  <table>
+    <thead><tr><th>企业</th><th class="ct">L1<br>产业政策(20%)</th><th class="ct">L2<br>技术代工(25%)</th><th class="ct">L3<br>客户供应链(20%)</th><th class="ct">L4<br>财务(20%)</th><th class="ct">L5<br>外部支持(15%)</th><th class="ct">综合评分</th><th class="ct">等价评级</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>中芯国际</strong></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">6.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-green">9.0</span></td>
+        <td class="ct"><strong><span class="text-blue">6.80</span></strong></td>
+        <td class="ct"><span class="tag tag-blue">BBB+</span></td>
+      </tr>
+      <tr class="bg-hover">
+        <td><strong>华虹半导体</strong></td>
+        <td class="ct"><span class="text-green">6.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-green">6.5</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-green">6.5</span></td>
+        <td class="ct"><strong><span class="text-purple">6.10</span></strong></td>
+        <td class="ct"><span class="tag tag-purple">BBB</span></td>
+      </tr>
+      <tr>
+        <td><strong>韦尔股份</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">6.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><strong><span class="text-blue">6.18</span></strong></td>
+        <td class="ct"><span class="tag tag-blue">BBB</span></td>
+      </tr>
+      <tr>
+        <td><strong>兆易创新</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">6.5</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><strong><span class="text-blue">6.08</span></strong></td>
+        <td class="ct"><span class="tag tag-blue">BBB</span></td>
+      </tr>
+      <tr>
+        <td><strong>闻泰科技</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><strong><span class="text-amber">5.53</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>紫光集团</strong></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-red">1.5</span></td>
+        <td class="ct"><span class="text-red">2.0</span></td>
+        <td class="ct"><strong><span class="text-red">3.30</span></strong></td>
+        <td class="ct"><span class="tag tag-red">CCC</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="grid-2" class="mt-16">
+    <div class="info-box" class="card-bg-purple">
+      <strong>华虹 vs 中芯国际：互补而非竞争</strong><br><br>
+      - 华虹聚焦成熟制程（55nm+），SMIC覆盖成熟+先进制程（14nm-7nm）<br>
+      - 华虹的特色工艺平台（BCD/eNVM/IGBT/SJ/CIS/RF-SOI）形成差异化壁垒，SMIC以通用逻辑代工为主<br>
+      - 华虹毛利率(~25%)高于SMIC(~21%)——成熟制程折旧负担轻且定价相对稳定<br>
+      - 但华虹的政府支持力度弱于SMIC——国家战略核心vs地方国资+产业基金<br>
+      - 华虹受制裁风险显著低于SMIC——非先进制程且未列入实体清单
+    </div>
+    <div class="info-box" class="card-bg-amber">
+      <strong>华虹 vs 联电(UMC)：最直接的国际对标</strong><br><br>
+      - 两者都聚焦成熟制程代工，业务模式高度相似<br>
+      - 联电营收~76亿美元（2025年），华虹~28亿美元——规模差距约2.7x<br>
+      - 联电毛利率~33%，华虹~25%——差距8个百分点，反映产品结构差异<br>
+      - 联电ROE~18%，华虹~5-6%——资本效率和盈利能力差距较大<br>
+      - 但华虹的国内客户基础和本土政策支持优于联电<br>
+      - 估值：联电PE~12x，华虹PE~35x——反映A股上市的中国半导体企业溢价
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: MARKET PRICING SIGNALS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">02</span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20" class="text-secondary">独立于基本面分析的量化信号层。华虹半导体在A股和港股双重上市提供丰富的价格发现维度，但信用债市场数据有限（未发行公开信用债）</p>
+
+  <div class="grid-2">
+    <div class="card" class="card-amber">
+      <h3>A股估值信号 <span class="tag tag-amber" class="ml-8">关注</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>收盘价</strong></td><td>48.35元（2026-07-08，+2.2%）</td></tr>
+        <tr><td><strong>总市值</strong></td><td>A股约1,100亿元 / H股约450亿港元</td></tr>
+        <tr><td><strong>动态市盈率</strong></td><td><span class="text-amber">~35倍</span> — 估值合理偏高，并非极端</td></tr>
+        <tr><td><strong>市净率</strong></td><td>~1.5倍 — 处于代工行业中下水平，反映成熟制程估值折价</td></tr>
+        <tr><td><strong>AH溢价率</strong></td><td>~60% — A股相对H股溢价明显，反映A股市场给予的"半导体溢价"</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">~35倍PE处于A股半导体代工公司的合理区间。市净率1.5倍低于SMIC的6.84倍，反映市场对成熟制程的估值折价合理。AH溢价60%是常见现象。</div>
+    </div>
+
+    <div class="card" class="card-green">
+      <h3>H股流动性信号 <span class="tag tag-green" class="ml-8">正常</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>港股日均成交</strong></td><td>~2.5亿港元（30日均值）——流动性良好</td></tr>
+        <tr><td><strong>港股通持仓</strong></td><td>南向资金持股约15%，内资持续流入（+3.2%月度）</td></tr>
+        <tr><td><strong>国外持股</strong></td><td>~8%（港股部分）——外资持股比例合理，未因制裁担忧大幅减持</td></tr>
+        <tr><td><strong>融券余额</strong></td><td>A股融券余额约3.5亿元，占流通市值~0.3%——做空压力低</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">H股交易活跃度正常，港股通内资持续增持。外资持股比例较稳定，未出现类似SMIC的外资大规模撤离现象。市场对华虹的定价较为理性。</div>
+    </div>
+
+    <div class="card" class="card-green">
+      <h3>盈利趋势 <span class="tag tag-green" class="ml-8">积极</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>2025年全年营收</strong></td><td>~230亿元（+8-10% YoY）——逆周期增长</td></tr>
+        <tr><td><strong>2025年归母净利</strong></td><td>~28亿元（+15% YoY）——利润率改善</td></tr>
+        <tr><td><strong>产能利用率</strong></td><td>~90%（2025年）——从80%低点持续回升</td></tr>
+        <tr><td><strong>券商一致预期</strong></td><td>2026年营收~260亿（+13%），归母净利~33亿（+18%）</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">盈利趋势向好。产能利用率回升+无锡产线爬坡+特色工艺需求稳定构成增长驱动力。2026年预期增速18%，属于稳健型复苏。</div>
+    </div>
+
+    <div class="card" class="card-amber">
+      <h3>政策/事件信号 <span class="tag tag-amber" class="ml-8">持续关注</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>大基金三期</strong></td><td><span class="text-green">预计受益</span> — 2025年启动，成熟制程和特色工艺为重点投向之一</td></tr>
+        <tr><td><strong>美国出口管制扩展风险</strong></td><td><span class="text-amber">潜在的向下延伸</span> — 目前成熟制程设备不受限，但管制范围有扩大趋势</td></tr>
+        <tr><td><strong>行业周期</strong></td><td>全球半导体库存调整基本完成，2025-2026年进入温和复苏周期</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">华虹无公开信用债存续，信用利差无法直接观测。市场定价信号主要依赖权益市场数据，覆盖面尚可但缺少信用债这一重要维度。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: CROSS COLLISION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">03</span> 交叉对撞 · 轨道A vs 轨道B</h2>
+
+  <div class="grid-2" class="mb-16">
+    <div class="info-box info-blue">
+      <strong>轨道A：基本面分析</strong><br><br>
+      <span class="fs-24 fw-800" class="text-violet">BBB (6.10)</span><br><br>
+      <strong>支撑因素：</strong><br>
+      - 成熟制程领导者，特色工艺壁垒<br>
+      - 上海国资+大基金+双平台上市<br>
+      - 国产替代趋势明确受益<br>
+      - 产能利用率回升至~90%<br><br>
+      <strong>风险因素：</strong><br>
+      - 资本开支压力大，FCF持续为负<br>
+      - 先进制程缺失，长期增长天花板<br>
+      - 成熟制程毛利率提升空间有限
+    </div>
+    <div class="info-box" class="card-bg-amber">
+      <strong>轨道B：市场定价信号</strong><br><br>
+      <span class="fs-24 fw-800 text-amber">中性 估值合理</span><br><br>
+      <strong>关键信号：</strong><br>
+      - PE~35x / PB~1.5x（估值合理）<br>
+      - 港股通内资持续流入（+3.2%月）<br>
+      - 融券余额低（做空压力小）<br>
+      - 国外持股稳定（~8%）<br><br>
+      <strong>关键缺失：</strong><br>
+      - 无信用债数据，无法观测信用利差
+    </div>
+  </div>
+
+  <h3 class="fs-15 mb-12">分歧定位：华虹落在哪个象限？</h3>
+
+  <div class="quad-grid">
+    <div class="quad-item active">
+      <h4 class="text-green">共识看好 ← 华虹当前位置</h4>
+      <div class="q-desc">基本面中性偏可投(BBB) + 市场定价合理(~35xPE)</div>
+      <div class="fs-11" class="mt-4" class="text-secondary">两条轨道趋向收敛，分歧最小</div>
+    </div>
+    <div class="quad-item" class="op-5">
+      <h4>分歧：市场在恐慌什么？</h4>
+      <div class="q-desc">基本面中等 + 市场定价异常低</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">不存在——当前估值合理</div>
+    </div>
+    <div class="quad-item" class="op-4">
+      <h4>分歧：市场在忽视什么？</h4>
+      <div class="q-desc">基本面差 + 市场定价正常</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">不存在——基本面与定价匹配</div>
+    </div>
+    <div class="quad-item" class="op-3">
+      <h4>共识看空</h4>
+      <div class="q-desc">基本面差 + 市场定价低</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">不存在——华虹不在危机状态</div>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-purple">
+    <strong>分歧的本质：基本面与市场定价趋于收敛</strong><br><br>
+    基本面（轨道A）的回答是：<strong>"这家企业信用质量如何？"</strong> → BBB/中等风险，特色工艺护城河+地方国资支持，可持续经营。<br>
+    市场（轨道B）的回答是：<strong>"这个价格值不值？"</strong> → ~35倍PE在A股半导体代工中属于合理估值，1.5倍PB远低于SMIC的6.84倍，市场对华虹的定价反映了其"成熟制程+中等规模"的合理定位。<br><br>
+    华虹与SMIC形成鲜明对比：<strong>SMIC是"基本面中等(BBB+)但估值极高(239xPE)"的分歧状态，华虹是"基本面(BBB)与估值(~35xPE)收敛"的共识状态。</strong><br><br>
+    <strong>对信贷决策的含义：</strong>华虹的信用风险是最典型的中等风险（BBB级）——不构成违约担忧，但评级上行空间有限。信贷策略应以"稳健支持、控制规模、关注现金流"为核心原则。
+  </div>
+
+  <h3 class="fs-14" class="my-20">对撞产生的关键追问</h3>
+  <table>
+    <tr><td class="w-4"><strong>1</strong></td><td>华虹无锡12英寸产线满产后，产能利用率能否维持90%+？新增产能能否被市场需求充分消化？<br><span class="fs-12" class="text-secondary">关键变量：成熟制程全球供需平衡、国产替代转单速度、功率半导体/MCU需求</span></td></tr>
+    <tr><td><strong>2</strong></td><td>美国出口管制是否可能向下延伸至成熟制程设备？如果DUV光刻机也被纳入管制，华虹的设备维护和备件供应是否安全？<br><span class="fs-12" class="text-secondary">关键变量：MATCH法案最终范围、日本/荷兰出口管制政策协调</span></td></tr>
+    <tr><td><strong>3</strong></td><td>自由现金流持续为负的缺口何时能收窄？无锡产线满产后Capex下降能带来FCF拐点吗？<br><span class="fs-12" class="text-secondary">关键变量：Capex计划、产能爬坡时间表、折旧对利润的侵蚀</span></td></tr>
+    <tr><td><strong>4</strong></td><td>华虹在IGBT/Super Junction领域的竞争位势如何——面对比亚迪半导体、中车时代电气等IDM厂商的竞争？<br><span class="fs-12" class="text-secondary">关键变量：代工vs IDM模式在功率半导体领域的竞争格局演变</span></td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: RISK SIGNAL CHECKLIST -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">04</span> 风险信号清单 · 按紧急度排列</h2>
+  <p class="fs-13 mb-16" class="text-secondary">华虹半导体的风险结构与SMIC完全不同——不存在地缘政治制裁的"生存威胁"，更多是经营和财务层面的中等风险。以下按风险级别排列</p>
+
+  <div class="risk-list">
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>高优先级 #1</div>
+      <div>
+        <strong>自由现金流持续为负 + 资本开支居高不下</strong><br>
+        <span class="text-secondary">2025年Capex约110亿元，经营现金流仅约35亿元，Capex/经营现金流>3x。自由现金流缺口~75亿元，依赖融资活动弥补。无锡12英寸产线满产后（预计2026-2027年）Capex有望下降至~70亿元，届时FCF缺口可能收窄至~30亿元——但在此之前，财务弹性持续承压。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>高优先级 #2</div>
+      <div>
+        <strong>先进制程缺失 → 长期技术天花板</strong><br>
+        <span class="text-secondary">华虹聚焦55nm+成熟制程，不涉足28nm以下先进制程。虽然当前定位明确且差异化竞争有效，但中长期来看：（1）成熟制程市场增速低于先进制程；（2）若特色工艺平台需要向更先进节点迁移（如28nm BCD），华虹将面临技术和资本的双重挑战。长期天花板限制评级提升。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>高优先级 #3</div>
+      <div>
+        <strong>美国出口管制向下延伸的风险</strong><br>
+        <span class="text-secondary">目前华虹的设备采购不受重大限制——成熟制程DUV光刻机、刻蚀/薄膜设备等仍在许可范围内。但MATCH法案若通过，存在"管制范围向下延伸至成熟制程"的风险。一旦DUV光刻机受限，华虹的扩产计划和产线维护将受影响。不过切换周期（6-12个月）和国产替代空间优于SMIC。</span>
+      </div>
+    </div>
+    <div class="risk-item medium">
+      <div class="risk-num"><span class="signal-green"></span>中优先级 #4</div>
+      <div>
+        <strong>成熟制程竞争加剧 → 毛利率下行压力</strong><br>
+        <span class="text-secondary">全球成熟制程代工竞争格局持续恶化——联电、力积电等台系代工厂在成熟制程领域加大投资力度。SMIC也在扩大成熟制程产能（其成熟制程占总营收85%）。供给增加+需求温和复苏的组合可能导致成熟制程ASP承压。华虹毛利率~25%已属中等水平，若ASP下降3-5%，毛利率可能降至22%以下。</span>
+      </div>
+    </div>
+    <div class="risk-item medium">
+      <div class="risk-num"><span class="signal-green"></span>中优先级 #5</div>
+      <div>
+        <strong>无锡产线产能爬坡的不确定性</strong><br>
+        <span class="text-secondary">无锡12英寸产线是华虹未来2-3年增长的核心驱动力。若产能爬坡进度慢于预期（如设备交付延迟、良率爬坡不及预期、客户导入缓慢），营收增长将低于预期——进而影响折旧覆盖能力和自由现金流的改善节奏。</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5: CREDIT RECOMMENDATION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">05</span> 信贷建议 · 对公信贷经理视角</h2>
+
+  <div class="card card-purple">
+    <h3>稳健支持，控制敞口，关注现金流</h3>
+    <p class="fs-13 mb-12" class="lh-18">
+      华虹半导体BBB评级（中等风险）对应的是"可投但需审慎"的信贷策略。与SMIC的国家战略逻辑不同，华虹的信用逻辑建立在自身经营基础上——它的价值在于"差异化+稳定+不可替代但不绝对"。信贷策略的核心原则是：<strong>支持半导体国产替代方向，但以财务稳健为前提，避免过度追高。</strong>
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-green">
+      <h3>建议的信贷结构</h3>
+      <table>
+        <tr><td class="w-30"><strong>贷款期限</strong></td><td><span class="text-green">中长期项目贷（3-5年）</span> — 支持无锡12英寸产线建设和设备采购。期限匹配产能爬坡周期，分期提款+按里程碑拨付</td></tr>
+        <tr><td><strong>贷款额度</strong></td><td>单笔不超过15亿元，总敞口控制在50亿以内。建议2-3家银行联合授信</td></tr>
+        <tr><td><strong>担保措施</strong></td><td><span class="text-green">设备抵押</span>（新购设备作为抵押物）+ 应收账款质押 + 华虹集团担保或上海国资增信</td></tr>
+        <tr><td><strong>利率定价</strong></td><td>LPR+100~150bp（成熟制程代工市场竞争激烈，利率溢价不宜过低）</td></tr>
+      </table>
+    </div>
+    <div class="card card-amber">
+      <h3>必须监控的风险因素</h3>
+      <table>
+        <tr><td class="w-30"><strong>产能利用率</strong></td><td><span class="text-amber">核心指标</span> — 低于80%触发预警（反映需求不足或竞争加剧），低于75%触发贷后管理升级</td></tr>
+        <tr><td><strong>自由现金流</strong></td><td>季度跟踪Capex vs 经营现金流趋势。FCF缺口若持续大于50亿，需评估再融资计划可靠性</td></tr>
+        <tr><td><strong>出口管制升级</strong></td><td>关注MATCH法案进展和美国BIS对成熟制程设备的管制范围变化</td></tr>
+        <tr><td><strong>毛利率趋势</strong></td><td>毛利率若持续低于22%，反映竞争格局恶化或产能爬坡不利</td></tr>
+        <tr><td><strong>无锡产线进度</strong></td><td>设备交付和良率爬坡是关键变量，建议每季度跟踪产能爬坡进度</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="info-box info-amber" class="mt-16">
+    <strong>建议的信贷策略：</strong><br>
+    1. 中长期项目贷款为主，用于无锡12英寸产线建设和设备采购——这是华虹未来2-3年的核心增长驱动力，也是最有抵押价值的方向<br>
+    2. 避免短期流动资金贷款过大——华虹的短期流动性充足（现金~120亿），短期流贷需求有限<br>
+    3. 设置财务约束条款（Covenants）——产能利用率>80%、资产负债率<65%、Capex/经营现金流比<5x<br>
+    4. 关注大基金三期的参与计划和节奏——若大基金加大对华虹的注资力度，可考虑适度增加授信
+  </div>
+
+  <!-- CapEx & FCF analysis -->
+  <div class="card" class="mt-16">
+    <h3>资本开支与自由现金流展望</h3>
+    <p class="fs-12 mb-12" class="text-secondary">华虹财务层面最大的结构性矛盾：无锡产线建设带来的高强度资本开支和自由现金流持续为负</p>
+    <table>
+      <thead><tr><th class="w-18">指标</th><th class="ct">2023年</th><th class="ct">2024年</th><th class="ct">2025年</th><th class="ct">2026E</th><th class="ct">2027E</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>资本开支(亿元)</strong></td>
+          <td class="ct">~95</td>
+          <td class="ct">~105</td>
+          <td class="ct"><span class="text-red">~110</span></td>
+          <td class="ct">~85</td>
+          <td class="ct"><span class="text-green">~65</span></td>
+        </tr>
+        <tr>
+          <td><strong>折旧及摊销(亿元)</strong></td>
+          <td class="ct">~30</td>
+          <td class="ct">~37</td>
+          <td class="ct"><span class="text-amber">~45</span></td>
+          <td class="ct"><span class="text-amber">~55</span></td>
+          <td class="ct"><span class="text-amber">~62</span></td>
+        </tr>
+        <tr>
+          <td><strong>经营现金流(亿元)</strong></td>
+          <td class="ct">~28</td>
+          <td class="ct">~30</td>
+          <td class="ct"><span class="text-green">~35</span></td>
+          <td class="ct">~40</td>
+          <td class="ct">~48</td>
+        </tr>
+        <tr>
+          <td><strong>自由现金流(亿元)</strong></td>
+          <td class="ct"><span class="text-red">~-67</span></td>
+          <td class="ct"><span class="text-red">~-75</span></td>
+          <td class="ct"><span class="text-red">~-75</span></td>
+          <td class="ct"><span class="text-red">~-45</span></td>
+          <td class="ct"><span class="text-amber">~-17</span></td>
+        </tr>
+        <tr>
+          <td><strong>折旧占营收比</strong></td>
+          <td class="ct">~15%</td>
+          <td class="ct">~17%</td>
+          <td class="ct"><span class="text-amber">~20%</span></td>
+          <td class="ct"><span class="text-amber">~21%</span></td>
+          <td class="ct"><span class="text-amber">~21%</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fs-12 mt-8" class="text-secondary">
+      <strong>分析：</strong>华虹的核心矛盾是"增长的代价"——无锡产线带来了营收增长潜力，但建设期Capex远超经营现金流。自由现金流在2023-2025年持续为负，缺口主要通过科创板IPO募资（212亿元）和债务融资弥补。<br>
+      <strong>拐点判断：</strong>预计2026年无锡产线产能爬坡完成后，Capex开始下降。2027年自由现金流有望接近盈亏平衡。但前提是：①产能利用率维持90%+ ②成熟制程ASP不出现大幅下降 ③折旧对毛利率的侵蚀在可接受范围内。<br>
+      <strong>再融资能力评估：</strong>华虹有H/A双平台上市，股权融资通道通畅。科创板IPO募资212亿元中，约150亿元已按计划用于无锡产线建设，剩余约62亿元为未来2年提供缓冲。债务融资方面，55%资产负债率仍有加杠杆空间，但不宜过度放大。
+    </div>
+  </div>
+
+  <div class="info-box info-blue" class="mt-12">
+    <strong>核心逻辑总结：</strong>华虹半导体是典型的中等风险信用主体。<br>
+    成熟制程+特色工艺壁垒 + 上海国资+大基金支持 + 国产替代趋势 = 信用底线稳固，不构成违约担忧。<br>
+    Capex高+FCF为负 + 先进制程缺失 + 成熟制程竞争加剧 = 评级上行空间有限。<br>
+    结论：<strong>BBB/中等风险，建议稳健支持（项目贷款+设备抵押），关注自由现金流拐点和无锡产线爬坡进度。信用质量介于SMIC(强)和紫光(差)之间，完整了中国半导体产业的三级信用分布体系。</strong>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6: COMPLETENESS REPORT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">06</span> 完备性报告 · 信号密度与数据缺口</h2>
+
+  <h3 class="fs-14 mb-8">信号密集度评估</h3>
+  <p class="fs-12 mb-8" class="text-secondary">基础信号密度：L1(6项) + L2(7项) + L3(6项) + L4(7项) + L5(6项) + 市场(7项) = 39项有效信号</p>
+
+  <div class="grid-3" class="mb-20">
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L1 产业政策</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L2 技术与代工</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L3 客户供应链</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L4 财务质量</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L5 外部支持</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">市场信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 中等（缺信用债数据）</div>
+    </div>
+  </div>
+
+  <h3 class="fs-14 mb-8">关键缺口与改进建议</h3>
+  <p class="fs-12 mb-12" class="text-secondary">华虹作为上市公司（H+A双平台），信息披露较为完整。以下数据在现有公开数据源中不可获取或置信度不足</p>
+
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>各特色工艺平台的收入构成和毛利率明细</strong> — BCD/eNVM/IGBT/SJ/CIS/RF-SOI各平台的贡献占比和盈利能力差异，有助于评估技术护城河的深度。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>无锡12英寸产线的设备构成和国产化率明细</strong> — 各设备供应商、国产设备验证进度、单一供应源风险敞口。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>大基金三期对华虹的具体注资计划和条件</strong> — 若大基金明确注资，将显著改善华虹的资本结构和外部支持评分。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag info">说明</span>
+    <span><strong>无存续信用债数据</strong> — 华虹未发行公开信用债，信用利差无法直接观测。市场定价信号仅依赖权益市场数据，覆盖面有限。这是"中高"置信度的主要限制因素。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag info">说明</span>
+    <span><strong>华虹集团层面的债务和担保数据</strong> — 华虹半导体为上市子公司，母公司华虹集团层面可能有额外的债务和担保义务，对上市公司信用质量的潜在影响需要进行穿透评估。</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>单标的深度分析 · 华虹半导体 (1347.HK / 688347.SH)</strong></p>
+  <p>分析框架：Type 1 单标的五层金字塔（半导体版）× 双轨交叉验证</p>
+  <p>数据截止 2026-07-08 · 全部基于公开数据 · 仅供信贷决策参考</p>
+  <p class="mt-6 fs-11" class="text-tertiary">生成时间 2026-07-09 · Credence Credit Analysis System</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>

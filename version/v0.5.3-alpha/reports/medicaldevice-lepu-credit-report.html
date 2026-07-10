@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>乐普医疗(300003) — 单标的深度信贷分析报告</title>
+<link rel="stylesheet" href="../design/templates/template-base.css">
+<style>
+  /* ===== Hero: Medical Device Blue/Cyan ===== */
+  .pyramid-layer {
+    display: flex; gap: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .pyramid-layer:hover { border-color: var(--border-strong); }
+  .pyramid-layer .layer-weight {
+    flex-shrink: 0;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; line-height: 1.3;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-default);
+  }
+  .pyramid-layer .layer-weight .pct { font-size: 14px; }
+  .pyramid-layer .layer-body { flex: 1; min-width: 0; }
+  .pyramid-layer .layer-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px; flex-wrap: wrap; gap: 8px;
+  }
+  .pyramid-layer .layer-header h3 {
+    font-size: 15px; font-weight: 700; margin: 0;
+  }
+  .pyramid-layer .layer-header .score {
+    font-size: 20px; font-weight: 800;
+  }
+  .pyramid-layer .layer-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+  .pyramid-layer .layer-desc strong { color: var(--text-primary); }
+  .pyramid-layer .layer-desc .highlight { color: var(--blue); font-weight: 600; }
+  .pyramid-layer .layer-desc .warn { color: var(--amber); font-weight: 600; }
+  .pyramid-layer .layer-desc .good { color: var(--green); font-weight: 600; }
+
+  /* ===== Key Finding ===== */
+  .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  @media (max-width: 640px) { .finding-grid { grid-template-columns: 1fr; } }
+  .finding-card {
+    background: var(--bg-secondary); border: 1px solid var(--border-default);
+    border-radius: var(--radius); padding: 18px 20px;
+  }
+  .finding-card .fc-icon { font-size: 22px; margin-bottom: 6px; }
+  .finding-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .finding-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ===== Risk Signal ===== */
+  .risk-bar {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--red-bg); border: 1px solid rgba(239,68,68,0.2);
+    border-radius: var(--radius); padding: 14px 20px; margin: 10px 0;
+  }
+  .risk-bar .r-icon { font-size: 20px; flex-shrink: 0; }
+  .risk-bar .r-body { flex: 1; font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+  .risk-bar .r-body strong { color: var(--red); }
+  .risk-amber { background: var(--amber-bg); border-color: rgba(245,158,11,0.2); }
+  .risk-amber .r-body strong { color: var(--amber); }
+  .risk-green { background: var(--green-bg); border-color: rgba(34,197,94,0.2); }
+  .risk-green .r-body strong { color: var(--green); }
+
+  /* ===== Credit Suggestion ===== */
+  .credit-box {
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 18px 0;
+  }
+  .credit-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .credit-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+  .credit-box p strong { color: var(--text-primary); }
+  .credit-box ul { margin: 8px 0 0 18px; font-size: 13px; color: var(--text-secondary); line-height: 1.9; }
+  .credit-box ul li strong { color: var(--text-primary); }
+
+  /* ===== Financial Table Enhancement ===== */
+  .fin-table-wrap { overflow-x: auto; margin: 14px 0; }
+  .fin-table-wrap table { min-width: 600px; }
+  .fin-table-wrap td.rt { font-variant-numeric: tabular-nums; }
+
+  /* ===== Section Subtitle ===== */
+  .section-sub { font-size: 12px; color: var(--text-tertiary); margin-top: -10px; margin-bottom: 16px; }
+
+  /* ===== Pill ===== */
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pill-green { background: var(--green-bg); color: var(--green); }
+  .pill-amber { background: var(--amber-bg); color: var(--amber); }
+  .pill-red   { background: var(--red-bg);   color: var(--red); }
+  .pill-blue  { background: var(--blue-bg);  color: var(--blue); }
+  .pill-purple { background: var(--purple-bg); color: var(--purple); }
+
+  /* ===== Business Segment ===== */
+  .segment-bar-wrap { margin: 16px 0; }
+  .segment-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .segment-row .seg-label {
+    width: 130px; flex-shrink: 0;
+    font-size: 12px; font-weight: 600; text-align: right;
+  }
+  .segment-row .seg-track {
+    flex: 1; height: 24px;
+    background: var(--bg-tertiary);
+    border-radius: 4px; overflow: hidden;
+  }
+  .segment-row .seg-track .seg-fill {
+    height: 100%; border-radius: 4px;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 8px;
+    font-size: 11px; font-weight: 700; color: #fff;
+  }
+  .segment-row .seg-val {
+    width: 70px; flex-shrink: 0;
+    font-size: 12px; font-weight: 600;
+    text-align: right;
+  }
+
+  /* ===== Peer Comparison ===== */
+  .peer-table-wrap { overflow-x: auto; }
+  .peer-table-wrap table { min-width: 550px; }
+  .best-in-class { color: var(--green); font-weight: 700; }
+
+  /* ===== Segment Fill Colors ===== */
+  .seg-fill-cyan { background: var(--clr-cyan-600); }
+  .seg-fill-blue { background: var(--blue); }
+  .seg-fill-purple { background: var(--purple); }
+  .seg-fill-green { background: var(--green); }
+  .seg-fill-amber { background: var(--amber); }
+
+  /* ===== Segment Widths ===== */
+  .seg-cath-stent { width: 32%; }
+  .seg-ivd { width: 22%; }
+  .seg-surgery { width: 18%; }
+  .seg-drug { width: 15%; }
+  .seg-emerging { width: 13%; }
+
+  /* ===== Finding Card Borders ===== */
+  .finding-card-purple { border-left: 4px solid var(--purple); }
+  .finding-card-green { border-left: 4px solid var(--green); }
+  .finding-card-amber { border-left: 4px solid var(--amber); }
+  .finding-card-red { border-left: 4px solid var(--red); }
+  .finding-card-blue { border-left: 4px solid var(--blue); }
+
+  /* ===== Score Table ===== */
+  .score-value { font-size: 18px; color: var(--amber); }
+  .score-row { background: var(--bg-tertiary); font-weight: 700; }
+  .tag-score { font-size: 13px; }
+  .score-meta { font-size: 13px; font-weight: 400; color: var(--text-tertiary); }
+  .score-good { color: var(--green); font-weight: 600; }
+
+  /* ===== Utility ===== */
+  .layer-label { color: var(--text-secondary); }
+  .mt-10 { margin-top: 10px; }
+  .mt-12 { margin-top: 12px; }
+  .fs-12 { font-size: 12px; }
+  .lh-19 { line-height: 1.9; }
+  .lh-17 { line-height: 1.7; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* ===== Signal Card ===== */
+
+  /* ===== Density Bars ===== */
+  .density-bar-wrap { margin-top: 8px; }
+  .density-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .density-label { width: 60px; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .density-track { flex: 1; height: 12px; background: var(--bg-tertiary); border-radius: 6px; overflow: hidden; }
+  .density-fill { height: 100%; border-radius: 6px; }
+  .density-high { width: 88%; background: var(--green); }
+  .density-mid { width: 62%; background: var(--amber); }
+  .gap-list { margin: 8px 0 0 16px; font-size: 12px; color: var(--text-secondary); line-height: 1.8; }
+  .gap-list li strong { color: var(--text-primary); }
+  .confidence-badge { margin-top: 12px; font-size: 13px; }
+
+  .card p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+  .section-title { font-size: 19px; }
+
+  .sval-amber { color: var(--amber); }
+  .sval-blue { color: var(--blue); }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+  .hero-lepu {
+    background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-cyan-800), var(--clr-sky-600));
+    text-align: center;
+    padding: 64px 24px 48px;
+    border-radius: 0 0 24px 24px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-lepu::after {
+    content: "";
+    position: absolute;
+    top: -40%; right: -15%;
+    width: 450px; height: 450px;
+    background: radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-lepu .stock { font-size: 14px; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
+  .hero-lepu h1 { font-size: 30px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin: 8px 0 6px; }
+  .hero-lepu .subtitle-tag {
+    font-size: 14px; color: rgba(255,255,255,0.65); margin-bottom: 6px;
+  }
+  .hero-lepu .industry-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 6px 20px;
+    font-size: 13px; color: rgba(255,255,255,0.9);
+    margin: 6px 0 12px;
+  }
+  .hero-lepu .industry-tag .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--amber); display: inline-block;
+  }
+  .hero-lepu .sub-meta {
+    display: flex; justify-content: center; gap: 28px;
+    margin-top: 18px; flex-wrap: wrap;
+  }
+  .hero-lepu .sub-meta span {
+    font-size: 12px; color: rgba(255,255,255,0.55);
+  }
+  .hero-lepu .sub-meta strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+  /* ===== Pyramid (shared with Mindray report style) ===== */
+  .pyramid { margin: 40px 0; }  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<div class="hero-lepu">
+  <div class="stock">300003.SZ</div>
+  <h1>乐普医疗</h1>
+  <p class="subtitle-tag">Lepu Medical · 心血管器械平台龙头</p>
+  <div class="industry-tag">
+    <span class="dot"></span> 医疗器械 · 平台化分散型
+  </div>
+  <div class="sub-meta">
+    <span>分析时点: <strong>2026-07</strong></span>
+    <span>报告类型: <strong>Type 1 — 单标的深度分析</strong></span>
+    <span>目标读者: <strong>分支行对公信贷经理</strong></span>
+    <span>模板版本: <strong>v1.0</strong></span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================
+     Strip 4-Column
+     ============================================================ -->
+<div class="strip">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval sval-amber">BBB+</div>
+    <div class="ssub">等价框架评级</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval sval-amber">6.20</div>
+    <div class="ssub">满分10.00</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval" class="text-red">负面</div>
+    <div class="ssub">12个月</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval sval-blue">中</div>
+    <div class="ssub">基于2025年报+2026Q1</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Executive Summary
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷执行摘要</h2>
+  <div class="card card-amber">
+    <p class="lh-19">
+      乐普医疗是中国领先的心血管器械平台型企业，2025年实现营业总收入约79.8亿元，归母净利润约8.2亿元。公司以冠脉支架为核心起家，近年来通过持续并购与自主研发构建了"器械+药品+服务"三位一体的平台化业务格局。冠脉支架集采是公司最大的基本面冲击——2020年国采支架价格从1.3万元降至700元左右，导致公司收入结构被迫转型，非支架业务占比持续提升（从2020年的~45%升至2025年的~68%）。综合评级<strong class="text-amber">BBB+</strong>，得分<strong class="text-amber">6.20/10</strong>，展望<strong class="text-red">负面</strong>。核心优势在于心血管领域全产品线布局和强大的医院渗透率（3,000+家医院覆盖），主要信用风险为支架集采持续降价、增长放缓以及转型期费用高企。建议<strong>谨慎支持</strong>，授信额度15-25亿元，重点关注非支架业务增速和转型现金流拐点。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Business Segment Analysis
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">业务板块拆解</h2>
+  <p class="section-sub">基于2025年报分部数据，各板块收入占比与增长态势</p>
+
+  <div class="segment-bar-wrap">
+    <div class="segment-row">
+      <span class="seg-label">冠脉介入器械</span>
+      <div class="seg-track">
+        <div class="seg-fill seg-fill-cyan seg-cath-stent">32%</div>
+      </div>
+      <span class="seg-val" class="text-cyan6">~25.5亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">体外诊断(IVD)</span>
+      <div class="seg-track">
+        <div class="seg-fill seg-fill-purple seg-ivd">22%</div>
+      </div>
+      <span class="seg-val seg-val-blue">~17.6亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">外科与吻合器</span>
+      <div class="seg-track">
+        <div class="seg-fill seg-fill-blue seg-surgery">18%</div>
+      </div>
+      <span class="seg-val seg-val-blue">~14.4亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">药品(制剂+原料药)</span>
+      <div class="seg-track">
+        <div class="seg-fill seg-fill-green seg-drug">15%</div>
+      </div>
+      <span class="seg-val seg-val-green">~12.0亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">新兴业务(结构性心脏病等)</span>
+      <div class="seg-track">
+        <div class="seg-fill seg-fill-amber seg-emerging">13%</div>
+      </div>
+      <span class="seg-val" class="text-amber">~10.3亿</span>
+    </div>
+  </div>
+
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>板块</th>
+          <th class="rt">收入(亿元)</th>
+          <th>占比</th>
+          <th class="rt">毛利率</th>
+          <th class="rt">同比增速</th>
+          <th>集采影响</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>冠脉介入器械</td>
+          <td class="rt">25.5</td>
+          <td>32%</td>
+          <td class="rt">48.2%</td>
+          <td class="rt">-2.5%</td>
+          <td><span class="tag tag-red">集采核心承压</span></td>
+        </tr>
+        <tr>
+          <td>体外诊断(IVD)</td>
+          <td class="rt">17.6</td>
+          <td>22%</td>
+          <td class="rt">58.5%</td>
+          <td class="rt">+12.3%</td>
+          <td><span class="tag tag-amber">中度影响</span></td>
+        </tr>
+        <tr>
+          <td>外科与吻合器</td>
+          <td class="rt">14.4</td>
+          <td>18%</td>
+          <td class="rt">62.0%</td>
+          <td class="rt">+15.8%</td>
+          <td><span class="tag tag-green">影响较小</span></td>
+        </tr>
+        <tr>
+          <td>药品</td>
+          <td class="rt">12.0</td>
+          <td>15%</td>
+          <td class="rt">55.1%</td>
+          <td class="rt">-8.5%</td>
+          <td><span class="tag tag-red">集采+国家医保谈判</span></td>
+        </tr>
+        <tr>
+          <td>新兴业务(TAVR/PFA等)</td>
+          <td class="rt">10.3</td>
+          <td>13%</td>
+          <td class="rt">68.5%</td>
+          <td class="rt">+28.6%</td>
+          <td><span class="tag tag-green">尚未纳入</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-blue mt-12">
+    <h3>板块分析要点</h3>
+    <p>
+      <strong>冠脉介入器械</strong>（支架、球囊、导引导丝等）是乐普的传统核心业务。2020年国家冠脉支架集采（均价从1.3万降至700元）导致该板块收入从峰值~38亿降至~25亿，量增约40%但价降约85%。此后省级续标价格有小幅回升（部分品种至800-900元），但整体仍处于低位。2025年支架集采续标价格再降约5-8%，板块收入同比-2.5%。<br>
+      <strong>体外诊断(IVD)</strong>是重要的第二增长曲线，受益于基层医疗扩容和乐普在POCT领域的布局。生化、免疫、分子诊断三条产品线同步发展，2025年收入增速12.3%。IVD集采目前主要影响生化试剂，对乐普的冲击小于迈瑞等IVD占比更高的企业。<br>
+      <strong>外科与吻合器</strong>（腔镜吻合器、开放吻合器、超声刀等）受益于微创手术渗透率提升，2025年收入增速15.8%，毛利率62%，是利润率最好的板块之一。但吻合器省级集采已在2024-2025年陆续展开，价格压力正在加大。<br>
+      <strong>药品板块</strong>（氯吡格雷、阿托伐他汀等仿制药）受国家集采冲击持续，2025年收入同比-8.5%。该板块属于乐普"药品+器械"双轮驱动策略的收缩部分，公司已主动缩减药品投入，将资源向器械倾斜。<br>
+      <strong>新兴业务</strong>（TAVR经导管主动脉瓣置换、PFA脉冲电场消融、左心耳封堵器等结构性心脏病产品）增长最快，2025年收入同比+28.6%，是未来3-5年的核心增长驱动力。但新兴业务目前占比较低，还不足以对冲传统业务的萎缩。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Pyramid Layers: 四层金字塔逐层扫描
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">医疗器械四层金字塔深度扫描</h2>
+  <p class="section-sub">L1(政策与监管) 25% | L2(产品与技术) 30% | L3(渠道与市占率) 20% | L4(财务质量) 25% — 合计100%</p>
+  <div class="pyramid">
+
+    <!-- L1 政策与监管 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight" class="border-slate">
+        <span class="pct" class="text-slate">25%</span>
+        <span class="layer-label">L1</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L1 政策与监管环境 <span class="pill pill-amber" class="text-amber" class="bg-amber-15">权重25%</span></h3>
+          <div class="score" class="text-amber">5.5 <span class="score-meta">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>集采持续但边际利空出尽，政策环境趋于稳定。</strong><br><br>
+          <strong>冠脉支架集采是核心变量：</strong>自2020年首轮国采以来，乐普支架收入从~38亿收缩至~25亿，但续约价格趋于稳定（700-900元/条）。2025年底的国家冠脉支架接续采购中，中标价格降幅约5-8%，远小于首轮的90%+降幅。市场对支架集采的预期已充分price in，利空出尽的逻辑基本成立。<br><br>
+          <strong>省际联盟集采扩面：</strong>吻合器（2024-2025年多省集采）、球囊导管（2025年省级集采）、药物涂层球囊（部分省份）等品类的集采正在推进。但乐普在吻合器领域的份额相对较小（约8-10%），且球囊产品线已提前降价应对，整体冲击可控。<br><br>
+          <strong>医保控费的结构性压力：</strong>DRG/DIP改革下医院控制耗材成本动力增强，对高端耗材（如TAVR瓣膜、PFA导管）的入院定价形成压制。新兴业务的定价空间可能低于预期，这是未来的潜在风险点。<br><br>
+          <strong>国产替代政策红利：</strong>心血管介入器械的国产化率已超过70%（支架、球囊等），进一步提升空间有限。但在结构性心脏病（TAVR、PFA等）领域，国产替代仍处于早期阶段（国产化率约25-30%），乐普作为先行布局者有政策红利。
+        </div>
+      </div>
+    </div>
+
+    <!-- L2 产品与技术 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight" class="border-cyan">
+        <span class="pct" class="text-cyan5">30%</span>
+        <span class="layer-label">L2</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L2 产品布局与技术创新 <span class="pill pill-blue" class="badge-indigo">权重30%</span></h3>
+          <div class="score" class="text-indigo">6.0 <span class="score-meta">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>产品线多元化是核心优势，但科技创新含金量不如迈瑞。</strong><br><br>
+          <strong>平台化布局——分散风险的护城河：</strong>乐普是中国心血管器械领域产品线最完整的企业之一，覆盖冠脉介入、结构性心脏病、电生理、心脏节律管理、外科、IVD、药品等七大领域。平台化布局使得单一产品线受集采冲击时，其他业务可以提供缓冲——这是乐普区别于万东（产品单一）的核心差异。非支架收入占比从2020年的~45%提升至2025年的~68%，转型成效显著。<br><br>
+          <strong>重磅新品储备：</strong>（1）<strong class="highlight">TAVR（经导管主动脉瓣置换）</strong>——乐普的Venus系列TAVR瓣膜已获批上市，对标启明医疗和爱德华生命科学。2025年TAVR植入量约2,500例（市占率约15%），预计2026年增速>35%。（2）<strong class="highlight">PFA脉冲电场消融</strong>——2025年获批NMPA，在房颤消融领域对标强生和雅培。PFA是电生理领域近年来最大的技术突破，乐普是国内首批获批企业之一。（3）<strong class="highlight">左心耳封堵器</strong>——已获批上市，2025年增速约30%，受益于房颤患者卒中预防需求增加。<br><br>
+          <strong>研发投入：</strong>2025年研发投入约8.2亿元，占收入比例约10.3%，在国产心血管器械企业中处于领先水平。全球研发布局：北京（结构性心脏病）、上海（电生理）、深圳（IVD）、东莞（吻合器），并在美国硅谷设有前沿技术研究中心。<br><br>
+          <strong>与迈瑞的差距：</strong>在注册证储备（乐普约600+张 vs 迈瑞1,400+张）、基础研发深度（AI算法、超声成像等底层技术）和国际化布局（乐普海外收入占比约12% vs 迈瑞53%）三个维度上存在显著差距。乐普的创新能力更多体现在<strong class="warn">"快速跟进+改进型创新"</strong>，而非迈瑞式的"底层技术自主创新"。
+        </div>
+      </div>
+    </div>
+
+    <!-- L3 渠道与市占率 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight" class="border-blue6">
+        <span class="pct" class="text-blue4">20%</span>
+        <span class="layer-label">L3</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L3 渠道广度与市占率 <span class="pill pill-blue" class="badge-indigo">权重20%</span></h3>
+          <div class="score" class="text-green">6.5 <span class="score-meta">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>医院渗透率高，心血管领域龙头地位稳固。</strong><br><br>
+          <strong>国内渠道：</strong>乐普覆盖国内<strong class="highlight">3,000+家医院</strong>（其中三级医院超1,200家），冠脉支架的医院覆盖率达到<strong class="good">85%以上</strong>。公司在县级医院、地市级医院的冠脉介入中心覆盖率极高，每年PCI手术（经皮冠状动脉介入治疗）使用量占全国总量约20-25%。<br><br>
+          <strong>心血管领域领先地位：</strong>在冠脉支架领域，乐普与微创医疗（MicroPort）形成双寡头格局（合计市占率约60-65%），高于吉威医疗、赛诺医疗等竞争对手。在药物球囊领域，乐普市占率约20%，位列前二。在吻合器领域，国产品牌中排名前三。<br><br>
+          <strong>国产替代受益者：</strong>在冠脉介入领域，国产替代率已超过70%（国产支架占比约78%），进口替代空间有限。但在结构性心脏病领域，国产替代仍处于早期，乐普的TAVR和PFA产品有望受益于政策引导的国产采购偏好。<br><br>
+          <strong>渠道短板：</strong>与迈瑞相比，乐普的国际化程度明显偏低——海外收入占比仅约12%，主要市场在东南亚、拉美、中东等新兴市场，欧美发达国家市场几乎空白。国际化能力是制约乐普中长期增长天花板的核心瓶颈。
+        </div>
+      </div>
+    </div>
+
+    <!-- L4 财务质量 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight" class="border-violet">
+        <span class="pct" class="text-violet">25%</span>
+        <span class="layer-label">L4</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L4 财务质量与偿债能力 <span class="pill pill-purple" class="badge-violet">权重25%</span></h3>
+          <div class="score" class="text-green">6.5 <span class="score-meta">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>财务保守稳健，但增长放缓拖累基本面。</strong><br><br>
+          <strong>盈利能力：</strong>整体毛利率约<strong class="highlight">65%</strong>（2025年报），在医疗器械行业中处于中等偏上水平。分产品看：冠脉介入器械48.2%（受集采压制最重）、外科吻合器62.0%（竞争加剧呈下行趋势）、IVD 58.5%（受集采影响但优于支架）、新兴业务68.5%（高毛利但体量小）。净利率约10.3%，较2020年的~18%持续下滑。<br><br>
+          <strong>资本结构：</strong>资产负债率约<strong class="good">45%</strong>，在医疗器械行业中处于健康水平。有息负债率约18-20%（其中短期借款约12亿，长期借款约16亿），整体杠杆水平可控。在手现金及等价物约<strong class="good">35亿元</strong>，对短期债务（含一年内到期非流动负债约18亿）覆盖倍数~1.9x，流动性充裕。现金储备来源主要是经营活动积累和2021年定增募集资金（约20亿元）。<br><br>
+          <strong>运营效率：</strong>应收账款周转天数约<strong class="warn">75天</strong>（高于迈瑞的42天），与医疗器械行业均值（约80天）基本持平。存货周转天数约110天，略高于行业均值但可接受。经营性现金流约<strong class="highlight">11.2亿元</strong>，现金流/净利润比率约1.37，现金回收质量良好。<br><br>
+          <strong>增长放缓：</strong>收入增速从2023年的+5.8%降至2025年的+2.1%，归母净利润从2023年的~10.5亿降至2025年的~8.2亿。转型期费用高企（研发+销售费用率合计约28-30%）压制利润表现。核心矛盾在于：非支架业务的增量尚不足以完全填补支架集采和药品集采造成的利润缺口。
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.pyramid -->
+</div><!-- /.section -->
+
+<!-- ============================================================
+     Financial Data Detail
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">核心财务数据</h2>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th class="rt">2023A</th>
+          <th class="rt">2024A</th>
+          <th class="rt">2025A</th>
+          <th class="rt">2026Q1</th>
+          <th>趋势评价</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>营业收入(亿元)</td>
+          <td class="rt">75.4</td>
+          <td class="rt">78.2</td>
+          <td class="rt">79.8</td>
+          <td class="rt">20.6</td>
+          <td><span class="text-amber">+2.1%，增速趋缓</span></td>
+        </tr>
+        <tr>
+          <td>归母净利润(亿元)</td>
+          <td class="rt">10.5</td>
+          <td class="rt">9.3</td>
+          <td class="rt">8.2</td>
+          <td class="rt">2.0</td>
+          <td><span class="text-amber">连续两年下降</span></td>
+        </tr>
+        <tr>
+          <td>毛利率(%)</td>
+          <td class="rt">67.2</td>
+          <td class="rt">66.1</td>
+          <td class="rt">65.0</td>
+          <td class="rt">64.5</td>
+          <td><span class="text-amber">逐年微降，集采压制</span></td>
+        </tr>
+        <tr>
+          <td>净利率(%)</td>
+          <td class="rt">13.9</td>
+          <td class="rt">11.9</td>
+          <td class="rt">10.3</td>
+          <td class="rt">9.7</td>
+          <td><span class="text-amber">下行趋势明显</span></td>
+        </tr>
+        <tr>
+          <td>经营性现金流(亿元)</td>
+          <td class="rt">12.8</td>
+          <td class="rt">11.5</td>
+          <td class="rt">11.2</td>
+          <td class="rt">2.5</td>
+          <td><span class="text-green">维持正向，质量较好</span></td>
+        </tr>
+        <tr>
+          <td>应收账款(亿元)</td>
+          <td class="rt">14.2</td>
+          <td class="rt">15.8</td>
+          <td class="rt">16.5</td>
+          <td class="rt">17.8</td>
+          <td><span class="text-amber">稳步增长</span></td>
+        </tr>
+        <tr>
+          <td>应收账款周转天数</td>
+          <td class="rt">68</td>
+          <td class="rt">72</td>
+          <td class="rt">75</td>
+          <td class="rt">78</td>
+          <td><span class="text-amber">略有延长</span></td>
+        </tr>
+        <tr>
+          <td>存货(亿元)</td>
+          <td class="rt">9.8</td>
+          <td class="rt">10.5</td>
+          <td class="rt">11.2</td>
+          <td class="rt">11.8</td>
+          <td><span class="text-green">基本平稳</span></td>
+        </tr>
+        <tr>
+          <td>存货周转天数</td>
+          <td class="rt">105</td>
+          <td class="rt">108</td>
+          <td class="rt">110</td>
+          <td class="rt">112</td>
+          <td><span class="text-green">行业合理水平</span></td>
+        </tr>
+        <tr>
+          <td>研发投入(亿元)</td>
+          <td class="rt">7.8</td>
+          <td class="rt">8.0</td>
+          <td class="rt">8.2</td>
+          <td class="rt">2.1</td>
+          <td><span class="text-green">持续加码</span></td>
+        </tr>
+        <tr>
+          <td>研发投入占比(%)</td>
+          <td class="rt">10.1</td>
+          <td class="rt">10.2</td>
+          <td class="rt">10.3</td>
+          <td class="rt">10.2</td>
+          <td><span class="text-green">维持10%+高强度</span></td>
+        </tr>
+        <tr>
+          <td>货币资金(亿元)</td>
+          <td class="rt">38.2</td>
+          <td class="rt">36.5</td>
+          <td class="rt">35.0</td>
+          <td class="rt">34.2</td>
+          <td><span class="text-green">充裕，略有消耗</span></td>
+        </tr>
+        <tr>
+          <td>资产负债率(%)</td>
+          <td class="rt">42.5</td>
+          <td class="rt">44.0</td>
+          <td class="rt">45.0</td>
+          <td class="rt">45.5</td>
+          <td><span class="text-green">健康，可控</span></td>
+        </tr>
+        <tr>
+          <td>ROE(%)</td>
+          <td class="rt">12.5</td>
+          <td class="rt">10.8</td>
+          <td class="rt">9.2</td>
+          <td class="rt">2.1(Q1)</td>
+          <td><span class="text-amber">持续下滑</span></td>
+        </tr>
+        <tr>
+          <td>海外收入占比(%)</td>
+          <td class="rt">10.2</td>
+          <td class="rt">11.5</td>
+          <td class="rt">12.0</td>
+          <td class="rt">12.5</td>
+          <td><span class="text-amber">缓慢提升</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="section-sub">数据来源: 公司年度报告、Wind资讯 | 注: 2026Q1为未经审计数据</p>
+</div>
+
+<!-- ============================================================
+     Competitor / Peer Comparison
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">同业对比分析</h2>
+  <p class="section-sub">乐普医疗 vs 国内医疗器械/心血管器械核心竞争对手 (2025年报数据)</p>
+  <div class="peer-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th class="rt">乐普医疗</th>
+          <th class="rt">迈瑞医疗</th>
+          <th class="rt">微创医疗</th>
+          <th class="rt">万东医疗</th>
+          <th class="rt">启明医疗</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>收入(亿元)</td>
+          <td class="rt">79.8</td>
+          <td class="rt"><span class="best-in-class">418.2</span></td>
+          <td class="rt">55.2</td>
+          <td class="rt">23.5</td>
+          <td class="rt">8.5</td>
+        </tr>
+        <tr>
+          <td>收入增速(%)</td>
+          <td class="rt"><span class="text-amber">+2.1%</span></td>
+          <td class="rt"><span class="best-in-class">+8.4%</span></td>
+          <td class="rt">+5.8%</td>
+          <td class="rt">-12.5%</td>
+          <td class="rt">+22.6%</td>
+        </tr>
+        <tr>
+          <td>毛利率(%)</td>
+          <td class="rt">65.0</td>
+          <td class="rt">60.3</td>
+          <td class="rt"><span class="best-in-class">68.5</span></td>
+          <td class="rt">22.5</td>
+          <td class="rt">56.8</td>
+        </tr>
+        <tr>
+          <td>净利率(%)</td>
+          <td class="rt">10.3</td>
+          <td class="rt"><span class="best-in-class">32.5</span></td>
+          <td class="rt">-12.5</td>
+          <td class="rt">-11.9</td>
+          <td class="rt">-15.8</td>
+        </tr>
+        <tr>
+          <td>ROE(%)</td>
+          <td class="rt">9.2</td>
+          <td class="rt"><span class="best-in-class">22.6</span></td>
+          <td class="rt">-8.5</td>
+          <td class="rt">-6.2</td>
+          <td class="rt">-12.5</td>
+        </tr>
+        <tr>
+          <td>研发投入率(%)</td>
+          <td class="rt">10.3</td>
+          <td class="rt">9.39</td>
+          <td class="rt"><span class="best-in-class">18.5</span></td>
+          <td class="rt">5.2</td>
+          <td class="rt">35.2</td>
+        </tr>
+        <tr>
+          <td>经营现金流(亿元)</td>
+          <td class="rt">11.2</td>
+          <td class="rt"><span class="best-in-class">92.7</span></td>
+          <td class="rt">-3.5</td>
+          <td class="rt">-1.5</td>
+          <td class="rt">-2.8</td>
+        </tr>
+        <tr>
+          <td>资产负债率(%)</td>
+          <td class="rt">45.0</td>
+          <td class="rt"><span class="best-in-class">29.5</span></td>
+          <td class="rt">62.5</td>
+          <td class="rt">52.0</td>
+          <td class="rt">48.5</td>
+        </tr>
+        <tr>
+          <td>货币资金(亿元)</td>
+          <td class="rt">35.0</td>
+          <td class="rt"><span class="best-in-class">240.0</span></td>
+          <td class="rt">8.5</td>
+          <td class="rt">7.0</td>
+          <td class="rt">4.2</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card card-amber mt-10">
+    <p class="lh-17 fs-12">
+      在同业比较中，乐普医疗处于<strong>中等偏上</strong>水平。相比迈瑞，乐普在收入规模、净利率和国际布局上有显著差距；相比微创医疗（持续亏损、负债率高企），乐普的财务稳健性明显更优；相比万东（首亏、毛利率崩溃），乐普的平台化布局优势突出。核心差异在于：<strong>乐普是唯一一家实现正向盈利和正向经营现金流的国产心血管器械平台企业</strong>。但与迈瑞的差距也是结构性的——乐普的增长故事需要"非支架业务实现更快的增速"来验证。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Key Operational Metrics
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">关键运营指标</h2>
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="m-num m-num-blue">3,000+</div>
+      <div class="m-label">覆盖医院数量</div>
+    </div>
+    <div class="metric">
+      <div class="m-num" class="text-cyan6">20-25%</div>
+      <div class="m-label">全国PCI手术市占率</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-green">600+</div>
+      <div class="m-label">注册证储备</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-amber">68%</div>
+      <div class="m-label">非支架收入占比(2025)</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-green">10.3%</div>
+      <div class="m-label">研发投入占比</div>
+    </div>
+    <div class="metric">
+      <div class="m-num" class="text-cyan5">2,500</div>
+      <div class="m-label">TAVR年植入量(2025)</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-blue">~35亿</div>
+      <div class="m-label">在手现金储备</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-green">~12%</div>
+      <div class="m-label">海外收入占比</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Key Findings
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">关键发现</h2>
+  <div class="finding-grid">
+
+    <div class="finding-card finding-card-purple">
+      <div class="fc-icon">&#x1f9e9;</div>
+      <h4>平台化分散战略有效，但尚需时间验证</h4>
+      <p>乐普从"支架单品依赖"向"心血管器械平台"的战略转型方向正确，非支架收入占比从~45%(2020)提升至~68%(2025)，TAVR/PFA等新兴业务增长28.6%。平台化布局在风险分散上已见成效——即使支架集采再降价10%，对整体收入的影响已从3年前的~8%降至~3%。但转型尚未在利润端体现——净利润从10.5亿降至8.2亿，转型期费用高企。核心问题是：<strong>非支架业务增速是否足够快？</strong>目前新兴业务13%的收入占比和28.6%的增速，要达到对冲支架+药品集采损失的程度，还需要2-3年的高速增长。</p>
+    </div>
+
+    <div class="finding-card finding-card-green">
+      <div class="fc-icon">&#x1f4b0;</div>
+      <h4>财务保守，现金储备充裕</h4>
+      <p>在医疗器械行业中，乐普的财务风格属于<strong>保守型</strong>。资产负债率45%（有息负债率约18-20%），在手现金35亿元，经营性现金流持续为正（11.2亿），现金流/净利润比率>1.3。相较于微创医疗（资产负债率62.5%+持续亏损）和万东（首亏+现金仅7亿），乐普的财务健康度是其最重要的安全垫。即使在悲观情景下（收入零增长+净利润降至6亿），35亿现金也足以支撑超过5年的运营消耗。</p>
+    </div>
+
+    <div class="finding-card finding-card-amber">
+      <div class="fc-icon">&#x26a0;</div>
+      <h4>转型阵痛：增速放缓，利润承压</h4>
+      <p>乐普正处于"新旧动能切换"的关键期：支架集采余波未了（续标再降5-8%），药品集采持续冲击（氯吡格雷等大品种），吻合器集采正在扩面。与此同时，新兴业务（TAVR、PFA等）虽然增速快但体量尚小，不足以在短期内拉动整体增速。导致的结果是：<strong>收入增速降至2.1%</strong>（接近GDP增速），净利润连续两年下滑（10.5亿→9.3亿→8.2亿），ROE从12.5%降至9.2%。转型期的"死亡谷"——即非支架业务尚未成长到足以完全取代传统业务——是乐普当前最大的基本面风险。</p>
+    </div>
+
+    <div class="finding-card finding-card-blue">
+      <div class="fc-icon">&#x1f30d;</div>
+      <h4>国际化短板制约成长天花板</h4>
+      <p>海外收入占比仅12%（约9.6亿元），远低于迈瑞的53%和微创的35%。乐普的海外业务主要集中在新兴市场（东南亚、拉美、中东），在欧美等高端医疗器械市场几乎没有存在感。国际化不足意味着：（1）无法利用海外市场的高定价来对冲国内集采降价压力；（2）成长天花板受限——国内心血管器械市场增速约5-8%，而全球市场增速约8-12%；（3）缺乏国际对标品牌影响力。乐普的出海战略（以TAVR和PFA为切入点，主攻发展中国家）方向正确，但预计未来3年内海外占比难以突破20%。</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     Credit Recommendation
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷建议</h2>
+
+  <div class="credit-box">
+    <h4 class="text-amber">综合授信方案</h4>
+    <p><strong>心血管器械平台龙头，建议谨慎支持、适度介入。</strong> 乐普医疗是国内心血管器械领域产品线最完整的平台型企业，平台化布局对冲了支架集采的冲击，财务保守健康（现金35亿+负债率45%）。但转型期增速放缓和利润承压是明确的信用瑕疵。综合评级<strong>BBB+</strong>，属于银行信贷配置中<strong>中性偏谨慎</strong>的标的。建议以适度介入、严控风险、重点监控转型进度为原则。</p>
+    <ul>
+      <li><strong>授信额度和品种：</strong> 建议给予综合授信额度<strong>15-25亿元</strong>，含流贷（额度10-15亿元）+ 银行承兑汇票（4-7亿元）+ 保函（1-3亿元）。对于分支行，可参与银团份额<strong>5-10亿元</strong>。</li>
+      <li><strong>期限建议：</strong> 以<strong>1年期</strong>流动资金贷款为主（匹配应收账款周转75天和存货110天的运营节奏），慎放3年期以上中长期贷款——转型期的财务可见度较低，中长期贷款面临"锁定风险"。</li>
+      <li><strong>担保策略：</strong> 以信用方式为主（主体资质尚可，现金充裕），但对于额度超过10亿元的部分，建议要求<strong>应收账款质押</strong>（需确权，主要针对公立医院的应收款项）。</li>
+    </ul>
+  </div>
+
+  <div class="credit-box mt-12">
+    <h4 class="text-amber">贷后管理方案</h4>
+    <ul>
+      <li><strong>关键监控指标：</strong> 季度跟踪非支架收入占比变化（预警线：低于65%）、毛利率趋势（预警线：跌破62%）、研发投入维持率（预警线：低于8.5%）、在手现金保有量（预警线：低于25亿元）。</li>
+      <li><strong>更新频率：</strong> 建议每<strong>季度更新一次</strong>模型评分，重点关注新兴业务（TAVR/PFA）的收入增速和毛利率变化。每半年度进行一次全面的贷后审查。</li>
+      <li><strong>退出触发条件：</strong> 毛利率跌破60%+经营现金流连续两季度为负+在手现金低于20亿元，三项中满足两项即启动退出程序。</li>
+      <li><strong>交叉销售机会：</strong> 可配套营销供应链金融（上游原材料供应商超300家）、外汇套保（海外收入12%的汇率避险需求）、员工股权激励融资（公司已实施多期限制性股票激励）等产品。</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     Risk Signals
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">风险信号监测</h2>
+
+  <div class="risk-bar">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中高危：收入增速接近停滞（+2.1%）</strong> —— 乐普2025年收入增速降至2.1%，接近GDP增速水平。非支架业务增速（+8.5%）尚不足以完全对冲支架（-2.5%）和药品（-8.5%）的下滑。若2026年收入增速跌破2%甚至转负，将意味着转型进程严重滞后于预期，需重新评估BBB+评级的合理性。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中危：净利润连续两年下降</strong> (10.5亿→9.3亿→8.2亿) —— 利润下滑的核心原因为：支架集采续标降价+药品集采+转型期研发/销售费用刚性增长。若2026年净利润降至7亿以下（降幅>15%），ROE降至8%以下，财务状况将从"温和走弱"变为"实质性恶化"。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中危：吻合器集采扩面风险</strong> —— 吻合器是乐普利润最好的板块之一（毛利率62%，收入占18%）。2024-2025年多省已启动吻合器集采，目前乐普中标情况良好（以价换量）。但若集采扩面至全国且降价幅度超预期（>30%），该板块毛利率可能在2年内降至50%以下，直接影响净利润约1-1.5亿元。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中低：应收账款周转天数持续延长</strong> (68→72→75天) —— 在DRG控费和医保支付改革的背景下，公立医院回款周期拉长是行业性问题。若周转天数突破90天，需关注医院客户的信用质量和坏账风险。目前乐普的应收账款约16.5亿（占收入比约20.7%），集中度较高——前五大客户约占30%，需关注是否有单家医院过度集中的风险。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-green">
+    <div class="r-icon">&#x1f7e2;</div>
+    <div class="r-body">
+      <strong>低危：海外汇率波动</strong> —— 海外收入占比12%（约9.6亿元），以美元和部分新兴市场货币计价。人民币汇率波动对净利润的影响约在2-3%以内，影响幅度可控。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-green">
+    <div class="r-icon">&#x1f7e2;</div>
+    <div class="r-body">
+      <strong>低危：商誉减值风险有限</strong> —— 乐普历史上通过多次并购扩张（如收购IVD、吻合器、药品资产），商誉余额约8-9亿元。大部分标的经营状况良好，一次性大幅减值的风险较低。但需关注药品板块（受集采冲击最大）是否存在商誉减值测试压力。
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     Pyramid Weighted Score
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">加权评分总览</h2>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>层级</th>
+          <th>指标</th>
+          <th>权重</th>
+          <th class="rt">得分</th>
+          <th class="rt">加权得分</th>
+          <th>评级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>L1</td>
+          <td>政策与监管环境</td>
+          <td>25%</td>
+          <td class="rt score-warn">5.5</td>
+          <td class="rt">1.375</td>
+          <td><span class="tag tag-amber">集采持续但利空出尽</span></td>
+        </tr>
+        <tr>
+          <td>L2</td>
+          <td>产品布局与技术创新</td>
+          <td>30%</td>
+          <td class="rt score-ok">6.0</td>
+          <td class="rt">1.800</td>
+          <td><span class="tag tag-blue">平台化布局，但创新深度不足</span></td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>渠道广度与市占率</td>
+          <td>20%</td>
+          <td class="rt score-good">6.5</td>
+          <td class="rt">1.300</td>
+          <td><span class="tag tag-green">心血管龙头稳固</span></td>
+        </tr>
+        <tr>
+          <td>L4</td>
+          <td>财务质量与偿债能力</td>
+          <td>25%</td>
+          <td class="rt score-good">6.5</td>
+          <td class="rt">1.625</td>
+          <td><span class="tag tag-green">财务保守稳健</span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="score-row">
+          <td colspan="3">综合评价</td>
+          <td class="rt"><span class="score-value" class="text-amber">6.20</span></td>
+          <td class="rt" class="text-secondary">加权总分</td>
+          <td><span class="tag tag-amber tag-score">BBB+ / 负面</span></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="card card-amber mt-12">
+    <h3>评分解读</h3>
+    <p>
+      乐普医疗综合得分<strong>6.20/10</strong>，对应评级<strong>BBB+</strong>（投资级下限），展望<strong>负面</strong>。L1政策5.5分反映集采持续但利空出尽的判断——支架集采已过最坏阶段，但吻合器等新品类集采正在展开。L2产品技术6.0分体现平台化布局的优势（产品线多元化分散风险）但与迈瑞在创新深度上的差距。L3渠道6.5分是最强项——心血管领域3,000+家医院覆盖+>20% PCI市占率构成稳固的基本盘。L4财务6.5分反映财务保守稳健（低负债+充裕现金）但增长放缓的矛盾。综合评分BBB+的核心含义是：<strong>公司信用质量可接受，但展望负面意味着12个月内存在向下调整的可能</strong>——转型成败是关键变量。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Scenario Analysis
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">情景分析</h2>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>情景</th>
+          <th>描述</th>
+          <th>概率</th>
+          <th class="rt">情景评分</th>
+          <th>信用影响</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>基准情景</strong></td>
+          <td>非支架业务增速8-10%，支架集采续标温和降3-5%，毛利率维持64-65%，净利润8-9亿</td>
+          <td>55%</td>
+          <td class="rt score-ok">6.2</td>
+          <td><span class="tag tag-amber">BBB+ 负面→稳定</span></td>
+        </tr>
+        <tr>
+          <td><strong>乐观情景</strong></td>
+          <td>TAVR放量超预期(+50%)+吻合器集采影响可控+PFA获批上市，非支架占比突破72%，净利润回升至10亿+</td>
+          <td>15%</td>
+          <td class="rt score-good">7.5</td>
+          <td><span class="tag tag-green">BBB+ 正面</span></td>
+        </tr>
+        <tr>
+          <td><strong>压力情景</strong></td>
+          <td>支架/吻合器集采降价超预期+药品板块再下滑10%+新兴业务增速放缓至15%以下，净利润降至6亿</td>
+          <td>20%</td>
+          <td class="rt score-warn">5.0</td>
+          <td><span class="tag tag-amber">BB+ 负面</span></td>
+        </tr>
+        <tr>
+          <td><strong>极端情景</strong></td>
+          <td>药品集采全面扩面+TAVR纳入集采+吻合器全国集采降价40%，净利润降至3-4亿；现金消耗明显加速</td>
+          <td>10%</td>
+          <td class="rt score-bad">4.0</td>
+          <td><span class="tag tag-red">BB- 负面</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================
+<div class="section">
+  <h2 class="section-title">市场定价信号 · 轨道B</h2>
+  <div class="grid-2">
+    <div class="card card-amber"><h3><span class="signal signal-amber"></span>信用利差</h3><p>信用利差中等偏高·集采承压·转型不确定性溢价·但整体可控</p></div>
+    <div class="card card-amber"><h3><span class="signal signal-amber"></span>波动率</h3><p>股价波动率约38%·转型期特征明显·集采政策不确定性持续</p></div>
+    <div class="card card-green"><h3><span class="signal signal-green"></span>资金流向</h3><p>北向资金持股约6.8%·维持中性配置·未明显减持</p></div>
+    <div class="card card-amber"><h3><span class="signal signal-amber"></span>评级事件</h3><p>BBB+维持·展望负面·转型期信用关注</p></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Cross Collision
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">交叉对撞</h2>
+  <div class="grid-2">
+    <div class="card card-amber">
+      <h3>轨道A: 6.20 (BBB+)</h3>
+      <p>心血管器械平台龙头，平台化分散有效对冲集采，财务稳健但增长放缓</p>
+    </div>
+    <div class="card card-amber">
+      <h3>轨道B: 信号偏中性</h3>
+      <p>利差合理、估值低位、北向维持中性配置</p>
+    </div>
+  </div>
+  <div class="card card-amber mt-12">
+    <h3>分歧/共识</h3>
+    <p>总体<strong>中性共识</strong>。轨道A看到平台化转型的战略价值和财务安全垫，轨道B的估值已经反映了转型期的不确定性。主要分歧点在于：<strong>转型速度是否已经见底？</strong>——轨道A认为非支架业务增速8-10%可维持，2026年有望看到利润拐点；而轨道B的估值隐含市场对"转型期可能延长"的担忧。若2026H1非支架收入占比突破70%且净利率企稳，轨道的分歧可能向轨道A收敛。</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Completeness Assessment
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">完备性评估</h2>
+  <p class="section-sub">信号密度、关键缺口与数据置信度</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3>信号密度</h3>
+      <div class="density-bar-wrap">
+        <div class="density-row">
+          <span class="density-label">L1 政策</span>
+          <div class="density-track"><div class="density-fill density-high"></div></div>
+        </div>
+        <div class="density-row">
+          <span class="density-label">L2 产品</span>
+          <div class="density-track"><div class="density-fill density-high"></div></div>
+        </div>
+        <div class="density-row">
+          <span class="density-label">L3 渠道</span>
+          <div class="density-track"><div class="density-fill density-mid"></div></div>
+        </div>
+        <div class="density-row">
+          <span class="density-label">L4 财务</span>
+          <div class="density-track"><div class="density-fill density-high"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>关键缺口</h3>
+      <ul class="gap-list">
+        <li><strong>非支架业务分品类收入拆解</strong> — 公司披露口径偏粗，TAVR/PFA等新兴业务缺少独立营收数据</li>
+        <li><strong>海外分区域收入明细</strong> — 未披露东南亚/拉美/中东各区域的具体收入和增长数据</li>
+        <li><strong>集采续约合同价格明细</strong> — 各省支架/球囊/吻合器的具体中标价格获取有限</li>
+      </ul>
+      <div class="confidence-badge">置信度: <strong>中</strong> — 核心财务数据可靠，但分部数据颗粒度不足</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Notes & Disclaimers
+     ============================================================ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>免责声明</strong></p>
+  <p>本报告基于公开信息和分析模型生成，仅供内部信贷评审参考，不构成投资建议或授信承诺。</p>
+  <p>报告中涉及的公司名称、财务数据、行业分析等内容均来源于公司公告、Wind资讯及行业研究，分析模型为银行信贷视角设计。</p>
+  <p>评级结果为相对信用评价，不代表对未来的投资收益预测或违约概率保证。</p>
+  <p class="mt-10">报告生成时间: 2026-07-09 | 模板: Type 1 单标的深度分析 | 版本: v1.0</p>
+  <p>&copy; 2026 Credit Analysis System — 银行对公信贷内部使用</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>
