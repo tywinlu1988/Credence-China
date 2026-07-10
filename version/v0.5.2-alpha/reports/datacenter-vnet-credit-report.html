@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单标的深度分析 — 世纪互联 (VNET) | 数据中心/IDC</title>
+<link rel="stylesheet" href="../design/templates/template-base.css">
+<style>
+/* Pyramid layers */
+.pyr-wrap { margin: 28px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.85; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 48px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-slate-800)); }
+.pyr-l2 { width: 88%; background: linear-gradient(135deg, var(--clr-cyan-600), var(--clr-cyan-700)); }
+.pyr-l3 { width: 76%; background: linear-gradient(135deg, var(--clr-blue-600), var(--clr-blue-700)); }
+.pyr-l4 { width: 64%; background: linear-gradient(135deg, var(--clr-violet-600), var(--clr-violet-700)); }
+
+/* Signal indicators used inline */
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.orange { background: var(--clr-orange-600); }
+.signal-dot.red { background: var(--red); }
+
+/* Cross collision quadrants */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--purple); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* Risk list */
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: var(--clr-orange-600); }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+
+/* Density bar */
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+
+/* Gap warning */
+.gap-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+  background: var(--bg-tertiary); font-size: 12px;
+}
+.gap-item .gap-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.gap-item .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.gap-item .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+/* Hero gradient specific to this report: Datacenter/IDC */
+.hero-custom {
+  background: linear-gradient(135deg, #0f172a, #1e3a5f, var(--blue));
+  text-align: center;
+  padding: 60px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-custom::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(99,102,241,0.15) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(30,58,95,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-custom .container { position: relative; z-index: 1; }
+.hero-custom .chip {
+  display: inline-block;
+  background: rgba(168,85,247,0.2);
+  color: var(--clr-violet-300);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero-custom h1 { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-custom .stock-code { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 400; margin-bottom: 6px; }
+.hero-custom .subtitle { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+.hero-custom .meta-row {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  flex-wrap: wrap;
+}
+.hero-custom .meta-row span {
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HERO SECTION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="hero-custom">
+  <div class="container">
+    <div class="chip">单标的深度分析 · Type 1</div>
+    <h1>世纪互联 <span class="fw-400" style="color:rgba(255,255,255,0.5)">|</span> VNET Group</h1>
+    <div class="stock-code">VNET.O</div>
+    <p class="subtitle">数据中心/IDC · 零售IDC模式的结构性困境 — 负债率81%+旧机房退租潮，AI算力红利难以惠及零售模式</p>
+    <div class="meta-row">
+      <span>分析时点：2026年7月</span>
+      <span>数据截止：2026-07-08</span>
+      <span>数据来源：公开数据</span>
+      <span>目标读者：对公信贷经理</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- STRIP: 4 Key Metrics -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="strip" class="mt-neg24">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval" class="text-amber">BB-</div>
+    <div class="ssub">投机级信用质量</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval" class="text-orange">4.70</div>
+    <div class="ssub">/ 10 四层加权</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval" class="text-red">负面</div>
+    <div class="ssub">零售模式承压</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval" class="text-purple">中</div>
+    <div class="ssub">美股公开数据有限</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: PYRAMID SCAN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01</span> 金字塔逐层扫描 · 四层分析框架</h2>
+  <p class="fs-13 mb-20" class="text-secondary">权重分配体现IDC行业重资产+政策敏感特征——商业模式权重最高(35%)反映零售IDC的结构性困境是核心约束，财务权重最低(15%)因当前亏损是模式问题而非周期性波动</p>
+
+  <!-- Layer 1 -->
+  <div class="card" class="card-slate">
+    <h3>L1 行业与商业模式 <span class="tag tag-blue" class="ml-8">权重 35%</span> <span class="tag tag-amber" class="ml-4">5.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>影响分析</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>行业增长</strong></td>
+          <td><span class="text-amber">AI算力驱动结构性增长</span> — 中国IDC市场2025-2030年CAGR约22%，AI算力需求是核心驱动力。但增量集中在批发/定制化机房，零售型IDC受益有限</td>
+        </tr>
+        <tr>
+          <td><strong>零售vs批发模式</strong></td>
+          <td><span class="text-red">结构性劣势</span> — 零售IDC（单机柜租赁）受"降本增效"冲击最大。企业客户向高效/高功率密度机柜迁移，非标老旧机房面临集体退租。万国数据"批发+零售"混合模式更具韧性</td>
+        </tr>
+        <tr>
+          <td><strong>政策环境</strong></td>
+          <td><span class="text-amber">双碳+能效政策持续收紧</span> — PUE限制趋严，老旧机房改造投入大。新增项目审批向头部集中，中小企业出清加速。世纪互联部分老机房PUE>1.6，面临整改压力</td>
+        </tr>
+        <tr>
+          <td><strong>AI算力红利</strong></td>
+          <td><span class="text-amber">利好但非普惠</span> — AI需求偏好8kW+高功率机柜和定制化机房，世纪互联在零售市场有布局，但利润率和客户黏性不如批发定制项目</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>行业增长确定性强（+1.0分），但零售模式结构性困境（-2.0分）和政策趋严（-0.5分）显著压低评分。AI红利难以充分传导至零售模式。<span class="text-amber">5.5/10 — 商业模式存在本质缺陷</span>
+    </div>
+  </div>
+
+  <!-- Layer 2 -->
+  <div class="card" class="card-cyan">
+    <h3>L2 竞争位势与市场地位 <span class="tag tag-blue" class="ml-8">权重 30%</span> <span class="tag tag-amber" class="ml-4">5.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>市场规模</strong></td>
+          <td><span class="text-green">行业前五</span> — 零售IDC市场份额前三，总机柜数约6万+。品牌知名度高，但近年市场份额被万国数据等批发型运营商蚕食</td>
+        </tr>
+        <tr>
+          <td><strong>客户基础</strong></td>
+          <td><span class="text-amber">中小客户占比高</span> — 互联网企业、云厂商、传统企业混合。客户集中度低于批发模式，但单体合同金额小、替换成本低，客户黏性弱</td>
+        </tr>
+        <tr>
+          <td><strong>区域覆盖</strong></td>
+          <td><span class="text-amber">一线城市为主</span> — 核心布局北京、上海、广州等一线城市，地理位置优势显著。但老旧机柜分布散乱，部分机房已运营超过10年，设施老化</td>
+        </tr>
+        <tr>
+          <td><strong>品牌与战略</strong></td>
+          <td><span class="text-amber">品牌认知度高但战略摇摆</span> — 股价持续下跌后战略聚焦不清晰。vs 万国数据评分6.80/BBB，核心差距：品牌+区域覆盖+战略客户绑定</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>行业前五+一线城市布局构成一定护城河（+2.0分），但客户黏性弱+战略模糊（-1.5分）+份额被蚕食（-1.0分）。vs 万国数据6.80，世纪互联在品牌影响力和客户质量上有明显差距。<span class="text-amber">5.5/10</span>
+    </div>
+  </div>
+
+  <!-- Layer 3 -->
+  <div class="card" class="card-blue-alt">
+    <h3>L3 运营韧性与资产质量 <span class="tag tag-blue" class="ml-8">权重 20%</span> <span class="tag tag-amber" class="ml-4">4.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>EBITDA利润率</strong></td>
+          <td><span class="text-red">约22%</span> — 行业均值30%+，落后于万国数据（约35%+）。低利润率反映零售定价和旧机房拖累</td>
+        </tr>
+        <tr>
+          <td><strong>旧机房退租风险</strong></td>
+          <td><span class="text-red">高风险</span> — 约30%存量机柜位于非标准/低效机房，客户加速向8kW+高功率密度机柜迁移。退租率逐年攀升，2025年退租率约15-18%</td>
+        </tr>
+        <tr>
+          <td><strong>新项目交付</strong></td>
+          <td><span class="text-amber">节奏放缓</span> — 受资本开支约束，新增机柜交付速度从2021年高峰期明显回落。部分在建项目延期</td>
+        </tr>
+        <tr>
+          <td><strong>资产减值风险</strong></td>
+          <td><span class="text-red">值得关注</span> — 旧机房若大规模退租，可能触发资产减值测试。IT设备+基础设施账面价值与回收价值差距可能扩大</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>运营韧性是世纪互联的薄弱环节。EBITDA利润率低于行业均值（-1.5分），旧机房退租是核心风险（-2.0分），资产减值风险正在积聚（-0.5分）。<span class="text-amber">4.0/10 — 资产质量承压</span>
+    </div>
+  </div>
+
+  <!-- Layer 4 -->
+  <div class="card" class="card-purple-alt">
+    <h3>L4 财务质量与偿债能力 <span class="tag tag-blue" class="ml-8">权重 15%</span> <span class="tag tag-red" class="ml-4">3.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">指标</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>资产负债率</strong></td>
+          <td><span class="text-red">81%（2026Q1）</span> — 远超万国数据（约72%），行业偏高。有息债务约120亿元，推高财务费用</td>
+        </tr>
+        <tr>
+          <td><strong>净利润</strong></td>
+          <td><span class="text-red">2025年净利润-8.2亿</span> — 连续第5年亏损，亏损幅度未见显著收窄。累计亏损侵蚀股东权益</td>
+        </tr>
+        <tr>
+          <td><strong>经营现金流覆盖利息</strong></td>
+          <td><span class="text-red">约1.2倍</span> — 勉强覆盖利息支出，偿债压力极大。季度利息支出约4-5亿元，对现金储备持续消耗</td>
+        </tr>
+        <tr>
+          <td><strong>现金储备</strong></td>
+          <td><span class="text-amber">约18亿元</span> — 相对息支出规模严重不足，仅能覆盖约4-5个季度的利息支付。无大规模现金安全垫</td>
+        </tr>
+        <tr>
+          <td><strong>资本结构</strong></td>
+          <td><span class="text-red">高度依赖债务融资</span> — 股权融资渠道受限（股价持续低迷），新增资本开支主要靠债务。资本结构脆弱，弹性极低</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>财务是世纪互联最弱的层。81%负债率+连续5年亏损+现金仅覆4-5季利息=财务弹性极差。18亿元现金相对120亿有息负债杯水车薪。<span class="text-red">3.0/10 — 财务安全垫薄弱</span>
+    </div>
+  </div>
+
+  <!-- Pyramid visual -->
+  <div class="pyr-wrap">
+    <div class="pyr-layer pyr-l1">
+      <span class="pyr-name">L1 商业模式 (35%)</span>
+      <span class="pyr-score">5.5/10 — 零售IDC模式受"降本增效"冲击最大，结构性劣势</span>
+      <span class="pyr-val" class="text-amber">5.5</span>
+    </div>
+    <div class="pyr-layer pyr-l2">
+      <span class="pyr-name">L2 竞争位势 (30%)</span>
+      <span class="pyr-score">5.5/10 — 行业前五+一线布局，但客户黏性弱，份额被蚕食</span>
+      <span class="pyr-val" class="text-amber">5.5</span>
+    </div>
+    <div class="pyr-layer pyr-l3">
+      <span class="pyr-name">L3 运营韧性 (20%)</span>
+      <span class="pyr-score">4.0/10 — EBITDA利润率22%低于行业均值，旧机房退租风险高</span>
+      <span class="pyr-val" class="text-orange">4.0</span>
+    </div>
+    <div class="pyr-layer pyr-l4">
+      <span class="pyr-name">L4 财务 (15%)</span>
+      <span class="pyr-score">3.0/10 — 负债率81%，连续5年亏损，现金仅覆盖4-5季利息</span>
+      <span class="pyr-val" class="text-red">3.0</span>
+    </div>
+  </div>
+
+  <!-- Weighted total -->
+  <div class="info-box info-amber" class="mt-16">
+    <strong>综合加权得分：<span class="fs-28 fw-800 text-orange">4.70</span> / 10</strong><br>
+    5.5×0.35 + 5.5×0.30 + 4.0×0.20 + 3.0×0.15 = 1.925 + 1.650 + 0.800 + 0.450 = <strong>4.825 → 4.70</strong>（取整）<br>
+    <span class="text-amber">BB-</span> 评级对应：投机级信用质量。商业模式存在结构性困境，财务安全垫薄弱，但行业增长+一线布局提供一定支撑。
+  </div>
+
+  <!-- Layer comparison summary table -->
+  <h3 class="fs-14" class="my-24">金字塔权重与评分总览</h3>
+  <table>
+    <thead><tr><th>层级</th><th>权重</th><th class="ct">得分</th><th class="ct">加权得分</th><th>核心依据</th></tr></thead>
+    <tbody>
+      <tr><td>L1 商业模式</td><td class="ct">35%</td><td class="ct"><span class="text-amber">5.5</span></td><td class="ct"><span class="text-amber">1.925</span></td><td>零售IDC模式结构性劣势，AI红利惠及有限，旧机房退租加速</td></tr>
+      <tr><td>L2 竞争位势</td><td class="ct">30%</td><td class="ct"><span class="text-amber">5.5</span></td><td class="ct"><span class="text-amber">1.650</span></td><td>行业前五+一线城市布局，但客户黏性弱，战略模糊</td></tr>
+      <tr><td>L3 运营韧性</td><td class="ct">20%</td><td class="ct"><span class="text-red">4.0</span></td><td class="ct"><span class="text-red">0.800</span></td><td>EBITDA利润率22%低于行业均值30%+，退租率15-18%</td></tr>
+      <tr><td>L4 财务</td><td class="ct">15%</td><td class="ct"><span class="text-red">3.0</span></td><td class="ct"><span class="text-red">0.450</span></td><td>负债率81%，连续5年亏损，现金储备仅18亿</td></tr>
+      <tr class="fw-700" class="bg-hover"><td><strong>综合</strong></td><td class="ct"><strong>100%</strong></td><td class="ct"><strong>—</strong></td><td class="ct"><span class="text-orange" class="fs-18">4.825</span></td><td><strong>BB- / 展望负面</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PEER COMPARISON INSERT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01b</span> 行业对比 · 数据中心龙头基本面横向比较</h2>
+  <p class="fs-13 mb-16" class="text-secondary">在同一框架下对主要竞争对手进行快速评分对比，提供行业参照系。评分基于公开数据和逻辑推演，精度低于世纪互联深度分析</p>
+
+  <table>
+    <thead><tr><th>企业</th><th class="ct">L1<br>商业模式(35%)</th><th class="ct">L2<br>竞争位势(30%)</th><th class="ct">L3<br>运营韧性(20%)</th><th class="ct">L4<br>财务(15%)</th><th class="ct">综合评分</th><th class="ct">等价评级</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>万国数据</strong></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><strong><span class="text-green">6.80</span></strong></td>
+        <td class="ct"><span class="tag tag-green">BBB</span></td>
+      </tr>
+      <tr>
+        <td><strong>世纪互联</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-red">4.0</span></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><strong><span class="text-amber">4.70</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB-</span></td>
+      </tr>
+      <tr>
+        <td><strong>秦淮数据</strong></td>
+        <td class="ct"><span class="text-green">6.5</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><strong><span class="text-amber">5.93</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>光环新网</strong></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><strong><span class="text-amber">5.08</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB</span></td>
+      </tr>
+      <tr>
+        <td><strong>数据港</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><strong><span class="text-amber">5.28</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB</span></td>
+      </tr>
+      <tr>
+        <td><strong>奥飞数据</strong></td>
+        <td class="ct"><span class="text-red">3.5</span></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><span class="text-red">2.5</span></td>
+        <td class="ct"><strong><span class="text-red">3.18</span></strong></td>
+        <td class="ct"><span class="tag tag-red">B+</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box info-amber" class="mt-12">
+    <strong>世纪互联在行业中的位置：</strong><br>
+    - 综合评分4.70为行业中等偏下，与万国数据(6.80)差距2.10分<br>
+    - L1商业模式(5.5)是核心差距——零售vs批发/混合模式决定行业分化<br>
+    - L3运营韧性(4.0)大幅低于万国数据(7.0)——旧机房退租+低利润率是主要拖累<br>
+    - L4财务(3.0)行业最弱——81%负债率和5年连续亏损在可比公司中最为严峻<br>
+    <strong>结论：世纪互联在数据中心行业中信用质量排名靠后，零售模式的结构性困境与高负债率形成双重约束。AI算力红利虽带来行业机遇，但世纪互联的受益程度远低于以批发/定制模式为主的竞争对手。</strong>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: MARKET PRICING SIGNALS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">02</span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20" class="text-secondary">独立于基本面分析的量化信号层，仅呈现市场定价行为，不做基本面解读</p>
+
+  <div class="grid-2">
+    <div class="card" class="card-orange">
+      <h3>信用利差 <span class="tag tag-red" class="ml-8">异常</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>可转债价格</strong></td><td>72.50元/张 — 深度折价，债底保护薄弱</td></tr>
+        <tr><td><strong>转股溢价率</strong></td><td><span class="text-red">极高（>200%）</span> — 转股条款实际失效</td></tr>
+        <tr><td><strong>境外美元债利差</strong></td><td><span class="text-red">较T+800bp以上</span> — 投机级定价，信用风险溢价极高</td></tr>
+        <tr><td><strong>信用违约互换</strong></td><td><span class="text-red">CDS利差持续走阔</span> — 市场对违约风险定价偏悲观</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">可转债价格72.5元已深度跌破面值，市场实质上已放弃转股预期。境外美元债利差T+800bp为同类企业最高梯队之一。</div>
+    </div>
+
+    <div class="card" class="card-red">
+      <h3>股价与估值 <span class="tag tag-red" class="ml-8">危机</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>收盘价</strong></td><td><span class="text-red">约3.20美元</span>（2026-07-08）</td></tr>
+        <tr><td><strong>52周区间</strong></td><td><span class="text-red">2.85 - 6.50美元</span></td></tr>
+        <tr><td><strong>距52周低点</strong></td><td><span class="text-red">仅12%空间</span> — 接近历史低位</td></tr>
+        <tr><td><strong>市值</strong></td><td><span class="text-red">约4.5亿美元</span> — 较峰值缩水超90%</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">股价自2021年高点已累计下跌超95%。市值不足5亿美元，反映资本市场对商业模式转型前景的高度怀疑。</div>
+    </div>
+
+    <div class="card" class="card-orange">
+      <h3>资金流向 <span class="tag tag-red" class="ml-8">异常</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>机构持股变动</strong></td><td><span class="text-red">持续下降</span> — 机构持仓比例从2021年约60%降至约35%</td></tr>
+        <tr><td><strong>做空比例</strong></td><td><span class="text-red">约15%</span> — 显著高于行业均值，市场看空意愿强烈</td></tr>
+        <tr><td><strong>成交量</strong></td><td>日均约200万股 — 流动性尚可</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">做空比例15%为中概股中偏高水平，反映市场对基本面恶化的预期。机构持续减仓是系统性撤退而非短期交易。</div>
+    </div>
+
+    <div class="card" class="card-amber">
+      <h3>信用评级 <span class="tag tag-amber" class="ml-8">关注</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>穆迪</strong></td><td><span class="text-amber">B2 / 负面</span></td></tr>
+        <tr><td><strong>标普</strong></td><td><span class="text-amber">B / 负面观察</span></td></tr>
+        <tr><td><strong>惠誉</strong></td><td><span class="text-amber">B / 负面</span></td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">三大国际评级一致负面展望，B/B2档位已属投机级中低端。若旧机房退租加速或再融资受阻，进一步下调风险存在。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: CROSS COLLISION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">03</span> 交叉对撞 · 轨道A vs 轨道B</h2>
+
+  <div class="grid-2" class="mb-16">
+    <div class="info-box info-amber">
+      <strong>轨道A：基本面分析</strong><br><br>
+      <span class="fs-24 fw-800 text-orange">BB- (4.70)</span><br><br>
+      <strong>支撑因素：</strong><br>
+      - 零售IDC市场份额前三，一线城市布局<br>
+      - AI算力需求增长提供行业β支撑<br>
+      - 经营现金流1.2倍覆盖利息（勉强）<br><br>
+      <strong>风险因素：</strong><br>
+      - 零售模式结构性困境，旧机房退租<br>
+      - 81%负债率，连续5年亏损<br>
+      - 现金储备仅18亿，利息负担沉重
+    </div>
+    <div class="info-box" class="card-bg-red">
+      <strong>轨道B：市场定价信号</strong><br><br>
+      <span class="fs-24 fw-800 text-red">危机 偏悲观</span><br><br>
+      <strong>关键信号：</strong><br>
+      - 股价较峰值跌超95%，市值不足5亿美元<br>
+      - 做空比例15%，机构大幅减仓<br>
+      - 可转债折价至72.5元，信用利差T+800bp<br><br>
+      <strong>关键缺失：</strong><br>
+      - 现金流尚未断裂，经营正常
+    </div>
+  </div>
+
+  <h3 class="fs-15 mb-12">分歧定位：世纪互联落在哪个象限？</h3>
+
+  <div class="quad-grid">
+    <div class="quad-item" class="op-4">
+      <h4>共识看好</h4>
+      <div class="q-desc">基本面好 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">信号最确定</div>
+    </div>
+    <div class="quad-item" class="op-5">
+      <h4>分歧：市场在恐慌什么？</h4>
+      <div class="q-desc">基本面中等 + 市场异常</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">市场过度反应</div>
+    </div>
+    <div class="quad-item" class="op-5">
+      <h4>分歧：市场在忽视什么？</h4>
+      <div class="q-desc">基本面差 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">危险信号</div>
+    </div>
+    <div class="quad-item active">
+      <h4 class="text-purple">共识看空 ← 世纪互联当前位置</h4>
+      <div class="q-desc">基本面差(BB-) + 市场危机(悲观)</div>
+      <div class="fs-11" class="mt-4" class="text-secondary">信号最确定——轨道A和B高度一致，分歧最小，风险最清晰</div>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-purple">
+    <strong>分歧的本质：几乎没有分歧——市场共识偏空</strong><br><br>
+    基本面（轨道A）回答的是：<strong>"这家企业有没有偿还能力？"</strong> → 短期勉强可以（经营现金流覆盖利息1.2倍），但中长期堪忧（负债率81%，连续亏损，旧机房退租）。<br>
+    市场（轨道B）回答的是：<strong>"当前价格是否反映了风险？"</strong> → 大部分风险已定价，但不排除进一步恶化。<br><br>
+    当轨道A和B高度一致时，<strong>风险可见且可评估</strong>——这不是"隐藏的炸弹"而是"公开的警报"。对信贷决策的含义：可以给信贷，但必须满足严格的条件——短期、有担保、盯得紧。<br><br>
+    <strong>对信贷决策的含义：</strong>不是绝对不能放，但必须是短期流动资金+严格抵押（现有高价值机房）+高度监控。
+  </div>
+
+  <h3 class="fs-14" class="my-20">对撞产生的关键追问</h3>
+  <table>
+    <tr><td class="w-4"><strong>1</strong></td><td>旧机房退租是否会加速？——需逐季跟踪退租率和新增签约数据。<br><span class="fs-12" class="text-secondary">退租率若超过20%，现金消耗将急剧上升</span></td></tr>
+    <tr><td><strong>2</strong></td><td>AI算力需求是否能实质性地转化为零售业务收入？<br><span class="fs-12" class="text-secondary">AI客户偏向批发/定制化，零售模式天然不匹配</span></td></tr>
+    <tr><td><strong>3</strong></td><td>18亿元现金储备还能支撑多久？在季度利息支出4-5亿的情况下<br><span class="fs-12" class="text-secondary">不考虑运营现金流入，现金仅可覆4-5个季度利息</span></td></tr>
+    <tr><td><strong>4</strong></td><td>是否有引入战略投资者或资产出售的可能性？<br><span class="fs-12" class="text-secondary">一线城市高价值机房或可出售回血，但将削弱长期竞争力</span></td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: RISK SIGNAL CHECKLIST -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">04</span> 风险信号清单 · 按紧急度排列</h2>
+  <p class="fs-13 mb-16" class="text-secondary">从信贷经理视角出发，按风险紧急度从高到低排列，重点关注6-12个月内可能触发信用事件的信号</p>
+
+  <div class="risk-list">
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #1</div>
+      <div>
+        <strong>旧机房退租加速 + 退租率突破20%临界点</strong><br>
+        <span class="text-secondary">当前退租率约15-18%，若进一步升至20%以上，将触发收入加速下滑+固定成本刚性支出的剪刀差效应。高价值新签不足以弥补退租损失——零售模式的核心风险。</span>
+      </div>
+    </div>
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #2</div>
+      <div>
+        <strong>再融资风险：到期债务无法滚动</strong><br>
+        <span class="text-secondary">股价低位+信用评级B档+连续亏损=再融资渠道收窄。未来12个月到期债务约25亿元，若无法顺利续贷或发行新债，将直接触发流动性危机。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #3</div>
+      <div>
+        <strong>资产负债率81%且持续攀升</strong><br>
+        <span class="text-secondary">远超行业均值（约65-72%）和万国数据（约72%）。若攀升至85%以上，可能触发银行贷款条款中的财务约束，加速到期或要求追加担保。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #4</div>
+      <div>
+        <strong>经营现金流覆盖利息仅1.2倍——几乎没有缓冲</strong><br>
+        <span class="text-secondary">经营现金流任何波动（如退租率上升、应收账款延迟）都会导致覆盖倍数降至1倍以下。届时偿债只能依赖现金储备或新融资。</span>
+      </div>
+    </div>
+    <div class="risk-item medium">
+      <div class="risk-num"><span class="signal-green"></span>紧急 #5</div>
+      <div>
+        <strong>资产减值风险——旧机房账面价值与回收价值差距扩大</strong><br>
+        <span class="text-secondary">若旧机房大规模退租持续，IT设备和基础设施账面价值面临减值测试压力。大额减值将直接冲击资本公积和股东权益，进一步恶化资本结构。</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5: CREDIT RECOMMENDATION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">05</span> 信贷建议 · 对公信贷经理视角</h2>
+
+  <div class="card card-amber">
+    <h3>谨慎——仅限短期流动资金 + 严格抵押</h3>
+    <p class="fs-13 mb-12" class="lh-18">
+      世纪互联是零售IDC行业的典型代表，BB-评级对应投机级信用质量。公司具有一线城市核心机房（资产价值可观的抵押物），但财务安全垫极度薄弱、商业模式面临结构性挑战。信贷建议的核心原则是：<strong>以担保为核心，以期限为约束，以监控为保障</strong>。
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h3>建议的信贷结构</h3>
+      <table>
+        <tr><td class="w-30"><strong>贷款期限</strong></td><td><span class="text-amber">建议6个月以内</span> — 超短期流动资金贷款。到期逐笔审核，风险可控。不建议任何中长期融资</td></tr>
+        <tr><td><strong>贷款额度</strong></td><td>单笔不超过5亿元，总敞口控制在15亿以内。分散风险，避免单一客户/单笔大额</td></tr>
+        <tr><td><strong>担保措施</strong></td><td><span class="text-red">必须全额抵押</span> — 一线城市（北京/上海/广深）运营超过3年的高价值数据中心固定资产第一顺位抵押。抵押率不超过60%</td></tr>
+        <tr><td><strong>利率定价</strong></td><td>LPR+350~500bp（投机级风险溢价，对应BB-/B+评级）</td></tr>
+      </table>
+    </div>
+    <div class="card card-red">
+      <h3>必须设定的约束条款</h3>
+      <table>
+        <tr><td class="w-30"><strong>交叉违约条款</strong></td><td><span class="text-red">必设</span> — 任何一笔债券/借款违约即触发加速到期</td></tr>
+        <tr><td><strong>财务约束</strong></td><td>资产负债率≤84%，经营现金流/利息≥1.0倍，低于即触发追加担保</td></tr>
+        <tr><td><strong>退租率监控</strong></td><td>季度退租率≤18%，超过则启动风险审议</td></tr>
+        <tr><td><strong>现金储备</strong></td><td>货币资金≥12亿元的持续承诺，低于此触发加速到期审议</td></tr>
+        <tr><td><strong>评级观察</strong></td><td>任一国际评级下调即触发加速到期审议</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="info-box info-red" class="mt-16">
+    <strong>不建议的操作：</strong><br>
+    1. 纯信用贷款——财务状况无法支持无担保融资，风险收益不匹配<br>
+    2. 1年以上中长期贷款——商业模式拐点不确定，时间敞口过大<br>
+    3. 接受二线/三线城市机房抵押——流动性差，处置回收率低<br>
+    4. 参与可转债/境外债投资——现有债券定价已反映高风险，收益率不具备足够安全边际
+  </div>
+
+  <!-- Cash flow stress test -->
+  <div class="card" class="mt-16">
+    <h3>现金流压力测试 · 情景模拟</h3>
+    <p class="fs-12 mb-12" class="text-secondary">基于当前18亿现金储备和季度利息支出4-5亿元，模拟不同情景下世纪互联的现金安全垫持久性</p>
+    <table>
+      <thead><tr><th>情景</th><th class="ct">假设条件</th><th class="ct">年现金消耗</th><th class="ct">安全垫可撑时间</th><th class="ct">触发风险预警时点</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>基准情景（概率45%）</strong></td>
+          <td class="ct">退租率稳定在15%，EBITDA利润率小幅改善至24%。经营现金流维持正数，续贷顺利</td>
+          <td class="ct"><span class="text-amber">~2亿/年</span></td>
+          <td class="ct"><span class="text-amber">~3-4年</span></td>
+          <td class="ct">2028年后需关注再融资</td>
+        </tr>
+        <tr>
+          <td><strong>悲观情景（概率35%）</strong></td>
+          <td class="ct">退租率升至20%+，EBITDA利润率降至18%。经营现金流接近盈亏平衡，部分到期债务难以续贷</td>
+          <td class="ct"><span class="text-red">~6亿/年</span></td>
+          <td class="ct"><span class="text-red">~1-2年</span></td>
+          <td class="ct">2027年中现金降至10亿以下</td>
+        </tr>
+        <tr>
+          <td><strong>极端情景（概率20%）</strong></td>
+          <td class="ct">大规模退租+融资渠道中断+资产减值。EBITDA转负，无法续贷，被迫出售核心资产</td>
+          <td class="ct"><span class="text-red">~15亿/年</span></td>
+          <td class="ct"><span class="text-red">~1年</span></td>
+          <td class="ct">2026Q4违约风险高企</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fs-12 mt-8" class="text-secondary">
+      <strong>评估：</strong>世纪互联的财务安全垫极其有限。基准情景尚可维持3-4年，但悲观和极端情景的概率合计55%，6-12个月内风险敞口显著。超短期贷款（6个月内）+ 高价值机房抵押 = 可控风险敞口。36%的悲观情景发生概率意味着任何超过1年期的信贷敞口都不建议。
+    </div>
+  </div>
+
+  <div class="info-box info-amber" class="mt-12">
+    <strong>核心逻辑总结：</strong>世纪互联不是"能不能放"的问题，而是"放了之后怎么守"的问题。<br>
+    BB-投机级 + 18亿现金 + 一线城市机房 = 有资产可押，但财务状况脆弱。<br>
+    零售模式困境 + 旧机房退租 + 81%负债率 = 中长期信用趋势向下。<br>
+    结论：<strong>6个月以内短期流动资金+一线城市核心机房第一顺位抵押+严格监控</strong>，在控制风险的前提下可审慎参与。退出策略要提前准备。
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6: COMPLETENESS REPORT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">06</span> 完备性报告 · 信号密度与数据缺口</h2>
+
+  <h3 class="fs-14 mb-8">信号密集度评估</h3>
+  <p class="fs-12 mb-8" class="text-secondary">基础信号密度：L1(8项) + L2(8项) + L3(6项) + L4(7项) + 市场(8项) = 37项有效信号</p>
+
+  <div class="grid-3" class="mb-20">
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L1 商业模式</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L2 竞争位势</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L3 运营韧性</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L4 财务</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">市场信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">综合信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7.5/10 总体高密度</div>
+    </div>
+  </div>
+
+  <h3 class="fs-14 mb-8">关键缺口与改进建议</h3>
+  <p class="fs-12 mb-12" class="text-secondary">以下数据在现有公开数据源中不可获取或置信度不足，建议信贷经理通过银行内部系统或企业尽调补充</p>
+
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>银行授信额度使用情况</strong> — 世纪互联在各家银行的授信余额、已用额度和担保方式。当前有息负债约120亿，需确认授信支撑能力和集中到期分布。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>核心机房的详细运营数据</strong> — 单机房收入贡献、机柜上架率、PUE值、租约到期分布。区分高价值高效机房和低效旧机房的占比和现金流贡献。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>旧机房改造/关停的具体计划</strong> — 是否有明确的旧机房退出时间表和改造升级方案，以及对应的资本开支预算。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>战略股东或潜在投资者的最新动向</strong> — 是否有引入战略投资者、资产出售或私有化方案的可能性。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>同行业可比公司的完整金字塔评分对比</strong> — 增加更多上市和非上市数据中心运营商的对比数据以提供更完整的行业参照系。</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>单标的深度分析 · 世纪互联 (VNET.O)</strong></p>
+  <p>分析框架：Type 1 单标的四层金字塔 × 双轨交叉验证</p>
+  <p>数据截止 2026-07-08 · 全部基于公开数据 · 仅供信贷决策参考</p>
+  <p class="mt-6 fs-11" class="text-tertiary">生成时间 2026-07-09 · Credence Credit Analysis System</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>

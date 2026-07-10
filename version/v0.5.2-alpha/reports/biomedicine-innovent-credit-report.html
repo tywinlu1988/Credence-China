@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信达生物 (01801.HK) · 生物医药深度信用分析报告</title>
+<link rel="stylesheet" href="../design/templates/template-base.css">
+<style>
+/* ========== Add-on styles for Innovent Biologics report ========== */
+/* Pyramid layers */
+.pyr-wrap { margin: 24px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.8; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 44px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-slate-800)); }
+.pyr-l2 { width: 84%; background: linear-gradient(135deg, var(--clr-teal-600), var(--clr-teal-700)); }
+.pyr-l3 { width: 72%; background: linear-gradient(135deg, var(--clr-blue-600), var(--clr-blue-700)); }
+.pyr-l4 { width: 60%; background: linear-gradient(135deg, var(--clr-violet-600), var(--clr-violet-700)); }
+/* Signal dot */
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.red { background: var(--red); }
+/* Cross collision quad */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--clr-teal-600); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+/* Risk items */
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: var(--clr-orange-600); }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+/* Density bar */
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+/* Gap items */
+.gap-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+  background: var(--bg-tertiary); font-size: 12px;
+}
+.gap-item .gap-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.gap-item .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.gap-item .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+/* Spacing helpers */
+.mb-6 { margin-bottom: 6px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mt-8 { margin-top: 8px; }
+.mt-10 { margin-top: 10px; }
+.mt-12 { margin-top: 12px; }
+.mt-14 { margin-top: 14px; }
+.mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
+.card-text { font-size: 13px; color: var(--text-secondary); }
+.card-text-lh { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+.metric-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 3px; }
+.checklist { font-size: 13px; color: var(--text-secondary); line-height: 2.0; padding-left: 18px; }
+.pl-14 { padding-left: 14px; }
+.fw-600 { font-weight: 600; }
+.score-lg { font-size: 22px; }
+.summary-note { font-size: 12px; color: var(--text-tertiary); margin-top: 8px; }
+.disclaimer-text { font-size: 12px; color: var(--text-tertiary); line-height: 1.8; }
+.divider-sm { margin: 16px 0; }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+.hero-custom {
+  background: linear-gradient(135deg, var(--clr-slate-950) 0%, var(--clr-blue-midnight) 40%, var(--clr-teal-600) 100%);
+  text-align: center;
+  padding: 56px 0 44px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-custom::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(13,148,136,0.12) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(30,58,95,0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-custom .container { position: relative; z-index: 1; }
+.hero-custom .chip {
+  display: inline-block;
+  background: rgba(13,148,136,0.2);
+  color: var(--clr-teal-300);
+  border: 1px solid rgba(13,148,136,0.3);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 18px;
+}
+.hero-custom h1 { font-size: 32px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 6px; }
+.hero-custom .stock-code { font-size: 15px; color: rgba(255,255,255,0.55); font-weight: 400; margin-bottom: 6px; }
+.hero-custom .subtitle { font-size: 14px; color: rgba(255,255,255,0.55); max-width: 640px; margin: 0 auto; line-height: 1.7; }
+.hero-custom .meta-row {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  flex-wrap: wrap;
+}
+.hero-custom .meta-row span {
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================ -->
+<!-- HERO SECTION -->
+<!-- ================================================================ -->
+<header class="hero-custom">
+  <div class="container">
+    <div class="chip">单标的深度分析 · Type 1</div>
+    <h1>信达生物 <span class="fw-400" style="color:rgba(255,255,255,0.5)">|</span> Innovent Biologics</h1>
+    <div class="stock-code">01801.HK</div>
+    <p class="subtitle">生物医药/创新药 · PD-1已商业化，管线梯度丰富，亏损持续收窄——中国Biotech第二梯队的信用锚点</p>
+    <div class="meta-row">
+      <span>分析时点：2026年7月</span>
+      <span>数据截止：2026-07-09</span>
+      <span>数据来源：公开数据</span>
+      <span>目标读者：对公信贷经理</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ================================================================ -->
+<!-- STRIP: 4 Key Metrics -->
+<!-- ================================================================ -->
+<div class="strip" class="mt-neg24">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval" class="text-teal">BBB</div>
+    <div class="ssub">中性偏正面，信用风险中等</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval" class="text-amber">5.80</div>
+    <div class="ssub">/ 10 四层加权</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval" class="text-teal">稳定</div>
+    <div class="ssub">未来12-18个月评级维持</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval" class="text-amber">中</div>
+    <div class="ssub">港股+科创板双重披露</div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- SECTION 1: PYRAMID SCAN -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01</span> 金字塔逐层扫描 · 四层分析框架</h2>
+  <p class="fs-13 mb-20" class="text-secondary">权重分配体现创新药Biotech特征——研发管线权重最高(30%)，反映管线价值是信用核心；政策与医保权重25%，商业化能力25%，财务权重20%。信达生物作为PD-1已商业化的Biotech，各层评分处于中等区间。</p>
+
+  <!-- Layer 1 -->
+  <div class="card" class="card-slate">
+    <h3>L1 政策与医保环境 <span class="tag tag-blue" class="ml-8">权重 25%</span> <span class="tag tag-green" class="ml-4">6.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>评估与关键事实</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>国家医保谈判</strong></td>
+          <td><span class="text-amber">影响中性偏正</span> — 信迪利单抗（达伯舒）已纳入国家医保目录，以价换量效果显著。2025年医保续约谈判降价幅度温和（约10-15%），价格压力边际递减。但医保支付受限适应症范围，自费市场增量仍有限</td>
+        </tr>
+        <tr>
+          <td><strong>创新药审批加速</strong></td>
+          <td><span class="text-green">政策利好</span> — NMPA优先审评+突破性疗法认定机制为创新药开辟快速通道。信达拥有多个品种获突破性疗法认定，审批效率提升有助于加速管线价值兑现</td>
+        </tr>
+        <tr>
+          <td><strong>融资环境</strong></td>
+          <td><span class="text-amber">边际改善</span> — 港股18A板块估值自2023年低谷有所回暖，但整体仍低于2020-2021年高峰。信达港股+科创板双平台为再融资提供弹性空间，且2026年CB市场对BBB级Biotech重开大门</td>
+        </tr>
+        <tr>
+          <td><strong>行业政策方向</strong></td>
+          <td><span class="text-green">结构性利好</span> — 2024.7国务院《全链条支持创新药发展实施方案》+2025年医保局16条措施，确立创新药政策上行周期。丙类商保目录的探索有望为创新药开辟第三支付方</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>医保谈判影响中性（以价换量已被消化），创新药审批加速+全链条支持政策构成结构性利好。信达PD-1已进入医保，较未进医保的Biotech享有先发优势。<span class="text-green">评分6.0/10</span>——行业政策面温和利好，无重大政策风险
+    </div>
+  </div>
+
+  <!-- Layer 2 -->
+  <div class="card" class="card-teal">
+    <h3>L2 研发管线深度 <span class="tag tag-blue" class="ml-8">权重 30%</span> <span class="tag tag-amber" class="ml-4">5.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>评估与关键事实</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>PD-1商业化</strong></td>
+          <td><span class="text-green">已兑现</span> — 信迪利单抗（达伯舒）为第2个获批国产PD-1，2025年销售额约¥35-40亿，拥有6大获批适应症并全部纳入医保。但PD-1市场竞争极为激烈：6家国产PD-1已上市（百济替雷利珠、君实特瑞普利、恒瑞卡瑞利珠等），价格战压缩毛利率</td>
+        </tr>
+        <tr>
+          <td><strong>后续管线梯队</strong></td>
+          <td><span class="text-amber">有特色但不够深厚</span> — 管线覆盖IO双抗、ADC、CAR-T等多个技术平台。IBI-112（IL-23p19，自免）处于III期，IBI-343（CLDN18.2 ADC）和IBI-939（TIGIT）处于早期临床。管线丰富度优于一般Biotech，但缺乏百济泽布替尼级别的"重磅炸弹"潜力品种</td>
+        </tr>
+        <tr>
+          <td><strong>生物类似药布局</strong></td>
+          <td><span class="text-amber">稳定现金流贡献</span> — 贝伐珠单抗（达攸同）、利妥昔单抗（达伯华）等生物类似药已上市，贡献稳定收入流。生物类似药竞争加剧但信达凭先发优势占有一定市场份额，年收入合计约¥15-20亿</td>
+        </tr>
+        <tr>
+          <td><strong>与礼来合作</strong></td>
+          <td><span class="text-green">差异化优势</span> — 与礼来（Eli Lilly）的深度合作为信达提供了BD能力和国际化通道。礼来不仅是股东（持股~8%），更在PD-1海外临床和注册方面提供了关键支持。但国内主导权已回归信达，合作关系趋于平衡</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>PD-1已商业化是信达的底线支撑，但PD-1红海竞争（6家已上市+价格战）压制利润空间。后续管线有特色（IL-23p19、CLDN18.2 ADC等）但缺乏天花板级品种。生物类似药提供现金流但增速有限。<span class="text-amber">评分5.5/10</span>——管线健康但不突出
+    </div>
+  </div>
+
+  <!-- Layer 3 -->
+  <div class="card" class="card-blue-alt">
+    <h3>L3 商业化能力 <span class="tag tag-blue" class="ml-8">权重 25%</span> <span class="tag tag-green" class="ml-4">6.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>评估与关键事实</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>销售团队</strong></td>
+          <td><span class="text-green">Biotech中领先</span> — 信达拥有约3,000人的肿瘤+自免销售团队，覆盖全国主要医院终端。在Biotech中，信达的商业化团队规模仅次于百济，远超其他Biotech。销售人均产出约¥200-250万，效率处于行业中等偏上水平</td>
+        </tr>
+        <tr>
+          <td><strong>市场准入</strong></td>
+          <td><span class="text-green">医保覆盖度高</span> — 信迪利单抗6大适应症全部纳入医保，是中国PD-1中适应症医保覆盖最全的品种之一。医院进院覆盖超过3,000家（含基层医疗机构），DTP药房网络完善</td>
+        </tr>
+        <tr>
+          <td><strong>海外商业化</strong></td>
+          <td><span class="text-amber">尚处早期</span> — 与礼来合作的PD-1海外注册推进中，但进度落后于百济替雷利珠（已在50+市场获批）。信达的国际化能力尚未验证，海外收入占比<5%，与百济的全球化差距明显</td>
+        </tr>
+        <tr>
+          <td><strong>品牌与医生认知</strong></td>
+          <td><span class="text-green">品牌认可度高</span> — "达伯舒"品牌在肿瘤科医生中认知度Top 3国产PD-1。信达在学术推广和临床数据发表方面投入充分，在肺癌、肝癌等大适应症领域建立了口碑</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>商业化能力是信达最突出的维度——3,000人销售团队+医保覆盖+礼来合作在Biotech中构成较强壁垒。但相比恒瑞、齐鲁等大型药企的万人大军，规模和深度仍有差距。海外商业化能力几乎是空白。<span class="text-green">评分6.0/10</span>——Biotech中领先，低于大型药企
+    </div>
+  </div>
+
+  <!-- Layer 4 -->
+  <div class="card" class="card-purple-alt">
+    <h3>L4 财务质量 <span class="tag tag-blue" class="ml-8">权重 20%</span> <span class="tag tag-amber" class="ml-4">5.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">指标</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>盈利能力</strong></td>
+          <td><span class="text-amber">仍在亏损但收窄中</span> — 2025年净亏损约¥10-15亿（较2024年~¥20亿大幅收窄）。营收持续增长（2025年~¥65-70亿），研发费用率~45%逐步下降。预计2027-2028年有望实现盈亏平衡。亏损主要来自研发投入（~¥30亿/年）和销售费用</td>
+        </tr>
+        <tr>
+          <td><strong>现金储备</strong></td>
+          <td><span class="text-green">相对充裕</span> — 现金储备约¥85亿（含理财和定期存款），按当前烧钱速度可支撑约2-3年。对比百济无限跑道不如，但在Biotech中属于安全水平。现金储备为其提供了充足的时间窗口等待管线价值释放</td>
+        </tr>
+        <tr>
+          <td><strong>资产负债结构</strong></td>
+          <td><span class="text-green">债务压力可控</span> — 资产负债率约45-50%，在Biotech中属于健康水平。有息负债规模不大（以可转债为主），利息覆盖倍数逐步改善。港股+科创板双平台提供股权融资弹性</td>
+        </tr>
+        <tr>
+          <td><strong>研发投入效率</strong></td>
+          <td><span class="text-amber">效率中等</span> — 年研发投入~¥30亿，研发费用率约45%，低于百济（~60%）但高于大型药企。管线推进效率中等——PD-1后暂未有第二个重磅品种进入商业化阶段，研发转化效率有待验证</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>财务是信达的短板但非危险项——亏损在收窄，现金储备可以支撑2-3年，资产负债率可控。核心问题是距离盈亏平衡仍有1-2年时间，且研发投入产出比有待验证。<span class="text-amber">评分5.0/10</span>——尚可但不优秀
+    </div>
+  </div>
+
+  <!-- Pyramid visual -->
+  <div class="pyr-wrap">
+    <div class="pyr-layer pyr-l1">
+      <span class="pyr-name">L1 政策与医保 (25%)</span>
+      <span class="pyr-score">6.0/10 — 医保谈判中性，审批加速利好</span>
+      <span class="pyr-val" class="text-green">6.0</span>
+    </div>
+    <div class="pyr-layer pyr-l2">
+      <span class="pyr-name">L2 研发管线 (30%)</span>
+      <span class="pyr-score">5.5/10 — PD-1已商业但竞争激烈，后续管线有特色</span>
+      <span class="pyr-val" class="text-amber">5.5</span>
+    </div>
+    <div class="pyr-layer pyr-l3">
+      <span class="pyr-name">L3 商业化能力 (25%)</span>
+      <span class="pyr-score">6.0/10 — 3,000人团队+医保覆盖，Biotech领先</span>
+      <span class="pyr-val" class="text-green">6.0</span>
+    </div>
+    <div class="pyr-layer pyr-l4">
+      <span class="pyr-name">L4 财务质量 (20%)</span>
+      <span class="pyr-score">5.0/10 — 亏损收窄，现金储备¥85亿可撑2-3年</span>
+      <span class="pyr-val" class="text-amber">5.0</span>
+    </div>
+  </div>
+
+  <!-- Weighted total -->
+  <div class="info-box" class="mt-16" class="card-bg-teal">
+    <strong>综合加权得分：<span class="fs-28 fw-800" class="text-teal">5.80</span> / 10</strong><br>
+    6.0×0.25 + 5.5×0.30 + 6.0×0.25 + 5.0×0.20 = 1.50 + 1.65 + 1.50 + 1.00 = <strong>5.65 → 5.80</strong>（管线期权调整：IL-23p19和CLDN18.2 ADC的潜在价值+0.15）<br>
+    <span class="text-green" class="fw-800">BBB</span> 评级对应：中性偏正面信用质量。PD-1商业化提供收入底盘，亏损持续收窄，现金储备安全。核心关注点：PD-1竞争红海、后续管线兑现能力、盈亏平衡时间表。
+  </div>
+
+  <!-- Layer comparison summary table -->
+  <h3 class="fs-14" class="my-24">金字塔权重与评分总览</h3>
+  <table>
+    <thead><tr><th>层级</th><th>权重</th><th class="ct">得分</th><th class="ct">加权得分</th><th>核心依据</th></tr></thead>
+    <tbody>
+      <tr><td>L1 政策与医保</td><td class="ct">25%</td><td class="ct"><span class="text-green">6.0</span></td><td class="ct"><span class="text-green">1.50</span></td><td>医保谈判影响中性，创新药审批加速+全链条政策利好，信达PD-1已进医保享先发优势</td></tr>
+      <tr><td>L2 研发管线</td><td class="ct">30%</td><td class="ct"><span class="text-amber">5.5</span></td><td class="ct"><span class="text-amber">1.65</span></td><td>PD-1已商业化但竞争激烈(6家)，后续管线有特色(IL-23p19/CLDN18.2 ADC)但缺乏重磅潜力</td></tr>
+      <tr><td>L3 商业化能力</td><td class="ct">25%</td><td class="ct"><span class="text-green">6.0</span></td><td class="ct"><span class="text-green">1.50</span></td><td>3,000人销售团队+医保全覆盖，Biotech中商业化能力领先；海外能力空白</td></tr>
+      <tr><td>L4 财务质量</td><td class="ct">20%</td><td class="ct"><span class="text-amber">5.0</span></td><td class="ct"><span class="text-amber">1.00</span></td><td>亏损收窄(¥10-15亿→目标盈亏平衡)，现金¥85亿可撑2-3年，资产负债率45-50%健康</td></tr>
+      <tr class="fw-700" class="bg-hover"><td><strong>综合</strong></td><td class="ct"><strong>100%</strong></td><td class="ct"><strong>—</strong></td><td class="ct"><span class="fs-18" class="text-teal">5.80</span></td><td><strong>BBB / 展望稳定（管线期权调整后+0.15）</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ================================================================ -->
+<!-- SECTION 1b: PEER COMPARISON -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">02</span> 行业对比 · 创新药Biotech基本面横向比较</h2>
+  <p class="fs-13 mb-16" class="text-secondary">在同一框架下对主要竞争对手进行快速评分对比，信达处于行业中等偏上位置——低于龙头百济，但高于君实、荣昌、迈威等同业。</p>
+
+  <table>
+    <thead><tr><th>企业</th><th class="ct">L1<br>政策(25%)</th><th class="ct">L2<br>管线(30%)</th><th class="ct">L3<br>商业化(25%)</th><th class="ct">L4<br>财务(20%)</th><th class="ct">综合评分</th><th class="ct">等价评级</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>百济神州</strong></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-green">9.0</span></td>
+        <td class="ct"><span class="text-green">8.5</span></td>
+        <td class="ct"><span class="text-green">8.0</span></td>
+        <td class="ct"><strong><span class="text-green">8.25</span></strong></td>
+        <td class="ct"><span class="tag tag-green">A-</span></td>
+      </tr>
+      <tr class="bg-hover">
+        <td><strong>信达生物</strong></td>
+        <td class="ct"><span class="text-green">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-green">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><strong><span class="text-teal">5.80</span></strong></td>
+        <td class="ct"><span class="tag tag-green">BBB</span></td>
+      </tr>
+      <tr>
+        <td><strong>荣昌生物</strong></td>
+        <td class="ct"><span class="text-green">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><strong><span class="text-amber">4.80</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB</span></td>
+      </tr>
+      <tr>
+        <td><strong>君实生物</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><span class="text-red">3.5</span></td>
+        <td class="ct"><strong><span class="text-amber">4.75</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB-</span></td>
+      </tr>
+      <tr>
+        <td><strong>迈威生物</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><span class="text-red">1.0</span></td>
+        <td class="ct"><strong><span class="text-red">3.50</span></strong></td>
+        <td class="ct"><span class="tag tag-red">CCC</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box" class="mt-12" class="card-bg-teal">
+    <strong>信达在行业中的位置：</strong><br>
+    - 综合评分5.80（BBB）在可比Biotech中处于第二梯队领头位置，低于百济（8.25/A-）但明显高于荣昌、君实和迈威<br>
+    - <strong>与百济的核心差距</strong>：管线深度（48 vs ~30个资产）、全球化程度（80%海外收入 vs <5%）、盈利能力（已盈利vs仍然亏损）——差距显著但合理<br>
+    - <strong>相对优势</strong>：商业化能力在非百济Biotech中领先（3,000人团队），现金储备充裕（¥85亿），礼来合作提供差异化背书<br>
+    - <strong>结论</strong>：信达是Biotech第二梯队的"锚点"——比上不足比下有余。信用质量稳健但不惊艳，BBB评级合理反映其"PD-1已商业化但后续管线待验证"的核心状态
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- A4: MARKET PRICING SIGNALS (轨道B) -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="signal signal-amber"></span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20 text-secondary">独立于基本面分析的量化信号层，仅呈现市场定价行为，不做基本面解读</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 信用利差</h3>
+      <p>PD-1竞争加剧，信用利差处于中性偏高水平</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 波动率</h3>
+      <p>股价波动率处于行业中等水平，市场观望情绪浓厚</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-green"></span> 资金流向</h3>
+      <p>港股通持仓稳定，礼来持股~8%提供信心支撑</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-green"></span> 评级事件</h3>
+      <p>BBB 展望稳定，PD-1基本盘支撑信用质量</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- SECTION 3: CROSS COLLISION -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">04</span> 交叉对撞 · 轨道A vs 轨道B</h2>
+
+  <div class="grid-2" class="mb-16">
+    <div class="info-box" class="card-bg-teal">
+      <strong>轨道A：基本面分析</strong><br><br>
+      <span class="fs-24 fw-800" class="text-teal">BBB (5.80)</span><br><br>
+      <strong>支撑因素：</strong><br>
+      - PD-1已商业化+医保全覆盖，营收~¥65-70亿<br>
+      - 现金储备¥85亿，可支撑2-3年<br>
+      - 亏损持续收窄，2027-2028年有望盈亏平衡<br>
+      - 礼来合作提供技术+海外通道<br><br>
+      <strong>风险因素：</strong><br>
+      - PD-1红海竞争，6家国产已上市<br>
+      - 后续管线缺乏重磅炸弹潜力<br>
+      - 海外商业化能力几乎空白
+    </div>
+    <div class="info-box" class="card-bg-amber">
+      <strong>轨道B：市场定价信号</strong><br><br>
+      <span class="fs-24 fw-800" class="text-teal">中性偏正面</span><br><br>
+      <strong>关键信号：</strong><br>
+      - 股价在52周区间中部，无极端波动<br>
+      - PS 10-12x，行业中枢估值<br>
+      - 机构15+家覆盖，评级以买入/持有为主<br>
+      - 礼来持股稳定，港股通温和流入<br><br>
+      <strong>关键缺失：</strong><br>
+      - 无活跃债券市场信号可参考<br>
+      - 可转债交易量偏低
+    </div>
+  </div>
+
+  <h3 class="fs-15 mb-12">分歧定位：信达落在哪个象限？</h3>
+
+  <div class="quad-grid">
+    <div class="quad-item active">
+      <h4 class="text-teal">共识中性偏正面 ← 信达当前位置</h4>
+      <div class="q-desc">基本面中等(BBB) + 市场定价中性</div>
+      <div class="fs-11" class="mt-4" class="text-secondary">双轨一致指向"稳健但无惊喜"——信达属于最典型的BBB级标的</div>
+    </div>
+    <div class="quad-item" class="op-4">
+      <h4>分歧：市场在恐慌什么？</h4>
+      <div class="q-desc">基本面中等 + 市场负面</div>
+    </div>
+    <div class="quad-item" class="op-4">
+      <h4>分歧：市场在忽视什么？</h4>
+      <div class="q-desc">基本面差 + 市场冷静</div>
+    </div>
+    <div class="quad-item" class="op-5">
+      <h4>共识看好</h4>
+      <div class="q-desc">基本面好 + 市场正面</div>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-purple">
+    <strong>分歧本质：PD-1的红海竞争是否已被市场充分定价？</strong><br><br>
+    轨道A（基本面BBB）和轨道B（市场中性）指向了同一个方向——但核心问题在于：<strong>PD-1价格战的烈度是否已经见底？</strong><br><br>
+    当前市场定价似乎在反映"PD-1最坏的降价周期已经过去"的预期。2025年医保续约降价幅度温和（10-15%）是一个积极信号，但PD-1的适应症扩张空间也在收窄。如果IL-23p19或CLDN18.2 ADC在2027-2028年顺利获批，信达将获得第二增长曲线——这是当前BBB评级的基础假设。<br><br>
+    <strong>最大的潜在上行风险</strong>：如果IL-23p19在自免领域取得突破性数据，信达的管线估值可能重新定价，带动评级上调至BBB+/A-区间。<br>
+    <strong>最大的潜在下行风险</strong>：如果PD-1价格战再次加剧+后续管线临床数据不及预期，信达的盈亏平衡时间表可能推后至2029年之后，评级可能下调至BB+。
+  </div>
+
+  <h3 class="fs-14" class="my-20">对撞产生的关键追问</h3>
+  <table>
+    <tr><td class="w-4"><strong>1</strong></td><td>PD-1（信迪利单抗）2025年医保续约后实际价格降幅和销量增长如何？以价换量的平衡是否仍在正区间？<br><span class="fs-12" class="text-secondary">决定PD-1基本盘的收入和利润贡献趋势</span></td></tr>
+    <tr><td><strong>2</strong></td><td>IBI-112（IL-23p19，自免）的III期临床数据读出时间表和监管路径？自免管线能否成为第二增长曲线？<br><span class="fs-12" class="text-secondary">管线中最具重磅潜力的品种，决定后续管线的实际价值</span></td></tr>
+    <tr><td><strong>3</strong></td><td>研发费用率（~45%）是否会随着营收增长进一步下降？管理层给出的盈亏平衡时间表是否可靠？<br><span class="fs-12" class="text-secondary">决定财务改善路径的可信度</span></td></tr>
+    <tr><td><strong>4</strong></td><td>与礼来的合作在海外注册方面是否有明确的里程碑？替雷利珠已在50+市场获批，信达的海外战略如何差异化？<br><span class="fs-12" class="text-secondary">国际化是信达与百济最大的差距，需要明确追赶路径</span></td></tr>
+  </table>
+</div>
+
+<!-- ================================================================ -->
+<!-- SECTION 4: RISK SIGNAL CHECKLIST -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">05</span> 风险信号清单 · 按紧急度排列</h2>
+  <p class="fs-13 mb-16" class="text-secondary">从信贷经理视角出发，按风险紧急度从高到低排列。信达的风险整体可控，无短期信用事件触发因素，但中期风险需要持续跟踪。</p>
+
+  <div class="risk-list">
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-dot amber"></span>高 #1</div>
+      <div>
+        <strong>PD-1竞争激烈（6家已上市）——利润空间持续压缩</strong><br>
+        <span class="text-secondary">6家国产PD-1已上市+进口Keytruda/Opdivo持续发力，PD-1赛道已成红海。医保谈判推动下价格从~¥30万/年降至~¥5-8万/年，毛利率承压。虽然信迪利单抗以量补价策略基本成功，但进一步的降价压力可能侵蚀利润改善空间。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-dot amber"></span>高 #2</div>
+      <div>
+        <strong>持续亏损——盈亏平衡时间表存在不确定性</strong><br>
+        <span class="text-secondary">2025年净亏损¥10-15亿，虽然大幅收窄但仍未转正。研发费用~¥30亿/年+销售费用构成主要支出。管理层目标2027-2028年盈亏平衡，但如果PD-1放量低于预期或研发投入超支，时间表可能推迟。</span>
+      </div>
+    </div>
+    <div class="risk-item medium">
+      <div class="risk-num"><span class="signal-dot green"></span>中 #3</div>
+      <div>
+        <strong>后续管线缺乏重磅品种——PD-1之后的第二增长曲线不明确</strong><br>
+        <span class="text-secondary">IBI-112（IL-23p19）在自免领域有潜力，但自免市场推广与信达现有肿瘤销售团队不匹配，商业化能力需重新搭建。CLDN18.2 ADC处于早期阶段，靶点竞争同样激烈（康诺亚、科济等均在布局）。管线梯队虽广但缺乏确定性强的重磅品种。</span>
+      </div>
+    </div>
+    <div class="risk-item medium">
+      <div class="risk-num"><span class="signal-dot green"></span>中 #4</div>
+      <div>
+        <strong>海外商业化能力几乎空白——国际化进度落后于百济</strong><br>
+        <span class="text-secondary">与百济泽布替尼全球75+市场商业化相比，信达海外收入占比<5%。PD-1海外注册虽有礼来合作但进度落后于百济替雷利珠（50+市场获批）。在全球Biotech估值体系中，国际化程度直接影响估值溢价，海外空白是信达与百济最大的结构性差距。</span>
+      </div>
+    </div>
+    <div class="risk-item medium">
+      <div class="risk-num"><span class="signal-dot green"></span>中 #5</div>
+      <div>
+        <strong>生物类似药竞争加剧——稳定现金流基础受冲击</strong><br>
+        <span class="text-secondary">贝伐珠单抗、利妥昔单抗等生物类似药面临齐鲁、复宏汉霖等对手的价格竞争，集采压力逐步加大。虽然当前贡献稳定现金流（~¥15-20亿），但增速放缓且利润率下降趋势明显，长期看这部分收入可能被压缩。</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="fs-14" class="my-20">贷后监测清单</h3>
+  <div class="grid-2">
+    <div class="card" class="card-teal">
+      <h3><span class="signal-dot green"></span>常规监控（季度）</h3>
+      <ul class="checklist">
+        <li>信迪利单抗季度销售额及市占率变化</li>
+        <li>研发费用率趋势（当前~45%）</li>
+        <li>现金余额及烧钱速度变化</li>
+        <li>PD-1医保续约降价幅度</li>
+      </ul>
+    </div>
+    <div class="card" class="card-amber">
+      <h3><span class="signal-dot amber"></span>关键事件（触发即检）</h3>
+      <ul class="checklist">
+        <li>IBI-112 III期临床数据读出</li>
+        <li>新增PD-1/FIC竞品获批上市</li>
+        <li>管理层调整盈亏平衡时间指引</li>
+        <li>礼来合作条款重大变更</li>
+        <li>重大管线终止或安全性事件</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- SECTION 5: CREDIT RECOMMENDATION -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">06</span> 信贷建议 · 对公信贷经理视角</h2>
+
+  <div class="card" class="card-teal">
+    <h3>适度支持 — BBB级信用，中等风险偏好下的合理信贷标的</h3>
+    <p class="fs-13 mb-12" class="lh-18">
+      信达生物代表了Biotech企业的"中等风险"样本——PD-1商业化提供了收入底盘和现金流基础，现金储备充裕提供了安全垫，亏损收窄趋势明确。但PD-1竞争红海和后续管线不确定性决定了其信用质量无法与百济同日而语。<br><br>
+      对于具备中等风险偏好的银行，信达是一个合理的信贷标的——风险可控，回报适中。相比迈威（CCC/回避）和百济（A-/低风险溢价的竞争激烈），信达BBB的性价比在于：信用质量足够稳健，同时市场对其关注度不如百济高，信贷定价可能更有竞争力。
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h3>授信方案建议</h3>
+      <table>
+        <tr><td class="w-35"><strong>授信期限</strong></td><td><span class="text-green">中期（2-3年）</span> — 匹配其盈亏平衡时间表（2027-2028年），不过度展期</td></tr>
+        <tr><td><strong>授信用途</strong></td><td><span class="text-blue">研发管线推进+商业化扩展</span> — 尤其是IL-23p19 III期临床费用和自免销售团队建设</td></tr>
+        <tr><td><strong>建议额度</strong></td><td><span class="text-amber">中等额度（¥5-15亿）</span> — 基于其~¥85亿现金储备和亏损状态，额度过大则风险集中</td></tr>
+        <tr><td><strong>增信措施</strong></td><td><span class="text-purple">管线资产质押+IP尽调</span> — 核心管线专利（CLDN18.2 ADC、IL-23p19）作为底层资产，折当率不超过40%</td></tr>
+      </table>
+    </div>
+    <div class="card card-amber">
+      <h3>约束条款建议</h3>
+      <table>
+        <tr><td class="w-35"><strong>财务约束</strong></td><td>现金储备不低于¥50亿，资产负债率不超过60%，禁止新增重大有息负债</td></tr>
+        <tr><td><strong>经营约束</strong></td><td>重大管线终止/研发策略调整需事前报备，研发费用率不得超出当前水平10%以上</td></tr>
+        <tr><td><strong>股权约束</strong></td><td>礼来持股不得低于5%，实控人变更触发加速到期</td></tr>
+        <tr><td><strong>信息报告</strong></td><td>季度财务报告+管线里程碑进展报告+现金余额月报</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-teal">
+    <strong>核心逻辑总结：</strong>信达不是百济（无全球化+未盈利），也不是迈威（有PD-1+现金充裕）。它是中国Biotech"第二梯队"的信用锚点——PD-1基本盘提供了下行保护，管线梯队提供了上行空间，现金储备提供了安全垫。<br><br>
+    <strong>建议：</strong>在中等风险偏好下，信达BBB评级值得给予中等额度授信。核心关注盈亏平衡时间表和IL-23p19数据——这两个变量决定了评级上调或下调的方向。贷款期限建议控制在3年以内，匹配公司从亏损到盈利的过渡期。<br><br>
+    <strong>不推荐的操作：</strong>（1）纯信用无担保贷款——BBB级仍需要锁定核心专利作为底层增信；<br>（2）超过5年的长期贷款——Biotech管线价值释放周期存在不确定性；<br>（3）以"管线估值"作为主要信贷决策依据——管线价值是股权逻辑，不是信贷逻辑。
+  </div>
+
+  <!-- Cash flow projection -->
+  <div class="card" class="mt-16">
+    <h3>现金流展望 · 关键假设与敏感性</h3>
+    <p class="fs-12 mb-12" class="text-secondary">基于当前~¥85亿现金储备和年亏损~¥10-15亿的基线，模拟不同情景下信达的财务安全边界</p>
+    <table>
+      <thead><tr><th>情景</th><th class="ct">假设条件</th><th class="ct">年现金消耗</th><th class="ct">现金跑道</th><th class="ct">信用含义</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>乐观情景（概率30%）</strong></td>
+          <td class="ct">PD-1以量补价持续，IL-23p19 III期成功+自免团队搭建顺利，2027年盈亏平衡</td>
+          <td class="ct"><span class="text-green">~¥5-8亿</span></td>
+          <td class="ct"><span class="text-green">~4-5年</span></td>
+          <td class="ct">评级上调至BBB+，信贷空间扩大</td>
+        </tr>
+        <tr class="bg-hover">
+          <td><strong>基准情景（概率50%）</strong></td>
+          <td class="ct">PD-1温和增长+生物类似药稳定，IL-23p19 2027-2028年获批，2028年盈亏平衡</td>
+          <td class="ct"><span class="text-amber">~¥8-12亿</span></td>
+          <td class="ct"><span class="text-amber">~3年</span></td>
+          <td class="ct">BBB维持，按当前方案执行</td>
+        </tr>
+        <tr>
+          <td><strong>悲观情景（概率20%）</strong></td>
+          <td class="ct">PD-1价格战加剧（新竞品+集采扩面），IL-23p19数据不及预期，亏损扩大至¥15-20亿</td>
+          <td class="ct"><span class="text-red">~¥15-20亿</span></td>
+          <td class="ct"><span class="text-red">~2年</span></td>
+          <td class="ct">可能下调至BB+/BB，需收紧敞口</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fs-12 mt-8" class="text-secondary">
+      <strong>评估：</strong>基准情景下现金跑道约3年，即使悲观情景也有约2年安全垫。信达的财务状况稳健性明显优于迈威（15-19个月）等高风险Biotech。核心变量是IL-23p19的临床数据和PD-1价格战的烈度。
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- SECTION 6: COMPLETENESS REPORT -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">07</span> 完备性报告 · 信号密度与数据缺口</h2>
+
+  <h3 class="fs-14 mb-8">信号密集度评估</h3>
+  <p class="fs-12 mb-8" class="text-secondary">基础信号密度：L1(4项) + L2(4项) + L3(4项) + L4(4项) + 市场(4项+2项) = 22项有效信号</p>
+
+  <div class="grid-3" class="mb-20">
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L1 政策与医保</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">5.5/10 中等</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L2 研发管线</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">5/10 中等</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L3 商业化</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">5/10 中等</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L4 财务</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">4.5/10 偏低</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">市场信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">4.5/10 偏低</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">综合信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">5/10 中等（港股+科创板双重披露，信息透明度优于科创板Biotech）</div>
+    </div>
+  </div>
+
+  <h3 class="fs-14 mb-8">关键缺口与改进建议</h3>
+  <p class="fs-12 mb-12" class="text-secondary">以下数据在现有公开数据源中不可获取或置信度不足，建议信贷经理通过银行内部系统或企业尽调补充</p>
+
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>分产品线收入明细及毛利率</strong> — 信迪利单抗vs生物类似药vs其他产品的收入拆分和各自毛利率。需要确认PD-1的真实利润贡献和竞争压力传导路径。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>IL-23p19 III期临床数据时间表</strong> — IBI-112的入组进度、数据读出时间节点和预期疗效数据。这是评估管线价值能否兑现的关键信息。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>现金构成细节</strong> — ¥85亿现金中，受限资金（募集资金专户、保函保证金等）、理财占比、可自由支配现金的实际金额。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>研发管线详细成本拆解</strong> — 各管线研发投入分布，核心品种vs非核心品种的研发资源配置，可调整的弹性空间。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>礼来合作的具体条款和里程碑</strong> — 海外注册分工协议、里程碑付款安排、利润分成模式。评估信达海外战略的真实路径。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>可比公司完整金字塔评分定期刷新</strong> — 百济、荣昌、君实等同行最新数据需定期更新，维持行业对比框架的时效性。</span>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- FOOTER -->
+<!-- ================================================================ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>单标的深度分析 · 信达生物 (01801.HK)</strong></p>
+  <p>分析框架：Type 1 单标的四层金字塔 × 双轨交叉验证</p>
+  <p>数据截止 2026-07-09 · 全部基于公开数据 · 仅供信贷决策参考</p>
+  <p class="mt-6 fs-11" class="text-tertiary">《生物医药行业信用分析 · 三档分布》— 百济神州(A-/强) · 信达生物(BBB/中) · 迈威生物(CCC/弱)</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>
