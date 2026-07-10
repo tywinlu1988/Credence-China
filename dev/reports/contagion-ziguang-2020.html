@@ -38,7 +38,7 @@
     <span>违约日：2020-11-16（17紫光PPN005）</span>
     <span>传染类型：信心崩塌 + 流动性挤兑 + 信用链传染</span>
     <span>波及范围：清华系/校企/半导体/高收益债</span>
-    <span>版本：v0.6.2</span>
+    <span>版本：v0.7.0-alpha</span>
   </div>
 </div>
 
@@ -804,11 +804,55 @@
     </div>
   </div>
 
+  <!-- ====== 附录：v0.7.0四种传染类型重新分类 ====== -->
+  <div class="section">
+    <h2 class="section-title">附录：v0.7.0四种传染类型重新分类</h2>
+    <div class="card">
+      <h3>紫光案例在v0.7.0新型四类框架中的映射</h3>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;margin-bottom:12px;">
+        v0.7.0将传染类型重构为四大标准分类：<strong>信用链传染</strong>（供应链/客户-供应商关联）、<strong>区域共振</strong>（同区域无差别重定价）、<strong>流动性挤兑</strong>（融资渠道同步冻结）、<strong>信心崩塌</strong>（市场信仰/标签失效引发的全面重估）。以下展示紫光案例在这四类框架中的映射。
+      </p>
+      <table>
+        <thead><tr><th>v0.7.0传染类型</th><th>适用性</th><th>传染强度(1-5)</th><th>紫光案例具体表现</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>信用链传染</strong></td>
+            <td><span class="tag tag-amber">部分适用</span></td>
+            <td><span class="tag tag-amber">3/5</span></td>
+            <td>紫光的信用链主要通过"同实际控制人"路径传导——紫光违约→清华控股债暴跌27%→同方/诚志/启迪信用重估。这种基于股权控制关系的传染在v0.7.0框架中被归入信用链传染子类"控制权关联传导"，与供应链信用链（房地产案例）形成区分。半导体行业利差走阔30-40bp属于间接影响。</td>
+          </tr>
+          <tr>
+            <td><strong>区域共振</strong></td>
+            <td><span class="tag tag-green">低适用</span></td>
+            <td><span class="tag tag-green">1/5</span></td>
+            <td>紫光为北京注册企业，但违约对北京区域国企的传染效应极为有限。校企/半导体企业与区域关联度低，区域共振权重仅约10%。v0.7.0框架将此低权重归因于紫光的"全国性运营+单一实际控制人"结构——与区域型国企（如永煤/河南能化）有本质差异。</td>
+          </tr>
+          <tr>
+            <td><strong>流动性挤兑</strong></td>
+            <td><span class="tag tag-amber">部分适用</span></td>
+            <td><span class="tag tag-amber">3/5</span></td>
+            <td>紫光违约进一步加剧了永煤已引发的信用债一级市场冻结。校企概念债从"受追捧"变为"被规避"——融资渠道在数天内从畅通转为冻结。但与房地产的5渠道全部冻结不同，紫光影响的融资渠道集中于债券市场，银行信贷和其他渠道受影响有限。</td>
+          </tr>
+          <tr>
+            <td><strong>信心崩塌</strong></td>
+            <td><span class="tag tag-red">核心适用</span></td>
+            <td><span class="tag tag-red">5/5</span></td>
+            <td><strong>本案例最核心的传染类型。</strong>紫光同时承载"校企信仰"和"国家战略信仰"两种市场信念。当两种信仰同时崩塌时，传染的破坏力不只是加法，而是乘法。与永煤（6天前违约）叠加形成了"三重信仰在一周内崩塌"的历史性冲击——AAA国企信仰、校企信仰、国家战略信仰。v0.7.0框架新增的"多重信仰载体"参数在此案例中得到完整验证。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box info-amber" style="margin-top:12px;">
+        <strong>重分类结论：</strong>紫光案例在v0.7.0框架下被重新分类为以<strong>信心崩塌（5/5）</strong>为绝对主导、<strong>信用链传染（3/5）和流动性挤兑（3/5）</strong>为辅助、<strong>区域共振（1/5）</strong>为极低权重的传染事件。旧分类中的"CONTAGION TYPE 3"标签对应新框架中"信心崩塌主导型"——与永煤（区域共振+信心崩塌双主导）和房地产（信用链+流动性挤兑双主导）形成三种不同的传染类型权重分布。紫光案例的独特性在于其"双重信仰载体"结构（校企+国家战略），使信心崩塌权重（40%→50%）在v0.7.0框架中进一步调高。
+      </div>
+    </div>
+  </div>
+
   <!-- ====== FOOTER ====== -->
   <div class="divider"></div>
   <div class="footer">
     <p><strong>传染复盘报告 · 紫光集团传染链 2020.11</strong></p>
-    <p>报告生成时间：2026-07-10 | 基于统一信贷评估框架 v0.6.2 · 传染理论 v0.6.1-alpha | 仅供内部参考</p>
+    <p>报告生成时间：2026-07-10 | 基于统一信贷评估框架 v0.7.0-alpha · 传染理论 v0.7.0-alpha | 仅供内部参考</p>
     <p style="margin-top:8px;font-size:10px;">数据来源：Wind、中债估值、申万宏源、财联社、中诚信国际、第一财经、经济观察报、全球企业动态、新浪财经等公开市场数据。本报告为事后复盘分析，不构成投资建议。</p>
   </div>
 

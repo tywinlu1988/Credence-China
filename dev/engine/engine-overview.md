@@ -208,7 +208,7 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | 0.3.0 | 2026-07-08 | 马赛克引擎架构、多利益方覆盖、P0债券投资仪表盘、信号置信度/密度、完备性报告 |
 | 0.4.0 | 2026-07-08 | 评级粒度从6档扩展至12档（+/-子级）、EL预期损失整合层、中国市场PD参考校准 |
 | 0.5.4-alpha | 2026-07-10 | 一致性审计修复：术语统一、阈值对齐、版本号标准化、交叉引用补全 |
-| **0.7.0-release** | **2026-07-10** | **系统智能层发布：+传染矩阵、集中度框架、系统性预警框架。引擎架构升级至四层。13行业覆盖。M4组合风控完整实现。** |
+| **0.7.0-alpha** | **2026-07-10** | **系统智能层发布：+传染矩阵、集中度框架、系统性预警框架。引擎架构升级至四层。13行业覆盖。M4组合风控完整实现。** |
 
 ---
 
@@ -234,9 +234,12 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | quantitative-analysis.md | v0.7.0-alpha | 定量分析方法论 |
 | mosaic-engine.md | v0.7.0-alpha | 马赛克引擎 |
 | output-layered-framework.md | v0.7.0-alpha | 分层输出框架 |
+| contagion-theory.md | v0.7.0-alpha | 传染理论基础（系统智能层） |
 | contagion-matrix.md | v0.7.0-alpha | 13行业传染矩阵 |
 | concentration-framework.md | v0.7.0-alpha | 五维集中度分析框架 |
 | systemic-warning-framework.md | v0.7.0-alpha | 系统性预警框架 |
+
+**职责边界说明：** 原有M4组合风控框架（multi-stakeholder.md §5）承担单发行人/单组合的风控职能（集中度限额/压力测试/评级调整）。系统智能层（contagion-matrix.md/concentration-framework.md/systemic-warning-framework.md）在M4基础上增加跨发行人/跨组合的系统性风险分析——传染矩阵覆盖全市场行业对传导、集中度框架覆盖五维组合集中度、预警框架提供全市场SRI读数。两者分工明确：原有M4做单发行人风控·系统智能层做跨发行人系统性风险。
 
 ### 8.3 版本管理原则
 
@@ -256,5 +259,6 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 - [双轨分析方法论](dual-track-methodology.md) — 轨道A+轨道B、交叉对撞、评级映射、完整推理实例
 - [马赛克引擎](mosaic-engine.md) — 信号提取、拼图、完备性评估、Mode B接口定义
 - [13行业传染矩阵](contagion-matrix.md) — 13×13行业间传染路径、传导强度、行业聚类
+- [传染理论基础](contagion-theory.md) — 传染类型、传导机制、升级因子理论
 - [五维集中度分析框架](concentration-framework.md) — 行业/区域/评级/期限/融资渠道集中度评估
 - [系统性预警框架](systemic-warning-framework.md) — SRI信号聚合算法、四级温度计、历史回测

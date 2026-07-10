@@ -7,75 +7,8 @@
 <title>组合集中度评估报告 · 辽宁区域国企集中 · 东北振兴信用债组合</title>
 <link rel="stylesheet" href="../design/templates/template-base.css">
 <style>
-  /* ===== Hero — deep indigo gradient for Type 14 Concentration ===== */
-  .hero-concentration {
-    background: linear-gradient(135deg, #0a0e27, #1a1f4e, #2d2a6e, #1a1f4e);
-    text-align: center;
-    padding: 60px 0 44px;
-    margin: -24px -24px 0;
-    border-radius: 0 0 24px 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-concentration::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .hero-concentration::after {
-    content: '';
-    position: absolute;
-    bottom: -80px; left: -40px;
-    width: 250px; height: 250px;
-    background: radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .hero-concentration .container > * { position: relative; z-index: 1; }
-  .hero-concentration h1 {
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    color: #ffffff;
-    margin-bottom: 10px;
-    text-shadow: 0 2px 16px rgba(0,0,0,0.4);
-  }
-  .hero-concentration .subtitle {
-    font-size: 14px;
-    color: rgba(255,255,255,0.7);
-    max-width: 720px;
-    margin: 0 auto;
-    line-height: 1.7;
-  }
-  .hero-concentration .meta {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .hero-concentration .meta span {
-    padding: 5px 14px;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 20px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.8);
-  }
-  .hero-concentration .chip {
-    display: inline-block;
-    background: rgba(168,85,247,0.35);
-    color: #c084fc;
-    border: 1px solid rgba(168,85,247,0.4);
-    border-radius: 20px;
-    padding: 5px 18px;
-    font-size: 12px;
-    letter-spacing: 1px;
-    margin-bottom: 18px;
-    backdrop-filter: blur(4px);
-  }
+  /* ===== Hero — standard gradient for Type 14 Concentration ===== */
+  .hero { background: linear-gradient(135deg, #0a0e27, #1a1f4e, #2d2a6e, #1a1f4e); }
 
   /* ===== Heatmap grid ===== */
   .heatmap-grid {
@@ -276,23 +209,21 @@
 <body>
 
 <!-- ================================================================ -->
-<!-- SECTION 1: HERO                                                 -->
+<!-- HERO — 深紫深蓝渐变 -->
 <!-- ================================================================ -->
-<div class="hero-concentration">
-  <div class="container">
-    <span class="chip">TYPE 14 · 组合集中度评估报告</span>
-    <h1>辽宁区域国企集中组合 · 集中度深度评估</h1>
-    <p class="subtitle">
-      基于五维集中度框架，对"东北振兴信用债组合"的行业、区域、评级、期限、渠道五大维度进行系统性集中度评分。
-      辽宁区域国企风险敞口达40%，叠加永煤事件后弱区域融资环境持续恶化，触发极端集中预警。
-    </p>
-    <div class="meta">
-      <span>组合名称：东北振兴信用债组合</span>
-      <span>分析日期：2026-06-30</span>
-      <span>组合规模：60亿元</span>
-      <span>综合集中度评分：8.2/10</span>
-      <span>版本：v0.6.2</span>
-    </div>
+<div class="hero">
+  <span class="chip">组合集中度评估报告 · TYPE 14</span>
+  <h1>辽宁区域国企集中组合 · 集中度深度评估</h1>
+  <p class="subtitle">
+    基于五维集中度框架，对"东北振兴信用债组合"的行业、区域、评级、期限、渠道五大维度进行系统性集中度评分。
+    辽宁区域国企风险敞口达40%，叠加永煤事件后弱区域融资环境持续恶化，触发极端集中预警。
+  </p>
+  <div class="meta">
+    <span>组合名称：东北振兴信用债组合</span>
+    <span>分析日期：2026-06-30</span>
+    <span>组合规模：60亿元</span>
+    <span>综合集中度评分：8.2/10</span>
+    <span>版本：v0.7.0-alpha</span>
   </div>
 </div>
 
@@ -1141,7 +1072,7 @@
 <!-- ================================================================ -->
 <div class="footer">
   <p><strong>组合集中度评估报告 · Type 14 · 辽宁区域国企集中组合</strong></p>
-  <p>Credence Report System v0.6.2 | 分析日期：2026-06-30 | 组合：东北振兴信用债组合（60亿元）</p>
+  <p>Credence Report System v0.7.0-alpha | 分析日期：2026-06-30 | 组合：东北振兴信用债组合（60亿元）</p>
   <p>本报告仅供内部风险管理使用，不构成投资建议。数据来源包括组合持仓系统、Wind金融终端、内部评级模型、交易对手确认信息。</p>
   <p style="margin-top:6px;">生成时间：2026-07-10 13:30:00 CST | 报告编号：CRS-CONC-LN-20260710-001</p>
 </div>

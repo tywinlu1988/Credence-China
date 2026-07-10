@@ -40,7 +40,7 @@
     <span>违约日：2020-11-10</span>
     <span>传染类型：区域共振 + 信心崩塌 + 流动性挤兑</span>
     <span>波及范围：河南/山西/河北国企 · AAA产业债整体</span>
-    <span>版本：v0.6.2</span>
+    <span>版本：v0.7.0-alpha</span>
   </div>
 </div>
 
@@ -793,11 +793,55 @@
     </div>
   </div>
 
+  <!-- ====== 附录：v0.7.0四种传染类型重新分类 ====== -->
+  <div class="section">
+    <h2 class="section-title">附录：v0.7.0四种传染类型重新分类</h2>
+    <div class="card">
+      <h3>永煤案例在v0.7.0新型四类框架中的映射</h3>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;margin-bottom:12px;">
+        v0.7.0将传染类型重构为四大标准分类：<strong>信用链传染</strong>（供应链/客户-供应商关联）、<strong>区域共振</strong>（同区域无差别重定价）、<strong>流动性挤兑</strong>（融资渠道同步冻结）、<strong>信心崩塌</strong>（市场信仰/标签失效引发的全面重估）。以下展示永煤案例在这四类框架中的映射。
+      </p>
+      <table>
+        <thead><tr><th>v0.7.0传染类型</th><th>适用性</th><th>传染强度(1-5)</th><th>永煤案例具体表现</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>信用链传染</strong></td>
+            <td><span class="tag tag-amber">部分适用</span></td>
+            <td><span class="tag tag-amber">2/5</span></td>
+            <td>永煤作为煤炭企业，下游火电/钢铁客户集中度有限，供应链传导不显著。但豫能化母公司通过资金归集体系对永煤的"逆向信用链"值得关注——子公司的信用风险实际由母公司的资金抽调行为触发。</td>
+          </tr>
+          <tr>
+            <td><strong>区域共振</strong></td>
+            <td><span class="tag tag-red">核心适用</span></td>
+            <td><span class="tag tag-red">5/5</span></td>
+            <td><strong>本案例最主导的传染类型。</strong>永煤违约引发河南省全体存续国企无差别抛售（河南投资/河南交投/中原高速等），并迅速扩散至邻省山西（晋煤/潞安/阳煤）和河北（冀中能源/河钢）。区域共振的衰减距离从"同省→邻省→弱区域板块"完整呈现，验证了v0.7.0区域共振框架中"衰减距离4层、衰减系数0.4"的参数设定。</td>
+          </tr>
+          <tr>
+            <td><strong>流动性挤兑</strong></td>
+            <td><span class="tag tag-red">核心适用</span></td>
+            <td><span class="tag tag-red">4/5</span></td>
+            <td>信用债基金净值下跌→机构赎回→基金抛售信用债→信用债整体利差走阔→一级市场冻结（53只/427亿取消发行）的完整流动性负反馈链条启动。信用债质押率从0.85降至0.7，部分债券质押功能完全丧失。</td>
+          </tr>
+          <tr>
+            <td><strong>信心崩塌</strong></td>
+            <td><span class="tag tag-red">核心适用</span></td>
+            <td><span class="tag tag-red">5/5</span></td>
+            <td><strong>永煤打破了"AAA国企刚兑信仰"，是本案例最具持久影响力的传染类型。</strong>"AAA≠刚兑"的认知形成后，全部AAA国企债遭无差别抛售，信用定价体系发生永久性改变——弱资质AAA利差跳升300-500bp。这一类型在旧分类中被归为"区域共振+信心崩塌"的混合标签，v0.7.0将其独立为一类，更精确地反映了信仰崩塌的独立传染机制。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box info-amber" style="margin-top:12px;">
+        <strong>重分类结论：</strong>永煤案例在v0.7.0框架下被重新分类为以<strong>区域共振（5/5）和信心崩塌（5/5）</strong>为双主导、<strong>流动性挤兑（4/5）</strong>为催化剂、<strong>信用链传染（2/5）</strong>为次要类型的传染事件。旧分类中的"CONTAGION TYPE 3"标签对应新框架中"区域共振+信心崩塌"复合类型。这一重分类验证了v0.7.0四类框架对不同信用事件传染机制差异的捕捉能力——与房地产（信用链主导）、紫光（信心崩塌主导）的传染类型分布形成有效区分。
+      </div>
+    </div>
+  </div>
+
   <!-- ====== FOOTER ====== -->
   <div class="divider"></div>
   <div class="footer">
     <p><strong>传染复盘报告 · 永煤控股传染链 2020.10-11</strong></p>
-    <p>报告生成时间：2026-07-10 | 基于统一信贷评估框架 v0.6.2 · 传染理论 v0.6.1-alpha | 仅供内部参考</p>
+    <p>报告生成时间：2026-07-10 | 基于统一信贷评估框架 v0.7.0-alpha · 传染理论 v0.7.0-alpha | 仅供内部参考</p>
     <p style="margin-top:8px;font-size:10px;">数据来源：Wind、中债估值、财联社、中金固收、国泰君安固收、申万宏源、天风证券、华创证券、第一财经、彭博等公开市场数据。本报告为事后复盘分析，不构成投资建议。</p>
   </div>
 

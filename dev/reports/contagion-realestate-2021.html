@@ -39,7 +39,7 @@
     <span>爆发期：2021.06-2023</span>
     <span>传染类型：信用链传染 + 流动性挤兑 + 信心崩塌 + 区域共振</span>
     <span>波及范围：地产/建筑/建材/银行/家电/城投</span>
-    <span>版本：v0.6.2</span>
+    <span>版本：v0.7.0-alpha</span>
   </div>
 </div>
 
@@ -791,11 +791,55 @@
     </div>
   </div>
 
+  <!-- ====== 附录：v0.7.0四种传染类型重新分类 ====== -->
+  <div class="section">
+    <h2 class="section-title">附录：v0.7.0四种传染类型重新分类</h2>
+    <div class="card">
+      <h3>房地产案例在v0.7.0新型四类框架中的映射</h3>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;margin-bottom:12px;">
+        v0.7.0将传染类型重构为四大标准分类：<strong>信用链传染</strong>（供应链/客户-供应商关联）、<strong>区域共振</strong>（同区域无差别重定价）、<strong>流动性挤兑</strong>（融资渠道同步冻结）、<strong>信心崩塌</strong>（市场信仰/标签失效引发的全面重估）。以下展示房地产案例在这四类框架中的映射。
+      </p>
+      <table>
+        <thead><tr><th>v0.7.0传染类型</th><th>适用性</th><th>传染强度(1-5)</th><th>房地产案例具体表现</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>信用链传染</strong></td>
+            <td><span class="tag tag-red">核心适用</span></td>
+            <td><span class="tag tag-red">5/5</span></td>
+            <td><strong>本案例最主导的传染类型。</strong>恒大违约导致40+家A股上市供应商受影响，涉及14个申万二级行业、3,700亿市值。金螳螂77亿坏账、广田集团32亿坏账、全筑股份亏损8-12亿等典型案例完整呈现了"房企→建筑商（应收账款坏账）→建材供应商→家电/家居"的三层信用链传导路径。延迟引爆特征在违约后6-9个月的财务报表中充分体现。</td>
+          </tr>
+          <tr>
+            <td><strong>区域共振</strong></td>
+            <td><span class="tag tag-amber">部分适用</span></td>
+            <td><span class="tag tag-amber">3/5</span></td>
+            <td>房企违约→土地出让金收入暴跌→地方财政压力→城投信用恶化→地方银行资产质量下滑的"三角传染"路径。区域共振通过土地财政间接传导，强度低于永煤案例，因为房地产企业项目分布的全国性特征弱化了单一区域的共振效应。</td>
+          </tr>
+          <tr>
+            <td><strong>流动性挤兑</strong></td>
+            <td><span class="tag tag-red">核心适用</span></td>
+            <td><span class="tag tag-red">5/5</span></td>
+            <td><strong>地产行业5个主要融资渠道（境内债、美元债、信托、银行开发贷、ABS）同时冻结，形成了"渠道协同冻结"的乘积效应。</strong>中资高收益债利差飙升至2337bp创历史纪录，iBoxx高收益指数下跌16%，地产美元债价格暴跌30-70%。这一案例是v0.7.0流动性挤兑类型中"多渠道路径协同"模型的标杆验证。</td>
+          </tr>
+          <tr>
+            <td><strong>信心崩塌</strong></td>
+            <td><span class="tag tag-red">核心适用</span></td>
+            <td><span class="tag tag-red">4/5</span></td>
+            <td>恒大违约打破了"大而不倒"的头部房企信仰。穆迪一天内下调7家中国房企评级，2021年以来超过60家房企评级被下调、约150次。地产行业信用定价体系发生永久性变化——"国企为主、民企为辅"成为新格局。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box info-amber" style="margin-top:12px;">
+        <strong>重分类结论：</strong>房地产传染链在v0.7.0框架下被重新分类为以<strong>信用链传染（5/5）和流动性挤兑（5/5）</strong>为双主导、<strong>信心崩塌（4/5）</strong>为重要类型、<strong>区域共振（3/5）</strong>为间接传导的混合型传染事件。与永煤案例（区域共振+信心崩塌主导）形成鲜明对比——房地产的产业链长度（14个行业）和融资渠道多元化（5个渠道同时冻结）使其成为v0.7.0框架中"信用链+流动性挤兑复合型"的标准模板。旧分类中的"CONTAGION TYPE 3"标签在v0.7.0框架下被精确拆解为四种类型的加权组合。
+      </div>
+    </div>
+  </div>
+
   <!-- ====== FOOTER ====== -->
   <div class="divider"></div>
   <div class="footer">
     <p><strong>传染复盘报告 · 房地产行业传染链 2021-2023</strong></p>
-    <p>报告生成时间：2026-07-10 | 基于统一信贷评估框架 v0.6.2 · 传染理论 v0.6.1-alpha | 仅供内部参考</p>
+    <p>报告生成时间：2026-07-10 | 基于统一信贷评估框架 v0.7.0-alpha · 传染理论 v0.7.0-alpha | 仅供内部参考</p>
     <p style="margin-top:8px;font-size:10px;">数据来源：Wind、财联社、国泰海通证券、中泰证券、标普全球评级、穆迪、惠誉、天风证券、国信证券、21世纪经济报道、第一财经、经济观察报等。本报告为事后复盘分析，不构成投资建议。</p>
   </div>
 
