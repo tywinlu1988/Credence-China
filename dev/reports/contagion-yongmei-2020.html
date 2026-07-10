@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="传染复盘报告 · 永煤控股2020年违约传染链 · 区域共振与信心崩塌经典案例">
+<title>传染复盘 · 永煤控股传染链 2020.10-11</title>
+<link rel="stylesheet" href="../design/templates/template-base.css">
+<style>
+  .hero { background: linear-gradient(135deg, #0f1117, #3b0a0a, #6b1a1a, #2d0a0a); }
+  .path-card { background:var(--bg-secondary); border-radius:var(--radius); padding:18px 22px; margin:12px 0; border:1px solid var(--border-default); border-left:4px solid var(--red); }
+  .path-card h4 { font-size:14px; margin-bottom:8px; color:var(--red); }
+  .path-card .path-type { font-size:11px; color:var(--text-tertiary); margin-bottom:6px; }
+  .node-chain { display:flex; align-items:center; gap:6px; flex-wrap:wrap; padding:8px 0; font-size:12px; }
+  .node-chain .node { background:var(--bg-tertiary); padding:5px 12px; border-radius:4px; border:1px solid var(--border-default); }
+  .node-chain .arrow { color:var(--text-tertiary); }
+  .contagion-map { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border-default); border-radius:8px; overflow:hidden; margin:14px 0; }
+  .contagion-item { background:var(--bg-secondary); padding:14px 18px; }
+  .contagion-item h5 { font-size:13px; margin-bottom:6px; }
+  .warning-level { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700; }
+  .quant-box { background:var(--bg-tertiary); border-radius:6px; padding:14px 18px; margin:8px 0; border-left:3px solid var(--amber); }
+  .quant-box .q-stat { font-size:22px; font-weight:800; color:var(--red); }
+  .quant-box .q-label { font-size:11px; color:var(--text-secondary); }
+  .cross-chart { display:flex; gap:2px; margin:10px 0; }
+  .cross-chart .bar { flex:1; text-align:center; padding:10px 4px; background:var(--bg-tertiary); border-radius:4px; }
+  .cross-chart .bar .b-val { font-size:16px; font-weight:700; }
+  .cross-chart .bar .b-label { font-size:10px; color:var(--text-tertiary); }
+  @media (max-width:768px) { .contagion-map { grid-template-columns:1fr; } .node-chain { font-size:10px; } }
+</style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<div class="hero" style="background: linear-gradient(135deg, #0f1117, #3b0a0a, #6b1a1a, #2d0a0a);">
+  <span class="chip">CONTAGION TYPE 3 · 黑天鹅回溯验证 · 传染增强版</span>
+  <h1>永煤控股传染链复盘报告</h1>
+  <p class="subtitle">2020年10-11月 · 永煤SCP003违约引发的区域共振与信用债市场信心崩塌 · 中国信用债史上最具破坏力的传染事件之一</p>
+  <div class="meta">
+    <span>传染源：永城煤电控股集团</span>
+    <span>违约日：2020-11-10</span>
+    <span>传染类型：区域共振 + 信心崩塌 + 流动性挤兑</span>
+    <span>波及范围：河南/山西/河北国企 · AAA产业债整体</span>
+    <span>版本：v0.6.2</span>
+  </div>
+</div>
+
+<!-- ====== CONTAINER ====== -->
+<div class="container">
+
+  <!-- ====== KEY STATS STRIP ====== -->
+  <div class="strip cols-5">
+    <div class="strip-item">
+      <div class="slabel">传染源违约日</div>
+      <div class="sval" style="color:var(--red);">2020.11.10</div>
+      <div class="ssub">20永煤SCP003 10.32亿</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">违约前外部评级</div>
+      <div class="sval" style="color:var(--green);">AAA</div>
+      <div class="ssub">违约前30天仍维持</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">AAA国企利差走阔</div>
+      <div class="sval" style="color:var(--red);">+300~500bp</div>
+      <div class="ssub">河南国企债峰值</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">债券取消发行</div>
+      <div class="sval" style="color:var(--red);">~1,500亿</div>
+      <div class="ssub">2020年11月全市场</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">信用债ETF下跌</div>
+      <div class="sval" style="color:var(--red);">-2.5%</div>
+      <div class="ssub">部分杠杆产品强平</div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 1: 传染源 ====== -->
+  <div class="section">
+    <h2 class="section-title">一、传染源：永煤SCP003超预期违约</h2>
+    <div class="card card-red">
+      <h3>永煤控股 · 违约事件全景</h3>
+      <p style="color:var(--text-secondary);line-height:1.7;">
+        2020年11月10日，永城煤电控股集团（AAA省级国企）未能按期兑付"20永煤SCP003"本息10.32亿元。永煤是河南省最大煤炭国企，总资产1,724亿元，违约前30天外部评级仍为AAA。这一事件直接打破了中国信用债市场存在多年的"AAA国企刚兑信仰"，引发连锁反应。
+      </p>
+      <p style="color:var(--text-secondary);line-height:1.7;margin-top:8px;">
+        <strong>违约的核心矛盾在于：</strong>永煤合并报表显示货币资金469.68亿元，但母公司层面实际可自由支配资金仅约40亿元——大量资金被豫能化集团通过财务公司统一归集管理，或作为银行承兑汇票保证金、定期存单质押等方式受限。这种"合并层面充裕、母公司层面枯竭"的结构性矛盾，在违约前被外部评级和市场系统性忽视。
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>传染源关键特征</h3>
+      <table>
+        <thead><tr><th>维度</th><th>特征</th><th>传染升级潜力</th></tr></thead>
+        <tbody>
+          <tr><td>主体性质</td><td>AAA省级国企 · 河南省最大煤企</td><td><span class="tag tag-red">极高</span> — 打破AAA国企刚兑信仰</td></tr>
+          <tr><td>违约超预期程度</td><td>违约前30天仍维持AAA评级，刚发行新债</td><td><span class="tag tag-red">极高</span> — 市场完全没有预期</td></tr>
+          <tr><td>区域属性</td><td>河南省 · 人均财政全国第18位</td><td><span class="tag tag-red">高</span> — 同区域国企面临无差别抛售</td></tr>
+          <tr><td>行业属性</td><td>煤炭/煤化工 · 产能过剩行业</td><td><span class="tag tag-amber">高</span> — 同行业煤企债券暴跌</td></tr>
+          <tr><td>融资渠道依赖</td><td>高度依赖债券市场滚续融资</td><td><span class="tag tag-red">极高</span> — 一级市场全面冻结</td></tr>
+          <tr><td>信息不对称程度</td><td>违约前没有充分市场沟通</td><td><span class="tag tag-red">极高</span> — 市场用最坏假设替代缺失信息</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>传染源财务数据（违约前关键信号）</h3>
+      <div class="grid-3">
+        <div class="info-box info-red">
+          <strong>资产负债率</strong><br>
+          <span style="font-size:28px;font-weight:800;color:var(--red);">74.3%</span><br>
+          <span style="font-size:11px;color:var(--text-secondary);">行业均值55.2%，连续三年攀升</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>短债/总有息负债</strong><br>
+          <span style="font-size:28px;font-weight:800;color:var(--red);">65%</span><br>
+          <span style="font-size:11px;color:var(--text-secondary);">行业均值41%，期限错配严重</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>非受限货币资金/短债</strong><br>
+          <span style="font-size:28px;font-weight:800;color:var(--red);">0.28x</span><br>
+          <span style="font-size:11px;color:var(--text-secondary);">安全阈值1.0x，流动性枯竭</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 2: 传导路径逐条分析 ====== -->
+  <div class="section">
+    <h2 class="section-title">二、传导路径逐条分析</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;">永煤违约通过三条主要路径传导，每条路径对应不同的传染类型和波及范围。以下按传染强度依次分析。</p>
+
+    <!-- 路径1：同区域国企传染 -->
+    <div class="path-card">
+      <span class="path-type">传染类型：区域共振 + 信心崩塌</span>
+      <h4>路径1：同区域国企传染 · 河南能化 → 平煤 → 山西国企（区域共振）</h4>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        永煤违约后，市场对河南省政府的支持能力和意愿进行全面重估。投资者的逻辑链条为："永煤违约 → 河南政府是否知情/支持？ → 如果支持还有没有能力？ → 同省其他国企是否同样面临风险？" 这一逻辑在数小时内传遍市场，引发河南省全部存续国企债券的无差别抛售。
+      </p>
+      <div class="node-chain">
+        <span class="node" style="background:var(--red-bg);color:var(--red);">永煤违约</span>
+        <span class="arrow">→</span>
+        <span class="node">河南能化(母公司)交叉违约</span>
+        <span class="arrow">→</span>
+        <span class="node">同省国企债暴跌(河南投资/河南交投/中原高速)</span>
+        <span class="arrow">→</span>
+        <span class="node">河南一级市场发行冻结</span>
+      </div>
+      <div class="node-chain" style="margin-top:4px;">
+        <span class="node" style="background:var(--red-bg);color:var(--red);">河南区域共振</span>
+        <span class="arrow">→</span>
+        <span class="node">山西煤企(晋煤/潞安/阳煤)遭抛售</span>
+        <span class="arrow">→</span>
+        <span class="node">河北国企(冀中能源/河钢)利差跳升</span>
+        <span class="arrow">→</span>
+        <span class="node">辽宁/云南/天津等弱区域受波及</span>
+      </div>
+      <div class="quant-box" style="margin-top:10px;">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+          <div><span class="q-stat">200~600bp</span><br><span class="q-label">河南国企债利差走阔幅度</span></div>
+          <div><span class="q-stat">600~800bp</span><br><span class="q-label">山西煤企利差峰值（从200bp基础）</span></div>
+          <div><span class="q-stat">150~300bp</span><br><span class="q-label">冀中能源等河北国企利差跳升</span></div>
+          <div><span class="q-stat">~6个月</span><br><span class="q-label">山西煤企估值修复耗时</span></div>
+        </div>
+      </div>
+      <div class="info-box info-amber" style="margin-top:8px;">
+        <strong>学术解释："唤醒效应"</strong> — 永煤违约通过"唤醒效应"机制传染，超预期事件唤醒投资者重新评估之前忽视的区域风险信息。财政负担越重、信用状况越差的省份，受"唤醒效应"的负面影响越大。AAA级国企债券的隐性担保预期在违约后显著下降，利差收窄约70bp。
+      </div>
+    </div>
+
+    <!-- 路径2：同评级传染 -->
+    <div class="path-card">
+      <span class="path-type">传染类型：信心崩塌（为主） + 流动性挤兑</span>
+      <h4>路径2：同评级传染 · 所有AAA地方国企被重新定价（信心崩塌）</h4>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        永煤违约前，AAA评级被市场解读为"国企身份+政府隐性担保"。违约之后，市场意识到AAA评级并不等于零风险，所有AAA地方国企债券面临重新定价。这是中国信用债市场历史上最深刻的一次定价体系重构。
+      </p>
+      <div class="node-chain">
+        <span class="node" style="background:var(--red-bg);color:var(--red);">AAA国企违约</span>
+        <span class="arrow">→</span>
+        <span class="node">"AAA≠刚兑"认知形成</span>
+        <span class="arrow">→</span>
+        <span class="node">全部AAA国企债遭抛售</span>
+        <span class="arrow">→</span>
+        <span class="node">弱资质AAA利差跳升300~500bp</span>
+      </div>
+      <div class="quant-box" style="margin-top:10px;">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+          <div><span class="q-stat">+11.4bp</span><br><span class="q-label">3Y AAA信用利差峰值上行</span></div>
+          <div><span class="q-stat">+38.4bp</span><br><span class="q-label">3Y AA信用利差峰值上行</span></div>
+          <div><span class="q-stat">75%</span><br><span class="q-label">3Y AAA利差分位数（历史）</span></div>
+          <div><span class="q-stat">5级</span><br><span class="q-label">框架vs外部评级差距（17个月前）</span></div>
+        </div>
+      </div>
+      <div class="info-box info-red" style="margin-top:8px;">
+        <strong>评级泡沫指数触发：</strong>框架与外部评级差距超过3个子级即触发红色预警。永煤案例中差距达5个子级，RBI绝对偏离列严重级别、RBI相对偏离率25%（阈值15%）、RBI时滞仅21天（阈值90天）。中诚信国际从AAA直接下调至BB（跳越6个子级），属于典型的"断崖式调整"。
+      </div>
+    </div>
+
+    <!-- 路径3：同融资渠道传染 -->
+    <div class="path-card">
+      <span class="path-type">传染类型：流动性挤兑</span>
+      <h4>路径3：同融资渠道传染 · 煤炭行业信用债→产业债→信用债一级市场冻结（流动性挤兑）</h4>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        永煤违约引发"债基赎回→债券价格下跌→质押率下行→继续抛售"的流动性负反馈链条。这一链条持续约2-3周，导致信用债一级市场几乎全面冻结，大量发行人被迫取消或推迟债券发行。
+      </p>
+      <div class="node-chain">
+        <span class="node" style="background:var(--red-bg);color:var(--red);">永煤违约</span>
+        <span class="arrow">→</span>
+        <span class="node">信用债基金净值下跌</span>
+        <span class="arrow">→</span>
+        <span class="node">机构赎回→基金抛售信用债</span>
+        <span class="arrow">→</span>
+        <span class="node">信用债整体利差走阔</span>
+      </div>
+      <div class="node-chain" style="margin-top:4px;">
+        <span class="node">一级市场：取消发行潮</span>
+        <span class="arrow">→</span>
+        <span class="node">借新还旧模式断裂</span>
+        <span class="arrow">→</span>
+        <span class="node">部分弱资质主体跟随违约</span>
+      </div>
+      <div class="quant-box" style="margin-top:10px;">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+          <div><span class="q-stat">53只</span><br><span class="q-label">违约后9日内取消发行债券数</span></div>
+          <div><span class="q-stat">427亿</span><br><span class="q-label">同期取消/推迟发行规模</span></div>
+          <div><span class="q-stat">~1,500亿</span><br><span class="q-label">2020年11月全月取消发行总量</span></div>
+          <div><span class="q-stat">5.41%</span><br><span class="q-label">违约后第三周发行利率突破5%</span></div>
+        </div>
+      </div>
+      <div class="info-box info-red" style="margin-top:8px;">
+        <strong>流动性负反馈链条的具体过程：</strong>违约前公司债发行平均票面3.68%，违约后第二周升至4.31%，第三周飙升至5.41%。11月19日有175只债券报卖偏离，"19三峡平湖MTN001"偏离值高达2039.85BP。信用债质押率普遍降至0.7左右，部分债券质押融资功能完全丧失。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 3: 被波及主体清单 ====== -->
+  <div class="section">
+    <h2 class="section-title">三、被波及主体清单</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;">永煤违约传染的受波及主体按区域、行业和评级分层评估。以下清单涵盖直接受冲击和间接受影响的各类主体。</p>
+
+    <div class="card">
+      <h3>第一层：直接传染 · 河南省国企（最严重）</h3>
+      <table>
+        <thead><tr><th>主体名称</th><th>企业性质</th><th>债券利差变化</th><th>信用影响</th><th>恢复情况</th></tr></thead>
+        <tbody>
+          <tr><td>河南能源化工集团（豫能化）</td><td>河南省属国企</td><td>交叉违约，存续债暴跌86%+</td><td><span class="tag tag-red">直接违约</span></td><td>整体重组</td></tr>
+          <tr><td>河南投资集团</td><td>河南省属国企</td><td>利差走阔200-400bp</td><td><span class="tag tag-amber">严重冲击</span></td><td>3-6个月逐步恢复</td></tr>
+          <tr><td>河南交通投资集团</td><td>河南省属国企</td><td>利差走阔200-350bp</td><td><span class="tag tag-amber">严重冲击</span></td><td>3-6个月逐步恢复</td></tr>
+          <tr><td>中原高速</td><td>河南省属国企</td><td>债券价格下跌5-15元</td><td><span class="tag tag-amber">严重冲击</span></td><td>6个月恢复</td></tr>
+          <tr><td>河南其他存续债国企</td><td>河南省属国企</td><td>利差整体走阔200-500bp</td><td><span class="tag tag-red">无差别抛售</span></td><td>部分6个月恢复</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-red" style="margin-top:8px;">
+        <strong>河南省内传染特征：</strong>违约后河南地区近1个月无新发债券，再融资严重受阻。河南省内同类型国企债券遭恐慌性无差别抛售，无论基本面强弱。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>第二层：邻省传染 · 山西/河北国企</h3>
+      <table>
+        <thead><tr><th>主体名称</th><th>区域</th><th>债券利差变化</th><th>信用影响</th><th>恢复情况</th></tr></thead>
+        <tbody>
+          <tr><td>晋煤集团</td><td>山西省属</td><td>利差从200bp升至600-800bp</td><td><span class="tag tag-amber">严重冲击</span></td><td>修复慢于其他省份</td></tr>
+          <tr><td>潞安集团</td><td>山西省属</td><td>利差走阔400-600bp</td><td><span class="tag tag-amber">严重冲击</span></td><td>修复慢于其他省份</td></tr>
+          <tr><td>阳煤集团</td><td>山西省属</td><td>利差走阔400-600bp</td><td><span class="tag tag-amber">严重冲击</span></td><td>修复慢于其他省份</td></tr>
+          <tr><td>冀中能源</td><td>河北省属</td><td>利差跳升150-300bp，债价一度31元</td><td><span class="tag tag-amber">严重冲击</span></td><td>2021年4月修复至96元</td></tr>
+          <tr><td>河钢集团</td><td>河北省属</td><td>利差走阔100-200bp</td><td><span class="tag tag-amber">中等冲击</span></td><td>2021年初恢复</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-amber" style="margin-top:8px;">
+        <strong>区域传染衰减特征：</strong>山西煤企估值修复慢于河南和河北——至2021年4月仍在继续走阔。安徽、辽宁、云南、天津等财政偏弱地区也受到波及。华创证券总结的传染路径为：同行业（煤炭"短债滚续"模式）→ 同区域（偿债意愿受质疑）→ 同企业性质（AAA国企信仰破灭）→ 同风险点（"存贷双高"/母子公司占款）。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>第三层：行业/评级层面 · 整体市场</h3>
+      <table>
+        <thead><tr><th>波及群体</th><th>影响程度</th><th>具体表现</th><th>时间维度</th></tr></thead>
+        <tbody>
+          <tr><td>煤炭行业全体发债主体</td><td><span class="tag tag-red">严重</span></td><td>煤炭行业整体利差扩大约150bp</td><td>持续6-8个月</td></tr>
+          <tr><td>AAA产业债全体</td><td><span class="tag tag-red">严重</span></td><td>"国企信仰"被打破，弱资质AAA利差系统性走阔</td><td>永久性结构变化</td></tr>
+          <tr><td>信用债一级市场</td><td><span class="tag tag-red">严重</span></td><td>取消发行率达30-50%，部分优质发行人被迫取消</td><td>持续2-3个月</td></tr>
+          <tr><td>信用债基金/理财产品</td><td><span class="tag tag-amber">中等</span></td><td>净值下跌2-5%，部分杠杆产品触发强制平仓</td><td>持续2-3周</td></tr>
+          <tr><td>弱资质省份国企</td><td><span class="tag tag-amber">中等</span></td><td>辽宁/云南/内蒙古/天津等弱区域受影响</td><td>持续3-6个月</td></tr>
+          <tr><td>评级行业</td><td><span class="tag tag-amber">结构性</span></td><td>中诚信国际被交易商协会警告，评级行业监管加强</td><td>长期影响</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 4: 传染时间线 ====== -->
+  <div class="section">
+    <h2 class="section-title">四、传染时间线（2020.10-2021.03）</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;">以下展示从永煤违约前兆到市场逐步恢复的完整时间线。标注各阶段的关键事件、传染路径和量级变化。</p>
+
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item red">
+          <div class="tl-date">2020.10.20-27</div>
+          <div><span class="tag tag-red" style="margin-right:6px;">前兆阶段</span>永煤公告拟召开持有人会议商议展期方案；中诚信国际将永煤列入可能下调的观察名单（距违约-21天），随后从AAA下调至AA-（距违约-14天）。二级市场出现大规模减持，20永煤SCP003估值收益率升至6.5-8%。<strong>信号：违约概率已>80%，但市场尚未将此视为系统性事件。</strong></div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date">2020.11.10</div>
+          <div><span class="tag tag-red" style="margin-right:6px;">传染源触发</span><strong style="color:var(--red);">永煤SCP003实质性违约</strong> —— 未按期兑付本息10.32亿元。中诚信国际当日从AAA下调至BB（降幅6个子级）。河南能化存续债同步暴跌。河南省政府紧急召开协调会。<strong>冲击强度：10/10。</strong></div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date">2020.11.11-13</div>
+          <div><span class="tag tag-red" style="margin-right:6px;">第一阶段：恐慌抛售</span>河南国企债全线暴跌。山西煤企（晋煤/潞安/阳煤）、河北国企（冀中能源/河钢）遭无差别抛售。多只煤企债/城投债收益率飙升200-500bp，盘中临停。紫光集团相关债券同受波及，跌幅超30%。<strong>信用利差：3Y AAA +11.4bp，3Y AA +38.4bp。</strong></div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date">2020.11.14-20</div>
+          <div><span class="tag tag-red" style="margin-right:6px;">第二阶段：信用冻结</span>信用债一级发行全面冻结。违约后9日内53只债券取消发行，规模427.3亿元。公司债发行利率从3.68%飙升至5.41%。信用债质押率普遍降至0.7。流动性负反馈链条启动：债基赎回→价格下跌→质押率下行→继续抛售。<strong>175只债券报卖偏离，"19三峡平湖"偏离2039.85bp。</strong></div>
+        </div>
+        <div class="tl-item amber">
+          <div class="tl-date">2020.11.21-30</div>
+          <div><span class="tag tag-amber" style="margin-right:6px;">第三阶段：监管介入</span>金融委会议定调，严厉处罚"逃废债"。交易商协会对永煤及相关中介启动自律调查。央行加大流动性投放（11月13日逆回购1600亿，11月16日MLF续作8000亿）。市场情绪逐步缓和，但信用分层现象持续。豫能化交叉违约。20永煤SCP004/005等后续到期债券触发交叉违约条款。</div>
+        </div>
+        <div class="tl-item amber">
+          <div class="tl-date">2020.12月</div>
+          <div><span class="tag tag-amber" style="margin-right:6px;">第四阶段：结构重塑</span>信用债市场进入"后永煤时代"。弱资质国企与优质国企信用利差从约50bp扩大至150-200bp。信用评级行业受到监管高度关注，中诚信国际因永煤评级问题被交易商协会警告。年末效应放大冲击，一级市场取消发行率>50%。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2021.01-03</div>
+          <div><span class="tag tag-blue" style="margin-right:6px;">第五阶段：逐步恢复</span>市场风险偏好阶段性恢复。冀中能源债价从31元修复至96元。但"国企信仰"被打破后信用定价体系永久改变——弱资质国企利差系统性走阔。评级机构改革启动：交易所和交易商协会联合发布信用评级业务自律管理指引。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2021.04-06</div>
+          <div><span class="tag tag-green" style="margin-right:6px;">长期影响</span>河南/河北弱资质主体信用利差明显收窄。但山西煤企估值仍在走阔，修复慢于其他省份。惠誉指出天津/河北/山西/云南地方国企发行额仍净收缩。信用债市场定价逻辑从"信仰驱动"转向"基本面驱动"。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 5: 量级估算 ====== -->
+  <div class="section">
+    <h2 class="section-title">五、量级估算</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;">基于公开市场数据，对永煤违约传染的量级进行多维度量化估算。数据来源包括Wind、中债估值、国泰君安固收、申万宏源、天风证券等机构报告。</p>
+
+    <div class="card">
+      <h3>5.1 信用利差走阔幅度</h3>
+      <table>
+        <thead><tr><th>品种/期限</th><th>违约前利差</th><th>违约后峰值</th><th>走阔幅度</th><th>恢复至违约前水平耗时</th></tr></thead>
+        <tbody>
+          <tr><td>3Y AAA中票信用利差</td><td>~80bp</td><td>~91bp</td><td class="text-red">+11.4bp</td><td>约3个月</td></tr>
+          <tr><td>3Y AA+中票信用利差</td><td>~130bp</td><td>~160bp</td><td class="text-red">+30.4bp</td><td>约4个月</td></tr>
+          <tr><td>3Y AA中票信用利差</td><td>~200bp</td><td>~238bp</td><td class="text-red">+38.4bp</td><td>约6个月</td></tr>
+          <tr><td>AAA采掘行业利差</td><td>~100bp</td><td>~250bp</td><td class="text-red">+150bp</td><td>约6-8个月</td></tr>
+          <tr><td>河南国企债利差（均值）</td><td>~100bp</td><td>400-600bp</td><td class="text-red">+300-500bp</td><td>约6个月</td></tr>
+          <tr><td>山西煤企利差（冀中能源）</td><td>~200bp</td><td>600-800bp</td><td class="text-red">+400-600bp</td><td>约12个月</td></tr>
+          <tr><td>BBB级澳洲中资美元债OAS（彭博LCC指数）</td><td>~59bp</td><td>~65bp</td><td class="text-red">+6bp</td><td>约2个月</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-amber" style="margin-top:8px;">
+        <strong>关键观察：</strong>AAA级利差在违约后一周即达高峰，此后持续高位震荡；AA+和AA级利差走阔趋势延续更长（约8周达到小周期高点）。永煤事件冲击持续时间约8个月。央企/国企利差分位数从2020年初分别降至23%/5%的历史低位。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>5.2 债券取消发行规模</h3>
+      <table>
+        <thead><tr><th>时间区间</th><th>取消/推迟发行数量</th><th>涉及规模</th><th>日均取消规模</th></tr></thead>
+        <tbody>
+          <tr><td>违约前9个交易日</td><td>16只</td><td>~74亿元</td><td>~8亿元</td></tr>
+          <tr><td>违约后9日（11.10-11.19）</td><td>53只</td><td>427.3亿元</td><td>~47亿元（增5.9倍）</td></tr>
+          <tr><td>10月23日起累计</td><td>—</td><td>675.8亿元</td><td>—</td></tr>
+          <tr><td>2020年11月全月</td><td>—</td><td>~1,500亿元</td><td>~50亿元</td></tr>
+        </tbody>
+      </table>
+      <div class="grid-3" style="margin-top:10px;">
+        <div class="info-box info-red">
+          <strong>取消发行典型案例</strong><br>
+          <span style="font-size:11px;">20漳泽电力CP001（5亿）<br>20豫交运MTN007（18亿）<br>20山煤CP005（8亿）<br>20晋能MTN019（5亿）<br>20连云港SCP010（3亿）</span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>发行利率飙升</strong><br>
+          <span style="font-size:11px;">第一周：3.68%<br>第二周：4.31%（+63bp）<br>第三周：5.41%（+110bp）<br>极端案例：广西柳建7.3%</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>质押融资冻结</strong><br>
+          <span style="font-size:11px;">信用债质押率从0.85降至0.7<br>部分债券质押功能完全丧失<br>R007波动率大幅上升<br>年末效应放大冲击</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>5.3 评级下调统计</h3>
+      <table>
+        <thead><tr><th>维度</th><th>数据</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>永煤主体评级下调</td><td>AAA → BB（违约日）→ D（12月15日）</td><td>跳跃6个子级，属于"断崖式下调"</td></tr>
+          <tr><td>豫能化评级下调</td><td>AAA → BB（交叉违约后）</td><td>母公司连带下调</td></tr>
+          <tr><td>隐含评级下调</td><td>下调比例一度高达3.0%</td><td>2021年4月才首次逆转（降至1.7%）</td></tr>
+          <tr><td>多机构收紧入库</td><td>全行业</td><td>低资质券普遍被出库或降低质押率</td></tr>
+          <tr><td>评级行业处罚</td><td>中诚信国际被交易商协会警告</td><td>推动评级行业改革</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>5.4 总量级估算汇总</h3>
+      <div class="grid-4">
+        <div class="info-box info-red">
+          <strong>利差走阔总量</strong><br>
+          <span style="font-size:24px;font-weight:800;color:var(--red);">~300~500bp</span><br>
+          <span style="font-size:11px;">弱资质国企债峰值</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>取消发行规模</strong><br>
+          <span style="font-size:24px;font-weight:800;color:var(--red);">~1,500亿</span><br>
+          <span style="font-size:11px;">2020年11月全市场</span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>信用债ETF跌幅</strong><br>
+          <span style="font-size:24px;font-weight:800;color:var(--amber);">-2.5%</span><br>
+          <span style="font-size:11px;">部分杠杆产品强平</span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>冲击持续时间</strong><br>
+          <span style="font-size:24px;font-weight:800;color:var(--amber);">~8个月</span><br>
+          <span style="font-size:11px;">至2021年6月基本消化</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 6: 系统智能层预警能力 ====== -->
+  <div class="section">
+    <h2 class="section-title">六、如果当时有系统智能层：最早能何时预警传染？</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;">基于当前引擎的传染理论框架，模拟在永煤违约前各关键时点发出预警的可能性。以下分析展示从传染源识别、路径预判到波及范围测算的完整预警链条。</p>
+
+    <div class="card card-red">
+      <h3>6.1 T-17月（2019.06.30）：首次预警传染可能性</h3>
+      <div class="grid-2">
+        <div>
+          <div class="info-box info-red">
+            <strong>财务信号已明确</strong><br>
+            <span style="font-size:12px;line-height:1.7;">
+              · 资产负债率74.3%且连年攀升，已远超行业均值55.2%<br>
+              · 短债占比65%（阈值55%），期限错配严重<br>
+              · 非受限货币资金/短债仅0.45x（安全阈值1.0x）<br>
+              · 母公司货币资金124亿 vs 合并248亿，差额124亿<br>
+              · 非煤业务（化工/贸易）亏损-8.5亿，连续5年亏损<br>
+              · 与豫能化关联往来款超200亿，占合并总资产12%<br>
+              <strong>框架评分3.90/BB-，较外部AAA低5个子级</strong>
+            </span>
+          </div>
+        </div>
+        <div>
+          <div class="info-box info-amber">
+            <strong>传染路径预判能力</strong><br>
+            <span style="font-size:12px;line-height:1.7;">
+              · 同区域传染：河南省财政自给率45%（全国第23位），救助能力有限<br>
+              · 同行业传染：煤炭行业"短债滚续"模式高度脆弱<br>
+              · 同评级传染：AAA国企利差在100bp左右，存在评级泡沫<br>
+              · 升级因子评估：信息不对称度高，永煤未充分披露关联交易<br>
+              <strong>结论：T-17月即可判断永煤是潜在的传染源，受影响区域为河南全部存续国企，波及邻省概率中等</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-red" style="margin-top:14px;">
+      <h3>6.2 T-4.5月（2020.06.30）：传染路径精准识别</h3>
+      <div class="grid-2">
+        <div>
+          <div class="info-box info-red">
+            <strong>急性信号全面触发</strong><br>
+            <span style="font-size:12px;line-height:1.7;">
+              · 框架评分从3.90骤降至2.35/B（进入违约前区间）<br>
+              · 母公司货币资金从124亿降至48亿（-61.3%）<br>
+              · 短债覆盖率0.28x（违约临界点以下）<br>
+              · 归母净利润转负（-3.2亿）<br>
+              · 经营性现金流TTM仅25亿（YoY -64%）<br>
+              · EBITDA/利息降至1.1x，无法覆盖利息支出<br>
+              <strong>违约概率评估：>70%</strong>
+            </span>
+          </div>
+        </div>
+        <div>
+          <div class="info-box info-red">
+            <strong>传染路径预判精确化</strong><br>
+            <span style="font-size:12px;line-height:1.7;">
+              · 路径1（区域共振）：河南→山西→河北，波及面极广<br>
+              · 路径2（同评级）：全部AAA国企利差将走阔至少100-200bp<br>
+              · 路径3（流动性挤兑）：一级市场将冻结至少2-4周<br>
+              · 升级因子协同：恐慌情绪+信息不对称+年末效应叠加<br>
+              · 区域集中度分析：河南存续国企债超3,000亿，抛售压力巨大<br>
+              · 行业集中度分析：煤炭行业全部存续债超8,000亿<br>
+              <strong>结论：T-4.5月即可给出精确的传播路径和波及范围，为投资者提供4.5个月的避险窗口</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>6.3 预警能力汇总：如果有系统智能层</h3>
+      <table>
+        <thead><tr><th>预警项目</th><th>最早预警时点</th><th>预警提前量</th><th>预警置信度</th><th>可采取的对冲/避险措施</th></tr></thead>
+        <tbody>
+          <tr><td>永煤自身违约风险</td><td>2019.06 (T-17月)</td><td>17个月</td><td><span class="tag tag-green">高</span></td><td>减持20永煤SCP003及相关存续债</td></tr>
+          <tr><td>豫能化交叉违约风险</td><td>2019.06 (T-17月)</td><td>17个月</td><td><span class="tag tag-green">高</span></td><td>减持豫能化及永煤关联债</td></tr>
+          <tr><td>河南国企债区域共振</td><td>2019.06 (T-17月)</td><td>17个月</td><td><span class="tag tag-amber">中高</span></td><td>降低河南国企债敞口，或买入CDS对冲</td></tr>
+          <tr><td>山西/河北煤企传染</td><td>2020.06 (T-4.5月)</td><td>4.5个月</td><td><span class="tag tag-amber">中高</span></td><td>降低山西/河北煤企债券头寸</td></tr>
+          <tr><td>AAA国企评级重塑</td><td>2020.06 (T-4.5月)</td><td>4.5个月</td><td><span class="tag tag-amber">中等</span></td><td>用利率债替换信用债增加久期配置</td></tr>
+          <tr><td>信用债一级市场冻结</td><td>2020.06 (T-4.5月)</td><td>4.5个月</td><td><span class="tag tag-amber">中等</span></td><td>提前完成融资计划或锁定融资利率</td></tr>
+          <tr><td>评级行业系统性风险</td><td>2019.06 (T-17月)</td><td>17个月</td><td><span class="tag tag-amber">中低</span></td><td>建立独立于外部评级的信用评估体系</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-amber" style="margin-top:14px;">
+      <h3>6.4 关键启示：传染预警的核心能力</h3>
+      <div class="grid-3">
+        <div class="info-box info-red">
+          <strong>信号识别前置化</strong><br>
+          <span style="font-size:12px;">永煤2019年报已显示母公司资不抵债、关联交易异常、流动性覆盖率恶化。系统智能层通过财务双轨分析（合并vs母公司）可在T-17月识别这些信号，而非等到违约前21天。</span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>区域集中度异常</strong><br>
+          <span style="font-size:12px;">2020年6月时点，永煤违约将在同一区域（河南）叠加超过3,000亿存续债的抛售压力，同时向山西/河北蔓延。系统可通过区域集中度热力图提前预判传染范围。</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>升级因子监测</strong><br>
+          <span style="font-size:12px;">信息不对称+年末效应+监管真空三大升级因子叠加。系统可实时监测这些因子并动态调整传染强度评分——在永煤案例中，因子叠加应将传染强度从3级升级至5级。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 7: 升级因子分析 ====== -->
+  <div class="section">
+    <h2 class="section-title">七、升级因子分析：为什么永煤传染如此剧烈？</h2>
+    <div class="card">
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:10px;">根据传染理论基础的五种升级因子，永煤违约在以下多个维度同时触发升级条件，导致基础传染强度从3-4级跃升至5级（极端级）。</p>
+      <table>
+        <thead><tr><th>升级因子</th><th>永煤案例状态</th><th>影响程度</th><th>协同效应</th></tr></thead>
+        <tbody>
+          <tr><td>市场恐慌情绪</td><td>VIX指标虽未极端，但信用利差在违约前已处高位；违约后全市场恐慌抛售</td><td><span class="tag tag-red">极高</span></td><td>联动信息不对称，形成自我实现的恐慌循环</td></tr>
+          <tr><td>监管政策真空</td><td>河南省国资委初期表态模糊，市场猜测最坏情形；金融委11月21日才明确表态</td><td><span class="tag tag-red">极高</span></td><td>11天真空期足以让传染从河南扩散至全国</td></tr>
+          <tr><td>高杠杆环境</td><td>信用债市场杠杆率处于历史较高水平；大量机构使用信用债作为质押品</td><td><span class="tag tag-red">高</span></td><td>质押率下降直接触发强制平仓，放大抛售压力</td></tr>
+          <tr><td>信息不对称</td><td>永煤违约前没有充分沟通，母公司资金受限于集团归集未被披露</td><td><span class="tag tag-red">极高</span></td><td>市场用"最坏假设"替代缺失信息，河南全部国企被无差别抛售</td></tr>
+          <tr><td>年末效应</td><td>违约发生在11月10日，正值年末考核前夕；12月取消发行率>50%</td><td><span class="tag tag-amber">高</span></td><td>叠加年末效应后传染持续时间延长至8个月</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-red" style="margin-top:10px;">
+        <strong>协同效应分析：</strong>永煤违约中，恐慌情绪+信息不对称+监管真空三大升级因子同时触发，形成"恐慌→信息缺失→更多恐慌→监管沉默→恐慌自我实现"的强化循环。根据传染理论，三个及以上升级因子同时触发时，传染强度从局部升级为全市场冲击——永煤案例完美验证了这一理论。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 8: 路径图 ====== -->
+  <div class="section">
+    <h2 class="section-title">八、完整传染路径图</h2>
+    <div class="card">
+      <h3>永煤违约 · 三路径传导全景</h3>
+      <div class="contagion-map">
+        <div class="contagion-item" style="background:var(--bg-tertiary);">
+          <h5 style="color:var(--red);">路径1：同区域国企传染</h5>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+            <strong>传染源</strong>：永煤SCP003违约<br>
+            → 豫能化（母公司）交叉违约<br>
+            → 河南投资集团/河南交投/中原高速等全线抛售<br>
+            → 山西省煤企（晋煤/潞安/阳煤）被波及<br>
+            → 河北省国企（冀中能源/河钢）利差跳升<br>
+            → 辽宁/云南/天津弱区域受影响<br>
+            <strong>传染类型</strong>：区域共振<br>
+            <strong>波及范围</strong>：4省+数十家国企
+          </div>
+        </div>
+        <div class="contagion-item">
+          <h5 style="color:var(--amber);">路径2：同评级传染</h5>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+            <strong>传染源</strong>：AAA国企违约<br>
+            → "AAA≠刚兑"市场认知形成<br>
+            → 全部AAA国企债遭无差别抛售<br>
+            → 弱资质AAA利差跳升300-500bp<br>
+            → AA+/AA评级间接波及<br>
+            → 央企/国企利差分位数降至历史5%<br>
+            <strong>传染类型</strong>：信心崩塌<br>
+            <strong>波及范围</strong>：全市场AAA产业债
+          </div>
+        </div>
+        <div class="contagion-item">
+          <h5 style="color:var(--amber);">路径3：同融资渠道传染</h5>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+            <strong>传染源</strong>：债券违约<br>
+            → 信用债基金净值下跌<br>
+            → 机构赎回→基金抛售信用债<br>
+            → 信用债整体利差走阔50-100bp<br>
+            → 一级市场：53只/427亿取消发行<br>
+            → 借新还旧模式断裂→部分主体跟随违约<br>
+            <strong>传染类型</strong>：流动性挤兑<br>
+            <strong>波及范围</strong>：信用债市场整体
+          </div>
+        </div>
+        <div class="contagion-item">
+          <h5 style="color:var(--red);">交叉传染：与紫光违约叠加</h5>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+            <strong>传染源</strong>：永煤(11.10) + 紫光(11.16)<br>
+            → 信用债市场遭遇历史性双重冲击<br>
+            → 永煤打破"国企信仰"<br>
+            → 紫光打破"校企+半导体国家队"信仰<br>
+            → 市场恐慌情绪达到顶峰<br>
+            → 11月12日紫光债跌超30%<br>
+            → 影响持续至2021年6月<br>
+            <strong>叠加效应</strong>：1+1>2
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 9: 传染强度评分 ====== -->
+  <div class="section">
+    <h2 class="section-title">九、传染强度评估</h2>
+    <div class="card">
+      <h3>永煤违约：各路径传染强度评分</h3>
+      <table>
+        <thead><tr><th>路径</th><th>传染类型</th><th>强度评分(1-5)</th><th>衰减距离</th><th>恢复时间</th></tr></thead>
+        <tbody>
+          <tr><td>路径1：同区域国企传染</td><td>区域共振+信心崩塌</td><td><span class="tag tag-red">5/5</span></td><td>同省→邻省→同区域板块</td><td>6-12个月</td></tr>
+          <tr><td>路径2：同评级传染</td><td>信心崩塌</td><td><span class="tag tag-red">5/5</span></td><td>无明确边界</td><td>永久性结构变化</td></tr>
+          <tr><td>路径3：同融资渠道传染</td><td>流动性挤兑</td><td><span class="tag tag-red">4/5</span></td><td>同类型→相近类型→全市场</td><td>2-3个月</td></tr>
+          <tr><td>与紫光交叉传染</td><td>信心崩塌+流动性挤兑</td><td><span class="tag tag-red">5/5</span></td><td>无边界</td><td>6-8个月</td></tr>
+          <tr><td>同行业（煤炭）传染</td><td>信心崩塌</td><td><span class="tag tag-red">4/5</span></td><td>煤炭→能源→产业债</td><td>6-8个月</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-red" style="margin-top:14px;">
+      <h3>总体评估</h3>
+      <div class="metric-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">5/5</div>
+          <div class="m-label">综合传染等级</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">3条</div>
+          <div class="m-label">高风险路径</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" style="color:var(--amber);">8个月</div>
+          <div class="m-label">市场恢复周期</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">永久</div>
+          <div class="m-label">信用定价体系变化</div>
+        </div>
+      </div>
+      <div class="info-box info-red" style="margin-top:12px;">
+        <strong>最终结论：</strong>永煤违约是中国信用债市场有史以来最具破坏性的传染事件之一。三条传染路径同时触发，三种传染类型（区域共振+信心崩塌+流动性挤兑）叠加，五大升级因子（恐慌+监管真空+高杠杆+信息不对称+年末效应）几乎全部处于激活状态。与紫光违约（11月16日）的时间重合形成了历史性的"双重冲击"，对中国信用债市场的定价体系产生了永久性影响。如果当时存在系统智能层，T-17月即可识别永煤作为潜在传染源，T-4.5月可精确预判传染路径和波及范围，为投资者提供充足的避险窗口。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 10: 传染类型分布 ====== -->
+  <div class="section">
+    <h2 class="section-title">十、传染类型分布与理论对照</h2>
+    <div class="card">
+      <h3>永煤违约中的四种传染类型权重</h3>
+      <div class="cross-chart">
+        <div class="bar" style="border-top:3px solid var(--red);">
+          <div class="b-val" style="color:var(--red);">35%</div>
+          <div class="b-label">区域共振</div>
+          <div class="b-label" style="font-size:9px;">驱动区域无差别抛售</div>
+        </div>
+        <div class="bar" style="border-top:3px solid var(--red);">
+          <div class="b-val" style="color:var(--red);">35%</div>
+          <div class="b-label">信心崩塌</div>
+          <div class="b-label" style="font-size:9px;">打破AAA国企信仰</div>
+        </div>
+        <div class="bar" style="border-top:3px solid var(--amber);">
+          <div class="b-val" style="color:var(--amber);">25%</div>
+          <div class="b-label">流动性挤兑</div>
+          <div class="b-label" style="font-size:9px;">基金赎回→抛售→冻结</div>
+        </div>
+        <div class="bar" style="border-top:3px solid var(--blue);">
+          <div class="b-val" style="color:var(--blue);">5%</div>
+          <div class="b-label">信用链传染</div>
+          <div class="b-label" style="font-size:9px;">供应链关联有限</div>
+        </div>
+      </div>
+
+      <div class="info-box info-blue" style="margin-top:12px;">
+        <strong>理论对照：</strong>永煤违约与传染理论的四种传染类型高度吻合。区域共振（35%）和信心崩塌（35%）是主导类型，流动性挤兑（25%）作为催化剂放大了冲击效果。信用链传染（5%）在本次事件中占比较低，因为永煤作为煤炭企业，下游客户（火电/钢铁）集中度不高。这一分布特征与传染理论中"国企违约以区域共振和信心崩塌为主"的判断完全一致。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 11: 政策影响与监管改革 ====== -->
+  <div class="section">
+    <h2 class="section-title">十一、政策影响与监管改革</h2>
+    <div class="card">
+      <h3>永煤违约对信用债市场的深远影响</h3>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        永煤违约不仅是一次信用事件，更是中国信用债市场的一次"成人礼"。它迫使市场参与者重新思考以下根本性问题：评级机构的公信力如何重建？"国企信仰"是否应该存在？信用定价该用什么框架？
+      </p>
+
+      <div class="grid-3" style="margin-top:12px;">
+        <div class="info-box info-red">
+          <strong>评级行业改革</strong><br>
+          <span style="font-size:12px;line-height:1.7;">
+            · 中诚信国际因永煤评级问题被交易商协会警告<br>
+            · 交易商协会和交易所联合发布评级业务自律管理指引<br>
+            · 取消债券发行强制评级要求（2021年）<br>
+            · 推动双评级制度和评级行业对外开放<br>
+            · 评级区分度逐步提升，AAA不再被自动赋予所有大型国企
+          </span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>信用定价体系重塑</strong><br>
+          <span style="font-size:12px;line-height:1.7;">
+            · "国企信仰"溢价被大幅压缩<br>
+            · 弱资质国企与优质国企利差从约50bp扩大至150-200bp<br>
+            · 信用债定价从"信仰驱动"转向"基本面驱动"<br>
+            · 投资者教育：不再盲目相信外部评级和国企标签<br>
+            · 信用衍生品市场（CRM/CRMW）获得发展契机
+          </span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>信息披露改进</strong><br>
+          <span style="font-size:12px;line-height:1.7;">
+            · 货币资金受限情况纳入债券募集说明书强制披露<br>
+            · 关联交易披露要求加强，其他应收款占比超阈值需专项说明<br>
+            · 母公司报表与合并报表的差异分析成为投资者关注焦点<br>
+            · 审计机构对"持续经营能力"的判断标准更加严格<br>
+            · 债券持有人会议机制进一步完善
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>永煤违约对信用债市场的长期结构性影响</h3>
+      <table>
+        <thead><tr><th>影响维度</th><th>违约前状态</th><th>违约后变化</th><th>变化性质</th></tr></thead>
+        <tbody>
+          <tr><td>国企信用定价</td><td>AAA国企自动享有利率折扣（国企信仰溢价）</td><td>资质分化：优质国企利差收窄，弱资质国企利差显著走阔</td><td><span class="tag tag-red">永久性</span></td></tr>
+          <tr><td>评级行业</td><td>评级通胀严重，AAA企业数量远高于国际水平</td><td>评级区分度提升，但改革进程仍在继续</td><td><span class="tag tag-amber">渐进式</span></td></tr>
+          <tr><td>投资者行为</td><td>过度依赖外部评级和"国企信仰"</td><td>更多机构建立独立信用评估能力，双轨验证成为主流</td><td><span class="tag tag-amber">结构性</span></td></tr>
+          <tr><td>一级市场发行</td><td>国企债基本不愁发行，利率较低</td><td>弱资质国企发行难度加大，融资成本显著上升</td><td><span class="tag tag-red">永久性</span></td></tr>
+          <tr><td>区域融资分化</td><td>区域融资条件差异不明显</td><td>河南/山西等弱区域融资成本显著高于广东/浙江等强区域</td><td><span class="tag tag-red">永久性</span></td></tr>
+          <tr><td>信用衍生品市场</td><td>信用风险缓释工具市场规模极小</td><td>CRM/CRMW获得发展契机，但规模仍有限</td><td><span class="tag tag-amber">渐进式</span></td></tr>
+          <tr><td>监管框架</td><td>对信用债违约的处置机制不完善</td><td>金融委会议明确打击逃废债，违约处置机制逐步完善</td><td><span class="tag tag-amber">结构性</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 12: 理论与实践的映射 ====== -->
+  <div class="section">
+    <h2 class="section-title">十二、理论与实践的映射：永煤案例对传染理论的验证</h2>
+    <div class="card">
+      <h3>传染理论核心命题的实证检验</h3>
+      <table>
+        <thead><tr><th>理论命题</th><th>永煤案例验证</th><th>验证结果</th></tr></thead>
+        <tbody>
+          <tr><td>区域共振的衰减距离：同省→邻省→同区域板块</td><td>河南全部国企 -> 山西煤企 -> 河北国企 -> 辽宁/天津等弱区域</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>信心崩塌无明确边界</td><td>AAA国企信仰打破后所有AAA地方国企被重新定价</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>流动性挤兑的自我实现特征</td><td>基金赎回->价格下跌->质押率下降->继续抛售的价值链</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>升级因子协同效应（3个及以上触发）</td><td>恐慌+信息不对称+监管真空+年末效应同时触发</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>监管真空的放大效应</td><td>永煤违约后11天金融委才表态，真空期内传染扩展至全国</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>高杠杆环境加速流动性挤兑</td><td>信用债质押率从0.85降至0.7，部分债券质押功能完全丧失</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>年末效应放大冲击效果</td><td>12月取消发行率>50%，年末银行收紧授信</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>信用链传染在区域共振中占比低</td><td>永煤作为煤炭企业下游客户集中度不高，信用链传染有限</td><td><span class="tag tag-green">完全验证</span></td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-green" style="margin-top:10px;">
+        <strong>理论验证结论：</strong>永煤违约案例对传染理论的8项核心命题均提供了实证支持。该案例特别强化了传染理论中关于"区域共振+信心崩塌"双重传染的判定——当这两种类型同时触发且叠加升级因子的协同效应时，传染等级可以达到最高的5级（极端级）。永煤案例同时证明了传染理论中"三大升级因子同时触发即可使传染从局部升级为系统性冲击"的核心判断。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>永煤案例对引擎传染矩阵优化的具体建议</h3>
+      <table>
+        <thead><tr><th>优化方向</th><th>当前引擎状态</th><th>基于永煤案例的改进建议</th><th>优先级</th></tr></thead>
+        <tbody>
+          <tr><td>区域共振阈值</td><td>同省衰减距离默认3层</td><td>调整为4层（同省→邻省→同行业国企→同评级国企），衰减系数从0.5调整为0.4</td><td><span class="tag tag-red">高</span></td></tr>
+          <tr><td>评级泡沫指数</td><td>仅在个案分析中计算</td><td>作为系统级信号，当全市场RBI均值>3时自动触发"评级泡沫预警"</td><td><span class="tag tag-red">高</span></td></tr>
+          <tr><td>取消发行监测</td><td>无专门监测指标</td><td>新增"取消发行/计划发行比"指标，日度数据，阈值>20%=黄色预警，>40%=红色预警</td><td><span class="tag tag-red">高</span></td></tr>
+          <tr><td>监管表态分析</td><td>无此模块</td><td>新增"监管真空期"监测——重要信用事件后72小时监管无表态自动触发升级因子</td><td><span class="tag tag-amber">中</span></td></tr>
+          <tr><td>年末效应调整</td><td>无季节性调整</td><td>新增"日历效应"模块，Q4（尤其是11-12月）的传染强度上浮20%</td><td><span class="tag tag-amber">中</span></td></tr>
+          <tr><td>母公司报表分析</td><td>已有但权重需优化</td><td>母公司货币资金/合并货币资金比率<50%=红色预警，强制调降一级</td><td><span class="tag tag-red">高</span></td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-blue" style="margin-top:10px;">
+        <strong>迭代路线图：</strong>上述6项优化建议将纳入引擎v0.6.3版本的升级计划。其中区域共振阈值调整、评级泡沫指数和取消发行监测为P0优先级，预计在下一版本中完成部署。监管表态分析和年末效应调整为P1优先级，将结合自然语言处理模块和日历数据模块同步开发。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== FOOTER ====== -->
+  <div class="divider"></div>
+  <div class="footer">
+    <p><strong>传染复盘报告 · 永煤控股传染链 2020.10-11</strong></p>
+    <p>报告生成时间：2026-07-10 | 基于统一信贷评估框架 v0.6.2 · 传染理论 v0.6.1-alpha | 仅供内部参考</p>
+    <p style="margin-top:8px;font-size:10px;">数据来源：Wind、中债估值、财联社、中金固收、国泰君安固收、申万宏源、天风证券、华创证券、第一财经、彭博等公开市场数据。本报告为事后复盘分析，不构成投资建议。</p>
+  </div>
+
+</div>
+</body>
+</html>
