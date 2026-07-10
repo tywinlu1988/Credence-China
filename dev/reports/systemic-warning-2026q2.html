@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2026年Q2系统性风险警报报告 · SRI=0.56 🟡关注 · 光伏/新能源车/城投红色预警 · 传染链·集中度·行动建议">
+<title>2026Q2 系统性风险警报 · SRI 0.56 🟡关注</title>
+<link rel="stylesheet" href="../design/templates/template-base.css">
+<style>
+.hero { background: linear-gradient(135deg, #0f172a, #4a1a1a, #991b1b); }
+.hero .chip { background: rgba(153,27,27,0.25); color: #fca5a5; border-color: rgba(153,27,27,0.4); }
+.thermometer-wrapper { display:flex; align-items:center; gap:30px; justify-content:center; margin:24px 0; }
+.thermometer-icon { font-size:64px; line-height:1; }
+.thermometer-scale { flex:1; max-width:500px; }
+.thermo-track { height:32px; border-radius:16px; background:var(--bg-tertiary); overflow:hidden; position:relative; display:flex; }
+.thermo-segment { flex:1; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; }
+.thermo-segment.green { background:var(--green); }
+.thermo-segment.yellow { background:var(--amber); }
+.thermo-segment.orange { background:#ea580c; }
+.thermo-segment.red { background:var(--red); }
+.thermo-marker { position:relative; height:20px; margin-top:8px; }
+.thermo-marker .arrow { position:absolute; top:0; transform:translateX(-50%); font-size:18px; line-height:1; }
+.thermo-labels { display:flex; justify-content:space-between; margin-top:6px; font-size:11px; color:var(--text-tertiary); }
+.thermo-current-label { text-align:center; margin-top:12px; font-size:16px; font-weight:800; }
+.thermo-current-label .sri-val { font-size:28px; }
+.red-industry-card { background:var(--bg-secondary); border-radius:var(--radius); padding:18px 22px; margin:14px 0; border:1px solid var(--border-default); border-left:4px solid var(--red); }
+.red-industry-card h4 { font-size:14px; margin-bottom:8px; color:var(--red); }
+.red-industry-card .industry-tag { font-size:11px; color:var(--text-tertiary); margin-bottom:6px; }
+.red-industry-card .industry-desc { font-size:13px; color:var(--text-secondary); line-height:1.7; }
+.contagion-chain-card { background:var(--bg-secondary); border-radius:var(--radius); padding:18px 22px; margin:12px 0; border:1px solid var(--border-default); border-left:4px solid var(--purple); }
+.contagion-chain-card h4 { font-size:14px; margin-bottom:8px; color:var(--purple); }
+.contagion-chain-card .chain-tag { font-size:11px; color:var(--text-tertiary); margin-bottom:6px; }
+.contagion-chain-card .chain-desc { font-size:13px; color:var(--text-secondary); line-height:1.7; }
+.concentration-warn-card { background:var(--bg-secondary); border-radius:var(--radius); padding:18px 22px; margin:14px 0; border:1px solid var(--border-default); border-left:4px solid var(--red); }
+.concentration-warn-card h4 { font-size:14px; margin-bottom:8px; color:var(--red); }
+.concentration-warn-card .cw-tag { font-size:11px; color:var(--text-tertiary); margin-bottom:6px; }
+.concentration-warn-card .cw-desc { font-size:13px; color:var(--text-secondary); line-height:1.7; }
+.trend-card { background:var(--bg-secondary); border-radius:var(--radius); padding:18px 22px; margin:14px 0; border:1px solid var(--border-default); border-left:4px solid var(--amber); }
+.trend-card h4 { font-size:14px; margin-bottom:8px; color:var(--amber); }
+.action-card { background:var(--bg-secondary); border-radius:var(--radius); padding:18px 22px; margin:14px 0; border:1px solid var(--border-default); border-left:4px solid var(--blue); }
+.action-card h4 { font-size:14px; margin-bottom:8px; color:var(--blue); }
+.action-card .action-tag { font-size:11px; color:var(--text-tertiary); margin-bottom:6px; }
+.action-card .action-desc { font-size:13px; color:var(--text-secondary); line-height:1.7; }
+.completeness-bar { background:var(--bg-tertiary); border-radius:4px; height:20px; overflow:hidden; margin:6px 0; }
+.completeness-fill { height:100%; border-radius:4px; text-align:center; font-size:10px; line-height:20px; font-weight:600; }
+.heat-map { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:2px; margin:12px 0; }
+.heat-item { padding:12px 8px; text-align:center; border-radius:4px; font-size:11px; }
+.signal-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+.signal-dot.red { background:var(--red); }
+.signal-dot.amber { background:var(--amber); }
+.signal-dot.green { background:var(--green); }
+.signal-dot.blue { background:var(--blue); }
+.signal-dot.purple { background:var(--purple); }
+.warning-tier { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+.warn-badge { padding:4px 12px; border-radius:4px; font-size:11px; font-weight:600; }
+.warn-badge.red { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
+.warn-badge.amber { background:rgba(245,158,11,0.15); color:var(--amber); border:1px solid rgba(245,158,11,0.3); }
+.warn-badge.green { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); }
+.warn-badge.blue { background:rgba(99,102,241,0.15); color:var(--blue); border:1px solid rgba(99,102,241,0.3); }
+.warn-badge.purple { background:rgba(168,85,247,0.15); color:var(--purple); border:1px solid rgba(168,85,247,0.3); }
+.comparison-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border-default); border-radius:8px; overflow:hidden; margin:14px 0; }
+.comparison-item { background:var(--bg-secondary); padding:14px 18px; }
+.comparison-item h5 { font-size:13px; margin-bottom:6px; }
+.comparison-item .c-stat { font-size:20px; font-weight:800; color:var(--red); }
+.action-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border-default); border-radius:8px; overflow:hidden; margin:14px 0; }
+.action-grid-item { background:var(--bg-secondary); padding:16px 18px; }
+.action-grid-item h5 { font-size:13px; margin-bottom:6px; color:var(--blue); }
+.action-grid-item .ag-desc { font-size:12px; color:var(--text-secondary); line-height:1.7; }
+.priority-tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+.priority-tag.p0 { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
+.priority-tag.p1 { background:rgba(245,158,11,0.15); color:var(--amber); border:1px solid rgba(245,158,11,0.3); }
+.priority-tag.p2 { background:rgba(99,102,241,0.15); color:var(--blue); border:1px solid rgba(99,102,241,0.3); }
+.threshold-vis { display:flex; align-items:center; gap:6px; margin:8px 0; }
+.threshold-track { flex:1; height:8px; background:var(--bg-tertiary); border-radius:4px; position:relative; overflow:visible; }
+.threshold-marker { position:absolute; top:-6px; width:2px; height:20px; border-radius:1px; }
+.threshold-label { position:absolute; top:-22px; font-size:9px; color:var(--text-tertiary); white-space:nowrap; transform:translateX(-50%); }
+.threshold-current { position:absolute; top:-6px; width:12px; height:20px; border-radius:2px; transform:translateX(-50%); }
+.threshold-arrow { position:absolute; top:-24px; font-size:10px; font-weight:700; white-space:nowrap; transform:translateX(-50%); }
+@media (max-width:768px) { .thermometer-wrapper { flex-direction:column; gap:16px; } .action-grid { grid-template-columns:1fr; } .comparison-grid { grid-template-columns:1fr; } .heat-map { grid-template-columns:repeat(3,1fr); } }
+</style>
+</head>
+<body>
+
+<!-- ================================================================ -->
+<!-- HERO — 深红危机预警主题渐变 -->
+<!-- ================================================================ -->
+<div class="hero">
+  <span class="chip">系统性风险警报报告 · TYPE 15</span>
+  <h1>2026年第二季度系统性风险警报报告</h1>
+  <p class="subtitle">
+    SRI系统性风险指数 · 温度计四级判定 · 红色行业清单 · 传染风险TOP5 · 集中度警示 · 与前季度对比 · 行动建议
+  </p>
+  <div class="meta">
+    <span>分析时点：2026-07-10</span>
+    <span>SRI指数：0.56</span>
+    <span>温度计等级：🟡 关注</span>
+    <span>红色行业数：3个</span>
+    <span>报告版本：v0.6.9 · Type 15 系统性风险警报</span>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- CONTAINER -->
+<!-- ================================================================ -->
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- STRIP — 4列核心指标 -->
+  <!-- ================================================================ -->
+  <div class="strip cols-4">
+    <div class="strip-item">
+      <div class="slabel">SRI系统性风险指数</div>
+      <div class="sval" style="color:var(--amber);">0.56</div>
+      <div class="ssub">0-4范围 · 越高风险越大</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">温度计等级</div>
+      <div class="sval" style="color:var(--amber);">🟡 关注</div>
+      <div class="ssub">关注 · SRI 0.5-1.0</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">红色行业数</div>
+      <div class="sval" style="color:var(--red);">3个</div>
+      <div class="ssub">风险得分≥2.0的行业数量</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">趋势( vs 上季度 )</div>
+      <div class="sval" style="color:var(--red);">↑ +0.12</div>
+      <div class="ssub">较上季度SRI上升</div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 1 — 温度计可视化 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--red);"></span>
+      一、温度计可视化
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      温度计将SRI读数映射为四级颜色区间，直观展示当前系统性风险等级。
+      各级阈值为：🟢正常(SRI&lt;0.5) · 🟡关注(0.5≤SRI&lt;1.0) · 🟠警惕(1.0≤SRI&lt;1.8) · 🔴危险(SRI≥1.8)。
+      当前SRI=0.56，处于🟡关注区间下沿，略高于永煤违约前3个月的读数（0.58）。
+    </p>
+
+    <div class="card">
+      <div class="thermometer-wrapper">
+        <div class="thermometer-icon">🌡️</div>
+        <div class="thermometer-scale">
+          <div class="thermo-track">
+            <div class="thermo-segment green">正常</div>
+            <div class="thermo-segment yellow">关注</div>
+            <div class="thermo-segment orange">警惕</div>
+            <div class="thermo-segment red">危险</div>
+          </div>
+          <div class="thermo-marker">
+            <span class="arrow" style="left:14%;color:var(--amber);">▼</span>
+          </div>
+          <div class="thermo-labels">
+            <span>0</span>
+            <span>0.5</span>
+            <span>1.0</span>
+            <span>1.8</span>
+            <span>4.0</span>
+          </div>
+          <div class="thermo-current-label">
+            <span style="color:var(--amber);">当前 SRI = <span class="sri-val">0.56</span></span>
+            <span style="color:var(--text-tertiary);font-size:13px;font-weight:400;display:block;margin-top:4px;">
+              处于关注区间下沿 · 距警惕阈值(1.0)尚有0.44距离
+            </span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;justify-content:center;font-size:12px;margin-top:8px;">
+        <span><span class="signal-dot green"></span>SRI&lt;0.5 正常</span>
+        <span><span class="signal-dot amber"></span>0.5≤SRI&lt;1.0 关注</span>
+        <span><span class="signal-dot" style="background:#ea580c;"></span>1.0≤SRI&lt;1.8 警惕</span>
+        <span><span class="signal-dot red"></span>SRI≥1.8 危险</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>温度计等级定义与当前匹配</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>等级</th>
+            <th>SRI范围</th>
+            <th>颜色</th>
+            <th>含义</th>
+            <th>当前匹配</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>正常</td>
+            <td>SRI &lt; 0.5</td>
+            <td><span class="signal-dot green"></span> 🟢</td>
+            <td>&lt;20%行业同时红色·或&gt;70%行业绿色</td>
+            <td>10/13行业绿色(77%)，但SRI=0.56已超阈值</td>
+          </tr>
+          <tr>
+            <td>关注</td>
+            <td>0.5 ≤ SRI &lt; 1.0</td>
+            <td><span class="signal-dot amber"></span> 🟡</td>
+            <td>20-30%行业同时红色·或2-3个行业信号重叠</td>
+            <td><span class="warn-badge amber">当前等级 · 3个红色行业+城投信号重叠</span></td>
+          </tr>
+          <tr>
+            <td>警惕</td>
+            <td>1.0 ≤ SRI &lt; 1.8</td>
+            <td><span class="signal-dot" style="background:#ea580c;"></span> 🟠</td>
+            <td>30-50%行业同时红色·或高传染行业出问题</td>
+            <td>3/13红色(23%)但未达30%·超级传染者平稳</td>
+          </tr>
+          <tr>
+            <td>危险</td>
+            <td>SRI ≥ 1.8</td>
+            <td><span class="signal-dot red"></span> 🔴</td>
+            <td>&gt;50%行业同时红色·或多个高传染行业同时触发</td>
+            <td>远未达到·超级传染者(半导体/高端装备)运行正常</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box info-amber" style="margin-top:10px;">
+        <strong>温度计解读：</strong>当前SRI=0.56处于🟡关注区间下沿。主要风险贡献来自城投债（权重25%叠加1.5风险分，贡献SRI的67%）、商贸零售（风险得分2.0，贡献0.080）、光伏（风险得分2.5，贡献0.058）和新能源车（风险得分2.0，贡献0.044）。与历史对比：类似2020年8月永煤违约前水平（SRI≈0.58），但风险结构不同——2020年集中在煤炭/周期行业，当前集中在城投债+光伏+消费。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 2 — 红色行业清单 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--red);"></span>
+      二、红色行业清单
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      风险得分≥2.0的行业列表（触发红色信号），逐行业标注触发因子、核心矛盾及对SRI的贡献。
+      红色行业是系统性风险的主要贡献者，需重点监控其传染链和集中度敞口。
+      当前共有3个行业触发红色信号（光伏/储能2.5分、新能源汽车2.0分、商贸零售2.0分），城投债以1.5分接近红色阈值。
+    </p>
+
+    <div class="red-industry-card">
+      <span class="industry-tag">红色行业 #1 · 风险得分：2.5</span>
+      <h4>光伏/储能</h4>
+      <p class="industry-desc">
+        <strong>轨道A评分：</strong>4.5-5.5（BB+/BBB-区间，偏弱）<br>
+        <strong>展望方向：</strong>负面<br>
+        <strong>轨道B信号：</strong>🟡 关注<br>
+        <strong>一票否决触发：</strong>否<br>
+        <strong>核心矛盾：</strong>产能严重过剩是核心矛盾。全产业链面临供给侧出清压力，组件价格持续低迷，上游硅料/硅片环节亏损面扩大。2025-2026年间已有13家企业被强制执行，集中破产潮仍在进行中。行业仍处下行周期，尚未见底。<br>
+        <strong>SRI贡献：</strong>0.058（占SRI比重10.4%）<br>
+        <strong>传染链风险：</strong>光伏→化工（传染强度3/5，上游辅材供应冲击）、光伏→有色金属（传染强度2/5，银/铜等金属需求下降）、光伏→新能源车（间接竞争融资渠道）
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge red">基准分：2分</span>
+        <span class="warn-badge amber">展望惩罚：+0.5</span>
+        <span class="warn-badge green">轨道B惩罚：0</span>
+        <span class="warn-badge red">总风险得分：2.5</span>
+      </div>
+    </div>
+
+    <div class="red-industry-card">
+      <span class="industry-tag">红色行业 #2 · 风险得分：2.0</span>
+      <h4>新能源汽车</h4>
+      <p class="industry-desc">
+        <strong>轨道A评分：</strong>5.0-6.0（BBB/BB+区间，中等偏弱）<br>
+        <strong>展望方向：</strong>负面<br>
+        <strong>轨道B信号：</strong>🟡 关注<br>
+        <strong>一票否决触发：</strong>否<br>
+        <strong>核心矛盾：</strong>价格战持续升级，尾部企业加速出清。产能过剩问题严峻，全行业产能利用率降至60%以下。电池板块虽企稳回升，但整车环节面临盈利压力。中小企业融资环境恶化，信用事件风险上升。<br>
+        <strong>SRI贡献：</strong>0.044（占SRI比重7.9%）<br>
+        <strong>传染链风险：</strong>新能源车→有色金属（锂/钴/镍需求波动）、新能源车→半导体（车规级芯片需求关联）
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge red">基准分：1分</span>
+        <span class="warn-badge amber">展望惩罚：+0.5</span>
+        <span class="warn-badge amber">轨道B惩罚：+0.5</span>
+        <span class="warn-badge red">总风险得分：2.0</span>
+      </div>
+    </div>
+
+    <div class="red-industry-card">
+      <span class="industry-tag">红色行业 #3 · 风险得分：2.0</span>
+      <h4>商贸零售</h4>
+      <p class="industry-desc">
+        <strong>轨道A评分：</strong>5.0-6.0（BBB/BB+区间，中等偏弱）<br>
+        <strong>展望方向：</strong>负面<br>
+        <strong>轨道B信号：</strong>🟡 关注<br>
+        <strong>一票否决触发：</strong>否<br>
+        <strong>核心矛盾：</strong>消费降级趋势持续压制行业盈利。线上线下融合面临结构性挑战，传统百货/超市客流持续下滑。部分民企信用质量承压，融资渠道收窄。电商平台对线下零售的替代效应仍在深化。<br>
+        <strong>SRI贡献：</strong>0.080（占SRI比重14.3%）<br>
+        <strong>传染链风险：</strong>商贸零售→食品饮料（供应链需求关联）、商贸零售→纺织服装（消费降级传递）
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge red">基准分：1分</span>
+        <span class="warn-badge amber">展望惩罚：+0.5</span>
+        <span class="warn-badge amber">轨道B惩罚：+0.5</span>
+        <span class="warn-badge red">总风险得分：2.0</span>
+      </div>
+    </div>
+
+    <div class="red-industry-card" style="border-left-color:var(--amber);">
+      <span class="industry-tag">接近红色 · 风险得分：1.5 · 需密切关注</span>
+      <h4>城投债(LGV)</h4>
+      <p class="industry-desc">
+        <strong>轨道A评分：</strong>5.0-5.5（BB+/BBB区间，中等偏弱）<br>
+        <strong>展望方向：</strong>稳定<br>
+        <strong>轨道B信号：</strong>🟡 关注<br>
+        <strong>一票否决触发：</strong>否<br>
+        <strong>核心矛盾：</strong>10万亿化债推进中，但区域分化加剧。弱区域（山东/陕西/云南/河南等）评级下调集中。因城投债权重达25%，其1.5风险分对SRI的贡献（0.375）占SRI总量67%，是当前SRI偏高的最主要原因。<br>
+        <strong>SRI贡献：</strong>0.375（占SRI比重67.0%）<br>
+        <strong>传染链风险：</strong>城投→交通运输（传染强度4/5，基建投资关联）、城投→商贸零售（区域经济下行拖累消费）
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge amber">基准分：1分</span>
+        <span class="warn-badge green">展望惩罚：0</span>
+        <span class="warn-badge amber">轨道B惩罚：+0.5</span>
+        <span class="warn-badge amber">总风险得分：1.5</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>红色行业汇总表</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>行业</th>
+            <th>风险得分</th>
+            <th>轨道A评分</th>
+            <th>展望</th>
+            <th>轨道B</th>
+            <th>一票否决</th>
+            <th>SRI贡献</th>
+            <th>数据来源</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>光伏/储能</td>
+            <td><span class="tag tag-red">2.5</span></td>
+            <td>4.5-5.5 (BB+/BBB-)</td>
+            <td><span class="tag tag-red">负面</span></td>
+            <td><span class="tag tag-amber">关注</span></td>
+            <td><span class="tag tag-green">否</span></td>
+            <td class="text-red">0.058</td>
+            <td>兴业研究·产能过剩供需错配</td>
+          </tr>
+          <tr>
+            <td>新能源汽车</td>
+            <td><span class="tag tag-red">2.0</span></td>
+            <td>5.0-6.0 (BBB/BB+)</td>
+            <td><span class="tag tag-red">负面</span></td>
+            <td><span class="tag tag-amber">关注</span></td>
+            <td><span class="tag tag-green">否</span></td>
+            <td class="text-red">0.044</td>
+            <td>行业协会·价格战持续数据</td>
+          </tr>
+          <tr>
+            <td>商贸零售</td>
+            <td><span class="tag tag-red">2.0</span></td>
+            <td>5.0-6.0 (BBB/BB+)</td>
+            <td><span class="tag tag-red">负面</span></td>
+            <td><span class="tag tag-amber">关注</span></td>
+            <td><span class="tag tag-green">否</span></td>
+            <td class="text-red">0.080</td>
+            <td>消费降级趋势·线上冲击数据</td>
+          </tr>
+          <tr>
+            <td>城投债(LGV)</td>
+            <td><span class="tag tag-amber">1.5</span></td>
+            <td>5.0-5.5 (BB+/BBB)</td>
+            <td><span class="tag tag-green">稳定</span></td>
+            <td><span class="tag tag-amber">关注</span></td>
+            <td><span class="tag tag-green">否</span></td>
+            <td class="text-amber">0.375</td>
+            <td>财通证券·化债推进区域分化</td>
+          </tr>
+          <tr>
+            <td>其余9行业</td>
+            <td><span class="tag tag-green">0</span></td>
+            <td>均&gt;5.5 (BBB+及以上)</td>
+            <td><span class="tag tag-green">稳定/正面</span></td>
+            <td><span class="tag tag-green">平静</span></td>
+            <td><span class="tag tag-green">否</span></td>
+            <td class="text-green">0</td>
+            <td>各行业金字塔输出</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box info-red" style="margin-top:10px;">
+        <strong>红色行业综合评估：</strong>当前红色行业的共同特征是均处于"产能过剩+需求不足"的周期低谷。光伏和新能源车属于制造业产能过剩集群，商贸零售属于消费降级集群。3个红色行业之间没有直接的高强度传染路径，但均与城投债（接近红色）存在间接关联——城投债通过基建投资影响新能源车（物流/公交电动化需求）、通过地方财政影响商贸零售（居民可支配收入）。如果城投债风险得分升至2.0，SRI将升至约0.63。如果再有1个行业（如半导体）转红，SRI将接近0.70。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 3 — 传染风险TOP5 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--purple);"></span>
+      三、传染风险TOP5
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      基于传染矩阵的强度数据，识别当前环境下风险最高的传染链。
+      排序依据：传染强度 × 源头行业风险得分 × 目标行业脆弱度。强度数据引用自传染矩阵的行业间关联评分（1-5级）。
+      当前TOP3传染链为核心关注对象：光伏→化工(强度3)、光伏→有色金属(强度2)、城投→交通运输(强度4)。
+    </p>
+
+    <div class="contagion-chain-card">
+      <span class="chain-tag">传染链 #1 · 传染强度：4/5</span>
+      <h4>城投债(LGV) → 交通运输</h4>
+      <p class="chain-desc">
+        <strong>路径：</strong>弱区域城投信用恶化 → 地方政府基建投资收缩 → 交通基础设施项目减少 → 交通运输企业业务量下降<br>
+        <strong>传染类型：</strong>信用链传染 + 区域共振<br>
+        <strong>传染矩阵引用：</strong>contagion-matrix.md §4.2，城投↔交通运输强度4/5，属于高传染链。<br>
+        <strong>源头行业风险得分：</strong>1.5（城投债，接近红色）<br>
+        <strong>目标行业脆弱度：</strong>交通运输轨道A评分5.5-6.5（BBB+），展望稳定，轨道B平静。脆弱度中等——基础设施依赖度高。<br>
+        <strong>升级因子触发状态：</strong>信息不对称因子弱激活——弱区域城投的隐性债务透明度不足。<br>
+        <strong>潜在影响量级：</strong>若城投信用大面积恶化，交通运输行业信用利差可能走阔30-50bp。
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge red">强度 4/5</span>
+        <span class="warn-badge amber">源头风险 关注</span>
+        <span class="warn-badge amber">目标脆弱 中等</span>
+        <span class="warn-badge red">综合评级：高风险</span>
+      </div>
+    </div>
+
+    <div class="contagion-chain-card">
+      <span class="chain-tag">传染链 #2 · 传染强度：3/5</span>
+      <h4>光伏/储能 → 化工</h4>
+      <p class="chain-desc">
+        <strong>路径：</strong>光伏产能过剩 → 上游辅材（EVA/POE胶膜、光伏玻璃用纯碱等）需求下降 → 化工行业相关子板块承压<br>
+        <strong>传染类型：</strong>信用链传染（上游供应链需求冲击）<br>
+        <strong>传染矩阵引用：</strong>contagion-matrix.md §4.3，光伏↔化工强度3/5。<br>
+        <strong>源头行业风险得分：</strong>2.5（光伏，高风险）<br>
+        <strong>目标行业脆弱度：</strong>化工行业不在13行业覆盖范围内，但通过光伏供应链间接映射。<br>
+        <strong>升级因子触发状态：</strong>高杠杆环境因子未触发。<br>
+        <strong>潜在影响量级：</strong>光伏组件产量每下降10%，相关化工品需求将减少5-8%。
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge red">强度 3/5</span>
+        <span class="warn-badge red">源头风险 高</span>
+        <span class="warn-badge green">目标脆弱 低</span>
+        <span class="warn-badge amber">综合评级：中高风险</span>
+      </div>
+    </div>
+
+    <div class="contagion-chain-card">
+      <span class="chain-tag">传染链 #3 · 传染强度：2/5</span>
+      <h4>光伏/储能 → 有色金属</h4>
+      <p class="chain-desc">
+        <strong>路径：</strong>光伏产能过剩 → 银浆（光伏银浆占白银总需求约10%）、铜（光伏用铜量下降）需求走弱 → 有色金属行业需求端承压<br>
+        <strong>传染类型：</strong>信用链传染（下游需求萎缩）<br>
+        <strong>传染矩阵引用：</strong>contagion-matrix.md §4.3，光伏↔有色金属强度2/5。<br>
+        <strong>源头行业风险得分：</strong>2.5（光伏，高风险）<br>
+        <strong>目标行业脆弱度：</strong>有色金属行业不在13行业覆盖范围内，但通过商品需求间接关联。<br>
+        <strong>升级因子触发状态：</strong>无升级因子触发。<br>
+        <strong>潜在影响量级：</strong>光伏行业白银需求若下降15%，将对银价产生约1-2%的边际影响。
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge amber">强度 2/5</span>
+        <span class="warn-badge red">源头风险 高</span>
+        <span class="warn-badge green">目标脆弱 低</span>
+        <span class="warn-badge amber">综合评级：中等风险</span>
+      </div>
+    </div>
+
+    <div class="contagion-chain-card">
+      <span class="chain-tag">传染链 #4 · 传染强度：3/5</span>
+      <h4>商贸零售 → 食品饮料</h4>
+      <p class="chain-desc">
+        <strong>路径：</strong>消费降级 → 商贸零售低迷 → 食品饮料行业下游渠道去库存 → 品牌商营收增长放缓<br>
+        <strong>传染类型：</strong>信用链传染（下游需求萎缩）<br>
+        <strong>传染矩阵引用：</strong>contagion-matrix.md §4.4，商贸零售↔食品饮料强度3/5。<br>
+        <strong>源头行业风险得分：</strong>2.0（商贸零售，红色）<br>
+        <strong>目标行业脆弱度：</strong>食品饮料轨道A评分6.5-7.5（A-至A），展望稳定，轨道B平静。脆弱度低——必选消费抗周期性强。<br>
+        <strong>升级因子触发状态：</strong>无升级因子触发。<br>
+        <strong>潜在影响量级：</strong>商贸零售低迷可能导致食品饮料经销商渠道库存周转天数延长5-10天。
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge amber">强度 3/5</span>
+        <span class="warn-badge amber">源头风险 中高</span>
+        <span class="warn-badge green">目标脆弱 低</span>
+        <span class="warn-badge amber">综合评级：中等风险</span>
+      </div>
+    </div>
+
+    <div class="contagion-chain-card">
+      <span class="chain-tag">传染链 #5 · 传染强度：2/5</span>
+      <h4>新能源汽车 → 有色金属</h4>
+      <p class="chain-desc">
+        <strong>路径：</strong>新能源车价格战 → 上游锂/钴/镍价格承压 → 有色金属行业利润压缩<br>
+        <strong>传染类型：</strong>信用链传染（上游需求波动）<br>
+        <strong>传染矩阵引用：</strong>contagion-matrix.md §4.3，新能源车↔有色金属强度2/5。<br>
+        <strong>源头行业风险得分：</strong>2.0（新能源车，红色）<br>
+        <strong>目标行业脆弱度：</strong>有色金属行业不在13行业覆盖范围内。<br>
+        <strong>升级因子触发状态：</strong>无升级因子触发。<br>
+        <strong>潜在影响量级：</strong>碳酸锂价格已从峰值下跌约80%，进一步下行空间有限。
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge amber">强度 2/5</span>
+        <span class="warn-badge amber">源头风险 中高</span>
+        <span class="warn-badge green">目标脆弱 低</span>
+        <span class="warn-badge amber">综合评级：中等风险</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>传染风险摘要</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>排名</th>
+            <th>传染链</th>
+            <th>传染强度</th>
+            <th>传染类型</th>
+            <th>综合警示</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>城投债(LGV) → 交通运输</td>
+            <td><span class="tag tag-red">4/5</span></td>
+            <td>信用链+区域共振</td>
+            <td><span class="tag tag-red">高风险</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>光伏/储能 → 化工</td>
+            <td><span class="tag tag-amber">3/5</span></td>
+            <td>信用链(上游供应链)</td>
+            <td><span class="tag tag-amber">中高风险</span></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>光伏/储能 → 有色金属</td>
+            <td><span class="tag tag-amber">2/5</span></td>
+            <td>信用链(下游需求)</td>
+            <td><span class="tag tag-amber">中等风险</span></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>商贸零售 → 食品饮料</td>
+            <td><span class="tag tag-amber">3/5</span></td>
+            <td>信用链(需求萎缩)</td>
+            <td><span class="tag tag-amber">中等风险</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>新能源汽车 → 有色金属</td>
+            <td><span class="tag tag-amber">2/5</span></td>
+            <td>信用链(需求波动)</td>
+            <td><span class="tag tag-amber">中等风险</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box info-purple" style="margin-top:10px;">
+        <strong>传染风险综合评估：</strong>当前最需要关注的是城投→交通运输传染链（强度4），虽然城投尚未进入红色，但其权重极大（25%），一旦恶化将直接冲击交通运输行业。光伏→化工和光伏→有色金属两条传染链共享同一源头（光伏），构成"一对多"的传染扇出格局。好消息是当前超级传染者（半导体、高端装备）均运行正常，没有同时触发的多行业共振。在SRI当前🟡关注等级下，传染矩阵尚未进入全域升级状态。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 4 — 集中度警示 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--amber);"></span>
+      四、集中度警示
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      在当前系统性风险环境下（SRI=0.56 🟡关注），识别哪些集中度风险维度最具威胁性。
+      结合行业集中度、区域集中度、评级集中度、期限集中度和融资渠道集中度的交叉分析，
+      标注需要立即关注的高集中度敞口。
+    </p>
+
+    <div class="concentration-warn-card">
+      <span class="cw-tag">集中度风险 #1 · 优先级 P0</span>
+      <h4>光伏行业集中度风险</h4>
+      <p class="cw-desc">
+        <strong>集中度维度：</strong>行业集中度<br>
+        <strong>当前敞口水平：</strong>若组合中光伏行业敞口超过30%，则处于极端集中状态。<br>
+        <strong>阈值位置：</strong>根据五维集中度框架，单一行业敞口建议上限为25%（普通行业）或15%（高风险行业）。光伏当前风险得分2.5，应适用15%的高风险行业上限。<br>
+        <strong>与SRI的关联：</strong>光伏是本轮SRI上升的主要行业驱动（轨道A评分4.5-5.5，从2026Q1的5.0-6.0进一步下滑），其风险得分2.5在红色行业中最高。<br>
+        <strong>传染放大效应：</strong>光伏同时通过化工、有色金属两条传染链向外扩散，集中度风险被传染效应放大。<br>
+        <strong>建议监控指标：</strong>组件月度产量、行业开工率、企业应收账款周转天数。
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge red">影响量级：高</span>
+        <span class="warn-badge amber">触发概率：中高</span>
+        <span class="warn-badge red">优先级 P0</span>
+      </div>
+    </div>
+
+    <div class="concentration-warn-card">
+      <span class="cw-tag">集中度风险 #2 · 优先级 P1</span>
+      <h4>辽宁/贵州区域集中度风险</h4>
+      <p class="cw-desc">
+        <strong>集中度维度：</strong>区域集中度<br>
+        <strong>当前敞口水平：</strong>弱区域城投敞口若超过组合的20%，则面临区域集中度风险。<br>
+        <strong>阈值位置：</strong>根据集中度框架，弱区域（辽宁、贵州、云南、天津等）单一区域上限为15%，多弱区域合计不超过30%。<br>
+        <strong>与SRI的关联：</strong>城投债风险得分1.5是SRI的最大贡献者（67%），弱区域城投是城投债风险的核心来源。<br>
+        <strong>传染放大效应：</strong>弱区域城投如果出现信用事件，将通过区域共振效应传染至区域内其他国企，并通过城投→交通运输传染链（强度4）扩散。<br>
+        <strong>建议监控指标：</strong>弱区域城投评级调整动态、区域融资环境、地方政府债务率变化。
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge amber">影响量级：中高</span>
+        <span class="warn-badge amber">触发概率：中</span>
+        <span class="warn-badge amber">优先级 P1</span>
+      </div>
+    </div>
+
+    <div class="concentration-warn-card">
+      <span class="cw-tag">集中度风险 #3 · 优先级 P1</span>
+      <h4>新能源车+光伏联合行业集中度</h4>
+      <p class="cw-desc">
+        <strong>集中度维度：</strong>跨行业集中度（集群视角）<br>
+        <strong>当前敞口水平：</strong>新能源车与光伏同属"先进制造"集群，若合计敞口超过40%则存在集群集中风险。<br>
+        <strong>阈值位置：</strong>集群集中度上限建议为40%（集群D+集群F合计上限），当前两者均处高风险状态。<br>
+        <strong>与SRI的关联：</strong>两者合计贡献SRI约0.102（占SRI的18.3%）。光伏和新能源车共享类似的风险驱动因素（产能过剩、价格战）。<br>
+        <strong>传染放大效应：</strong>两者虽无直接传染路径，但共享融资渠道和投资者情绪，可能形成"双杀"效应。<br>
+        <strong>建议监控指标：</strong>两行业合计敞口占比、行业利差同步性、关联行业风险暴露。
+      </p>
+      <div class="warning-tier" style="margin-top:8px;">
+        <span class="warn-badge amber">影响量级：中</span>
+        <span class="warn-badge green">触发概率：中低</span>
+        <span class="warn-badge amber">优先级 P1</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>五维集中度风险矩阵</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>集中度维度</th>
+            <th>当前风险等级</th>
+            <th>SRI联动强度</th>
+            <th>传染放大风险</th>
+            <th>建议行动</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>行业集中度</td>
+            <td><span class="tag tag-red">高风险</span></td>
+            <td><span class="tag tag-red">强联动</span></td>
+            <td><span class="tag tag-red">高</span></td>
+            <td>减光伏敞口至30%以下</td>
+          </tr>
+          <tr>
+            <td>区域集中度</td>
+            <td><span class="tag tag-amber">中高风险</span></td>
+            <td><span class="tag tag-amber">中等联动</span></td>
+            <td><span class="tag tag-amber">中高</span></td>
+            <td>控制弱区域城投敞口</td>
+          </tr>
+          <tr>
+            <td>评级集中度</td>
+            <td><span class="tag tag-green">低风险</span></td>
+            <td><span class="tag tag-green">弱联动</span></td>
+            <td><span class="tag tag-green">低</span></td>
+            <td>维持现有评级分布</td>
+          </tr>
+          <tr>
+            <td>期限集中度</td>
+            <td><span class="tag tag-blue">较低风险</span></td>
+            <td><span class="tag tag-green">弱联动</span></td>
+            <td><span class="tag tag-blue">较低</span></td>
+            <td>可适度拉长久期</td>
+          </tr>
+          <tr>
+            <td>融资渠道集中度</td>
+            <td><span class="tag tag-blue">较低风险</span></td>
+            <td><span class="tag tag-blue">较低联动</span></td>
+            <td><span class="tag tag-green">低</span></td>
+            <td>保持渠道多样性</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box info-amber" style="margin-top:10px;">
+        <strong>集中度综合评估：</strong>在当前SRI=0.56（🟡关注）环境下，行业集中度是最高风险的维度，尤其是光伏行业（风险得分2.5，传染扇出路径多）。区域集中度风险次之，弱区域城投虽然尚未进入红色，但因其权重极大（25%），集中敞口需严格控制。根据SRI与集中度框架的联动规则，当前🟡关注等级下，若SRI的主要贡献行业在组合中敞口>20%，行业集中度维度权重将从25%上调至30%。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5 — 与前季度对比 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--amber);"></span>
+      五、与前季度对比
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      2026年Q2与2026年Q1的SRI趋势对比、新增红色行业和退出红色的行业。
+      趋势分析是判断系统性风险走向的关键依据——连续两期上升意味着风险积累加速。
+      本季度SRI从0.44升至0.56（↑+0.12），由关注度下沿向中段移动。
+    </p>
+
+    <div class="trend-card">
+      <h4>SRI趋势</h4>
+      <p style="font-size:13px; color:var(--text-secondary); line-height:1.7;">
+        <strong>本季度SRI：</strong><span class="text-red">0.56</span><br>
+        <strong>上季度SRI：</strong>0.44<br>
+        <strong>变化方向：</strong><span class="text-red">↑ +0.12</span><br>
+        <strong>变化幅度百分比：</strong>+27.3%<br>
+        <strong>趋势判断：</strong>SRI连续上升，从🟢正常区间（0.44）进入🟡关注区间（0.56）。虽然绝对读数仍处于关注区间下沿，但上升幅度（+0.12）值得警惕——如果保持此速度，2个季度后SRI将接近1.0的🟠警惕阈值。<br>
+        <strong>主要驱动因素：</strong>光伏行业信号恶化（轨道A从5.0-6.0下滑至4.5-5.5）是最大驱动因素。光伏风险贡献从0.030升至0.058。商贸零售展望从稳定转为负面也是重要推手。
+      </p>
+      <div class="threshold-vis">
+        <span style="font-size:11px;color:var(--text-tertiary);min-width:40px;">SRI轨迹:</span>
+        <div class="threshold-track">
+          <div class="threshold-label" style="left:0%;">2026Q1</div>
+          <div class="threshold-label" style="left:100%;">2026Q2</div>
+          <div class="threshold-marker" style="left:11%;background:var(--green);"></div>
+          <div class="threshold-marker" style="left:14%;background:var(--amber);"></div>
+          <div class="threshold-current" style="left:14%;background:var(--amber);"></div>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:var(--text-secondary);min-width:60px;">SRI: 0.56</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>新增红色行业（本季度新进入风险得分≥2.0的行业）</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>行业</th>
+            <th>本季度风险得分</th>
+            <th>上季度风险得分</th>
+            <th>变化</th>
+            <th>转红原因</th>
+            <th>影响评估</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>商贸零售</td>
+            <td><span class="tag tag-red">2.0</span></td>
+            <td>1.5</td>
+            <td class="text-red">+0.5</td>
+            <td>消费降级深化，展望从稳定转为负面，轨道B从平静升至关注</td>
+            <td><span class="tag tag-red">中等影响</span></td>
+          </tr>
+          <tr>
+            <td>光伏/储能</td>
+            <td><span class="tag tag-red">2.5</span></td>
+            <td>1.5</td>
+            <td class="text-red">+1.0</td>
+            <td>轨道A从5.0-6.0降至4.5-5.5，展望维持负面，产能出清未完成</td>
+            <td><span class="tag tag-red">高影响</span></td>
+          </tr>
+          <tr>
+            <td>新能源汽车</td>
+            <td><span class="tag tag-red">2.0</span></td>
+            <td>1.5</td>
+            <td class="text-red">+0.5</td>
+            <td>价格战加剧，尾部出清加速，轨道B从平静升关注</td>
+            <td><span class="tag tag-amber">中等影响</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>退出红色的行业（本季度风险得分降至2.0以下的行业）</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>行业</th>
+            <th>本季度风险得分</th>
+            <th>上季度风险得分</th>
+            <th>变化</th>
+            <th>退出原因</th>
+            <th>持久性评估</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>无退出红色行业</td>
+            <td><span class="tag tag-green">-</span></td>
+            <td>-</td>
+            <td class="text-green">-</td>
+            <td>上季度无风险得分≥2.0的红色行业。所有红色行业均为本季度新进入。</td>
+            <td><span class="tag tag-amber">新进入红色</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>季度间SRI贡献变化</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>行业</th>
+            <th>本季度贡献</th>
+            <th>上季度贡献</th>
+            <th>贡献变化</th>
+            <th>贡献变化原因</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>光伏/储能</td>
+            <td class="text-red">0.058</td>
+            <td>0.030</td>
+            <td class="text-red">+0.028</td>
+            <td>轨道A下滑至4.5-5.5，风险得分从1.5升至2.5</td>
+          </tr>
+          <tr>
+            <td>商贸零售</td>
+            <td class="text-red">0.080</td>
+            <td>0.038</td>
+            <td class="text-red">+0.042</td>
+            <td>展望转负+轨道B升级，风险得分从1.0升至2.0</td>
+          </tr>
+          <tr>
+            <td>新能源汽车</td>
+            <td class="text-red">0.044</td>
+            <td>0.022</td>
+            <td class="text-red">+0.022</td>
+            <td>轨道B升级，风险得分从1.0升至2.0</td>
+          </tr>
+          <tr>
+            <td>城投债(LGV)</td>
+            <td class="text-amber">0.375</td>
+            <td>0.250</td>
+            <td class="text-amber">+0.125</td>
+            <td>轨道B从平静升至关注，风险得分从1.0升至1.5</td>
+          </tr>
+          <tr>
+            <td>其余9行业</td>
+            <td class="text-green">0</td>
+            <td>0</td>
+            <td class="text-green">0</td>
+            <td>无变化</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box info-amber" style="margin-top:10px;">
+        <strong>季度对比总结：</strong>SRI从0.44升至0.56（↑+0.12），由🟢正常区间进入🟡关注区间。这是SRI首次在2026年内进入关注区间。上升主要由三个行业驱动：光伏（+0.028）、商贸零售（+0.042）和新能源车（+0.022），合计贡献0.092增量。城投债贡献增加0.125但主要来自轨道B升级而非基本面恶化。如果光伏出清加速导致更多企业违约，或城投区域分化进一步扩大，SRI可能在2026Q3升至0.65-0.75区间。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 6 — 行动建议 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--blue);"></span>
+      六、行动建议
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      本文档不提供"该买什么"的投资建议，而是从风险控制角度提出：哪些集中度需要降低、哪些行业需要增加监控频率、哪些传染链需要重点关注、以及在当前温度计等级（🟡关注）下的组合防御策略。
+      所有建议均基于当前SRI=0.56（🟡关注）和3个红色行业的分布特征。
+    </p>
+
+    <div class="action-grid">
+      <div class="action-grid-item">
+        <span class="priority-tag p0">P0</span>
+        <h5>降低光伏行业集中度敞口至30%以下</h5>
+        <p class="ag-desc">
+          光伏行业当前风险得分2.5（最高），且轨道A评分仍在恶化，产能出清尚未完成。建议将光伏行业敞口从当前水平（假设40%+）降低至30%以下。若敞口超过50%，建议分两阶段减仓：第一阶段减至40%、第二阶段减至30%以下。减仓优先选择高风险主体（组件制造环节，特别是二三线厂商），保留头部企业（隆基、通威等）但控制敞口比例。减仓资金可转向食品饮料（轨道A 6.5-7.5，展望稳定）或数据中心/算力基建（轨道A 6.5-7.5，展望正面）。
+        </p>
+      </div>
+      <div class="action-grid-item">
+        <span class="priority-tag p0">P0</span>
+        <h5>增加弱区域城投的监控频率至双周</h5>
+        <p class="ag-desc">
+          城投债虽未进入红色（风险得分1.5），但因权重25%是SRI的最大贡献者。建议将弱区域（辽宁、贵州、云南、陕西、河南等）城投的监控频率从月度提升至双周，重点监控：①评级调整动向（是否有集中下调）；②地方债务率变化；③再融资难度（发行利率走势）；④非标违约事件。如果弱区域城投出现集中评级下调（3家以上同时下调），应触发紧急审视。
+        </p>
+      </div>
+      <div class="action-grid-item">
+        <span class="priority-tag p1">P1</span>
+        <h5>重点监控城投→交通运输传染链</h5>
+        <p class="ag-desc">
+          城投↔交通运输传染链强度4/5，是当前所有传染链中强度最高的。虽然交通运输当前轨道A评分5.5-6.5（BBB+），展望稳定，轨道B平静，但如果城投信用大面积恶化（特别是弱区域），交通运输将通过基建投资下滑受到实质性冲击。建议：①评估组合对交通运输与城投的合计敞口；②若两者合计敞口超过35%，制定减仓预案；③关注交通类企业基建订单变化趋势。
+        </p>
+      </div>
+      <div class="action-grid-item">
+        <span class="priority-tag p1">P1</span>
+        <h5>利用关注窗口期进行预防性组合调整</h5>
+        <p class="ag-desc">
+          🟡关注不等同于危机，但如系统预警框架所述，SRI连续上升是本报告期间的重要信号。建议：①检查组合中3个红色行业（光伏、新能源车、商贸零售）的合计敞口，若超过50%则需主动降低；②控制城投债（特别是弱区域）敞口不超过20%；③增加抗周期配置：食品饮料（必选消费，抗周期性强）和数据中心/算力基建（AI需求驱动，景气度高企）；④缩短高风险行业持仓久期至3年以内。
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>行动建议汇总表</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>优先级</th>
+            <th>行动类别</th>
+            <th>具体行动</th>
+            <th>目标对象</th>
+            <th>执行时限</th>
+            <th>预期效果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="priority-tag p0">P0</span></td>
+            <td>集中度降低</td>
+            <td>减光伏敞口至30%以下</td>
+            <td>光伏行业集中度</td>
+            <td>4-6周</td>
+            <td>降低行业集中风险·减少SRI敏感敞口</td>
+          </tr>
+          <tr>
+            <td><span class="priority-tag p0">P0</span></td>
+            <td>监控升级</td>
+            <td>弱区域城投监控频率提至双周</td>
+            <td>辽宁/贵州等弱区域城投</td>
+            <td>立即</td>
+            <td>提前捕捉城投风险信号</td>
+          </tr>
+          <tr>
+            <td><span class="priority-tag p1">P1</span></td>
+            <td>传染链监控</td>
+            <td>城投→交通运输传染链专项评估</td>
+            <td>城投+交通运输联合敞口</td>
+            <td>2-4周</td>
+            <td>识别隐性传染风险</td>
+          </tr>
+          <tr>
+            <td><span class="priority-tag p1">P1</span></td>
+            <td>组合调整</td>
+            <td>增加食品饮料/数据中心配置</td>
+            <td>抗周期行业补充</td>
+            <td>4-8周</td>
+            <td>平衡组合·降低系统性风险敞口</td>
+          </tr>
+          <tr>
+            <td><span class="priority-tag p2">P2</span></td>
+            <td>久期管理</td>
+            <td>高风险行业持仓久期缩短至3年以内</td>
+            <td>光伏/新能源车/商贸零售持仓</td>
+            <td>8-12周</td>
+            <td>降低期限集中度与再融资风险</td>
+          </tr>
+          <tr>
+            <td><span class="priority-tag p2">P2</span></td>
+            <td>压力测试</td>
+            <td>启动SRI升级情景压力测试</td>
+            <td>全组合</td>
+            <td>12周</td>
+            <td>准备🟠警惕情景应对方案</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>温度计等级升级预案</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>升级路径</th>
+            <th>触发条件</th>
+            <th>概率评估</th>
+            <th>需要提前准备的行动</th>
+            <th>准备时限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🟡 关注 → 🟠 警惕</td>
+            <td>光伏风险得分升至≥3.0（一票否决）或城投债风险得分升至≥2.0或半导体信号恶化</td>
+            <td><span class="tag tag-amber">中低（20-30%）</span></td>
+            <td>提前制定高风险行业减仓至20%的预案、启动利率对冲、准备久期缩短方案</td>
+            <td>1个季度内</td>
+          </tr>
+          <tr>
+            <td>🟡 关注 → 🔴 危险</td>
+            <td>3个及以上超级传染者同时出现信号恶化，或全市场过半行业转入红色</td>
+            <td><span class="tag tag-green">低（&lt;5%）</span></td>
+            <td>全面防御组合方案、现金储备增至20%+、利率衍生品对冲全覆盖</td>
+            <td>当前SRI距危险阈值较远</td>
+          </tr>
+          <tr>
+            <td>🟡 关注 → 🟢 正常</td>
+            <td>光伏出清完成导致轨道A回升至6.0以上，或城投债轨道B恢复平静</td>
+            <td><span class="tag tag-amber">中低（15-25%）</span></td>
+            <td>恢复常规监控频率、逐步放宽集中度限额、正常化久期管理</td>
+            <td>2-3个季度后可能</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box info-blue" style="margin-top:10px;">
+        <strong>行动建议核心原则：</strong>在当前SRI=0.56（🟡关注）下，行动建议的核心原则是"预防性管理"而非"危机应对"。温度计为🟡关注意味着系统性风险存在但未到紧急程度，应该利用这个窗口期进行预防性调整，而非等到升温至🟠警惕或🔴危险才开始行动。核心关注三个传导链条：光伏→化工/有色金属（产业层面）、城投→交通运输（基建层面）、商贸零售→食品饮料（消费层面）。如果能在当前阶段完成光伏敞口瘦身和弱区域城投监控升级，即使下一季度SRI继续上升，组合已具备更好的风险承受能力。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 7 — 温度计与传染矩阵升级因子联动 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--purple);"></span>
+      七、温度计与传染矩阵升级因子联动
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      温度计等级与传染矩阵升级因子（恐慌情绪、监管政策真空、高杠杆环境、信息不对称、时间节点效应）的联动分析。
+      当温度计进入🟠或🔴时，系统性风险本身将充当全域升级因子，使传染矩阵全部链路强度+1~+2。
+      当前温度计为🟡关注，尚未触发全域升级。
+    </p>
+
+    <div class="card">
+      <h3>升级因子激活状态</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>升级因子</th>
+            <th>当前状态</th>
+            <th>激活程度</th>
+            <th>与SRI联动效应</th>
+            <th>传染矩阵影响</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>市场恐慌情绪</td>
+            <td>整体平稳，信用利差未出现异常走阔。光伏行业利差有所抬升但未扩散。</td>
+            <td><span class="tag tag-green">低</span></td>
+            <td>未激活。市场对信用风险定价理性，未出现恐慌性抛售。</td>
+            <td>无影响</td>
+          </tr>
+          <tr>
+            <td>监管政策真空或滞后</td>
+            <td>光伏产业政策持续推进，但产能出清缺乏强制手段。城投化债政策在执行中。</td>
+            <td><span class="tag tag-amber">中等</span></td>
+            <td>光伏产能出清速度低于预期加剧了行业风险积累。</td>
+            <td>弱激活·仅影响光伏相关链</td>
+          </tr>
+          <tr>
+            <td>高杠杆环境</td>
+            <td>整体信用债市场杠杆率中性，但光伏和新能源车行业资产负债率偏高。</td>
+            <td><span class="tag tag-amber">中低</span></td>
+            <td>高杠杆仅限于高风险行业自身，未扩散至全市场。</td>
+            <td>局部影响</td>
+          </tr>
+          <tr>
+            <td>信息不对称</td>
+            <td>弱区域城投隐性债务透明度不足，部分光伏企业财务数据质量存疑。</td>
+            <td><span class="tag tag-amber">中等</span></td>
+            <td>信息不对称增大了城投债和光伏行业的信用重估风险。</td>
+            <td>弱激活·城投与光伏链</td>
+          </tr>
+          <tr>
+            <td>时间节点效应</td>
+            <td>2026年下半年信用债到期量较上半年有所增加，再融资压力上升。</td>
+            <td><span class="tag tag-amber">中低</span></td>
+            <td>到期压力可能在下半年推升信用利差，但整体可控。</td>
+            <td>弱激活</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box info-purple" style="margin-top:10px;">
+        <strong>升级因子协同效应评估：</strong>在当前温度计🟡关注下，5个升级因子中无任何一个处于强激活状态。监管政策滞后和信息不对称两个因子处于中等激活，主要影响光伏和城投相关传染链。温度计当前尚未触发升级因子协同效应（需达到🟠警惕），因此传染矩阵全部链路维持基础强度值，未进入全域升级状态。但需注意：如果光伏产能出清导致系统性违约事件（3家以上光伏企业同时违约），市场恐慌情绪因子可能迅速升至强激活，届时温度计可能在1-2个月内从🟡关注升级至🟠警惕。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 8 — 历史可比情景 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--green);"></span>
+      八、历史可比情景
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      将当前SRI读数（0.56）与历史关键时点对比，评估当前系统性风险在历史谱系中的位置。
+      引用系统性预警框架（systemic-warning-framework.md）的历史回测数据。
+    </p>
+
+    <div class="card">
+      <h3>SRI历史对比表</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>历史情景</th>
+            <th>时间窗口</th>
+            <th>SRI估算</th>
+            <th>温度计</th>
+            <th>与当前对比</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>永煤违约前</td>
+            <td>2020年8月</td>
+            <td class="text-amber">0.58</td>
+            <td><span class="tag tag-amber">🟡关注</span></td>
+            <td>SRI接近（0.58 vs 0.56），但风险结构不同</td>
+          </tr>
+          <tr>
+            <td>地产危机前</td>
+            <td>2021年3月</td>
+            <td class="text-amber">0.97</td>
+            <td><span class="tag tag-amber">🟡关注(上沿)</span></td>
+            <td>SRI远低于地产危机前水平（0.56 vs 0.97）</td>
+          </tr>
+          <tr>
+            <td>疫情冲击</td>
+            <td>2020年2月</td>
+            <td class="text-red">1.83</td>
+            <td><span class="tag tag-red">🔴危险</span></td>
+            <td>SRI远低于疫情冲击水平（0.56 vs 1.83）</td>
+          </tr>
+          <tr>
+            <td><strong>当前时点</strong></td>
+            <td><strong>2026年Q2</strong></td>
+            <td class="text-amber"><strong>0.56</strong></td>
+            <td><span class="tag tag-amber"><strong>🟡关注</strong></span></td>
+            <td><strong>温和关注水平，与2020年8月类似</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>历史启示</h3>
+      <div class="comparison-grid">
+        <div class="comparison-item" style="border-left:3px solid var(--amber);">
+          <h5>永煤违约启示（2020年8月 SRI≈0.58）</h5>
+          <p style="font-size:12px;color:var(--text-secondary);line-height:1.6;">
+            <strong>SRI在先：</strong>永煤违约前3个月SRI已进入🟡关注区间（0.58），与当前读数极为接近。<br>
+            <strong>关键区别：</strong>当时风险集中在煤炭/周期行业（1个高风险行业+4个中等风险行业），当前集中在城投债（权重驱动）+光伏+新能源车+商贸零售（3个红色行业）。<br>
+            <strong>当前启示：</strong>永煤违约前SRI=0.58但市场普遍低估风险（AAA国企信仰），最终违约引发系统性冲击。当前市场是否也低估了城投债和光伏的累积风险？永煤案例提醒我们：即使SRI仅处于🟡关注区间，如果市场对特定风险存在"信仰"（如城投刚兑信仰），可能的违约事件冲击将远超SRI读数所暗示的水平。
+          </p>
+        </div>
+        <div class="comparison-item" style="border-left:3px solid var(--red);">
+          <h5>地产危机启示（2021年3月 SRI≈0.97）</h5>
+          <p style="font-size:12px;color:var(--text-secondary);line-height:1.6;">
+            <strong>SRI在先：</strong>地产危机爆发前6个月SRI为0.97，接近🟠警惕阈值。<br>
+            <strong>关键区别：</strong>当前SRI=0.56远低于0.97，且当前没有出现类似地产-城投-银行-建筑的系统性传染链激活。<br>
+            <strong>当前启示：</strong>地产危机验证了一个关键规律——当风险集中的行业是超级传染者时（房地产↔城投↔银行），SRI升至🟡关注上沿后很容易跨越🟠警惕阈值。当前光伏和新能源车均非超级传染者，这是有利因素。但不利因素是城投债（超级传染者排名第2）已经接近红色，如果城投风险进一步恶化，SRI可能更快速地接近0.97水平。
+          </p>
+        </div>
+      </div>
+      <div class="info-box info-green" style="margin-top:10px;">
+        <strong>历史对比核心结论：</strong>当前SRI=0.56在历史谱系中处于温和关注水平，类似于2020年8月永煤违约前的状态。主要区别在于：永煤前期的风险集中在单一传统行业（煤炭），而当前的风险分布在三个行业（光伏、新能源车、商贸零售）加上权重主导的城投债——风险面更宽但深度更浅。不利情景下（城投债进一步恶化+光伏出清导致更多企业违约），SRI可能复制永煤前期的演化路径，在2-3个季度内升至0.8-0.9。需要特别关注的预警信号包括：弱区域城投是否出现非标违约集中爆发、光伏龙头企业是否出现超预期亏损。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 9 — 完备性报告 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal" style="background:var(--green);"></span>
+      九、完备性报告
+    </h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+      本报告的完备性检查——涵盖系统性风险警报的各个维度、数据来源、方法论局限性和后续更新计划。
+      所有数据来自系统性预警框架（systemic-warning-framework.md）的2026年Q2计算数据和其他引擎输出。
+    </p>
+
+    <div class="card">
+      <h3>9.1 覆盖维度检查</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>分析维度</th>
+            <th>覆盖状态</th>
+            <th>数据来源</th>
+            <th>置信度</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SRI指数计算</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>systemic-warning-framework.md §8</td>
+            <td><span class="text-green">高</span></td>
+            <td>基于13行业轨道A/轨道B/展望完整数据</td>
+          </tr>
+          <tr>
+            <td>温度计可视化</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>systemic-warning-framework.md §3</td>
+            <td><span class="text-green">高</span></td>
+            <td>四级阈值+SRI=0.56映射</td>
+          </tr>
+          <tr>
+            <td>红色行业清单</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>systemic-warning-framework.md §8.1-8.2</td>
+            <td><span class="text-green">高</span></td>
+            <td>光伏·新能源车·商贸零售3个红色</td>
+          </tr>
+          <tr>
+            <td>传染风险TOP5</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>contagion-matrix.md §4+§5</td>
+            <td><span class="text-amber">中高</span></td>
+            <td>传染强度数据引用自传染矩阵</td>
+          </tr>
+          <tr>
+            <td>集中度警示</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>concentration-framework.md + SRI联动</td>
+            <td><span class="text-amber">中高</span></td>
+            <td>行业集中度·区域集中度双警示</td>
+          </tr>
+          <tr>
+            <td>与前季度对比</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>SRI历史追踪</td>
+            <td><span class="text-green">高</span></td>
+            <td>0.44→0.56 +0.12完整对比</td>
+          </tr>
+          <tr>
+            <td>行动建议</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>systemic-warning-framework.md §8.5</td>
+            <td><span class="text-amber">中</span></td>
+            <td>减集中度加监控为核</td>
+          </tr>
+          <tr>
+            <td>升级因子联动</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>contagion-matrix.md §6</td>
+            <td><span class="text-amber">中高</span></td>
+            <td>5个升级因子逐一评估</td>
+          </tr>
+          <tr>
+            <td>历史可比情景</td>
+            <td><span class="tag tag-green">已覆盖</span></td>
+            <td>systemic-warning-framework.md §5-7</td>
+            <td><span class="text-green">高</span></td>
+            <td>永煤·地产·疫情三方对比</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>9.2 数据质量与局限性</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>数据类别</th>
+            <th>数据质量</th>
+            <th>完整度</th>
+            <th>时效性</th>
+            <th>局限性说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>轨道A行业评分</td>
+            <td><span class="tag tag-green">良好</span></td>
+            <td>95%</td>
+            <td>T+7天</td>
+            <td>基于行业金字塔模型输出，部分行业数据更新滞后</td>
+          </tr>
+          <tr>
+            <td>轨道B市场信号</td>
+            <td><span class="tag tag-green">良好</span></td>
+            <td>95%</td>
+            <td>T+1天</td>
+            <td>市场数据及时但信号分类存在主观性</td>
+          </tr>
+          <tr>
+            <td>传染矩阵强度</td>
+            <td><span class="tag tag-amber">中等</span></td>
+            <td>80%</td>
+            <td>T+30天</td>
+            <td>矩阵强度基于专家判断，非计量估计</td>
+          </tr>
+          <tr>
+            <td>行业权重数据</td>
+            <td><span class="tag tag-amber">中等</span></td>
+            <td>85%</td>
+            <td>T+30天</td>
+            <td>截断权重减轻城投债主导但引入近似误差</td>
+          </tr>
+          <tr>
+            <td>信用债存量数据</td>
+            <td><span class="tag tag-amber">中等</span></td>
+            <td>75%</td>
+            <td>T+90天</td>
+            <td>存量数据季度更新，季度内变化未捕获</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>9.3 方法局限性声明</h3>
+      <div class="card card-amber">
+        <h4>局限一：信号质量依赖</h4>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+          SRI的计算质量取决于输入的轨道A评分和轨道B信号的准确性。2026年Q2计算基于当时的行业金字塔输出和轨道B信号，如果基础信号本身有偏差（如评级虚高），SRI也会失真。例如，城投债的轨道A评分5.0-5.5可能未完全反映弱区域的实际信用恶化程度，如果实际评分更低，SRI将高于0.56。
+        </p>
+      </div>
+      <div class="card card-amber" style="margin-top:10px;">
+        <h4>局限二：滞后于外生冲击</h4>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+          SRI框架基于行业基本面信号，无法提前预警外生的、非信用的冲击（如疫情、自然灾害、地缘冲突）。2026年Q2报告中未考虑下半年可能出现的宏观政策变化、国际贸易摩擦升级、或地缘政治事件对行业信用的冲击。
+        </p>
+      </div>
+      <div class="card card-amber" style="margin-top:10px;">
+        <h4>局限三：行业覆盖不完整</h4>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+          框架仅覆盖13个行业，房地产、建筑、煤炭、化工、有色金属等信用债重要行业不在直接覆盖范围内。本报告中光伏→化工和光伏→有色金属两条传染链的目标行业（化工、有色金属）均不在13行业内，其脆弱度评估系近似估计。
+        </p>
+      </div>
+      <div class="card card-amber" style="margin-top:10px;">
+        <h4>局限四：参数主观性与城投债权重主导</h4>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+          当前SRI=0.56中，城投债贡献了0.375（占67%）。虽然权重截断至25%防止了过度主导，但城投债的权重仍然是其他行业（如光伏2.33%、新能源车2.22%）的10倍以上。这意味着SRI很大程度上反映的是城投债的风险信号——如果城投债风险得分升至2.0，SRI将升至0.63，即使其他行业全部正常。这种权重结构使SRI对城投债信号非常敏感，但对其他行业信号相对不敏感。
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>9.4 完整度评分</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>评估维度</th>
+            <th>评分</th>
+            <th>完整度百分比</th>
+            <th>待改进项</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SRI计算覆盖</td>
+            <td><span class="tag tag-green">优秀</span></td>
+            <td>
+              <div class="completeness-bar">
+                <div class="completeness-fill" style="width:95%;background:var(--green);">95%</div>
+              </div>
+            </td>
+            <td>城投债权重敏感度需持续验证</td>
+          </tr>
+          <tr>
+            <td>红色行业分析深度</td>
+            <td><span class="tag tag-green">优秀</span></td>
+            <td>
+              <div class="completeness-bar">
+                <div class="completeness-fill" style="width:92%;background:var(--green);">92%</div>
+              </div>
+            </td>
+            <td>需补充更多企业层面的数据分析</td>
+          </tr>
+          <tr>
+            <td>传染链覆盖度</td>
+            <td><span class="tag tag-amber">良好</span></td>
+            <td>
+              <div class="completeness-bar">
+                <div class="completeness-fill" style="width:85%;background:var(--amber);">85%</div>
+              </div>
+            </td>
+            <td>非13行业目标链的精确度有限</td>
+          </tr>
+          <tr>
+            <td>集中度警示深度</td>
+            <td><span class="tag tag-amber">良好</span></td>
+            <td>
+              <div class="completeness-bar">
+                <div class="completeness-fill" style="width:88%;background:var(--amber);">88%</div>
+              </div>
+            </td>
+            <td>需引用具体组合数据提升精确度</td>
+          </tr>
+          <tr>
+            <td>季度对比精度</td>
+            <td><span class="tag tag-green">优秀</span></td>
+            <td>
+              <div class="completeness-bar">
+                <div class="completeness-fill" style="width:90%;background:var(--green);">90%</div>
+              </div>
+            </td>
+            <td>需补充SRI连续追踪的时间序列</td>
+          </tr>
+          <tr>
+            <td>行动建议可操作性</td>
+            <td><span class="tag tag-amber">良好</span></td>
+            <td>
+              <div class="completeness-bar">
+                <div class="completeness-fill" style="width:85%;background:var(--amber);">85%</div>
+              </div>
+            </td>
+            <td>需要组合具体持仓数据增强精确度</td>
+          </tr>
+          <tr>
+            <td>升级因子联动深度</td>
+            <td><span class="tag tag-amber">良好</span></td>
+            <td>
+              <div class="completeness-bar">
+                <div class="completeness-fill" style="width:82%;background:var(--amber);">82%</div>
+              </div>
+            </td>
+            <td>升级因子量化阈值需更精确</td>
+          </tr>
+          <tr>
+            <td>历史对比充分性</td>
+            <td><span class="tag tag-green">优秀</span></td>
+            <td>
+              <div class="completeness-bar">
+                <div class="completeness-fill" style="width:90%;background:var(--green);">90%</div>
+              </div>
+            </td>
+            <td>增加更多历史情景可提升参考性</td>
+          </tr>
+          <tr>
+            <td><strong>综合完整度</strong></td>
+            <td><span class="tag tag-amber">良好</span></td>
+            <td>
+              <div class="completeness-bar" style="height:24px;">
+                <div class="completeness-fill" style="width:88%;background:var(--blue);font-size:12px;line-height:24px;">88%</div>
+              </div>
+            </td>
+            <td>持续优化权重敏感度和数据精度</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>9.5 更新计划</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>更新内容</th>
+            <th>预计更新时间</th>
+            <th>触发条件</th>
+            <th>负责方</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026年Q3 SRI计算与报告</td>
+            <td>2026-10-10</td>
+            <td>季度更新</td>
+            <td>引擎团队</td>
+          </tr>
+          <tr>
+            <td>城投债权重敏感性复核</td>
+            <td>2026-08-01</td>
+            <td>城投债市场出现重大变化</td>
+            <td>引擎团队</td>
+          </tr>
+          <tr>
+            <td>光伏行业风险重评</td>
+            <td>2026-08-15</td>
+            <td>光伏企业中报发布后</td>
+            <td>行业分析组</td>
+          </tr>
+          <tr>
+            <td>传染矩阵强度校准</td>
+            <td>2026-09-01</td>
+            <td>新传染案例数据积累</td>
+            <td>量化分析组</td>
+          </tr>
+          <tr>
+            <td>新能源车行业信用更新</td>
+            <td>2026-09-15</td>
+            <td>下半年行业景气度跟踪</td>
+            <td>行业分析组</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box info-blue" style="margin-top:12px;">
+        <strong>完备性总结：</strong>本报告在SRI计算覆盖、红色行业分析深度、季度对比精度、历史对比充分性等方面达到优秀标准（90%+）。在传染链覆盖度、集中度警示深度、行动建议可操作性、升级因子联动深度等方面处于良好水平（82-88%），仍有提升空间。下一轮更新将重点改进：①补充城投债权重的敏感性分析；②集成更多企业级数据增强红色行业分析深度；③建立SRI连续追踪的时间序列数据库。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- DISCLAIMER -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="card card-red">
+      <h3>免责声明</h3>
+      <p style="font-size:13px; color:var(--text-secondary); line-height:1.7;">
+        本系统性风险警报报告（Type 15 · 2026年Q2实例）仅供内部风险评估参考使用。报告中的SRI系统性风险指数（0.56）、
+        温度计等级（🟡关注）、红色行业清单、传染风险排名、集中度警示、行动建议等均为基于公开信息和模型推演的初步判断，
+        不构成任何投资建议或信用决策依据。系统性风险分析涉及大量假设和简化，实际风险可能因市场环境、
+        政策变化、主体行为、外部冲击等因素与分析结果存在显著偏差。SRI指数不能预测外生冲击（如疫情、
+        地缘冲突、自然灾害等）。在做出任何投资或信用决策前，应结合最新的市场信息和专业判断进行综合评估。
+        本报告数据截止至2026年7月10日，报告发布后的市场变化不在考虑范围内。
+      </p>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ================================================================ -->
+<!-- FOOTER -->
+<!-- ================================================================ -->
+<div class="footer">
+  <p><strong>系统性风险警报报告</strong> — Type 15 · 2026年Q2实例</p>
+  <p>报告编号 T15-2026Q2 · 版本 v0.6.9 · 生成于 2026-07-10 · 仅供内部风险评估使用</p>
+  <p style="margin-top:6px; font-size:10px; color:var(--text-tertiary);">
+    基于统一信贷评估框架 v0.6.9 · 系统性预警框架 v0.6.8-alpha · 所有分析均为内部推演，不构成投资建议
+  </p>
+</div>
+
+</body>
+</html>
