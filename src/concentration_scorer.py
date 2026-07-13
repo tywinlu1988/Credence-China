@@ -54,8 +54,8 @@ def industry_score(metrics: ConcentrationMetrics) -> int:
 
 def region_score(metrics: ConcentrationMetrics) -> int:
     """D2: Regional concentration (single province + weak region share)."""
-    province = _rating_band(metrics.single_province_share, 0.15, 0.25, 0.35)
-    weak = _rating_band(metrics.weak_region_share, 0.05, 0.10, 0.20)
+    province = _rating_band(metrics.single_province_share, 0.20, 0.35, 0.50)
+    weak = _rating_band(metrics.weak_region_share, 0.10, 0.20, 0.35)
     return max(province, weak)
 
 
@@ -75,7 +75,7 @@ def maturity_score(metrics: ConcentrationMetrics) -> int:
 
 def channel_score(metrics: ConcentrationMetrics) -> int:
     """D5: Financing-channel concentration (top channel share + contraction flag)."""
-    base = _rating_band(metrics.top_channel_share, 0.30, 0.50, 0.70)
+    base = _rating_band(metrics.top_channel_share, 0.50, 0.70, 0.90)
     if metrics.top_channel_is_contracting and base < 9:
         base += 2
     return int(_clamp(base, 2, 10))

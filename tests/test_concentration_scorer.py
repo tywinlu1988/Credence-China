@@ -138,7 +138,7 @@ def test_maturity_orange_band():
 def test_region_danger_band():
     metrics = ConcentrationMetrics(
         hhi=500, cr3=0.30, cr5=0.50, max1=0.15,
-        single_province_share=0.40, weak_region_share=0.25,
+        single_province_share=0.50, weak_region_share=0.35,
         aaa_share=0.20, pseudo_high_rating_share=0.01,
         maturity_12m_share=0.20, single_month_peak=0.05,
         top_channel_share=0.30,
