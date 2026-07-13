@@ -26,8 +26,17 @@ CORE_DOCS = [
     "contagion-matrix.md",
     "concentration-framework.md",
     "systemic-warning-framework.md",
-    "lgv-framework.md",
+    "financial-bond-framework.md",
+    "holding-company-framework.md",
+    "non-credit-risk-overlay.md",
+    "external-support-framework.md",
+    "esg-framework.md",
+    "governance-fraud-risk.md",
+    "false-positive-negative-testing.md",
+    "final-review-2026-07-08.md",
+    "outlook-monitoring-framework.md",
     "lgd-recovery-framework.md",
+    "lgv-framework.md",
 ]
 
 SRI_PCT_PATTERN = re.compile(r"SRI\s*[:：]\s*\d{2}\s*/\s*100", re.IGNORECASE)
@@ -47,7 +56,10 @@ def check_versions() -> list[str]:
             errors.append(f"MISSING: {path.relative_to(ENGINE_DIR)}")
             continue
         text = path.read_text(encoding="utf-8")
-        if f"**版本**: {EXPECTED_VERSION}" not in text and f"**版本** {EXPECTED_VERSION}" not in text:
+        if (f"**版本**: {EXPECTED_VERSION}" not in text
+                and f"**版本** {EXPECTED_VERSION}" not in text
+                and f"**对应引擎版本**: {EXPECTED_VERSION}" not in text
+                and f"**对应引擎版本** {EXPECTED_VERSION}" not in text):
             errors.append(f"VERSION: {doc} does not declare {EXPECTED_VERSION}")
 
     if not SKILL_FILE.exists():
@@ -91,6 +103,19 @@ def check_rating_map() -> list[str]:
     return errors
 
 
+def check_audit_versions() -> list[str]:
+    errors = []
+    pattern = re.compile(r"\*\*对应引擎版本\*\*\s*:\s*" + re.escape(EXPECTED_VERSION) + r"\b")
+    for path in ENGINE_DIR.rglob("*.md"):
+        name = path.name
+        if not (name.endswith("-audit.md") or re.match(r".*-review-.*\.md$", name) or name.startswith("self-assessment-")):
+            continue
+        text = path.read_text(encoding="utf-8")
+        if not pattern.search(text):
+            errors.append(f"AUDIT_VERSION: {path.relative_to(ENGINE_DIR)} does not declare 对应引擎版本: {EXPECTED_VERSION}")
+    return errors
+
+
 def collect_errors(only_links: bool = False) -> list[str]:
     errors = check_links()
     if only_links:
@@ -98,6 +123,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_versions())
     errors.extend(check_sri_scale())
     errors.extend(check_rating_map())
+    errors.extend(check_audit_versions())
     return errors
 
 
@@ -112,7 +138,11 @@ def main():
         path = Path(args.only_toc)
         text = path.read_text(encoding="utf-8")
         toc_entries = re.findall(r"^\s*\d+\.\s+\[(.+?)\]\(#", text, re.MULTILINE)
-        body_entries = re.findall(r"^##\s+(.+)$", text, re.MULTILINE)
+        body_entries = [
+            re.sub(r"^[一二三四五六七八九十百千万]+[、.\\s]+", "", h)
+            for h in re.findall(r"^##\s+(.+)$", text, re.MULTILINE)
+            if h != "目录"
+        ]
         if toc_entries != body_entries[: len(toc_entries)]:
             print("TOC mismatch")
             sys.exit(1)
