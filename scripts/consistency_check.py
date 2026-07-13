@@ -27,58 +27,72 @@ CORE_DOCS = [
     "systemic-warning-framework.md",
 ]
 
+SRI_PCT_PATTERN = re.compile(r"SRI\s*[:：]\s*\d{2}\s*/\s*100", re.IGNORECASE)
+OLD_NOTCH_PATTERNS = [re.compile(p) for p in (r"AA/A", r"BBB/BB", r"4\.0-5\.9", r"2\.0-3\.9")]
 
-def collect_errors(only_links: bool = False):
+
+def check_versions() -> list[str]:
     errors = []
-
-    # 1. Core docs must declare EXPECTED_VERSION
     for doc in CORE_DOCS:
         path = ENGINE_DIR / doc
         if not path.exists():
-            errors.append(f"MISSING: {path.relative_to(ROOT)}")
+            errors.append(f"MISSING: {path.relative_to(ENGINE_DIR)}")
             continue
         text = path.read_text(encoding="utf-8")
         if f"**版本**: {EXPECTED_VERSION}" not in text and f"**版本** {EXPECTED_VERSION}" not in text:
             errors.append(f"VERSION: {doc} does not declare {EXPECTED_VERSION}")
 
-    # 2. Skill must declare EXPECTED_VERSION
     if not SKILL_FILE.exists():
-        errors.append(f"MISSING: {SKILL_FILE.relative_to(ROOT)}")
+        errors.append(f"MISSING: {SKILL_FILE}")
     else:
         skill_text = SKILL_FILE.read_text(encoding="utf-8")
         if EXPECTED_VERSION not in skill_text:
             errors.append(f"VERSION: SKILL.md does not contain {EXPECTED_VERSION}")
+    return errors
 
-    # 3. All internal .md links must resolve
+
+def check_links() -> list[str]:
+    errors = []
     for path in ENGINE_DIR.rglob("*.md"):
         text = path.read_text(encoding="utf-8")
         for match in re.finditer(r"\[.*?\]\(([^)]+\.md)(?:#[^)]*)?\)", text):
             link = match.group(1)
             target = ENGINE_DIR / link
             if not target.exists():
-                errors.append(f"BROKEN_LINK: {path.relative_to(ROOT)} -> {link}")
+                errors.append(f"BROKEN_LINK: {path.relative_to(ENGINE_DIR)} -> {link}")
+    return errors
 
-    if only_links:
-        return errors
 
-    # 4. No percentage-scale SRI examples in engine or templates
-    sri_pct_pattern = re.compile(r"SRI\s*[:：]\s*\d{2}\s*/\s*100", re.IGNORECASE)
+def check_sri_scale() -> list[str]:
+    errors = []
     for path in list(ENGINE_DIR.rglob("*.md")) + list(TEMPLATES_DIR.rglob("*.html")):
         text = path.read_text(encoding="utf-8")
-        if sri_pct_pattern.search(text):
-            errors.append(f"SRI_PCT: {path.relative_to(ROOT)} contains percentage-scale SRI")
+        if SRI_PCT_PATTERN.search(text):
+            rel = path.relative_to(ENGINE_DIR) if path.is_relative_to(ENGINE_DIR) else path.relative_to(TEMPLATES_DIR)
+            errors.append(f"SRI_PCT: {rel} contains percentage-scale SRI")
+    return errors
 
-    # 5. No old 6-notch rating artifacts
-    old_notch_patterns = [r"AA/A", r"BBB/BB", r"4\.0-5\.9", r"2\.0-3\.9"]
+
+def check_rating_map() -> list[str]:
+    errors = []
     for doc in ["false-positive-negative-testing.md", "final-review-2026-07-08.md"]:
         path = ENGINE_DIR / doc
         if not path.exists():
             continue
         text = path.read_text(encoding="utf-8")
-        for pattern in old_notch_patterns:
-            if re.search(pattern, text):
-                errors.append(f"OLD_NOTCH: {doc} contains '{pattern}'")
+        for pattern in OLD_NOTCH_PATTERNS:
+            if pattern.search(text):
+                errors.append(f"OLD_NOTCH: {doc} contains '{pattern.pattern}'")
+    return errors
 
+
+def collect_errors(only_links: bool = False) -> list[str]:
+    errors = check_links()
+    if only_links:
+        return errors
+    errors.extend(check_versions())
+    errors.extend(check_sri_scale())
+    errors.extend(check_rating_map())
     return errors
 
 
