@@ -17,6 +17,7 @@ CORE_DOCS = [
     "engine-overview.md",
     "dual-track-methodology.md",
     "industry-framework.md",
+    "validation-methodology.md",
     "qualitative-analysis.md",
     "quantitative-analysis.md",
     "mosaic-engine.md",
@@ -25,10 +26,17 @@ CORE_DOCS = [
     "contagion-matrix.md",
     "concentration-framework.md",
     "systemic-warning-framework.md",
+    "lgv-framework.md",
+    "lgd-recovery-framework.md",
 ]
 
 SRI_PCT_PATTERN = re.compile(r"SRI\s*[:：]\s*\d{2}\s*/\s*100", re.IGNORECASE)
-OLD_NOTCH_PATTERNS = [re.compile(p) for p in (r"AA/A", r"BBB/BB", r"4\.0-5\.9", r"2\.0-3\.9")]
+OLD_NOTCH_PATTERNS = [re.compile(p) for p in (
+    r"(?<![A-Z+-])AA/A(?![A-Z+-])",  # old 6-notch combined notation, not "AA+/AA/AA-"
+    r"(?<![A-Z+-])BBB/BB(?![A-Z+-])",  # old 6-notch combined notation, not "BBB+/BBB/BBB-"
+    r"4\.0-5\.9",
+    r"2\.0-3\.9",
+)]
 
 
 def check_versions() -> list[str]:
@@ -75,14 +83,11 @@ def check_sri_scale() -> list[str]:
 
 def check_rating_map() -> list[str]:
     errors = []
-    for doc in ["false-positive-negative-testing.md", "final-review-2026-07-08.md"]:
-        path = ENGINE_DIR / doc
-        if not path.exists():
-            continue
+    for path in ENGINE_DIR.rglob("*.md"):
         text = path.read_text(encoding="utf-8")
         for pattern in OLD_NOTCH_PATTERNS:
             if pattern.search(text):
-                errors.append(f"OLD_NOTCH: {doc} contains '{pattern.pattern}'")
+                errors.append(f"OLD_NOTCH: {path.relative_to(ENGINE_DIR)} contains '{pattern.pattern}'")
     return errors
 
 
