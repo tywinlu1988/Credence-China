@@ -24,7 +24,7 @@ When this Skill is invoked:
 
 A systematic methodology for evaluating corporate credit quality in China's fixed income markets. The engine operates in three layers: (1) a **Mosaic Engine** that assembles fragmented public data into coherent signals; (2) a **Dual-Track Engine** combining industry-specific multi-layer analysis pyramids with market-based pricing signals; and (3) a **System-Intelligence Layer** (v0.7.0-alpha) that models cross-industry contagion, portfolio concentration, and a market-wide Systemic Risk Index (SRI). Combines multi-stakeholder perspectives into a unified assessment framework.
 
-**Expanded capabilities (v0.4.0+):** LGD/recovery rate framework, external support assessment, structured outlook/monitoring system, LGV (local government financing vehicle / 城投债) framework, ESG + governance/fraud detection, non-credit risk overlay, financial bond framework, holding company framework, false positive/negative testing, and layered output system with graduated confidence levels.
+**Expanded capabilities (v0.4.0+):** LGD/recovery rate framework, external support assessment, structured outlook/monitoring system, LGFV（地方政府融资平台 / 城投债）framework, ESG + governance/fraud detection, non-credit risk overlay, financial bond framework, holding company framework, false positive/negative testing, and layered output system with graduated confidence levels.
 
 **Core principles:**
 1. Traditional financial analysis systematically fails in policy-driven, technology-barrier, and asset-lease industries. The heaviest credit factor is rarely on the balance sheet.
@@ -40,7 +40,7 @@ A systematic methodology for evaluating corporate credit quality in China's fixe
 - Assembling fragmented public data into a coherent credit assessment using mosaic theory
 - Retroactively validating analytical frameworks against historical defaults
 - Designing a commercial credit intelligence product
-- Evaluating LGFV (城投债) credit quality through the LGV framework → read `dev/engine/lgv-framework.md`
+- Evaluating LGFV (城投债) credit quality through the LGFV framework → read `dev/engine/lgv-framework.md`
 - Conducting ESG/governance risk scans and fraud detection → read `dev/engine/esg-framework.md` and `dev/engine/governance-fraud-risk.md`
 - Performing LGD/recovery rate analysis for default scenarios → read `dev/engine/lgd-recovery-framework.md`
 - Assessing external support (government, parent company) impact on creditworthiness → read `dev/engine/external-support-framework.md`
@@ -196,7 +196,7 @@ Each layer scores 0-10. Each layer has one-shot veto conditions (see `dev/engine
 
 ## Six Analytical Paradigms
 
-Each industry maps to one of six paradigms that determine its dominant risk drivers and contagion exposure. LGFV is treated as a special/seventh category and is not forced into the six-paradigm taxonomy.
+本框架包含 **6 个分析范式 + 1 个特殊类别（LGFV）**。LGFV 因政府信用绑定机制特殊，不强行归入六范式，但在传染矩阵中仍参与行业聚类分析。
 
 > **注意**：6 个分析范式是用于传染聚类和行业分组的概念工具；它们不同于 `industry-framework.md` 中定义的 4 个行业类型（用于设置金字塔权重）。一个行业可能同时满足多个范式特征，此时以 `industry-framework.md` 的行业类型作为金字塔权重依据，以范式作为传染分析依据。存在冲突时，使用 `industry-framework.md` §3.1 的优先级规则。
 
@@ -378,6 +378,6 @@ Two-time-point methodology (T1: 17-18 months, T2: 4-5 months before default). Al
 | 0.1.0 | 2026-07-07 | Initial release. 10-dim scoring, 4-layer pyramid, dual-track, 7 industries, solar forward-validated |
 | 0.2.0 | 2026-07-07 | Retrospective validation methodology. Yongmei (2 time points, 17-month) + Tsinghua Unigroup (17-month). Framework effective across risk genotypes. Semiconductor 5-layer pyramid. |
 | 0.3.0 | 2026-07-08 | Mosaic engine architecture (Mode A+B). Multi-stakeholder coverage map. P0 bond investment dashboard (relative value + terms + liquidity + event calendar). Signal confidence levels + signal density metrics. Data gap-to-risk mapping. Completeness reporting. External data source adapter interface (placeholder). |
-| 0.4.0-alpha | 2026-07-08 | LGD/recovery rate framework. External support assessment. Structured outlook/monitoring system. LGV (城投债) framework. ESG + governance/fraud detection. Non-credit risk overlay. Financial bond framework. Holding company framework. False positive/negative testing methodology. Layered output system. Multi-stakeholder coverage completed (P1/P2). All 8 industries fully validated. |
+| 0.4.0-alpha | 2026-07-08 | LGD/recovery rate framework. External support assessment. Structured outlook/monitoring system. LGFV（城投债）framework. ESG + governance/fraud detection. Non-credit risk overlay. Financial bond framework. Holding company framework. False positive/negative testing methodology. Layered output system. Multi-stakeholder coverage completed (P1/P2). All 8 industries fully validated. |
 | 0.5.0-release | 2026-07-09 | Release stabilization. Complete supporting documentation for all expanded capabilities. Production-ready layered output system. Full 8-industry, 30-document, 12-template coverage. |
 | 0.7.0-alpha | 2026-07-13 | System-intelligence layer: contagion theory/matrix, five-dimensional concentration framework, systemic warning (SRI), 13-industry coverage, six analytical paradigms. Skill synchronized with engine release. |
