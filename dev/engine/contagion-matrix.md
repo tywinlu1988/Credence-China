@@ -703,6 +703,8 @@
 | 限额管理系统 | 在限额中增加**传染路径限额**，联动[系统性预警框架](systemic-warning-framework.md)SRI阈值 | 对高传染链路(A→B)设定额外限额扣减，SRI≥1.0时触发限额收紧 |
 | 系统性风险监控 | 引用[系统性预警框架](systemic-warning-framework.md)SRI温度计 | M4组合风控的顶层仪表盘，以SRI读数驱动集中度限额的动态调整 |
 
+五维集中度分析框架（[concentration-framework.md](concentration-framework.md)）和系统性预警框架（[systemic-warning-framework.md](systemic-warning-framework.md)）在M4层引用本矩阵的传染强度和行业聚类结果，用于组合层面的传染压力测试和集中度调整。
+
 ### 7.2 M4(组合风控)集中度压力测试流程
 
 本矩阵的核心应用场景——M4组合框架下的**传染集中度压力测试**：
