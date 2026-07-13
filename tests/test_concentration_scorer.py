@@ -303,3 +303,89 @@ def test_risk_level_boundaries():
     assert _risk_level(8) == "red"
     assert _risk_level(9) == "red"
     assert _risk_level(10) == "red"
+
+
+def test_rating_adjustment_four_oranges():
+    metrics = ConcentrationMetrics(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.15,
+        single_province_share=0.10, weak_region_share=0.25,
+        aaa_share=0.20, pseudo_high_rating_share=0.20,
+        maturity_12m_share=0.60, single_month_peak=0.05,
+        top_channel_share=0.80,
+    )
+    adj = rating_adjustment(metrics)
+    assert sum(1 for lvl in adj["levels"].values() if lvl == "orange") == 4
+    assert adj["adjustment"] == -2.0
+    assert adj["bb_cap_triggered"] is False
+
+
+def test_rating_adjustment_one_red_zero_orange():
+    metrics = ConcentrationMetrics(
+        hhi=2600, cr3=0.55, cr5=0.65, max1=0.30,
+        single_province_share=0.10, weak_region_share=0.02,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    adj = rating_adjustment(metrics)
+    assert sum(1 for lvl in adj["levels"].values() if lvl == "red") == 1
+    assert sum(1 for lvl in adj["levels"].values() if lvl == "orange") == 0
+    assert adj["adjustment"] == -1.0
+    assert adj["bb_cap_triggered"] is False
+
+
+def test_bb_cap_single_industry_boundary():
+    at_cap = ConcentrationMetrics(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.50,
+        single_province_share=0.10, weak_region_share=0.02,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    below_cap = ConcentrationMetrics(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.49,
+        single_province_share=0.10, weak_region_share=0.02,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    assert rating_adjustment(at_cap)["bb_cap_triggered"] is True
+    assert rating_adjustment(below_cap)["bb_cap_triggered"] is False
+
+
+def test_bb_cap_weak_region_boundary():
+    at_cap = ConcentrationMetrics(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.15,
+        single_province_share=0.10, weak_region_share=0.36,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    below_cap = ConcentrationMetrics(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.15,
+        single_province_share=0.10, weak_region_share=0.34,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    assert rating_adjustment(at_cap)["bb_cap_triggered"] is True
+    assert rating_adjustment(below_cap)["bb_cap_triggered"] is False
+
+
+def test_bb_cap_pseudo_high_rating_boundary():
+    at_cap = ConcentrationMetrics(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.15,
+        single_province_share=0.10, weak_region_share=0.02,
+        aaa_share=0.20, pseudo_high_rating_share=0.41,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    below_cap = ConcentrationMetrics(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.15,
+        single_province_share=0.10, weak_region_share=0.02,
+        aaa_share=0.20, pseudo_high_rating_share=0.39,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    assert rating_adjustment(at_cap)["bb_cap_triggered"] is True
+    assert rating_adjustment(below_cap)["bb_cap_triggered"] is False

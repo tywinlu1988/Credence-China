@@ -7,8 +7,8 @@ class ConcentrationMetrics:
 
     Note: this dataclass does not currently include an explicit portfolio
     single-industry exposure share.  In ``rating_adjustment`` we proxy that
-    exposure with ``max1`` (largest single industry) and ``cr3`` (top-3
-    industry share) per dev/engine/concentration-framework.md §7.3.
+    exposure with ``max1`` (largest single industry share) per
+    dev/engine/concentration-framework.md §7.3.
     """
 
     hhi: float
@@ -154,6 +154,7 @@ def rating_adjustment(metrics: ConcentrationMetrics) -> dict:
 
     bb_cap_triggered = (
         red_count >= 3
+        or orange_count == 5
         or single_industry_proxy
         # Weak-region cap: the documented condition also requires
         # "该区域内过去12个月有国企违约", which is not available in
