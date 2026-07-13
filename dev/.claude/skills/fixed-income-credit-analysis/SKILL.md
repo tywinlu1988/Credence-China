@@ -190,7 +190,7 @@ Each industry maps to one of six paradigms that determine its dominant risk driv
 | Brand+Channel | Food & beverage, Textile & apparel | Brand equity | Confidence collapse, same-industry |
 | Network+Traffic | Transportation, Retail, Media/Internet | Network traffic | Supplier-customer chain, same funding channel |
 
-See `references/industry-pyramids.md` and `references/paradigm-*.md` for detailed specs.
+See `references/industry-pyramids.md`, `references/paradigm-brand-channel.md`, and `references/paradigm-network-traffic.md` for detailed specs.
 
 ## Ten-Dimension Industry Scoring (D1-D10)
 
@@ -267,7 +267,28 @@ Layer Score = Sigma(Indicator Score * Indicator Weight)
 Indicator Score = f(Raw Value, Threshold, Direction)
 ```
 
-**Rating Map:** 9.0-10.0 AAA | 7.5-8.9 AA/A | 6.0-7.4 BBB/BB | 4.0-5.9 B | 2.0-3.9 CCC | 0-1.9 D
+**Rating Map (12-notch):**
+
+| 评分范围 | 新评级 | 旧评级对应 | 含义 |
+|---|---|---|---|
+| 9.5 - 10.0 | AAA | AAA | 极低风险 |
+| 9.0 - 9.4 | AA+ | AA | |
+| 8.5 - 8.9 | AA | AA | 低风险 |
+| 8.0 - 8.4 | AA- | AA | |
+| 7.5 - 7.9 | A+ | A | 中低风险 |
+| 7.0 - 7.4 | A | A | |
+| 6.5 - 6.9 | A- | A | |
+| 6.0 - 6.4 | BBB+ | BBB | 中等风险 |
+| 5.5 - 5.9 | BBB | BBB | |
+| 5.0 - 5.4 | BBB- | BBB | |
+| 4.5 - 4.9 | BB+ | BB | 中高风险 |
+| 4.0 - 4.4 | BB | BB | |
+| 3.5 - 3.9 | BB- | BB | |
+| 3.0 - 3.4 | B+ | B | 高风险 |
+| 2.5 - 2.9 | B | B | |
+| 2.0 - 2.4 | B- | B | |
+| 1.0 - 1.9 | CCC | CCC | 极高风险 |
+| 0 - 0.9 | D | D | 违约/濒临 |
 
 ## Black-Swan Retrospective Validation
 
