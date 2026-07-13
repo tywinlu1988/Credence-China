@@ -27,7 +27,7 @@ def test_industry_risk_score_negative_outlook_and_orange_track_b():
         track_b_level=TrackBLevel.ORANGE,
         outlook=Outlook.NEGATIVE,
     )
-    assert industry_risk_score(ind) == 1.0
+    assert industry_risk_score(ind) == 1.5
 
 
 def test_veto_overrides_everything():
@@ -69,6 +69,22 @@ def test_veto_equals_maximum_non_veto():
     assert industry_risk_score(veto) == industry_risk_score(worst) == 3.0
 
 
+def test_track_b_penalties():
+    base = IndustryInput("base", 7.0, TrackBLevel.GREEN, Outlook.STABLE)
+    assert industry_risk_score(base) == 0.0
+    yellow = IndustryInput("yellow", 7.0, TrackBLevel.YELLOW, Outlook.STABLE)
+    assert industry_risk_score(yellow) == 0.5
+    orange = IndustryInput("orange", 7.0, TrackBLevel.ORANGE, Outlook.STABLE)
+    assert industry_risk_score(orange) == 1.0
+    red = IndustryInput("red", 7.0, TrackBLevel.RED, Outlook.STABLE)
+    assert industry_risk_score(red) == 1.5
+
+
+def test_worst_non_veto_with_red_track_b_and_negative_outlook():
+    ind = IndustryInput("worst", 2.0, TrackBLevel.RED, Outlook.NEGATIVE)
+    assert industry_risk_score(ind) == 3.0
+
+
 def test_sri_matches_2026q2_example():
     # Approximate 2026Q2 example from systemic-warning-framework.md §8.3.
     # Residual weight is distributed across the placeholder industries so the
@@ -86,7 +102,7 @@ def test_sri_matches_2026q2_example():
     residual = 1.0 - sum(weights[:4])
     valid_weights = weights[:4] + [residual / 9] * 9
     result = sri(industries, valid_weights)
-    assert 0.35 <= result <= 0.40
+    assert 0.54 <= result <= 0.60
 
 
 def test_sri_validates_weights():
