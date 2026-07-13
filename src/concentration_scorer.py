@@ -81,6 +81,53 @@ def channel_score(metrics: ConcentrationMetrics) -> int:
     return int(_clamp(base, 2, 10))
 
 
+def _risk_level(score: int) -> str:
+    """Map a 1-10 risk score to a four-level traffic-light classification."""
+    if score >= 8:
+        return "red"
+    if score >= 6:
+        return "orange"
+    if score >= 4:
+        return "yellow"
+    return "green"
+
+
+def rating_adjustment(metrics: ConcentrationMetrics) -> dict:
+    """Return rating adjustment in notches and flags per concentration-framework.md §7.
+
+    - green: 0
+    - yellow: -0.5
+    - orange: -1.0
+    - red: -1.0 plus potential BB cap trigger
+    """
+    levels = {
+        "industry": _risk_level(industry_score(metrics)),
+        "region": _risk_level(region_score(metrics)),
+        "rating": _risk_level(rating_score(metrics)),
+        "maturity": _risk_level(maturity_score(metrics)),
+        "channel": _risk_level(channel_score(metrics)),
+    }
+    adjustment = 0.0
+    red_count = 0
+    orange_count = 0
+    for lvl in levels.values():
+        if lvl == "red":
+            adjustment -= 1.0
+            red_count += 1
+        elif lvl == "orange":
+            adjustment -= 1.0
+            orange_count += 1
+        elif lvl == "yellow":
+            adjustment -= 0.5
+
+    bb_cap_triggered = red_count >= 2 or (red_count >= 1 and orange_count >= 2)
+    return {
+        "adjustment": adjustment,
+        "levels": levels,
+        "bb_cap_triggered": bb_cap_triggered,
+    }
+
+
 def concentration_risk_score(
     metrics: ConcentrationMetrics,
     weights: tuple[float, float, float, float, float] = (0.25, 0.20, 0.20, 0.20, 0.15),

@@ -6,6 +6,7 @@ from src.concentration_scorer import (
     concentration_risk_score,
     industry_score,
     maturity_score,
+    rating_adjustment,
     rating_score,
     region_score,
 )
@@ -168,3 +169,72 @@ def test_concentration_weights_must_have_length_five():
     )
     with pytest.raises(ValueError):
         concentration_risk_score(metrics, weights=(0.25, 0.25, 0.25, 0.25))
+
+
+def test_rating_adjustment_all_green():
+    low = ConcentrationMetrics(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.15,
+        single_province_share=0.10, weak_region_share=0.02,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    adj = rating_adjustment(low)
+    assert adj["adjustment"] == 0.0
+    assert adj["bb_cap_triggered"] is False
+
+
+def test_rating_adjustment_extreme_concentration():
+    high = ConcentrationMetrics(
+        hhi=2600, cr3=0.85, cr5=0.92, max1=0.65,
+        single_province_share=0.50, weak_region_share=0.35,
+        aaa_share=0.75, pseudo_high_rating_share=0.35,
+        maturity_12m_share=0.75, single_month_peak=0.35,
+        top_channel_share=0.80, top_channel_is_contracting=True,
+    )
+    adj = rating_adjustment(high)
+    assert adj["adjustment"] <= -3.0
+    assert adj["bb_cap_triggered"] is True
+
+
+def test_rating_adjustment_one_red_triggers_no_bb_cap():
+    one_red = ConcentrationMetrics(
+        hhi=2600, cr3=0.85, cr5=0.92, max1=0.65,
+        single_province_share=0.10, weak_region_share=0.02,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    adj = rating_adjustment(one_red)
+    assert adj["levels"]["industry"] == "red"
+    assert all(lvl == "green" for k, lvl in adj["levels"].items() if k != "industry")
+    assert adj["adjustment"] == -1.0
+    assert adj["bb_cap_triggered"] is False
+
+
+def test_rating_adjustment_two_reds_triggers_bb_cap():
+    two_red = ConcentrationMetrics(
+        hhi=2600, cr3=0.85, cr5=0.92, max1=0.65,
+        single_province_share=0.50, weak_region_share=0.35,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    adj = rating_adjustment(two_red)
+    assert adj["levels"]["industry"] == "red"
+    assert adj["levels"]["region"] == "red"
+    assert adj["adjustment"] == -2.0
+    assert adj["bb_cap_triggered"] is True
+
+
+def test_risk_level_boundaries():
+    from src.concentration_scorer import _risk_level
+    assert _risk_level(2) == "green"
+    assert _risk_level(3) == "green"
+    assert _risk_level(4) == "yellow"
+    assert _risk_level(5) == "yellow"
+    assert _risk_level(6) == "orange"
+    assert _risk_level(7) == "orange"
+    assert _risk_level(8) == "red"
+    assert _risk_level(9) == "red"
+    assert _risk_level(10) == "red"
