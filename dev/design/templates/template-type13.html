@@ -1259,6 +1259,7 @@
 
     <div class="card" style="margin-top:14px;">
       <h3>10.4 完整度评分</h3>
+      <!-- BEFORE outputting any rating in this template, confirm that all dimensions used meet the density rules in mosaic-engine.md §4. If not, output '信息不足无法评估' instead. -->
       <table>
         <thead>
           <tr>
@@ -1274,7 +1275,7 @@
             <td><span class="tag tag-green">{评分}</span></td>
             <td>
               <div class="completeness-bar">
-                <div class="completeness-fill" style="width:{百分比}%;background:var(--green);">{百分比}%</div>
+                <div class="completeness-fill" style="width:{source_density_pct}%;background:var(--green);">{source_density_pct}%</div>
               </div>
             </td>
             <td>{待改进项}</td>
@@ -1284,7 +1285,7 @@
             <td><span class="tag tag-green">{评分}</span></td>
             <td>
               <div class="completeness-bar">
-                <div class="completeness-fill" style="width:{百分比}%;background:var(--green);">{百分比}%</div>
+                <div class="completeness-fill" style="width:{path_density_pct}%;background:var(--green);">{path_density_pct}%</div>
               </div>
             </td>
             <td>{待改进项}</td>
@@ -1294,7 +1295,7 @@
             <td><span class="tag tag-amber">{评分}</span></td>
             <td>
               <div class="completeness-bar">
-                <div class="completeness-fill" style="width:{百分比}%;background:var(--amber);">{百分比}%</div>
+                <div class="completeness-fill" style="width:{data_density_pct}%;background:var(--amber);">{data_density_pct}%</div>
               </div>
             </td>
             <td>{待改进项}</td>
@@ -1304,7 +1305,7 @@
             <td><span class="tag tag-amber">{评分}</span></td>
             <td>
               <div class="completeness-bar">
-                <div class="completeness-fill" style="width:{百分比}%;background:var(--amber);">{百分比}%</div>
+                <div class="completeness-fill" style="width:{magnitude_density_pct}%;background:var(--amber);">{magnitude_density_pct}%</div>
               </div>
             </td>
             <td>{待改进项}</td>
@@ -1314,7 +1315,7 @@
             <td><span class="tag tag-green">{评分}</span></td>
             <td>
               <div class="completeness-bar">
-                <div class="completeness-fill" style="width:{百分比}%;background:var(--green);">{百分比}%</div>
+                <div class="completeness-fill" style="width:{history_density_pct}%;background:var(--green);">{history_density_pct}%</div>
               </div>
             </td>
             <td>{待改进项}</td>
@@ -1324,7 +1325,7 @@
             <td><span class="tag tag-amber">{评分}</span></td>
             <td>
               <div class="completeness-bar">
-                <div class="completeness-fill" style="width:{百分比}%;background:var(--amber);">{百分比}%</div>
+                <div class="completeness-fill" style="width:{warning_density_pct}%;background:var(--amber);">{warning_density_pct}%</div>
               </div>
             </td>
             <td>{待改进项}</td>
