@@ -196,18 +196,19 @@ Each layer scores 0-10. Each layer has one-shot veto conditions (see `dev/engine
 
 ## Six Analytical Paradigms
 
-Each industry maps to one of six paradigms that determine its dominant risk drivers and contagion exposure:
+Each industry maps to one of six paradigms that determine its dominant risk drivers and contagion exposure. LGFV is treated as a special/seventh category and is not forced into the six-paradigm taxonomy.
 
-> **注意**：6 个分析范式是用于传染聚类和行业分组的概念工具；它们不同于 `industry-framework.md` 中定义的 4 个行业类型（用于设置金字塔权重）。一个行业可能同时满足多个范式特征，此时以 `industry-framework.md` 的行业类型作为金字塔权重依据，以范式作为传染分析依据。
+> **注意**：6 个分析范式是用于传染聚类和行业分组的概念工具；它们不同于 `industry-framework.md` 中定义的 4 个行业类型（用于设置金字塔权重）。一个行业可能同时满足多个范式特征，此时以 `industry-framework.md` 的行业类型作为金字塔权重依据，以范式作为传染分析依据。存在冲突时，使用 `industry-framework.md` §3.1 的优先级规则。
 
-| Paradigm | Industries | Heaviest Factor | Key Contagion Path |
-|---|---|---|---|
-| Policy-Driven | Solar/PV, Semiconductor | Policy cycle | Same-region SOE, same-industry |
-| Tech-Barrier | High-end equipment, Biomedicine, Medical devices | Technology/IP | Supplier-customer chain, same funding channel |
-| Consolidation | New energy vehicles | Profit fortress | Same-industry, credit-chain |
-| Asset-Lease | Data centers | Client/lease quality | Supplier-customer chain, same funding channel |
-| Brand+Channel | Food & beverage, Textile & apparel | Brand equity | Confidence collapse, same-industry |
-| Network+Traffic | Transportation, Retail, Media/Internet | Network traffic | Supplier-customer chain, same funding channel |
+| Paradigm | Primary Industries | Secondary Attributes | Heaviest Factor | Key Contagion Path |
+|---|---|---|---|---|
+| Policy-Driven | Solar/PV; Semiconductor (primary) | Semiconductor also Tech-Barrier | Policy/geopolitics cycle | Same-region SOE, same-industry |
+| Tech-Barrier | High-end equipment; Biomedicine (primary); Medical devices; NEV-Supply Chain | Biomedicine also Policy-Driven; NEV-Supply Chain also Profit Fortress | Technology/IP/registration | Supplier-customer chain, same funding channel |
+| Consolidation | NEV-OEM | — | Survival / profit fortress | Same-industry, credit-chain |
+| Asset-Lease | Data centers (IDC/colocation primary) | Cloud/telecom hybrid as Network+Traffic | Client/lease quality | Supplier-customer chain, same funding channel |
+| Brand+Channel | Food & beverage; Textile & apparel | — | Brand equity | Confidence collapse, same-industry |
+| Network+Traffic | Transportation; Retail; Media/Internet; Data centers (cloud/telecom hybrid) | — | Network traffic | Supplier-customer chain, same funding channel |
+| Special / Government Credit | LGFV | — | Regional fiscal health | Regional resonance, same funding channel |
 
 See `dev/engine/industry-framework.md`, `dev/engine/paradigm-brand-channel.md`, and `dev/engine/paradigm-network-traffic.md` for detailed specs.
 
