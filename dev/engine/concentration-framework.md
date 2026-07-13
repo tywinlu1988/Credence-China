@@ -804,8 +804,7 @@
 | [财务深度分析](financial-deep-dive.md) | 债务到期排程方法(C.1-C.3) | 维度四(期限集中度)§5.2 |
 | [引擎架构总览](engine-overview.md) | 三层架构·M4组合风控定位 | 前言·§9.1 |
 | [输出分层框架](output-layered-framework.md) | L1/L2输出规范 | §9.1集成方式 |
-| [系统性预警框架](systemic-warning-framework.md) | SRI系统性风险指数·行业信号聚合算法·温度计 | 综合评分联动SRI判定§7.3·压力测试§8 |
-| [系统性预警框架](systemic-warning-framework.md) | SRI温度计作为集中度综合评分权重动态调整的触发条件 | §7.4权重动态调整规则 |
+| [系统性预警框架](systemic-warning-framework.md) | SRI温度计作为集中度综合评分权重动态调整的触发条件；综合评分联动SRI判定 | §7.4权重动态调整规则；§9.1集成方式 |
 
 ### 9.3 建议新增的集中度相关输出指标
 
