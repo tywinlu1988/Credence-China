@@ -1116,7 +1116,7 @@ function calculate_SRI(industries, weights):
         if ind.veto_triggered:
             risk_score = 3
         else:
-            risk_score = base + outlook_penalty + track_B_penalty
+            risk_score = min(base + outlook_penalty + track_B_penalty, 3.0)
         
         weighted_contribution = risk_score * weights[i]
         total_score += weighted_contribution

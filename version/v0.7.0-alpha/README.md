@@ -77,7 +77,7 @@
 ├── data/                                              → 数据架构
 │   └── data-architecture.md                          数据源分层·可达性验证·缺口映射
 │
-├── .claude/skills/fixed-income-credit-analysis/       → AI技能包 v0.3.0
+├── .claude/skills/fixed-income-credit-analysis/       → AI技能包 v0.7.0-alpha
 │
 └── archive/                                           → 历史工作文档
 ```
