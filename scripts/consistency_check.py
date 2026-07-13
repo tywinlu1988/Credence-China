@@ -27,19 +27,8 @@ CORE_DOCS = [
     "systemic-warning-framework.md",
 ]
 
-HISTORICAL_MARKERS = [
-    "(历史审计记录：",
-    "（历史审计记录：",
-    "(historical audit record:",
-    "（historical audit record:",
-]
 
-
-def _is_historical(line):
-    return any(marker in line for marker in HISTORICAL_MARKERS)
-
-
-def collect_errors():
+def collect_errors(only_links: bool = False):
     errors = []
 
     # 1. Core docs must declare EXPECTED_VERSION
@@ -69,16 +58,15 @@ def collect_errors():
             if not target.exists():
                 errors.append(f"BROKEN_LINK: {path.relative_to(ROOT)} -> {link}")
 
+    if only_links:
+        return errors
+
     # 4. No percentage-scale SRI examples in engine or templates
     sri_pct_pattern = re.compile(r"SRI\s*[:：]\s*\d{2}\s*/\s*100", re.IGNORECASE)
     for path in list(ENGINE_DIR.rglob("*.md")) + list(TEMPLATES_DIR.rglob("*.html")):
         text = path.read_text(encoding="utf-8")
-        for line in text.splitlines():
-            if _is_historical(line):
-                continue
-            if sri_pct_pattern.search(line):
-                errors.append(f"SRI_PCT: {path.relative_to(ROOT)} contains percentage-scale SRI")
-                break
+        if sri_pct_pattern.search(text):
+            errors.append(f"SRI_PCT: {path.relative_to(ROOT)} contains percentage-scale SRI")
 
     # 5. No old 6-notch rating artifacts
     old_notch_patterns = [r"AA/A", r"BBB/BB", r"4\.0-5\.9", r"2\.0-3\.9"]
@@ -87,13 +75,9 @@ def collect_errors():
         if not path.exists():
             continue
         text = path.read_text(encoding="utf-8")
-        for line in text.splitlines():
-            if _is_historical(line):
-                continue
-            for pattern in old_notch_patterns:
-                if re.search(pattern, line):
-                    errors.append(f"OLD_NOTCH: {doc} contains '{pattern}'")
-                    break
+        for pattern in old_notch_patterns:
+            if re.search(pattern, text):
+                errors.append(f"OLD_NOTCH: {doc} contains '{pattern}'")
 
     return errors
 
@@ -116,7 +100,7 @@ def main():
         print("TOC OK")
         return
 
-    errors = collect_errors()
+    errors = collect_errors(only_links=args.only_links)
     if errors:
         print(f"Consistency check FAILED ({len(errors)} issue(s)):")
         for e in errors:
