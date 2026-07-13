@@ -74,6 +74,20 @@ For each analysis dimension, compute signal density = obtained signals / expecte
 | 20-50% | Insufficient | Low confidence, directional only, mark "needs supplement" |
 | <20% | Severely lacking | Cannot score, mark "insufficient data" |
 
+### Mandatory Density Rules
+
+- If **any critical dimension** (L1 for the industry type, or any dimension the user explicitly asks about) has signal density **<20%**, you MUST NOT output a numeric score for that dimension. State `信息不足无法评估` and list the missing signals.
+- If the **weighted-average signal density across all scored dimensions** is **<50%**, you MUST NOT output a final letter rating. Output a qualitative directional assessment plus a prioritized gap list instead.
+- If density is 50-80%, you MAY output a rating but MUST label it as `中置信度` and widen the implied interval by ±1 notch.
+- The completeness report is mandatory for every analysis; omitting it is a protocol violation.
+
+Before finalizing any numeric rating, verify:
+1. Every dimension used in the score has a documented density.
+2. No critical dimension is below 20% density.
+3. The final rating maps to the official 12-notch table.
+4. Every veto condition has been explicitly checked.
+If any check fails, downgrade the rating or replace it with a directional statement.
+
 ### Data Gap-to-Risk Mapping
 
 Common gaps and their risk implications:
@@ -130,6 +144,8 @@ SRI = Σ(industry_risk_score × industry_weight_pct)
 For full specification see `dev/engine/systemic-warning-framework.md`.
 
 ## Mode B: External Data Source Adapter (Placeholder)
+
+> **Mode B 护栏**：除非用户明确提供了 CSV 上传、API endpoint 或 MCP server，否则禁止调用 Mode B 接口，禁止生成外部数据值。在 Mode B 未激活时，所有 Mode B 字段应作为数据缺口处理。
 
 Standardized interface for users to connect their own data. Defined but not implemented.
 
