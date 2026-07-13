@@ -40,7 +40,8 @@ def industry_risk_score(ind: IndustryInput) -> float:
     outlook_penalty = 0.5 if ind.outlook == Outlook.NEGATIVE else 0.0
     track_b_penalty = 0.5 if ind.track_b_level in (TrackBLevel.ORANGE, TrackBLevel.RED) else 0.0
 
-    return base + outlook_penalty + track_b_penalty
+    # Cap non-veto scores at 3.0 to keep the SRI component on the declared 0-3+ scale.
+    return min(base + outlook_penalty + track_b_penalty, 3.0)
 
 
 def sri(industries: list[IndustryInput], weights: list[float]) -> float:

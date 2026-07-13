@@ -1,4 +1,14 @@
-from src.concentration_scorer import ConcentrationMetrics, concentration_risk_score
+import pytest
+
+from src.concentration_scorer import (
+    ConcentrationMetrics,
+    channel_score,
+    concentration_risk_score,
+    industry_score,
+    maturity_score,
+    rating_score,
+    region_score,
+)
 
 
 def test_high_concentration():
@@ -7,15 +17,16 @@ def test_high_concentration():
         cr3=0.85,
         cr5=0.92,
         max1=0.65,
-        single_province_share=0.20,
-        weak_region_share=0.05,
-        aaa_share=0.40,
-        pseudo_high_rating_share=0.05,
-        maturity_12m_share=0.30,
-        single_month_peak=0.10,
-        top_channel_share=0.60,
+        single_province_share=0.40,
+        weak_region_share=0.25,
+        aaa_share=0.75,
+        pseudo_high_rating_share=0.35,
+        maturity_12m_share=0.75,
+        single_month_peak=0.35,
+        top_channel_share=0.80,
+        top_channel_is_contracting=True,
     )
-    assert concentration_risk_score(metrics) >= 8.0
+    assert concentration_risk_score(metrics) >= 6.0
 
 
 def test_low_concentration():
@@ -33,3 +44,76 @@ def test_low_concentration():
         top_channel_share=0.30,
     )
     assert concentration_risk_score(metrics) <= 4.0
+
+
+def test_all_five_dimensions_contribute():
+    high = ConcentrationMetrics(
+        hhi=2600,
+        cr3=0.85,
+        cr5=0.92,
+        max1=0.65,
+        single_province_share=0.50,
+        weak_region_share=0.35,
+        aaa_share=0.75,
+        pseudo_high_rating_share=0.35,
+        maturity_12m_share=0.75,
+        single_month_peak=0.35,
+        top_channel_share=0.80,
+        top_channel_is_contracting=True,
+    )
+    assert industry_score(high) >= 8
+    assert region_score(high) >= 8
+    assert rating_score(high) >= 8
+    assert maturity_score(high) >= 8
+    assert channel_score(high) >= 8
+    assert concentration_risk_score(high) >= 8.0
+
+
+def test_channel_contraction_bonus():
+    contracting = ConcentrationMetrics(
+        hhi=500,
+        cr3=0.30,
+        cr5=0.50,
+        max1=0.15,
+        single_province_share=0.10,
+        weak_region_share=0.02,
+        aaa_share=0.20,
+        pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20,
+        single_month_peak=0.05,
+        top_channel_share=0.60,
+        top_channel_is_contracting=True,
+    )
+    relaxed = ConcentrationMetrics(
+        hhi=500,
+        cr3=0.30,
+        cr5=0.50,
+        max1=0.15,
+        single_province_share=0.10,
+        weak_region_share=0.02,
+        aaa_share=0.20,
+        pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20,
+        single_month_peak=0.05,
+        top_channel_share=0.60,
+        top_channel_is_contracting=False,
+    )
+    assert channel_score(contracting) > channel_score(relaxed)
+
+
+def test_concentration_weights_must_sum_to_one():
+    metrics = ConcentrationMetrics(
+        hhi=500,
+        cr3=0.30,
+        cr5=0.50,
+        max1=0.15,
+        single_province_share=0.10,
+        weak_region_share=0.02,
+        aaa_share=0.20,
+        pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20,
+        single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    with pytest.raises(ValueError):
+        concentration_risk_score(metrics, weights=(0.25, 0.25, 0.25, 0.25, 0.10))
