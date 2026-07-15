@@ -23,7 +23,7 @@
 
 ### 1.2 当前引擎的缺口
 
-在评级机构对标审计（rating-agency-benchmark-audit.md）中，外部支持被列为G3/G4严重缺口：
+在评级机构对标审计（audits/rating-agency-benchmark-audit.md）中，外部支持被列为G3/G4严重缺口：
 
 | 缺口编号 | 缺口描述 | 严重程度 | 具体问题 |
 |---------|---------|---------|---------|
@@ -709,4 +709,4 @@
 - [定性分析方法论](qualitative-analysis.md) — 信息源分级、政策解读、马赛克拼图
 - [双轨分析方法论](dual-track-methodology.md) — 轨道A+轨道B、交叉对撞、评级映射
 - [马赛克引擎](mosaic-engine.md) — 信号提取、拼图聚合、完备性评估
-- [评级机构基准审计](rating-agency-benchmark-audit.md) — 外部支持评估的G3/G4缺口分析
+- [评级机构基准审计](audits/rating-agency-benchmark-audit.md) — 外部支持评估的G3/G4缺口分析

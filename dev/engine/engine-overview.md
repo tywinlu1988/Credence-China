@@ -28,14 +28,14 @@
 | **contagion-matrix.md** | 13×13行业传染矩阵 · 传导强度 · 行业聚类 · 升级因子 | 需要评估跨行业传染风险 |
 | **concentration-framework.md** | 五维集中度分析 · 阈值体系 · 评级调整映射 · 压力测试 | 需要评估组合集中度风险 |
 | **systemic-warning-framework.md** | SRI信号聚合 · 四级温度计 · 历史回测 · 即时计算 | 需要系统性风险读数 |
-| **financial-analysis-audit.md** | 财务层10项标准差距审查 | 审查记录 |
-| **quantitative-audit.md** | 定量模块统计严谨性审查 | 审查记录 |
-| **rating-agency-benchmark-audit.md** | 评级机构方法论对标 | 审查记录 |
-| **risk-management-standards-audit.md** | Basel/COSO风险管理标准对标 | 审查记录 |
-| **practitioner-usability-audit.md** | 一线从业者可用性审查 | 审查记录 |
-| **self-assessment-2026-07-08.md** | 引擎中期自评 | 审查记录 |
-| **final-review-2026-07-08.md** | 引擎终审 | 审查记录 |
-| **capability-review-2026-07-08.md** | 引擎能力终审 | 审查记录 |
+| **audits/financial-analysis-audit.md** | 财务层10项标准差距审查 | 审查记录 |
+| **audits/quantitative-audit.md** | 定量模块统计严谨性审查 | 审查记录 |
+| **audits/rating-agency-benchmark-audit.md** | 评级机构方法论对标 | 审查记录 |
+| **audits/risk-management-standards-audit.md** | Basel/COSO风险管理标准对标 | 审查记录 |
+| **audits/practitioner-usability-audit.md** | 一线从业者可用性审查 | 审查记录 |
+| **audits/self-assessment-2026-07-08.md** | 引擎中期自评 | 审查记录 |
+| **audits/final-review-2026-07-08.md** | 引擎终审 | 审查记录 |
+| **audits/capability-review-2026-07-08.md** | 引擎能力终审 | 审查记录 |
 
 ---
 

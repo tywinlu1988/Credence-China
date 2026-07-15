@@ -34,7 +34,6 @@ CORE_DOCS = [
     "esg-framework.md",
     "governance-fraud-risk.md",
     "false-positive-negative-testing.md",
-    "final-review-2026-07-08.md",
     "outlook-monitoring-framework.md",
     "lgd-recovery-framework.md",
     "lgv-framework.md",
@@ -152,7 +151,13 @@ def check_links() -> list[str]:
         text = path.read_text(encoding="utf-8")
         for match in re.finditer(r"\[.*?\]\(([^)]+\.md)(?:#[^)]*)?\)", text):
             link = match.group(1)
-            target = ENGINE_DIR / link
+            # Resolve relative to the referencing file's own directory first
+            # (standard markdown semantics, so same-dir links inside audits/
+            # resolve), then fall back to the engine root for the bare sibling
+            # links authored when every doc lived flat under dev/engine/.
+            target = path.parent / link
+            if not target.exists():
+                target = ENGINE_DIR / link
             if not target.exists():
                 errors.append(f"BROKEN_LINK: {path.relative_to(ENGINE_DIR)} -> {link}")
     return errors

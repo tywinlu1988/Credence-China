@@ -25,7 +25,7 @@
 
 ### 1.1 审计发现
 
-风险管理标准审计（risk-management-standards-audit.md）对照Basel新资本协议和COSO ERM 2017框架，识别出引擎当前覆盖的7类Basel风险类型中存在显著缺口：
+风险管理标准审计（audits/risk-management-standards-audit.md）对照Basel新资本协议和COSO ERM 2017框架，识别出引擎当前覆盖的7类Basel风险类型中存在显著缺口：
 
 | Basel风险类型 | 引擎覆盖情况 | 覆盖等级 | 缺口描述 |
 |---|---|---|---|
@@ -901,5 +901,5 @@ adjustment_likely_reversal: >
 - [财务深度分析](financial-deep-dive.md) — 债务到期排程、银行授信覆盖比率、FCF分析（流动性风险来源）
 - [外部支持评估框架](external-support-framework.md) — 类似的叠加层设计模式
 - [评级展望与持续监控框架](outlook-monitoring-framework.md) — 非信用风险事件的监控触发条件
-- [风险管理标准合规审计报告](risk-management-standards-audit.md) — 非信用风险覆盖缺口的审计发现
+- [风险管理标准合规审计报告](audits/risk-management-standards-audit.md) — 非信用风险覆盖缺口的审计发现
 - [行业分类与分析框架](industry-framework.md) — 各行业技术路线与颠覆风险参考
