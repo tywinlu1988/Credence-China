@@ -1,8 +1,10 @@
 # 方法论文档全面一致性审计报告
 
+**版本**: v1.0 | **对应引擎版本**: v0.7.0-alpha | **日期**: 2026-07-10
+
 **审计日期**: 2026-07-10
 **审计范围**: D:\sandbox\loanagent\dev\engine\ 目录下30份方法论文档
-**引擎当前版本**: v0.5.4-alpha（P1/P2问题已修复）
+**引擎当前版本**: v0.7.0-alpha（P1/P2问题已修复）
 **审计方法**: 全量文档逐行比对 + 交叉引用链路追踪 + 术语频率统计
 
 ---
@@ -95,8 +97,8 @@
 |---|---|---|---|
 | T6-1 | "6档" vs "12档" 混用 | `false-positive-negative-testing.md` §1.4 评级映射表使用6档分类 | 该文档版本未跟随 v0.4.0 升级，仍使用旧6档体系 |
 | T6-2 | "12档" 在部分文档中仍称为"6档扩展" | `dual-track-methodology.md` 标题标注"评级修订 v0.4.0"；`final-review.md` §3.1 仍称"仅有6档" | 不一致——v0.4.0已升级至12档，`final-review.md` 未同步更新 |
-| T6-3 | 评分区间在 `final-review.md` 与 `dual-track-methodology.md` 不匹配 | `final-review.md` §1.5 使用 AAA(9.0-10.0)、AA/A(7.5-8.9)、BBB/BB(6.0-7.4)、B(4.0-5.9)、CCC(2.0-3.9)、D(0-1.9) | 此为旧6档区间，与12档表冲突 |
-| T6-4 | "AA/A" 联合写法 | `final-review.md` §1.5、`false-positive-negative-testing.md` §1.4 使用"AA/A"、"BBB/BB"联合写法 | 12档已拆分AA和A、BBB和BB，不应联合书写 |
+| T6-3 | 评分区间在 `final-review.md` 与 `dual-track-methodology.md` 不匹配 | `final-review.md` §1.5 使用 AAA(9.0-10.0)、AA 与 A 合并档(7.5-8.9)、BBB 与 BB 合并档(6.0-7.4)、B(4.0 至 5.9)、CCC(2.0 至 3.9)、D(0-1.9) | 此为旧6档区间，与12档表冲突 |
+| T6-4 | "AA 与 A 合并" 联合写法 | `final-review.md` §1.5、`false-positive-negative-testing.md` §1.4 使用"AA 与 A 合并"、"BBB 与 BB 合并"联合写法 | 12档已拆分AA和A、BBB和BB，不应联合书写 |
 
 **严重度**: P0（影响分析结果）— false-positive-negative-testing.md 和 final-review.md 使用旧评级映射，可能导致假阳性/假阴性判定标准与实际评级体系不一致。
 
@@ -127,14 +129,14 @@
 
 | 项目 | `dual-track-methodology.md` §六（v0.4.0） | `false-positive-negative-testing.md` §1.4（未标注版本） | 冲突类型 |
 |---|---|---|---|
-| 总档位数 | 18档（AAA→D含+/-） | 6档（AAA, AA/A, BBB/BB, B, CCC, D） | 结构性冲突 |
+| 总档位数 | 18档（AAA→D含+/-） | 6档（AAA, AA 与 A 合并, BBB 与 BB 合并, B, CCC, D） | 结构性冲突 |
 | AAA区间 | 9.5-10.0 | 9.0-10.0 | 阈值冲突 |
 | 阴性判定线 | 无明确线 | BB+及以上为"阴性" | 判定逻辑冲突 |
-| B区间 | 2.0-2.4 B- / 2.5-2.9 B / 3.0-3.4 B+ | 4.0-5.9 B | 严重区间冲突 |
-| CCC区间 | 1.0-1.9 | 2.0-3.9 | 严重区间冲突 |
+| B区间 | 2.0-2.4 B- / 2.5-2.9 B / 3.0-3.4 B+ | 4.0 至 5.9 B | 严重区间冲突 |
+| CCC区间 | 1.0-1.9 | 2.0 至 3.9 | 严重区间冲突 |
 | D区间 | 0-0.9 | 0-1.9 | 阈值冲突 |
 
-**影响**: `false-positive-negative-testing.md` 的假阳性/假阴性判定使用旧6档体系，测试结论与当前12档体系不兼容。例如，旧体系评为CCC（2.0-3.9）在新体系中可能对应B-至B+，导致"BB+及以上为阴性"的判定逻辑完全无效。
+**影响**: `false-positive-negative-testing.md` 的假阳性/假阴性判定使用旧6档体系，测试结论与当前12档体系不兼容。例如，旧体系评为CCC（2.0 至 3.9）在新体系中可能对应B-至B+，导致"BB+及以上为阴性"的判定逻辑完全无效。
 
 **建议**: `false-positive-negative-testing.md` 必须升级评级映射表至12档，并重新计算所有测试案例的阳性/阴性判定。
 
@@ -145,10 +147,10 @@
 | 项目 | `final-review.md` §1.5 | `dual-track-methodology.md` §六 |
 |---|---|---|
 | AAA | 9.0-10.0 | 9.5-10.0 |
-| AA/A | 7.5-8.9（合并） | 拆分AA+, AA, AA-, A+, A, A- 共6档 |
-| BBB/BB | 6.0-7.4（合并） | 拆分BBB+, BBB, BBB-, BB+, BB, BB- 共6档 |
-| B | 4.0-5.9 | 拆分B+, B, B- 共3档 |
-| CCC | 2.0-3.9 | 1.0-1.9 |
+| AA 与 A | 7.5-8.9（合并） | 拆分AA+, AA, AA-, A+, A, A- 共6档 |
+| BBB 与 BB | 6.0-7.4（合并） | 拆分BBB+, BBB, BBB-, BB+, BB, BB- 共6档 |
+| B | 4.0 至 5.9 | 拆分B+, B, B- 共3档 |
+| CCC | 2.0 至 3.9 | 1.0-1.9 |
 | D | 0-1.9 | 0-0.9 |
 
 **影响**: `final-review.md` 是终结性审查报告，多处基于旧6档评级体系做出结论（如"评级粒度不足"判断），与v0.4.0已实现的12档方案矛盾。
@@ -452,7 +454,7 @@
 | **P1-3** | V2-2 | `engine-overview.md` v0.3.0 引用v0.4.0功能 | 版本号与内容不匹配 | 升级至v0.5.4-alpha | ✅ 已修复 v0.5.5 |
 | **P1-4** | D7 | `output-layered-framework.md` 使用30%阈值而 `mosaic-engine.md` 使用20% | 两个"数据严重不足"阈值冲突 | 统一阈值（采用20%），在产品层给出差异化理由 | ✅ 已修复 v0.5.5 |
 | **P1-5** | W6 | `quantitative-analysis.md` 统计修正停留在文档层面，代码实现0% | 统计方法的可信度受质疑 | 在所有统计方法处追加"文档层设计完成，代码实现待进行"的诚实标注 | ✅ 已修复 v0.5.5 |
-| **P1-6** | T6 | "AA/A"合并写法出现在 `final-review.md` 和 `false-positive-negative-testing.md` | 与12档拆分逻辑矛盾 | 使用12档独立评级名称 | ✅ 已修复 v0.5.5 |
+| **P1-6** | T6 | "AA 与 A 合并"写法出现在 `final-review.md` 和 `false-positive-negative-testing.md` | 与12档拆分逻辑矛盾 | 使用12档独立评级名称 | ✅ 已修复 v0.5.5 |
 | **P1-7** | V2-6/7/8 | `industry-framework.md`、`qualitative-analysis.md`、`mosaic-engine.md` 版本号滞后 | 核心架构文档版本号与最新功能不匹配 | 统一升级至v0.5.4-alpha | ✅ 已修复 v0.5.5 |
 
 ### P2 — 仅格式/组织结构问题

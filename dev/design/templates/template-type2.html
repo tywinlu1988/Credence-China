@@ -407,6 +407,20 @@
     </div>
   </div>
 
+  <!-- ====== SECTION 3.5: 数据完备性评估 ====== -->
+  <div class="section">
+    <h2 class="section-title">三（附）、数据完备性评估</h2>
+    <section class="completeness">
+      <h3>数据完备性评估</h3>
+      <div class="density-bar" data-density="{L1_density}">L1 信号密度: {L1_density}%</div>
+      <div class="density-bar" data-density="{L2_density}">L2 信号密度: {L2_density}%</div>
+      <div class="density-bar" data-density="{L3_density}">L3 信号密度: {L3_density}%</div>
+      <div class="density-bar" data-density="{L4_density}">L4 信号密度: {L4_density}%</div>
+      <ul class="gap-list">{gap_items}</ul>
+      <p class="confidence">综合置信度: {confidence_level}（{confidence_reason}）</p>
+    </section>
+  </div>
+
   <!-- ====== SECTION 4: 关键发现 ====== -->
   <div class="section">
     <h2 class="section-title">四、关键发现与风险提示</h2>
@@ -721,7 +735,7 @@
         <div>
           <h4 style="color:var(--text-primary);margin-bottom:8px;">框架版本</h4>
           <p>统一信贷评估框架 v2.0 · 2026-06发布</p>
-          <p style="margin-top:8px;">评分刻度：0-10分，对应D至AAA共21个评级子级</p>
+          <p style="margin-top:8px;">评分刻度：0-10分，对应18个评级区间 / 12-notch scheme（D–AAA，无CC级）</p>
           <p style="margin-top:8px;">评级阈值：>=8.5 AAA, >=7.5 AA, >=6.5 A, >=5.5 BBB, >=4.0 BB, >=3.0 B, >=1.5 CCC, &lt;1.5 CC及以下</p>
         </div>
         <div>

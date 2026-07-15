@@ -56,6 +56,19 @@
   </div>
 
   <!-- ================================================================ -->
+  <!-- 数据完备性评估 -->
+  <!-- ================================================================ -->
+  <section class="completeness">
+    <h3>数据完备性评估</h3>
+    <div class="density-bar" data-density="{L1_density}">L1 信号密度: {L1_density}%</div>
+    <div class="density-bar" data-density="{L2_density}">L2 信号密度: {L2_density}%</div>
+    <div class="density-bar" data-density="{L3_density}">L3 信号密度: {L3_density}%</div>
+    <div class="density-bar" data-density="{L4_density}">L4 信号密度: {L4_density}%</div>
+    <ul class="gap-list">{gap_items}</ul>
+    <p class="confidence">综合置信度: {confidence_level}（{confidence_reason}）</p>
+  </section>
+
+  <!-- ================================================================ -->
   <!-- 概述段落 -->
   <!-- ================================================================ -->
   <div class="info-box info-green">
