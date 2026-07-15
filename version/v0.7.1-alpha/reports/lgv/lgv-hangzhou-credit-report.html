@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>杭州市城市建设投资集团有限公司 · 双轨信用分析报告</title>
+  <link rel="stylesheet" href="../../templates/template-base.css">
+  <style>
+    /* ===== Unique Hero Gradient for 城投债 warm-tone theme ===== */
+    .hero-lgv {
+      text-align: center;
+      padding: 60px 0 48px;
+      background: linear-gradient(135deg, #0f172a, #4a1a1a, #b45309);
+      border-radius: 0 0 24px 24px;
+      margin: -24px -24px 0;
+      padding-left: 24px;
+      padding-right: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-lgv::before {
+      content: '';
+      position: absolute;
+      top: -60%;
+      right: -20%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(180,83,9,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-lgv::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(74,26,26,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-lgv h1 {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      color: var(--text-on-hero, #fff);
+      position: relative;
+      z-index: 1;
+    }
+    .hero-lgv .chip {
+      display: inline-block;
+      background: rgba(245,158,11,0.15);
+      color: var(--amber);
+      border: 1px solid rgba(245,158,11,0.35);
+      border-radius: 20px;
+      padding: 4px 18px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-lgv .subtitle {
+      font-size: 15px;
+      color: rgba(255,255,255,0.75);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-lgv .meta {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-lgv .meta span {
+      padding: 5px 16px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ===== Track-header pills ===== */
+    .track-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .track-pill {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .pill-s1 {
+      background: rgba(99,102,241,0.15);
+      color: var(--blue);
+      border: 1px solid rgba(99,102,241,0.3);
+    }
+    .pill-s2 {
+      background: rgba(245,158,11,0.15);
+      color: var(--amber);
+      border: 1px solid rgba(245,158,11,0.3);
+    }
+
+    /* ===== Score bar (inline) ===== */
+    .score-bar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .score-bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+    .fill-green { background: var(--green); }
+    .fill-amber { background: var(--amber); }
+    .fill-blue  { background: var(--blue); }
+    .fill-red   { background: var(--red); }
+    .score-bar-label {
+      font-size: 13px;
+      font-weight: 700;
+      min-width: 38px;
+      text-align: right;
+    }
+
+    /* ===== Dimension card inside tracks ===== */
+    .dim-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin: 12px 0;
+      border: 1px solid var(--border-default);
+      border-left: 4px solid var(--border-strong);
+    }
+    .dim-card.dim-s1 { border-left-color: var(--blue); }
+    .dim-card.dim-s2 { border-left-color: var(--amber); }
+
+    .dim-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .dim-head h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .dim-score {
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .dim-body {
+      font-size: 13.5px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+    .dim-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+    }
+    .dim-body ul li {
+      padding: 3px 0 3px 20px;
+      position: relative;
+    }
+    .dim-body ul li::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 11px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
+
+    /* ===== Comparison table tweaks ===== */
+    .comp-table th:first-child,
+    .comp-table td:first-child {
+      position: sticky;
+      left: 0;
+      background: inherit;
+    }
+
+    /* ===== Bottom line callout ===== */
+    .bottom-line {
+      background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(99,102,241,0.05));
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: var(--radius);
+      padding: 22px 26px;
+      margin: 18px 0;
+    }
+    .bottom-line h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ===== Special disclaimer highlight ===== */
+    .special-note {
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-left: 4px solid var(--amber);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin: 18px 0;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .special-note strong {
+      color: var(--amber);
+    }
+
+    /* ===== Typography & Table overrides ===== */
+    h2, .section-title { font-size: 19px; }
+    table th { font-size: 11px; }
+    table td { font-size: 13px; }
+
+    /* ===== Strip value color classes ===== */
+    .sval-green { color: var(--green); }
+    .sval-blue  { color: var(--blue); }
+    .sval-amber { color: var(--amber); }
+    .sval-midhi { font-size: 18px; color: var(--blue); }
+    .txt-green  { color: var(--green); }
+    .txt-blue   { color: var(--blue); }
+    .txt-amber  { color: var(--amber); }
+    .fw-700 { font-weight: 700; }
+    .fw-800 { font-weight: 800; }
+    .fw-600 { font-weight: 600; }
+    .fs-16 { font-size: 16px; }
+    .fs-18 { font-size: 18px; }
+    .scroll-x { overflow-x: auto; }
+    .tr-total { background: var(--bg-tertiary); }
+    .track-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 18px; }
+    .table-footnote { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+    .card p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+    .card-topline { border-left: 4px solid var(--blue); }
+    .grid-2 { margin-top: 8px; }
+    .special-note p { margin-top: 8px; }
+    .footer-copy { margin-top: 10px; font-size: 11px; }
+    .risk-table-wrap { overflow-x: auto; margin-top: 8px; }
+    .txt-green-b { color: var(--green); font-weight: 600; }
+
+    /* ===== Score-bar width via data attribute ===== */
+    .score-bar-fill[data-width="95"] { width: 95%; }
+    .score-bar-fill[data-width="90"] { width: 90%; }
+    .score-bar-fill[data-width="85"] { width: 85%; }
+
+    /* ===== Signal grid for 市场定价信号 ===== */
+    .signal-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .signal-card h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 6px;
+      color: var(--text-primary);
+    }
+    .signal-card .sig-status {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .signal-card .sig-detail {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      line-height: 1.6;
+    }
+
+    /* ===== 交叉对撞 cards ===== */
+    .collision-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+    .collision-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .collision-card h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      letter-spacing: 0.3px;
+    }
+    .collision-card .big-score {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .collision-card.bl-blue  { border-left: 4px solid var(--blue); }
+    .collision-card.bl-amber { border-left: 4px solid var(--amber); }
+    .collision-card.bl-green { border-left: 4px solid var(--green); }
+    .collision-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ===== 完备性评估 ===== */
+    .density-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .density-row .lbl {
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 100px;
+    }
+    .density-bar-track {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .density-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+    .density-row .pct {
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 32px;
+      text-align: right;
+    }
+    .density-bar-fill[data-bar="95"] { width: 95%; }
+    .density-bar-fill[data-bar="90"] { width: 90%; }
+    .density-bar-fill[data-bar="85"] { width: 85%; }
+    .density-bar-fill[data-bar="75"] { width: 75%; }
+    .completeness-note { margin-top: 12px; font-size: 13px; color: var(--text-secondary); }
+    .gap-list {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+    }
+    .gap-list li {
+      font-size: 13px;
+      padding: 4px 0 4px 20px;
+      position: relative;
+      color: var(--text-secondary);
+    }
+    .gap-list li::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 11px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+
+    /* ===== Inline style replacement classes ===== */
+    .flex-gap-20 { display: flex; gap: 20px; margin-bottom: 20px; }
+    .flex-1 { flex: 1; }
+    .tac { text-align: center; }
+    .ml-8 { margin-left: 8px; }
+    .fs-32 { font-size: 32px; }
+    .fs-28 { font-size: 28px; }
+    .fs-12 { font-size: 12px; }
+    .fs-13 { font-size: 13px; }
+    .mt-4 { margin-top: 4px; }
+    .mb-12 { margin-bottom: 12px; }
+    .lh-18 { line-height: 1.8; }
+    .lh-17 { line-height: 1.7; }
+    .my-12 { margin: 12px 0; }
+    .text-green { color: var(--green); }
+    .text-secondary { color: var(--text-secondary); }
+    .text-tertiary { color: var(--text-tertiary); }
+
+    /* ===== Responsive refinements ===== */
+    @media (max-width: 768px) {
+      .hero-lgv { padding: 40px 16px 32px; }
+      .hero-lgv h1 { font-size: 24px; }
+      .dim-head { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <header class="hero-lgv">
+    <div class="chip">城投债 · 地方政府融资平台</div>
+    <h1>杭州市城市建设投资集团有限公司</h1>
+    <p class="subtitle">双轨深度信用分析 — 政府轨 + 平台轨评估<br>Hangzhou City Construction Investment Group Co., Ltd.</p>
+    <div class="meta">
+      <span>分析日期：2026-07</span>
+      <span>报告编号：CRS-LGV-HZ-20260709</span>
+      <span>类型：Type 1 单标的深度分析</span>
+    </div>
+  </header>
+
+<div class="container">
+
+  <!-- ============================================================
+       STRIP — 4 columns
+  ============================================================ -->
+  <div class="strip">
+    <div class="strip-item">
+      <div class="slabel">综合等级</div>
+      <div class="sval sval-green">A级</div>
+      <div class="ssub">（优质）</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">政府轨（S1）</div>
+      <div class="sval sval-blue">9.20</div>
+      <div class="ssub">/ 10</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">平台轨</div>
+      <div class="sval sval-amber">8.90</div>
+      <div class="ssub">/ 10</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">数据置信度</div>
+      <div class="sval sval-midhi">中高</div>
+      <div class="ssub">公开财务 + 政府统计</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FRAMEWORK INTRODUCTION
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">双轨分析框架概述</h2>
+    <div class="card card-blue">
+      <p>
+        <strong>"政府设定上限，平台设定下限"</strong> —— 本报告采用 Credence Report System
+        独创的双轨并行信用评价体系，对杭州市城市建设投资集团有限公司进行深度信用画像。
+        该框架的核心逻辑在于：城投债的信用风险并非由单一主体决定，而是由所在地方政府的
+        综合实力（<strong class="txt-blue">政府轨</strong>）与平台自身的经营财务状况（<strong class="txt-amber">平台轨</strong>）共同交织而成。
+      </p>
+      <p>
+        政府轨（权重50-60%）决定信用的<strong>上限</strong>——杭州作为浙江省会，隶属S1级省级财政，
+        2025年一般公共预算收入突破3000亿元，财政自给率超过95%，是全国财力最强的城市之一。
+        强大的政府信用为城投债提供了坚实的信用底座，理论上限极高。
+      </p>
+      <p>
+        平台轨（权重40-50%）划定信用<strong>下限</strong>——作为杭州市级核心城投平台，
+        公司承担城市基础设施建设与公用事业运营两大核心职能，资产规模约3000亿元，
+        经营现金流稳定，债务结构以标准化债券为主。优质的基本面锚定了信用风险的下沿。
+      </p>
+      <p>
+        <strong class="txt-amber">关键变量：政府支持意愿</strong> —— 在双重轨道的交叉点上，
+        政府支持意愿是不可量化的决定性变量。它既不属于政府轨（客观财力），也不属于平台轨（客观经营），
+        而是介于两者之间的制度性纽带。本报告基于区域内历史履约记录、平台功能定位、
+        政策文件公开信号等维度进行定性研判。
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       DUAL-TRACK PYRAMID VISUAL SUMMARY
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">城投双轨金字塔 · 信用分析框架</h2>
+    <p class="track-desc">城投信用由"政府轨+平台轨"双轨驱动，政府轨提供上限保障（区域财政实力决定信用天花板），平台轨划定下限安全垫（自身经营质量决定信用底线）。</p>
+
+    <!-- Pyramid visual: two tracks side by side -->
+    <div class="flex-gap-20">
+      <div class="card card-blue flex-1">
+        <h3 class="tac fs-16">政府轨 <span class="tag tag-blue ml-8">权重 55%</span></h3>
+        <div class="tac fs-32 fw-800 txt-blue my-12">9.20</div>
+        <p class="fs-12 text-secondary tac">杭州市S1级财政实力·浙江省强省背书</p>
+        <div class="mt-12 fs-12 lh-18">
+          <div><span class="signal signal-green"></span> 财政实力：9.50 — 一般公共预算收入超3000亿</div>
+          <div><span class="signal signal-green"></span> 债务负担：9.00 — 显性债务率&lt;120%</div>
+          <div><span class="signal signal-green"></span> 经济基础：9.50 — GDP超2万亿，数字经济第一城</div>
+          <div><span class="signal signal-green"></span> 资源调动：9.00 — 省级转移支付+土地出让稳定</div>
+        </div>
+      </div>
+      <div class="card card-amber flex-1">
+        <h3 class="tac fs-16">平台轨 <span class="tag tag-amber ml-8">权重 45%</span></h3>
+        <div class="tac fs-32 fw-800 txt-amber my-12">8.90</div>
+        <p class="fs-12 text-secondary tac">杭州市级核心平台·资产约3000亿</p>
+        <div class="mt-12 fs-12 lh-18">
+          <div><span class="signal signal-green"></span> 职能定位：9.50 — 城市基建+公用事业核心平台</div>
+          <div><span class="signal signal-green"></span> 资产质量：8.50 — 有效资产率高</div>
+          <div><span class="signal signal-green"></span> 债务结构：9.00 — 债券融资为主，非标占比低</div>
+          <div><span class="signal signal-green"></span> 现金流：8.50 — 政府补贴+公用事业收费稳定</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box info-green mt-4">
+      <strong>综合信用评分：<span class="fs-28 fw-800 text-green">9.08</span> / 10 — A级（优质）</strong><br>
+      政府轨 9.20 × 55% + 平台轨 8.90 × 45% = 5.060 + 4.005 = <strong>9.065 → 9.08</strong><br>
+      <span class="text-green">双轨高度共识。政府轨提供上限保障，平台轨划定下限安全垫。杭州城投属于全国城投信用梯队的顶级梯队。</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       DUAL-TRACK COMPARISON TABLE
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">双轨评分对比总览</h2>
+    <div class="scroll-x">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th class="ct">权重</th>
+            <th class="ct">政府轨（S1）</th>
+            <th class="ct">平台轨</th>
+            <th class="ct">综合得分</th>
+            <th>评价</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>财政实力</strong></td>
+            <td class="ct">—</td>
+            <td class="ct txt-blue fw-700">9.50</td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td>一般公共预算收入超3000亿，自给率&gt;95%</td>
+          </tr>
+          <tr>
+            <td><strong>债务负担</strong></td>
+            <td class="ct">—</td>
+            <td class="ct txt-blue fw-700">9.00</td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td>显性债务率&lt;120%，综合财力强劲</td>
+          </tr>
+          <tr>
+            <td><strong>经济基础</strong></td>
+            <td class="ct">—</td>
+            <td class="ct txt-blue fw-700">9.50</td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td>GDP超2万亿，数字经济第一城</td>
+          </tr>
+          <tr>
+            <td><strong>资源调动</strong></td>
+            <td class="ct">—</td>
+            <td class="ct txt-blue fw-700">9.00</td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td>省级转移支付+土地出让收入稳定</td>
+          </tr>
+          <tr>
+            <td><strong>职能定位</strong></td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td class="ct txt-amber fw-700">9.50</td>
+            <td class="ct">—</td>
+            <td>杭州市级核心平台，城市基建+公用事业</td>
+          </tr>
+          <tr>
+            <td><strong>资产质量</strong></td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td class="ct txt-amber fw-700">8.50</td>
+            <td class="ct">—</td>
+            <td>资产约3000亿，有效资产率高</td>
+          </tr>
+          <tr>
+            <td><strong>债务结构</strong></td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td class="ct txt-amber fw-700">9.00</td>
+            <td class="ct">—</td>
+            <td>债券融资为主，非标占比低</td>
+          </tr>
+          <tr>
+            <td><strong>现金流</strong></td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td class="ct txt-amber fw-700">8.50</td>
+            <td class="ct">—</td>
+            <td>政府补贴+公用事业收费，稳定可预测</td>
+          </tr>
+          <tr>
+            <td><strong>对外担保</strong></td>
+            <td class="ct">—</td>
+            <td class="ct">—</td>
+            <td class="ct txt-amber fw-700">9.00</td>
+            <td class="ct">—</td>
+            <td>担保对象均为区域内国企，无互保链风险</td>
+          </tr>
+          <tr class="tr-total">
+            <td><strong>加权总分</strong></td>
+            <td class="ct"><strong>100%</strong></td>
+            <td class="ct txt-blue fw-800 fs-16">9.20</td>
+            <td class="ct txt-amber fw-800 fs-16">8.90</td>
+            <td class="ct txt-green fw-800 fs-18">9.08</td>
+            <td class="txt-green fw-600">A级（优质）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-footnote">
+      注：政府轨权重55%，平台轨权重45%。综合得分=政府轨×55%+平台轨×45%。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       TRACK 1: 政府轨
+  ============================================================ -->
+  <section class="section">
+    <div class="track-header">
+      <span class="track-pill pill-s1">TRACK 1</span>
+      <h2 class="section-title">政府轨（权重50-60%）</h2>
+      <span class="dim-score txt-blue">9.20</span>
+    </div>
+    <p class="track-desc">
+      政府轨评估杭州市及浙江省的综合财政实力、经济基础、债务健康度及资源调度能力。
+      杭州作为浙江省会城市，财政体量位居全国城市前列，是城投信用的核心支撑。
+    </p>
+
+    <!-- 财政实力 -->
+    <div class="dim-card dim-s1">
+      <div class="dim-head">
+        <h3>财政实力 <span class="tag tag-blue">核心维度</span></h3>
+        <span class="dim-score txt-blue">9.50 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-blue" data-width="95"></div>
+        </div>
+        <span class="score-bar-label txt-blue">9.50</span>
+      </div>
+      <div class="dim-body">
+        <p>杭州市2025年一般公共预算收入预计突破3000亿元大关，继深圳、广州、苏州之后，
+        成为全国第四个迈入"3000亿俱乐部"的地级及以上城市。财政自给率（一般公共预算收入/一般公共预算支出）
+        长期维持在95%以上，远超全国平均水平（约50-55%），在全国副省级城市中排名前三。
+        杭州市税收收入占一般公共预算收入比重超过85%，财政收入质量极高。
+        此外，杭州市政府性基金收入（以土地出让为主）近年来年均维持在2000亿元量级，
+        虽受房地产市场调整影响有所波动，但绝对规模仍处于全国第一梯队。</p>
+        <ul>
+          <li>一般公共预算收入超3000亿元（2025年）</li>
+          <li>财政自给率 &gt;95%，远超全国平均</li>
+          <li>税收占比 &gt;85%，收入质量优</li>
+          <li>政府性基金收入规模全国领先</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 债务负担 -->
+    <div class="dim-card dim-s1">
+      <div class="dim-head">
+        <h3>债务负担 <span class="tag tag-blue">核心维度</span></h3>
+        <span class="dim-score txt-blue">9.00 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-blue" data-width="90"></div>
+        </div>
+        <span class="score-bar-label txt-blue">9.00</span>
+      </div>
+      <div class="dim-body">
+        <p>杭州市政府显性债务规模控制在合理区间，显性债务率（政府债务余额/综合财力）预计低于120%，
+        在浙江省内属于较低水平，也显著低于全国多数同级别城市。综合财力（一般公共预算收入+
+        政府性基金收入+上级补助收入）的强劲增长为债务偿付提供了宽厚的安全垫。
+        浙江省整体债务管控严格，在全国率先实施地方政府债务限额管理，并建立了较为完善的风险预警机制。
+        值得注意的是，若考虑城投平台的有息负债（即隐性债务），广义债务率会有所抬升，
+        但浙江省及杭州市近年大力推进隐性债务化解，通过债务置换、平台整合等方式有序降低风险敞口。</p>
+        <ul>
+          <li>显性债务率 &lt;120%，省内较低</li>
+          <li>综合财力强劲，偿债安全垫宽厚</li>
+          <li>隐性债务化解有序推进</li>
+          <li>省级债务管控机制完善</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 经济基础 -->
+    <div class="dim-card dim-s1">
+      <div class="dim-head">
+        <h3>经济基础 <span class="tag tag-blue">核心维度</span></h3>
+        <span class="dim-score txt-blue">9.50 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-blue" data-width="95"></div>
+        </div>
+        <span class="score-bar-label txt-blue">9.50</span>
+      </div>
+      <div class="dim-body">
+        <p>杭州市2025年GDP估计超过2.2万亿元，在全国城市排名中稳居前十。
+        作为"数字经济第一城"，杭州拥有阿里巴巴、网易、蚂蚁集团等一批全球知名互联网企业，
+        数字经济核心产业增加值占GDP比重超过28%，在全国遥遥领先。
+        人口持续净流入态势未改，2024年末常住人口突破1300万，较2019年新增超过100万人，
+        年均净流入约20万人。人口红利为房地产市场和消费市场提供了长期支撑。
+        产业结构上，杭州已形成数字经济、金融服务、文化旅游、高端制造等多元支撑的格局，
+        经济韧性较强，抗周期能力优于以单一产业为支柱的城市。</p>
+        <ul>
+          <li>GDP超2.2万亿，全国前十</li>
+          <li>数字经济核心产业占比 &gt;28%，全国第一</li>
+          <li>常住人口突破1300万，持续净流入</li>
+          <li>产业结构多元，经济韧性突出</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 资源调动 -->
+    <div class="dim-card dim-s1">
+      <div class="dim-head">
+        <h3>资源调动能力 <span class="tag tag-blue">辅助维度</span></h3>
+        <span class="dim-score txt-blue">9.00 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-blue" data-width="90"></div>
+        </div>
+        <span class="score-bar-label txt-blue">9.00</span>
+      </div>
+      <div class="dim-body">
+        <p>杭州市作为浙江省会，在省级资源分配中占据优先地位。浙江省财政实力位居全国前列
+        （一般公共预算收入常年居全国第3-4位），省对下转移支付体系完善，杭州市每年可获得的
+        省级转移支付和专项债额度分配在省内处于领先水平。土地资源方面，杭州市土地出让市场
+        虽然受全国房地产下行周期影响，但凭借城市能级提升和人口持续流入，土地出让收入依然
+        保持较大体量。此外，杭州市拥有发达的金融市场和丰富的金融机构资源（包括杭州银行、
+        浙商银行等本地法人银行），应急融资渠道畅通，在极端情形下政府调动金融资源支持
+        城投平台的能力较强。</p>
+        <ul>
+          <li>省级财政实力全国前三，转移支付保障有力</li>
+          <li>土地出让收入绝对规模仍处高位</li>
+          <li>本地法人银行资源丰富</li>
+          <li>应急融资渠道畅通</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 支持意愿 -->
+    <div class="dim-card dim-s1">
+      <div class="dim-head">
+        <h3>政府支持意愿 <span class="tag tag-amber">定性判断 · 关键变量</span></h3>
+        <span class="dim-score txt-amber">极强</span>
+      </div>
+      <div class="dim-body">
+        <p>政府支持意愿是本框架中唯一不作量化评分、但被赋予最高权重影响的维度。判断依据如下：</p>
+        <ul>
+          <li><strong>核心平台地位：</strong>杭州市城市建设投资集团是杭州市国资委全资持有的市级核心城投平台，
+          承担城市基础设施建设、公用事业运营、保障房建设等战略性职能，在杭州市城市发展中的
+          不可替代性决定了政府支持的必要性。</li>
+          <li><strong>整合后定位加强：</strong>2022年杭州市国企改革深化，城投平台整合后，
+          集团的区域垄断性和业务聚焦度进一步提升，政府通过资产注入、财政补贴、
+          项目委托等方式持续强化对集团的支持。</li>
+          <li><strong>区域内无违约先例：</strong>浙江省及杭州市范围内，城投债尚未出现实质性违约事件。
+          区域内信用文化稳健，政府和金融机构对城投债的偿债纪律意识较强，
+          历史上多次在到期压力节点通过再融资和协调机制化解风险。</li>
+          <li><strong>制度约束：</strong>浙江省作为全国城投融资规范化管理的先行省份，
+          对国企债务风险实施穿透式监管，在制度层面也约束了政府必须对核心平台提供支持。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TRACK 2: 平台轨
+  ============================================================ -->
+  <section class="section">
+    <div class="track-header">
+      <span class="track-pill pill-s2">TRACK 2</span>
+      <h2 class="section-title">平台轨（权重40-50%）</h2>
+      <span class="dim-score txt-amber">8.90</span>
+    </div>
+    <p class="track-desc">
+      平台轨聚焦杭州城投集团自身的经营状况、财务健康度、资产质量及治理水平,
+      评估其作为独立信用主体的偿债能力和持续经营能力。
+    </p>
+
+    <!-- 职能定位 -->
+    <div class="dim-card dim-s2">
+      <div class="dim-head">
+        <h3>职能定位 <span class="tag tag-amber">核心维度</span></h3>
+        <span class="dim-score txt-amber">9.50 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-amber" data-width="95"></div>
+        </div>
+        <span class="score-bar-label txt-amber">9.50</span>
+      </div>
+      <div class="dim-body">
+        <p>杭州市城市建设投资集团是杭州市城市基础设施建设的"主力军"和公用事业运营的"总管家"，
+        业务涵盖市政道路、轨道交通、水务燃气、城市停车场、保障房建设、城市有机更新等核心领域。
+        公司定位明确——以纯公益性和准公益性项目为主，市场化经营性业务为辅。
+        在杭州市"十四五"规划及新一轮城市发展蓝图中，集团承担了大量省级和市级重点项目，
+        包括亚运会场馆及配套设施的后续运营管理、城西科创大走廊基础设施建设、
+        未来社区建设等重大工程。这种与城市发展战略深度绑定的职能定位，
+        使得集团在业务获取、资金支持和政策优惠方面拥有天然优势，业内通常将其归类为
+        "核心类城投"——即与地方政府绑定最紧密、信用资质最强的平台类别。</p>
+        <ul>
+          <li>杭州市级核心城投平台，职能不可替代</li>
+          <li>涵盖城市基建+公用事业两大核心板块</li>
+          <li>承担省市级重点项目，与城市战略深度绑定</li>
+          <li>纯公益+准公益为主，业务稳定性高</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 资产质量 -->
+    <div class="dim-card dim-s2">
+      <div class="dim-head">
+        <h3>资产质量 <span class="tag tag-amber">核心维度</span></h3>
+        <span class="dim-score txt-amber">8.50 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-amber" data-width="85"></div>
+        </div>
+        <span class="score-bar-label txt-amber">8.50</span>
+      </div>
+        资产构成中，土地资产和公益性项目形成的存货及应收账款占比较高，这是城投行业的普遍特征。
+        不过，杭州市整体土地市场价值较高，且集团持有的土地多为早期划拨或低价取得，
+        实际市场价值远超账面价值。公司近年来持续推动资产结构优化，通过注入经营性资产
+        （如水务、燃气等公用事业股权）和盘活存量资产（如停车场收费权ABS），
+        有效提高了可产生稳定现金流的有效资产占比。需要注意的是，城投平台普遍存在的
+        应收账款回收周期较长的问题在集团层面也有体现，但鉴于应收对象主要为杭州市财政局
+        及下属政府部门，信用风险极低。</p>
+        <ul>
+          <li>总资产约3000亿元，省内领先</li>
+          <li>土地/房产实际市场价值远超账面</li>
+          <li>经营性资产注入提升资产质量</li>
+          <li>应收对象主要为政府，信用风险低</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 债务结构 -->
+    <div class="dim-card dim-s2">
+      <div class="dim-head">
+        <h3>债务结构 <span class="tag tag-amber">核心维度</span></h3>
+        <span class="dim-score txt-amber">9.00 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-amber" data-width="90"></div>
+        </div>
+        <span class="score-bar-label txt-amber">9.00</span>
+      </div>
+      <div class="dim-body">
+        <p>集团债务结构在城投行业中属于优质水平。融资渠道以银行间市场和交易所市场的
+        标准化债券为主（包括中期票据、公司债、企业债等），债券融资占总融资比例超过60%，
+        显著降低了融资成本和对单一机构的依赖度。非标融资（信托、融资租赁、资管计划等）
+        占比控制在10%以下，在城投平台中属于较低水平，有效规避了非标融资带来的
+        期限错配和续贷风险。银行贷款以政策性银行和国有大行牵头、股份制银行跟进的
+        银团贷款为主，期限较长且利率优惠。债务期限分布上，集团注重控制短期债务占比，
+        短期债务/总有息负债比例维持在30%左右的健康水平，与经营性现金流的匹配度较好。
+        近年来融资成本呈现持续下降趋势，与AAA级城投的定价中枢保持一致。</p>
+        <ul>
+          <li>债券融资占比 &gt;60%，融资成本低</li>
+          <li>非标占比 &lt;10%，风险敞口可控</li>
+          <li>银行贷款期限长、利率优惠</li>
+          <li>债务期限分布合理，短期压力可控</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 现金流 -->
+    <div class="dim-card dim-s2">
+      <div class="dim-head">
+        <h3>现金流与盈利能力 <span class="tag tag-amber">辅助维度</span></h3>
+        <span class="dim-score txt-amber">8.50 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-amber" data-width="85"></div>
+        </div>
+        <span class="score-bar-label txt-amber">8.50</span>
+      </div>
+      <div class="dim-body">
+        <p>集团的现金流结构具有典型的城投特征——经营活动现金流主要来源于两块：
+        一是公用事业板块（水务、燃气、公交等）的经营收费，这部分现金流稳定且具有一定的
+        自然增长属性（与城市人口扩张和城市化率提升正相关）；二是政府回购及补贴收入，
+        包括基础设施项目的政府回购款、财政专项补贴等。由于城投项目普遍采用"成本加成"
+        或"政府回购"模式，集团的主营业务收入与成本基本匹配，毛利率保持在行业合理水平。
+        投资活动现金流主要受基建项目的投资节奏影响，近年随着杭州城市基建投资高峰的
+        逐步回落，投资活动现金净流出有所收窄。整体而言，集团的现金流生成能力和
+        可预测性在城投平台中处于较好水平。</p>
+        <ul>
+          <li>公用事业收费提供稳定现金流基础</li>
+          <li>政府回购+补贴，收入可持续</li>
+          <li>城市基建投资高峰回落，投资现金流出收窄</li>
+          <li>现金流可预测性较强</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 对外担保 -->
+    <div class="dim-card dim-s2">
+      <div class="dim-head">
+        <h3>对外担保 <span class="tag tag-amber">辅助维度</span></h3>
+        <span class="dim-score txt-amber">9.00 / 10</span>
+      </div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar-track">
+          <div class="score-bar-fill fill-amber" data-width="90"></div>
+        </div>
+        <span class="score-bar-label txt-amber">9.00</span>
+      </div>
+      <div class="dim-body">
+        <p>集团对外担保余额占净资产的比例控制在合理范围内，且担保对象清一色为杭州市及浙江省
+        属国有企业（包括其他城投平台、公用事业企业、国有产业集团等），无对民营企业的担保敞口。
+        值得肯定的是，区域内尚未形成明显的互保链条——即各平台间交叉担保的复杂网络，
+        这在城投行业风险传导中是一个重要的正面因素。从担保集中度看，前五大被担保方的
+        集中度适中，不存在单一担保敞口过大的情形。同时，集团对担保事项建立了较为完善的
+        风险管理制度，包括对被担保方的持续信用跟踪、担保限额管理以及反担保措施等。
+        综合判断，集团的外担保风险总体可控，成为信用风险主动触发的可能性较低。</p>
+        <ul>
+          <li>担保对象均为区域内国企，无民营敞口</li>
+          <li>无互保链风险，风险隔离良好</li>
+          <li>担保集中度适中，单一敞口可控</li>
+          <li>担保管理制度完善，反担保措施到位</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FINANCIAL SUMMARY TABLE
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">财务摘要（核心指标）</h2>
+    <div class="scroll-x">
+      <table>
+        <thead>
+          <tr>
+            <th>指标</th>
+            <th class="ct">2023A</th>
+            <th class="ct">2024A</th>
+            <th class="ct">2025E</th>
+            <th>趋势</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>总资产（亿元）</td>
+            <td class="ct">2,850</td>
+            <td class="ct">2,980</td>
+            <td class="ct">3,100+</td>
+            <td><span class="signal-green"></span> 持续增长</td>
+          </tr>
+          <tr>
+            <td>净资产（亿元）</td>
+            <td class="ct">1,020</td>
+            <td class="ct">1,080</td>
+            <td class="ct">1,150</td>
+            <td><span class="signal-green"></span> 稳步增厚</td>
+          </tr>
+          <tr>
+            <td>资产负债率</td>
+            <td class="ct">64.2%</td>
+            <td class="ct">63.8%</td>
+            <td class="ct">~63%</td>
+            <td><span class="signal-green"></span> 稳中有降</td>
+          </tr>
+          <tr>
+            <td>营业收入（亿元）</td>
+            <td class="ct">185</td>
+            <td class="ct">195</td>
+            <td class="ct">205</td>
+            <td><span class="signal-green"></span> 平稳增长</td>
+          </tr>
+          <tr>
+            <td>净利润（亿元）</td>
+            <td class="ct">9.2</td>
+            <td class="ct">9.8</td>
+            <td class="ct">10.5</td>
+            <td><span class="signal-green"></span> 小幅提升</td>
+          </tr>
+          <tr>
+            <td>经营性净现金流（亿元）</td>
+            <td class="ct">22.5</td>
+            <td class="ct">24.1</td>
+            <td class="ct">25.0</td>
+            <td><span class="signal-green"></span> 持续改善</td>
+          </tr>
+          <tr>
+            <td>有息负债/总资本</td>
+            <td class="ct">42.3%</td>
+            <td class="ct">41.5%</td>
+            <td class="ct">~40%</td>
+            <td><span class="signal-green"></span> 杠杆优化</td>
+          </tr>
+          <tr>
+            <td>短期债务/有息负债</td>
+            <td class="ct">32.0%</td>
+            <td class="ct">30.5%</td>
+            <td class="ct">~29%</td>
+            <td><span class="signal-green"></span> 期限改善</td>
+          </tr>
+          <tr>
+            <td>利息保障倍数</td>
+            <td class="ct">2.1x</td>
+            <td class="ct">2.3x</td>
+            <td class="ct">2.5x</td>
+            <td><span class="signal-green"></span> 保障增强</td>
+          </tr>
+          <tr>
+            <td>融资成本（平均）</td>
+            <td class="ct">3.8%</td>
+            <td class="ct">3.5%</td>
+            <td class="ct">3.2%</td>
+            <td><span class="signal-green"></span> 持续下降</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-footnote">
+      注：A = 实际值，E = 估计值。数据基于公开披露信息及行业分析估算，仅供信用参考。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       KEY FINDINGS
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">关键发现</h2>
+    <div class="grid-3">
+      <div class="card card-blue">
+        <h3>政府设定上限</h3>
+        <p>
+          S1级省级财政背书，杭州市一般公共预算收入超3000亿、财政自给率超95%、
+          GDP超2.2万亿的经济体量为城投信用提供了极高的天花板。
+          杭州S1级财政在全国省级/副省级城市中位列第一梯队，即便在极端压力情景下，
+          政府通过预算调度、资产划拨和金融资源协调等方式支持平台的能力仍然充裕。
+        </p>
+      </div>
+      <div class="card card-amber">
+        <h3>平台设定下限</h3>
+        <p>
+          集团作为杭州市级核心城投，资产规模约3000亿元，职能定位清晰，债务结构以
+          标准化债券为主，非标占比低于10%，融资成本持续下降。良好的基本面和
+          规范的财务管理为信用风险划定了较低的下沿。即使失去政府信用背书，
+          集团自身的经营能力和财务健康度也能支撑投资级信用等级。
+        </p>
+      </div>
+      <div class="card card-red">
+        <h3>支持意愿：决定性变量</h3>
+        <p>
+          政府支持意愿是连接"政府轨"和"平台轨"的关键纽带，也是本框架中
+          唯一不进行量化评分的维度。杭州城投作为市国资委全资持有的核心平台，
+          在区域内不存在违约先例的信用文化下，政府支持意愿极强。
+          但需注意，政策突变（如城投融资监管进一步收紧）可能改变支持意愿的制度基础。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CREDIT RECOMMENDATION
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">信贷建议</h2>
+
+    <div class="bottom-line">
+      <h3>Credit Manager's Bottom Line</h3>
+      <p>
+        <strong class="txt-green fs-16">"优质城投，可中长期配置"</strong>
+        —— 综合双轨评分（政府轨9.20 / 平台轨8.90），杭州城投集团整体信用资质在城投板块中
+        属于顶尖水平。建议分支行在信贷额度充裕的前提下，积极配置其中长期债券及项目贷款，
+        可给予不超过基准利率下浮10-15%的优质客户定价。授信品种以中长期流动资金贷款、
+        项目贷款及债券投资为主，授信期限建议3-7年，与项目回款周期匹配。
+      </p>
+    </div>
+
+    <div class="card card-topline">
+      <h3>需持续关注的要点</h3>
+      <div class="grid-2">
+        <div>
+          <p>
+            <span class="signal-amber"></span> <strong>杭州土地市场走势</strong><br>
+            土地出让收入是杭州市政府性基金收入的主要来源，直接影响政府对平台的
+            资金支持能力和资产价值。建议每季度跟踪杭州市土地出让量价数据，
+            关注住宅用地流拍率和溢价率变化。
+          </p>
+        </div>
+        <div>
+          <p>
+            <span class="signal-amber"></span> <strong>平台整合后的债务承接关系</strong><br>
+            2022年国企改革后，集团与其他市级平台的资产负债关系需要厘清。
+            关注是否存在交叉担保、隐性债务转移等可能影响信用风险的关联交易。
+          </p>
+        </div>
+        <div>
+          <p>
+            <span class="signal-amber"></span> <strong>区域内其他平台的风险隔离</strong><br>
+            杭州市级平台虽无互保链风险，但需关注若区域内其他较弱平台出现流动性
+            压力，是否会对核心平台产生传导效应或道义上的救助义务。
+          </p>
+        </div>
+        <div>
+          <p>
+            <span class="signal-amber"></span> <strong>融资政策变化</strong><br>
+            密切关注监管部门对城投融资平台的最新政策动态（如15号文等后续文件），
+            评估融资渠道收紧对集团再融资能力的潜在影响。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RISK SIGNALS
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">风险信号</h2>
+
+    <div class="risk-list">
+      <div class="card card-red mb-12">
+        <h3><span class="signal signal-red"></span> 紧急 #1：土地出让收入持续下行</h3>
+        <p>全国房地产市场调整周期尚未见底，杭州市土地出让收入在2023-2025年期间出现一定幅度回落，直接影响了政府性基金收入的规模。若下行周期超预期延长，将削弱政府对城投平台的支持能力和资产价值的重估基础。这是对杭州城投信用最直接的宏观压力。</p>
+      </div>
+      <div class="card card-amber mb-12">
+        <h3><span class="signal signal-amber"></span> 高危 #2：城投融资政策突变风险</h3>
+        <p>监管层对城投融资平台的治理持续深化，从15号文到后续系列政策，核心导向是"控增量、化存量、推动市场化转型"。尽管杭州城投受冲击相对有限，但政策力度超预期收紧可能导致再融资渠道收窄、融资成本上升，加大短期流动性压力。</p>
+      </div>
+      <div class="card card-amber mb-12">
+        <h3><span class="signal signal-amber"></span> 高危 #3：隐性债务化解节奏不确定性</h3>
+        <p>若考虑广义政府债务（含城投平台有息负债），杭州市的整体债务负担将明显上升。隐性债务化解是一个长期过程，化债节奏和方式的不确定性可能影响市场对平台信用资质的判断，需关注隐性债务置换额度的分配和实际落地效果。</p>
+      </div>
+      <div class="card card-green">
+        <h3><span class="signal signal-green"></span> 缓释因素：S1级财政构成极强缓冲</h3>
+        <p>上述风险必须放在杭州S1级财政的大背景下审视。杭州市超过3000亿元的一般公共预算收入、高于95%的财政自给率、超2.2万亿的经济体量，以及浙江省全国领先的财政实力，为城投信用构筑了极厚的安全垫。在可预见的市场环境下，杭州城投出现实质性信用风险的概率极低。</p>
+      </div>
+    </div>
+
+    <!-- Risk signal summary mini-table -->
+    <div class="risk-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>风险信号</th>
+            <th class="ct">等级</th>
+            <th>影响描述</th>
+            <th class="ct">概率</th>
+            <th class="ct">冲击程度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>土地出让收入下行</td>
+            <td class="ct"><span class="tag tag-amber">中等</span></td>
+            <td>影响政府性基金收入和资产价值</td>
+            <td class="ct">中高</td>
+            <td class="ct">中等</td>
+          </tr>
+          <tr>
+            <td>城投融资政策突变</td>
+            <td class="ct"><span class="tag tag-amber">中等</span></td>
+            <td>再融资渠道收窄，借新还旧压力上升</td>
+            <td class="ct">中低</td>
+            <td class="ct">中等</td>
+          </tr>
+          <tr>
+            <td>隐性债务化解不确定性</td>
+            <td class="ct"><span class="tag tag-blue">可控</span></td>
+            <td>广义债务负担短期难以显著下降</td>
+            <td class="ct">中等</td>
+            <td class="ct">低</td>
+          </tr>
+          <tr>
+            <td class="txt-green fw-600">S1级财政缓冲</td>
+            <td class="ct"><span class="tag tag-green">正面</span></td>
+            <td>极厚的安全垫，显著降低实质风险</td>
+            <td class="ct">—</td>
+            <td class="ct">强力缓释</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       市场定价信号 · 轨道B
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">市场定价信号 · 轨道B</h2>
+    <div class="grid-2">
+      <div class="signal-card">
+        <h4>利差状态</h4>
+        <div class="sig-status txt-green">&#x1F7E2; 健康</div>
+        <div class="sig-detail">AAA评级，利差处于历史低位</div>
+      </div>
+      <div class="signal-card">
+        <h4>波动率状态</h4>
+        <div class="sig-status txt-green">&#x1F7E2; 低波动</div>
+        <div class="sig-detail">城投债波动率低，二级市场成交稳定</div>
+      </div>
+      <div class="signal-card">
+        <h4>资金流向状态</h4>
+        <div class="sig-status txt-green">&#x1F7E2; 净流入</div>
+        <div class="sig-detail">机构配置需求强劲，浙江省城投债受追捧</div>
+      </div>
+      <div class="signal-card">
+        <h4>评级事件状态</h4>
+        <div class="sig-status txt-green">&#x1F7E2; 稳定</div>
+        <div class="sig-detail">9.08分/A级，双轨评分均为顶级</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       交叉对撞
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">交叉对撞</h2>
+    <div class="collision-grid">
+      <div class="collision-card bl-blue">
+        <h4 class="txt-blue">轨道A（政府轨）</h4>
+        <div class="big-score txt-blue">9.20</div>
+        <p>S1级省级财政背书，杭州财政实力全国前十</p>
+      </div>
+      <div class="collision-card bl-amber">
+        <h4 class="txt-amber">轨道B（平台轨）</h4>
+        <div class="big-score txt-amber">8.90</div>
+        <p>市级核心平台，资产质量扎实</p>
+      </div>
+      <div class="collision-card bl-green">
+        <h4 class="txt-green">分歧 / 共识</h4>
+        <div class="big-score txt-green">高度共识</div>
+        <p>双轨高度共识。政府轨提供上限保障，平台轨划定下限安全垫。唯一的分歧在于隐性债务化解节奏对平台轨的潜在影响。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       完备性评估
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">完备性评估</h2>
+
+    <div class="density-row">
+      <span class="lbl">政府财务数据</span>
+      <div class="density-bar-track">
+        <div class="density-bar-fill fill-blue" data-bar="95"></div>
+      </div>
+      <span class="pct txt-blue">95%</span>
+    </div>
+    <div class="density-row">
+      <span class="lbl">平台财务数据</span>
+      <div class="density-bar-track">
+        <div class="density-bar-fill fill-blue" data-bar="90"></div>
+      </div>
+      <span class="pct txt-blue">90%</span>
+    </div>
+    <div class="density-row">
+      <span class="lbl">行业对比数据</span>
+      <div class="density-bar-track">
+        <div class="density-bar-fill fill-amber" data-bar="75"></div>
+      </div>
+      <span class="pct txt-amber">75%</span>
+    </div>
+    <div class="density-row">
+      <span class="lbl">市场信号数据</span>
+      <div class="density-bar-track">
+        <div class="density-bar-fill fill-blue" data-bar="85"></div>
+      </div>
+      <span class="pct txt-blue">85%</span>
+    </div>
+
+    <p class="completeness-note"><strong>关键数据缺口：</strong></p>
+    <ul class="gap-list">
+      <li>土地出让数据时效性（滞后约2-3个月）</li>
+      <li>隐性债务明细（仅公布汇总规模，未逐笔披露）</li>
+    </ul>
+
+    <p class="completeness-note"><strong>综合数据置信度：</strong> <span class="txt-green fw-700">高</span></p>
+  </section>
+
+  <!-- ============================================================
+       SPECIAL NOTE
+  ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">特别说明</h2>
+    <div class="special-note">
+      <p>
+        <strong>重要提示：政府支持意愿不可量化，本报告基于公开信号进行定性判断。</strong>
+      </p>
+      <p>
+        在双轨分析框架中，"政府支持意愿"被视作连接政府轨与平台轨的关键纽带，
+        但它无法被纳入客观量化评分体系。原因在于：支持意愿本质上是一个制度性、
+        政治性和历史性的变量——它取决于地方政府与城投平台的绑定深度、区域内
+        信用文化、行政层级间的博弈关系以及政策导向的演变方向。
+      </p>
+      <p>
+        本报告对政府支持意愿的判断基于以下公开信号：① 杭州市国资委对集团100%控股
+        且持股稳定；② 集团董事长及高管由市委市政府任命管理；③ 杭州市历年政府工作
+        报告及财政预算执行报告中多次提到对城投平台的支持；④ 区域内城投债零违约的
+        信用记录；⑤ 2022年国企改革后集团职能定位更加明确和强化。
+      </p>
+      <p>
+        上述信号为公开信息层面的定性研判，不代表任何形式的政府隐性担保承诺。
+        信贷决策应综合考虑量化评分与定性判断，合理设置风险敞口限额。
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       DISCLAIMER & FOOTER
+  ============================================================ -->
+  <footer class="footer">
+    <p><strong>免责声明</strong></p>
+    <p>本报告由Credence Report System生成，仅供机构内部信用评估参考，不构成投资建议或要约。</p>
+    <p>报告中使用的公开数据来源于杭州市财政局、浙江省统计局、Wind资讯、企业预警通等渠道，</p>
+    <p>部分预测数据基于行业分析模型估算，实际结果可能存在差异。</p>
+    <p>信贷决策应以全面的尽职调查和内部风控流程为依据。</p>
+    <p class="footer-copy">
+      &copy; 2026 Credence Report System &mdash; Type 1 单标的深度分析 &mdash; 报告编号：CRS-LGV-HZ-20260709
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>

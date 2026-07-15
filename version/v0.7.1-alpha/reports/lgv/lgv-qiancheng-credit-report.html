@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单标的深度分析 — 黔城产业 | 城投债</title>
+<link rel="stylesheet" href="../../templates/template-base.css">
+<style>
+/* Pyramid layers */
+.pyr-wrap { margin: 28px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.85; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 48px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-slate-800)); }
+.pyr-l2 { width: 88%; background: linear-gradient(135deg, var(--clr-cyan-600), var(--clr-cyan-700)); }
+.pyr-l3 { width: 76%; background: linear-gradient(135deg, var(--clr-blue-600), var(--clr-blue-700)); }
+.pyr-l4 { width: 64%; background: linear-gradient(135deg, var(--clr-violet-600), var(--clr-violet-700)); }
+
+/* Signal indicators used inline */
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.orange { background: var(--clr-orange-600); }
+.signal-dot.red { background: var(--red); }
+
+/* Cross collision quadrants */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--purple); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* Risk list */
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: var(--clr-orange-600); }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+
+/* Density bar */
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+
+/* Gap warning */
+.gap-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+  background: var(--bg-tertiary); font-size: 12px;
+}
+.gap-item .gap-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.gap-item .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.gap-item .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+/* Hero gradient specific to this report: LGV/城投债 */
+.hero-custom {
+  background: linear-gradient(135deg, #0f172a, #4a1a1a, #b45309);
+  text-align: center;
+  padding: 60px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-custom::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(180,83,9,0.15) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(74,26,26,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-custom .container { position: relative; z-index: 1; }
+.hero-custom .chip {
+  display: inline-block;
+  background: rgba(168,85,247,0.2);
+  color: var(--clr-violet-300);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero-custom h1 { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-custom .stock-code { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 400; margin-bottom: 6px; }
+.hero-custom .subtitle { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+.hero-custom .meta-row {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  flex-wrap: wrap;
+}
+.hero-custom .meta-row span {
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HERO SECTION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="hero-custom">
+  <div class="container">
+    <div class="chip">单标的深度分析 · Type 1</div>
+    <h1>黔城产业 <span class="fw-400" style="color:rgba(255,255,255,0.5)">|</span> Qiancheng Investment</h1>
+    <div class="stock-code">贵州区县级城投平台</div>
+    <p class="subtitle">城投债 · 贵州区县级城投的信用崩塌 — 失信被执行人11次，非标违约全面爆发，再融资渠道基本关闭</p>
+    <div class="meta-row">
+      <span>分析时点：2026年7月</span>
+      <span>数据截止：2026-07-08</span>
+      <span>数据来源：公开数据</span>
+      <span>目标读者：对公信贷经理</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- STRIP: 4 Key Metrics -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="strip" class="mt-neg24">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval" class="text-red">CC</div>
+    <div class="ssub">已进入信用事件状态</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval" class="text-red">2.20</div>
+    <div class="ssub">/ 10 四层加权</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval" class="text-red">负面</div>
+    <div class="ssub">风险持续恶化</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval" class="text-purple">中高</div>
+    <div class="ssub">公开信息充分</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: DUAL-TRACK PYRAMID SCAN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01</span> 城投双轨金字塔 · 信用分析框架</h2>
+  <p class="fs-13 mb-20" class="text-secondary">城投信用由"政府轨+平台轨"双轨驱动。黔城产业位于区县级弱财政区域，政府轨支撑能力极弱，平台轨自身已陷入实质违约状态。</p>
+
+  <!-- Two-track pyramid visual -->
+  <div class="mb-20" class="flex-gap-20">
+    <div class="card card-red" class="flex-1">
+      <h3 class="ct fs-16">政府轨 <span class="tag tag-red" class="ml-8">权重 55%</span></h3>
+      <div class="fw-800" class="ct fs-32" class="my-12 text-red">2.50</div>
+      <p class="fs-12" class="ct" class="text-secondary">区县级弱财政 · 贵州省化债压力大</p>
+      <div class="mt-12 fs-12" class="lh-18">
+        <div><span class="signal signal-red"></span> 财政实力：2.0 — 区县级一般预算收入&lt;10亿，自给率&lt;30%</div>
+        <div><span class="signal signal-red"></span> 债务负担：2.0 — 显性债务率超200%，综合财力薄弱</div>
+        <div><span class="signal signal-red"></span> 经济基础：3.0 — 县域经济总量小，产业结构单一</div>
+        <div><span class="signal signal-red"></span> 资源调动：2.5 — 省级转移支付依赖度高，土地出让基本停滞</div>
+      </div>
+    </div>
+    <div class="card card-red" class="flex-1">
+      <h3 class="ct fs-16">平台轨 <span class="tag tag-red" class="ml-8">权重 45%</span></h3>
+      <div class="fw-800" class="ct fs-32" class="my-12 text-red">1.80</div>
+      <p class="fs-12" class="ct" class="text-secondary">失信11次 · 融资渠道全部关闭</p>
+      <div class="mt-12 fs-12" class="lh-18">
+        <div><span class="signal signal-red"></span> 职能定位：2.5 — 区县级平台，职能重要性低</div>
+        <div><span class="signal signal-red"></span> 资产质量：1.5 — 有效资产极少，变现困难</div>
+        <div><span class="signal signal-red"></span> 债务结构：1.0 — 非标占比高，已发生多起违约</div>
+        <div><span class="signal signal-red"></span> 现金流：1.0 — 经营现金流为负，融资现金流入为零</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box info-red" class="mt-4">
+    <strong>综合信用评分：<span class="fs-28 fw-800" class="text-red">2.20</span> / 10 — CC级（违约风险极高）</strong><br>
+    政府轨 2.50 × 55% + 平台轨 1.80 × 45% = 1.375 + 0.810 = <strong>2.185 → 2.20</strong><br>
+    <span class="text-red">双轨一致指向违约风险。政府轨因区县级弱财政无法提供有效支持，平台轨已实质违约。黔城产业属于城投信用最底层梯队，信贷决策建议回避。</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PEER COMPARISON INSERT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01b</span> 行业对比 · 城投平台信用基本面横向比较</h2>
+  <p class="fs-13 mb-16" class="text-secondary">在同一框架下对不同层级/区域的城投平台进行快速评分对比，提供行业参照系。评分基于公开数据和逻辑推演，精度低于黔城产业深度分析</p>
+
+  <table>
+    <thead><tr><th>平台</th><th class="ct">L1<br>区域经济(35%)</th><th class="ct">L2<br>平台地位(30%)</th><th class="ct">L3<br>资产质量(20%)</th><th class="ct">L4<br>再融资(15%)</th><th class="ct">综合评分</th><th class="ct">等价评级</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>杭州城投</strong></td>
+        <td class="ct"><span class="text-green">8.5</span></td>
+        <td class="ct"><span class="text-green">8.0</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><strong><span class="text-green">8.00</span></strong></td>
+        <td class="ct"><span class="tag tag-green">A</span></td>
+      </tr>
+      <tr>
+        <td><strong>重庆渝富</strong></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-green">6.5</span></td>
+        <td class="ct"><strong><span class="text-green">6.75</span></strong></td>
+        <td class="ct"><span class="tag tag-green">BBB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>贵州省级平台</strong></td>
+        <td class="ct"><span class="text-amber">4.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><span class="text-amber">4.0</span></td>
+        <td class="ct"><strong><span class="text-amber">4.48</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB</span></td>
+      </tr>
+      <tr>
+        <td><strong>遵义道桥</strong></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><span class="text-amber">4.0</span></td>
+        <td class="ct"><span class="text-red">2.5</span></td>
+        <td class="ct"><span class="text-red">2.5</span></td>
+        <td class="ct"><strong><span class="text-red">3.10</span></strong></td>
+        <td class="ct"><span class="tag tag-red">B-</span></td>
+      </tr>
+      <tr>
+        <td><strong>黔城产业</strong></td>
+        <td class="ct"><span class="text-red">2.0</span></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><span class="text-red">2.0</span></td>
+        <td class="ct"><span class="text-red">1.0</span></td>
+        <td class="ct"><strong><span class="text-red">2.20</span></strong></td>
+        <td class="ct"><span class="tag tag-red">CC</span></td>
+      </tr>
+      <tr>
+        <td><strong>昆明城建</strong></td>
+        <td class="ct"><span class="text-red">2.5</span></td>
+        <td class="ct"><span class="text-amber">4.0</span></td>
+        <td class="ct"><span class="text-red">2.5</span></td>
+        <td class="ct"><span class="text-red">2.0</span></td>
+        <td class="ct"><strong><span class="text-red">2.80</span></strong></td>
+        <td class="ct"><span class="tag tag-red">CCC+</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box info-red" class="mt-12">
+    <strong>黔城产业在行业中的位置：</strong><br>
+    - 综合评分2.20为样本中最低，与杭州城投(8.00)差距5.80分<br>
+    - L1区域经济(2.0)和L4再融资(1.0)是最大短板——前者反映自然条件，后者反映信用事件后果<br>
+    - L3资产质量(2.0)和L4再融资(1.0)在所有可比平台中垫底——失信11次+债券展期是实质违约标志<br>
+    - 即使与问题平台昆明城建(2.80)和遵义道桥(3.10)相比，仍低0.6-0.9分<br>
+    <strong>结论：黔城产业在城投平台中信用质量处于最低水平，已进入信用事件状态。与优质平台（杭州城投）的差距本质上反映了区域经济和行政层级的根本差异，而这种差异在短期内无法弥合。</strong>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: MARKET PRICING SIGNALS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">02</span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20" class="text-secondary">独立于基本面分析的量化信号层，仅呈现市场定价行为，不做基本面解读</p>
+
+  <div class="grid-2">
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 信用利差 <span class="tag tag-red" class="ml-8">危机</span></h3>
+      <p class="fs-13" class="lh-17">黔城产业已无公开存续债券，非标违约记录导致信用利差无法正常定价。存续债券净价跌至50-60元，隐含收益率超15%，市场已按实质违约状态定价。与同区域平台相比，黔城产业的信用利差高出2-3倍。</p>
+    </div>
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 波动率 <span class="tag tag-red" class="ml-8">危机</span></h3>
+      <p class="fs-13" class="lh-17">失信被执行人记录多达11次，持续新增且无修复迹象。融资租赁违约、信托计划逾期等多起信用事件叠加，波动率处于城投平台最高区间。信用崩塌路径完整清晰——从非标违约到债券展期。</p>
+    </div>
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 资金流向 <span class="tag tag-red" class="ml-8">枯竭</span></h3>
+      <p class="fs-13" class="lh-17">银行授信基本冻结、债券发行完全暂停、融资租赁渠道中断、商业汇票无法贴现——所有融资渠道已实质关闭。公司仅靠有限的政府回款和处置非核心资产维持日常运营。</p>
+    </div>
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 评级信号 <span class="tag tag-red" class="ml-8">危机</span></h3>
+      <p class="fs-13" class="lh-17">主体评级已从A档一路下调至C档/负面，区县级弱财政的信用底色难以支撑。展望负面意味着仍有进一步下调空间（至D）。评级持续下调的过程就是黔城信用崩塌的完整历史。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: CROSS COLLISION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">03</span> 交叉对撞 · 轨道A vs 轨道B</h2>
+
+  <div class="grid-2" class="mb-16">
+    <div class="info-box info-red">
+      <strong>轨道A：基本面分析</strong><br><br>
+      <span class="fs-24 fw-800 text-red">CC (2.20)</span><br><br>
+      <strong>支撑因素：</strong><br>
+      - 地方政府支持意愿存在<br>
+      - 区域主要平台身份<br>
+      - 化债政策长期可能延伸覆盖<br><br>
+      <strong>风险因素：</strong><br>
+      - 失信记录11次，实质违约已发生<br>
+      - 再融资渠道全部关闭<br>
+      - 隐性负债远超账面
+    </div>
+    <div class="info-box" class="card-bg-red">
+      <strong>轨道B：市场定价信号</strong><br><br>
+      <span class="fs-24 fw-800 text-red">危机 偏悲观</span><br><br>
+      <strong>关键信号：</strong><br>
+      - 收益超15%，净价50-60元<br>
+      - 债券已展期，评级降至C<br>
+      - 流动性枯竭，授信冻结<br><br>
+      <strong>关键缺失：</strong><br>
+      - 几乎没有正面信号
+    </div>
+  </div>
+
+  <h3 class="fs-15 mb-12">分歧定位：黔城产业落在哪个象限？</h3>
+
+  <div class="quad-grid">
+    <div class="quad-item" class="op-3">
+      <h4>共识看好</h4>
+      <div class="q-desc">基本面好 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">信号最确定</div>
+    </div>
+    <div class="quad-item" class="op-3">
+      <h4>分歧：市场在恐慌什么？</h4>
+      <div class="q-desc">基本面中等 + 市场异常</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">市场过度反应</div>
+    </div>
+    <div class="quad-item" class="op-3">
+      <h4>分歧：市场在忽视什么？</h4>
+      <div class="q-desc">基本面差 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">危险信号</div>
+    </div>
+    <div class="quad-item active">
+      <h4 class="text-purple">共识看空 ← 黔城产业当前位置</h4>
+      <div class="q-desc">基本面极差(CC) + 市场危机(悲观定价)</div>
+      <div class="fs-11" class="mt-4" class="text-secondary">信号最确定——轨道A和B完全一致，分歧为零</div>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-purple">
+    <strong>分歧的本质：完全无分歧——市场共识坚定看空</strong><br><br>
+    基本面（轨道A）回答的是：<strong>"这家企业的信用还有修复可能吗？"</strong> → 极低。失信11次+债券展期+再融资渠道关闭，信用修复的前提不存在。<br>
+    市场（轨道B）回答的是：<strong>"当前价格还有什么隐含信息？"</strong> → 无其他信息。50-60元净价已反映最悲观预期，唯一的变量是回收率。<br><br>
+    当轨道A和B完全一致时，<strong>市场有效定价了所有已知风险</strong>。没有分歧意味着没有"隐藏的好消息"，只有"已经发生的坏消息"。<br><br>
+    <strong>对信贷决策的含义：</strong>信用事件已发生，不建议新增任何敞口。存量敞口的唯一策略是积极寻求退出和回收。
+  </div>
+
+  <h3 class="fs-14" class="my-20">对撞产生的关键追问</h3>
+  <table>
+    <tr><td class="w-4"><strong>1</strong></td><td>债券展期后的处置方案是什么？——目前是否有明确的还款计划或资产处置方案？<br><span class="fs-12" class="text-secondary">展期协议条件、担保执行进度、司法处置时间表</span></td></tr>
+    <tr><td><strong>2</strong></td><td>一揽子化债政策是否可能延伸至该平台？——概率和时点？<br><span class="fs-12" class="text-secondary">目前无迹象表明区县级化债会加速，需跟踪政策动态</span></td></tr>
+    <tr><td><strong>3</strong></td><td>地方政府愿意拿出多少资源进行救助？——财政剩余空间有多大？<br><span class="fs-12" class="text-secondary">区县级财政已极度紧张，大规模救助不现实</span></td></tr>
+    <tr><td><strong>4</strong></td><td>存量债权人的最终回收率可能达到什么水平？<br><span class="fs-12" class="text-secondary">参考贵州其他区县级城投的处置案例，回收率预计30-50%</span></td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: RISK SIGNAL CHECKLIST -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">04</span> 风险信号清单 · 按紧急度排列</h2>
+  <p class="fs-13 mb-16" class="text-secondary">从信贷经理视角出发，按风险紧急度从高到低排列，重点关注6-12个月内可能进一步恶化的风险</p>
+
+  <div class="risk-list">
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #1</div>
+      <div>
+        <strong>失信被执行人持续新增——司法信用彻底破产</strong><br>
+        <span class="text-secondary">11次失信记录表明平台已不具备任何再融资条件。若继续新增（概率极高），将触发更多债权人起诉和资产查封，形成"起诉-失信-更多起诉"的恶性循环。</span>
+      </div>
+    </div>
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #2</div>
+      <div>
+        <strong>再融资渠道全部关闭——流动性枯竭</strong><br>
+        <span class="text-secondary">银行授信冻结+债券发行暂停+融资租赁渠道中断=完全丧失外部融资能力。仅靠政府回款和资产处置维持，现金流随时可能断裂。</span>
+      </div>
+    </div>
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #3</div>
+      <div>
+        <strong>公开债券展期——信用事件已实质发生</strong><br>
+        <span class="text-secondary">多只债券已展期，构成公开市场信用事件。评级已降至C档，距D档（违约）仅一步之遥。债券持有人的回收时间和回收率存在极大不确定性。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #4</div>
+      <div>
+        <strong>隐性负债规模远超账面——实际负债率估计超80%</strong><br>
+        <span class="text-secondary">表面资产负债率约62%，但含大量担保、明股实债和融资租赁隐性负债。若全部纳入，真实负债率可能超80%，偿债能力远弱于账面表现。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #5</div>
+      <div>
+        <strong>化债政策覆盖不足——区县级平台仍在"风险处置"阶段</strong><br>
+        <span class="text-secondary">一揽子化债政策主要惠及省级和市级平台，区县级平台受益有限。黔城产业未被纳入化债白名单，短期内看不到政策救助希望。</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5: CREDIT RECOMMENDATION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">05</span> 信贷建议 · 对公信贷经理视角</h2>
+
+  <div class="card card-red">
+    <h3>回避——已进入信用事件状态，不建议新增敞口</h3>
+    <p class="fs-13 mb-12" class="lh-18">
+      黔城产业是典型的弱资质区县级城投信用崩塌案例。CC评级对应违约级信用质量，失信被执行人11次+债券展期+再融资渠道全面关闭 = 信用修复可能性极低。信贷建议的核心原则是：<strong>不新增敞口，存量积极退出</strong>。
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-red">
+      <h3>对存量敞口的处置建议</h3>
+      <table>
+        <tr><td class="w-30"><strong>现状评估</strong></td><td><span class="text-red">全面排查存量敞口</span> — 逐笔确认担保措施、抵押物现状和法律状态。梳理到期时间，建立风险台账</td></tr>
+        <tr><td><strong>担保执行</strong></td><td><span class="text-red">立即启动</span> — 如存在有效担保（土地抵押、房产抵押等），应尽快启动司法执行程序，防止其他债权人抢先查封</td></tr>
+        <tr><td><strong>退出策略</strong></td><td><span class="text-red">积极推进</span> — 建议通过二级市场转让、债务重组、债权折价出售等方式退出。参考贵州其他区县级城投处置案例，预期回收率约30-50%</td></tr>
+        <tr><td><strong>债务重组</strong></td><td><span class="text-red">参与债权人委员会</span> — 如已成立债委会，积极参与统一协调。避免单方面诉讼导致碎片化处置</td></tr>
+      </table>
+    </div>
+    <div class="card" class="card-red">
+      <h3>密切监控的指标</h3>
+      <table>
+        <tr><td class="w-30"><strong>失信记录</strong></td><td><span class="text-red">持续跟踪</span> — 是否新增失信执行人案件</td></tr>
+        <tr><td><strong>债券展期进展</strong></td><td>展期协议执行情况，是否有还款或部分还款</td></tr>
+        <tr><td><strong>化债政策动态</strong></td><td>是否被纳入化债白名单或获得特殊再融资债支持</td></tr>
+        <tr><td><strong>政府态度</strong></td><td>地方财政是否有任何救助信号或资产注入</td></tr>
+        <tr><td><strong>其他债权人行动</strong></td><td>其他银行/信托的处置策略——是诉讼、重组还是等待</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="info-box info-red" class="mt-16">
+    <strong>严重不建议的操作：</strong><br>
+    1. 新增任何形式的信贷敞口——纯信用、抵押、担保、贸易融资等均不建议。信用事件已发生，不存在"安全结构"<br>
+    2. 参与债券二级市场买入——虽有折价（净价50-60元），但回收时间和金额存在高度不确定性<br>
+    3. 接受展期协议——除非债委会统一安排且担保权益得到明确保护，否则展期仅推迟损失确认<br>
+    4. 依赖政府"隐性担保"——区县级城投的政府信用背书已实质失效，化债政策覆盖不足
+  </div>
+
+  <!-- Cash flow stress test -->
+  <div class="card" class="mt-16">
+    <h3>信用修复情景分析 · 概率极低</h3>
+    <p class="fs-12 mb-12" class="text-secondary">评估黔城产业未来1-3年信用修复的可能性，不做传统现金流压力测试（已无正常现金流可测）</p>
+    <table>
+      <thead><tr><th>情景</th><th class="ct">发生概率</th><th class="ct">描述</th><th class="ct">对债权人的含义</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>化债政策延伸覆盖</strong></td>
+          <td class="ct"><span class="text-amber">~10%</span></td>
+          <td>一揽子化债政策扩展至区县级平台，获得特殊再融资债或金融工具支持，缓解部分到期债务压力</td>
+          <td class="ct"><span class="text-amber">回收率可提升至60-70%</span></td>
+        </tr>
+        <tr>
+          <td><strong>地方政府资源救助</strong></td>
+          <td class="ct"><span class="text-amber">~15%</span></td>
+          <td>上级政府协调资源注入（资产划拨+财政资金），帮助平台进行债务重组和部分兑付</td>
+          <td class="ct"><span class="text-amber">回收率40-60%</span></td>
+        </tr>
+        <tr>
+          <td><strong>资产处置回血</strong></td>
+          <td class="ct"><span class="text-amber">~30%</span></td>
+          <td>通过处置非核心资产（土地、股权、物业等）获得部分资金用于偿债，但处置时间不确定</td>
+          <td class="ct"><span class="text-red">回收率30-50%，时间1-3年</span></td>
+        </tr>
+        <tr>
+          <td><strong>维持现状/持续恶化</strong></td>
+          <td class="ct"><span class="text-red">~45%</span></td>
+          <td>平台继续处于风险处置阶段，无外部救助，债权回收高度依赖司法程序，回收率极低</td>
+          <td class="ct"><span class="text-red">回收率20-30%，时间3-5年+</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fs-12 mt-8" class="text-secondary">
+      <strong>评估：</strong>信用修复概率极低。化债政策延伸覆盖的概率仅10%，且即使发生也非短期利好。"维持现状/持续恶化"概率45%是最可能的情景。对信贷经理而言，最务实的预期是：回收率30-50%，回收时间1-3年。建议成立专项工作组，积极推动存量敞口的司法处置和债务重组。
+    </div>
+  </div>
+
+  <div class="info-box info-red" class="mt-12">
+    <strong>核心逻辑总结：</strong>黔城产业已不是"放不放进款"的问题——信用事件已发生。<br>
+    CC评级 + 失信11次 + 债券展期 = 信用崩塌已确认。<br>
+    区域经济弱 + 区县级层 + 化债覆盖不足 = 短期内无修复希望。<br>
+    结论：<strong>不新增敞口，存量积极退出</strong>。对现有敞口以回收最大化为目标，启动担保执行或参与债委会统一处置安排。
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6: COMPLETENESS REPORT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">06</span> 完备性报告 · 信号密度与数据缺口</h2>
+
+  <h3 class="fs-14 mb-8">信号密集度评估</h3>
+  <p class="fs-12 mb-8" class="text-secondary">基础信号密度：L1(8项) + L2(8项) + L3(6项) + L4(9项) + 市场(8项) = 39项有效信号</p>
+
+  <div class="grid-3" class="mb-20">
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L1 区域经济</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L2 平台地位</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L3 资产质量</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L4 再融资</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">9/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">市场信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">综合信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8.5/10 总体高密度</div>
+    </div>
+  </div>
+
+  <h3 class="fs-14 mb-8">关键缺口与改进建议</h3>
+  <p class="fs-12 mb-12" class="text-secondary">以下数据在现有公开数据源中不可获取或置信度不足，建议信贷经理通过银行内部系统或企业尽调补充</p>
+
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>隐性负债的完整清单</strong> — 含对外担保、明股实债、融资租赁、信托融资等表外负债的详细金额、期限和担保安排。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>存量担保物的现状和法律状态</strong> — 土地、房产等抵押物是否存在重复抵押、查封或争议。需逐笔确认担保权益的优先顺位。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>地方政府最新财政数据和救助意愿表示</strong> — 区县级财政最新收支数据，以及政府对黔城产业的救助态度和可调用资源。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>同地区其他城投的信用状态对比</strong> — 了解贵州同层级其他城投的违约/化债进展，评估区域系统性风险。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>债委会协调机制和处置方案细节</strong> — 如已成立债委会，需获取相关协议和处置方案，评估参与路径。</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>单标的深度分析 · 黔城产业 (贵州区县级城投平台)</strong></p>
+  <p>分析框架：Type 1 单标的四层金字塔 × 双轨交叉验证</p>
+  <p>数据截止 2026-07-08 · 全部基于公开数据 · 仅供信贷决策参考</p>
+  <p class="mt-6 fs-11" class="text-tertiary">生成时间 2026-07-09 · Credence Credit Analysis System</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!--
+  Credit Analysis Report Template
+  Dark theme, color-coded signals, progressive disclosure.
+  Sections: Hero → Verdict → Key Numbers → Pyramid → Deepest Layer → Market Blindness → Timeline → Self-Assessment
+  Colors: Red #ef4444 (risk), Amber #f59e0b (watch), Green #22c55e (calm), Purple #a855f7 (meta)
+  Font: System stack with PingFang SC for Chinese
+  Replace all {{PLACEHOLDERS}} with actual data.
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{REPORT_TITLE}}</title>
+<style>:root{--bg:#0f1117;--card:#1a1d28;--card2:#212433;--text:#e2e4ea;--text2:#9398a9;--border:#2a2e3c;--green:#22c55e;--green-bg:rgba(34,197,94,.08);--red:#ef4444;--red-bg:rgba(239,68,68,.08);--amber:#f59e0b;--amber-bg:rgba(245,158,11,.08);--blue:#6366f1;--blue-bg:rgba(99,102,241,.08);--purple:#a855f7;--purple-bg:rgba(168,85,247,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.container{max-width:960px;margin:0 auto;padding:0 28px}
+/* --- HERO --- */
+.hero{text-align:center;padding:64px 0 48px}
+.hero .chip{display:inline-block;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(168,85,247,.25);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:1px;margin-bottom:20px}
+.hero h1{font-size:34px;font-weight:800;letter-spacing:-.5px;margin-bottom:12px}
+.hero .kicker{font-size:15px;color:var(--text2);max-width:620px;margin:0 auto 28px}
+.hero .meta{display:flex;justify-content:center;gap:32px;font-size:12px;color:var(--text2)}
+.hero .meta span{padding:6px 14px;background:var(--card);border-radius:6px;border:1px solid var(--border)}
+/* --- VERDICT --- */
+.verdict{text-align:center;padding:28px 24px;border-radius:10px;margin:24px 0}
+.verdict.pass{border:1px solid rgba(34,197,94,.3);background:var(--green-bg)}
+.verdict .v-big{font-size:36px;font-weight:800;color:var(--green);margin-bottom:6px}
+/* --- KEY NUMBERS --- */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;margin:0 0 48px}
+.strip-item{background:var(--card);padding:22px 20px;text-align:center}
+.strip-item .label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.strip-item .val{font-size:26px;font-weight:800;margin-bottom:4px}
+.strip-item .sub{font-size:11px;color:var(--text2)}
+/* --- SECTIONS --- */
+.section{margin:48px 0}
+.section-title{font-size:20px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+/* --- PYRAMID --- */
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:4px;margin:24px 0}
+.pyr-layer{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-radius:6px;color:#fff;font-size:13px;font-weight:600}
+.pyr-layer .pyr-score{font-size:12px;opacity:.85;font-weight:400}
+.pyr-l5{width:340px;background:linear-gradient(135deg,#64748b,#475569)}
+.pyr-l4{width:440px;background:linear-gradient(135deg,#7c3aed,#6d28d9)}
+.pyr-l3{width:540px;background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+.pyr-l2{width:640px;background:linear-gradient(135deg,#0891b2,#0e7490)}
+.pyr-l1{width:740px;background:linear-gradient(135deg,#0f172a,#1e293b)}
+/* --- CARDS --- */
+.card{background:var(--card);border-radius:10px;padding:22px 26px;margin:14px 0;border:1px solid var(--border)}
+.card h3{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card.danger{border-left:4px solid var(--red)}
+.card.warn{border-left:4px solid var(--amber)}
+.card.info{border-left:4px solid var(--blue)}
+/* --- METRICS --- */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.metric{background:var(--card2);border-radius:8px;padding:16px 18px;text-align:center;border:1px solid var(--border)}
+.metric .m-num{font-size:28px;font-weight:800;margin-bottom:4px}
+.metric .m-label{font-size:12px;color:var(--text2)}
+.metric .m-ref{font-size:11px;color:var(--text2);margin-top:4px}
+/* --- TIMELINE --- */
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:12px;top:4px;bottom:4px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding:10px 0 10px 20px;font-size:13px}
+.tl-item::before{content:'';position:absolute;left:-20px;top:14px;width:12px;height:12px;border-radius:50%}
+.tl-item.danger::before{background:var(--red)}
+.tl-item.warn::before{background:var(--amber)}
+.tl-date{font-weight:700;font-size:13px;margin-bottom:2px}
+/* --- FLOW --- */
+.flow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0;font-size:13px}
+.flow-step{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;text-align:center;min-width:80px}
+.flow-arrow{color:var(--text2);font-size:18px}
+/* --- GRIDS --- */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+/* --- QUOTE --- */
+.quote{background:var(--card2);border-radius:10px;padding:20px 24px;margin:18px 0;border:1px solid var(--border);font-size:14px;font-style:italic;color:var(--text2)}
+.quote::before{content:'"';font-size:36px;color:var(--border);font-style:normal;line-height:1;margin-right:8px}
+/* --- DIVIDER --- */
+.divider{height:1px;background:var(--border);margin:36px 0}
+.footer{text-align:center;padding:32px 0;font-size:12px;color:var(--text2);border-top:1px solid var(--border)}
+@media(max-width:768px){.strip,.grid-2,.grid-3,.metric-grid{grid-template-columns:1fr}.pyr-l1{width:100%}.pyr-l2{width:96%}.pyr-l3{width:90%}.pyr-l4{width:84%}.pyr-l5{width:78%}.hero h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="container">
+<!--
+  PROGRESSIVE DISCLOSURE SECTIONS:
+  1. Hero: what happened, constraints, verdict
+  2. Key number strip: 4-6 critical metrics
+  3. Pyramid scan: all layers at a glance
+  4. Deepest layer: the heaviest-weight layer with red signals
+  5. Why missed: narrative vs data side-by-side
+  6. Timeline: analysis point → default
+  7. Self-assessment: framework got right + limitations
+  REPLACE ALL {{ }} PLACEHOLDERS WITH ACTUAL DATA.
+-->
+</div>
+<div class="footer"><p><strong>{{FOOTER_TITLE}}</strong></p><p style="margin-top:4px">{{FOOTER_META}}</p></div>
+</body>
+</html>

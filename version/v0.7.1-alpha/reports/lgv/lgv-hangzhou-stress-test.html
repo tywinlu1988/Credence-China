@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>压力测试报告 | 杭州城投 · Severe场景</title>
+  <link rel="stylesheet" href="../../templates/template-base.css">
+  <!-- Hangzhou UCI specific: Hero gradient (teal) -->
+  <style>
+    .hero { background: linear-gradient(135deg, #0f172a, #0e7490); }
+  </style>
+</head>
+<body>
+
+<!-- ================================================================ -->
+<!-- HERO -->
+<!-- ================================================================ -->
+<div class="hero">
+  <span class="chip">压力测试报告</span>
+  <h1>杭州市城市建设投资集团有限公司</h1>
+  <p class="subtitle">
+    三场景压力测试 · Base / Bear / Severe · 信用韧性评估
+  </p>
+  <div class="meta">
+    <span>测试日期：2026-07-09</span>
+    <span>报告编号：STRESS-2026-Q3-031</span>
+    <span>Severe参数：收入-20% / 土地出让收入-50% / 融资成本+200bp</span>
+    <span>分析师：陈敏华</span>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- CONTAINER -->
+<!-- ================================================================ -->
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- STRIP — 三场景核心结论 -->
+  <!-- ================================================================ -->
+  <div class="strip cols-3">
+    <div class="strip-item">
+      <div class="slabel">Base 基准</div>
+      <div class="sval score-good">AA+</div>
+      <div class="ssub">评级无调整 · 利息覆盖倍数 3.0x</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">Bear 熊市</div>
+      <div class="sval score-ok">AA-</div>
+      <div class="ssub">评级下调-1 notch · 利息覆盖倍数 1.8x</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">Severe 极端</div>
+      <div class="sval score-warn">A-</div>
+      <div class="ssub">评级下调-3 notch · 技术性违约风险上升</div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 测试场景概述 -->
+  <!-- ================================================================ -->
+  <div class="info-box info-blue">
+    <strong>压力测试目标：</strong>评估杭州市城投集团在土地财政收缩和中央转移
+    支付缩减叠加情景下的信用韧性水平。压力参数基于2025年实际经营数据
+    （总资产3,850亿元、营业收入485亿元、有息负债2,280亿元），向下叠加
+    不同程度的冲击。Severe场景参数参考2014-2015地方债务整顿期间城投行业
+    最严峻的融资环境，并结合2022-2023年房地产市场深度调整后的土地出让收入
+    下滑幅度校准而来。测试窗口为期12个月（2026Q3-2027Q2）。
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 1 — 三场景参数对比 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">一、三场景参数对比</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+      以下参数基于2025年实际经营数据外推，结合地方财政收支趋势和房地产市场
+      周期判断构建。Base场景假设宏观经济温和复苏、土地市场企稳；Bear场景
+      假设房地产市场二次探底、土地出让收入明显回落；Severe场景假设地方财政
+      收入系统性下滑、中央转移支付缩减和城投融资政策全面收紧。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>参数</th>
+          <th class="ct">Base 基准</th>
+          <th class="ct">Bear 熊市</th>
+          <th class="ct">Severe 极端</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>收入增速变动</td>
+          <td class="ct">0%（持平）</td>
+          <td class="ct">-10%</td>
+          <td class="ct"><span class="text-red">-20%</span></td>
+        </tr>
+        <tr>
+          <td>土地出让收入变动</td>
+          <td class="ct">0%（持平）</td>
+          <td class="ct">-25%</td>
+          <td class="ct"><span class="text-red">-50%</span></td>
+        </tr>
+        <tr>
+          <td>融资成本变动</td>
+          <td class="ct">+50bp</td>
+          <td class="ct">+100bp</td>
+          <td class="ct"><span class="text-red">+200bp</span></td>
+        </tr>
+        <tr>
+          <td>政府补贴变动</td>
+          <td class="ct">0%（维持当前水平）</td>
+          <td class="ct">-15%</td>
+          <td class="ct"><span class="text-red">-30%</span></td>
+        </tr>
+        <tr>
+          <td>中央转移支付变动</td>
+          <td class="ct">0%（持平）</td>
+          <td class="ct">-10%</td>
+          <td class="ct"><span class="text-red">-20%</span></td>
+        </tr>
+        <tr>
+          <td>应收账款周转天数</td>
+          <td class="ct">+15天</td>
+          <td class="ct">+40天</td>
+          <td class="ct"><span class="text-red">+75天</span></td>
+        </tr>
+        <tr>
+          <td>资产减值损失占收入</td>
+          <td class="ct">0.5%</td>
+          <td class="ct">1.5%</td>
+          <td class="ct"><span class="text-red">4.0%</span></td>
+        </tr>
+        <tr>
+          <td>资本支出缩减</td>
+          <td class="ct">0%（按预算执行）</td>
+          <td class="ct">-15%</td>
+          <td class="ct"><span class="text-red">-30%</span></td>
+        </tr>
+        <tr>
+          <td>地方财政自给率变动</td>
+          <td class="ct">-2pp</td>
+          <td class="ct">-8pp</td>
+          <td class="ct"><span class="text-red">-15pp</span></td>
+        </tr>
+        <tr>
+          <td>发生概率</td>
+          <td class="ct"><span class="score-good">55%</span></td>
+          <td class="ct"><span class="score-ok">30%</span></td>
+          <td class="ct"><span class="score-bad">15%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-purple" style="margin-top:14px;">
+      <h3>参数选择依据</h3>
+      <p style="font-size:13px; color:var(--text-secondary);">
+        土地出让收入降幅：Severe场景-50%参考2022-2023年全国土地出让收入
+        最大降幅（约-32%），考虑到杭州市对土地财政依赖度较高（土地出让收入
+        占地方综合财力约40%），下调幅度设定高于全国均值。融资成本+200bp
+        参考2022年11月信用债调整期间城投利差走阔约180bp的历史经验。补贴和
+        转移支付变动参考2024-2025年中央化债背景下对高负债省份转移支付压缩的
+        政策信号。综合来看，Severe场景参数设定在"2014年债务改革+2022年地产
+        危机"两个历史最差时期的复合水平，压力充分。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 2 — 关键财务指标敏感性分析 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">二、关键财务指标敏感性分析</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+      以下分析覆盖三项核心信用指标：利息覆盖倍数、现金跑道和资产负债率。
+      每个指标分别展示在三场景下的变动轨迹和触发阈值。
+    </p>
+
+    <div class="card card-blue">
+      <h3>利息覆盖倍数 (EBIT / 利息支出)</h3>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+        Base场景下，EBIT约90亿元（EBIT利润率约18.6%，含政府补贴和土地整理
+        收益），利息支出约30亿元（融资成本约2.8%），覆盖倍数
+        <strong>3.0x</strong>，处于城投行业中等偏上水平（行业平均约2.2x）。
+        经营收益和补贴收入合计可充分覆盖付息义务。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+        Bear场景下，收入降至436.5亿元，土地出让收入-25%和补贴-15%持续压缩
+        盈利空间，EBIT降至约63亿元。融资成本升至3.3%，利息支出因债务规模
+        上升增至约35亿元。覆盖倍数为 <strong>1.8x</strong>，接近1.5x的行业
+        预警线。若考虑应收账款周转恶化（+40天）对营运资金的额外占用，实际
+        财务弹性将进一步下降。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary);">
+        Severe场景下，收入降至388亿元，土地出让收入减半、补贴缩减30%、
+        转移支付-20%，EBIT锐减至约31.5亿元。融资成本升至4.8%，利息支出
+        因债务规模扩张至约37亿元。覆盖倍数骤降至 <strong>0.9x</strong>，
+        跌破1.0x的技术性违约线。EBIT已无法覆盖当期利息支出，公司将被迫
+        依赖借新还旧或资产处置来维持付息能力。在城投行业情景下，政府信用
+        背书和再融资滚续能力是避免实质违约的关键变量。
+      </p>
+      <div style="margin-top:10px; display:flex; gap:12px; flex-wrap:wrap;">
+        <span class="tag tag-green">Base: 3.0x</span>
+        <span class="tag tag-amber">Bear: 1.8x</span>
+        <span class="tag tag-red">Severe: 0.9x</span>
+        <span class="tag tag-purple">预警线: 1.5x</span>
+        <span class="tag tag-purple">违约线: 1.0x</span>
+      </div>
+    </div>
+
+    <div class="card card-amber">
+      <h3>现金跑道 (可用现金 / 月度总现金流出)</h3>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+        期末可用现金及等价物约200亿元（含受限资金约35亿元）。此外，公司持有
+        银行授信额度约380亿元未使用，合计可用流动性约580亿元。但需注意，
+        城投企业的授信额度中约有40-50%为项目专项授信，不可自由调配用于
+        日常流动性管理。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+        Base场景下月度总现金流出约40亿元（含运营支出约18亿元、债务本息
+        约15亿元、资本支出约7亿元），现金跑道 <strong>5.0个月</strong>。
+        考虑到可自由支配授信（约200亿元）后，整体流动性覆盖约10个月，
+        状况尚可。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+        Bear场景下月度现金流出增至约50亿元（土地整理支出增加、应收账款回收
+        放缓导致营运资金缺口扩大），现金降至约175亿元，跑道缩至
+        <strong>3.5个月</strong>。授信额度可能因风险偏好下降而缩减20-30%，
+        实际可用流动性约450亿元。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary);">
+        Severe场景下月度现金流出进一步攀升至约75亿元（大量基础设施项目推进
+        的资金需求、到期的城投债需按时兑付以维持信用），现金消耗至约150亿元，
+        现金跑道骤降至 <strong>2.0个月</strong>，低于3个月的行业警戒线。
+        授信额度在极端市况下可能缩减50%以上，且使用条件更严苛（追加担保、
+        提高质押比例等）。公司处于流动性危机临界点，需立即启动应急融资。
+      </p>
+      <div style="margin-top:10px; display:flex; gap:12px; flex-wrap:wrap;">
+        <span class="tag tag-green">Base: 5.0月</span>
+        <span class="tag tag-amber">Bear: 3.5月</span>
+        <span class="tag tag-red">Severe: 2.0月</span>
+        <span class="tag tag-purple">安全线: 6.0月</span>
+      </div>
+    </div>
+
+    <div class="card card-red">
+      <h3>资产负债率变动</h3>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+        当前资产负债率约59.2%（有息负债2,280亿元/总资产3,850亿元），在省会
+        城市城投中处于中等水平（一线及强二线城投均值约55-65%）。有息负债中
+        长期债务占比约72%，短期债务占比28%，债务期限结构基本合理。但需注意
+        资产负债率未充分反映大量隐性债务和或有负债（如对子公司的担保）。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+        Base场景下，假定新增债务主要用于在建项目续建，权益因利润积累微增，
+        负债率维持 <strong>59%</strong>。债务安全性尚可，融资空间仍在。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+        Bear场景下，因利润大幅缩减（净利润约8亿元）、土地市场低迷导致
+        存货价值下降（土地储备减值约20亿元），权益规模收缩，负债率升至
+        <strong>65%</strong>。处于城投行业可控范围上限，但信用指标已开始
+        接近部分银行授信合同中的财务承诺红线（通常为70%）。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary);">
+        Severe场景下，资产减值损失（约15.5亿元）和土地储备大幅减值（约
+        60亿元）直接冲击权益端，叠加持续经营亏损（净利润约-2亿元）和新增
+        融资（约120亿元）以应对流动性缺口，负债率急升至
+        <strong>75%</strong>，突破70%的内部风控线。资产负债率超过75%后，
+        城投企业在一级市场发行债券的难度明显增加，投资者对信用瑕疵的敏感性
+        急剧上升。
+      </p>
+      <div style="margin-top:10px; display:flex; gap:12px; flex-wrap:wrap;">
+        <span class="tag tag-green">Base: 59%</span>
+        <span class="tag tag-amber">Bear: 65%</span>
+        <span class="tag tag-red">Severe: 75%</span>
+        <span class="tag tag-purple">风控线: 70%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 3 — 三场景关键指标汇总 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">三、三场景关键指标汇总</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+      以下表格汇总了三个压力场景下杭州城投的主要信用和财务指标变化。
+      颜色标记反映各指标在场景下的风险水平（绿=安全、蓝=关注、琥珀=警戒、红=危险）。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th class="ct">当前 (2025A)</th>
+          <th class="ct">Base 基准</th>
+          <th class="ct">Bear 熊市</th>
+          <th class="ct">Severe 极端</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>营业收入（亿元）</td>
+          <td class="ct">485</td>
+          <td class="ct">485</td>
+          <td class="ct">436.5</td>
+          <td class="ct score-bad">388</td>
+        </tr>
+        <tr>
+          <td>土地出让收入（亿元）</td>
+          <td class="ct">225</td>
+          <td class="ct">225</td>
+          <td class="ct">169</td>
+          <td class="ct score-bad">112.5</td>
+        </tr>
+        <tr>
+          <td>政府补贴收入（亿元）</td>
+          <td class="ct">52</td>
+          <td class="ct">52</td>
+          <td class="ct">44.2</td>
+          <td class="ct score-bad">36.4</td>
+        </tr>
+        <tr>
+          <td>EBIT（亿元）</td>
+          <td class="ct">105</td>
+          <td class="ct">90</td>
+          <td class="ct">63</td>
+          <td class="ct score-bad">31.5</td>
+        </tr>
+        <tr>
+          <td>净利润（亿元）</td>
+          <td class="ct">18.6</td>
+          <td class="ct">16.0</td>
+          <td class="ct">8.0</td>
+          <td class="ct score-bad">-2.0</td>
+        </tr>
+        <tr>
+          <td>经营活动现金流（亿元）</td>
+          <td class="ct">35</td>
+          <td class="ct">28</td>
+          <td class="ct">12</td>
+          <td class="ct score-bad">-15</td>
+        </tr>
+        <tr>
+          <td>利息覆盖倍数</td>
+          <td class="ct">3.5x</td>
+          <td class="ct score-good">3.0x</td>
+          <td class="ct score-ok">1.8x</td>
+          <td class="ct score-bad">0.9x</td>
+        </tr>
+        <tr>
+          <td>现金跑道（月）</td>
+          <td class="ct">6.2</td>
+          <td class="ct score-good">5.0</td>
+          <td class="ct score-ok">3.5</td>
+          <td class="ct score-bad">2.0</td>
+        </tr>
+        <tr>
+          <td>资产负债率</td>
+          <td class="ct">59.2%</td>
+          <td class="ct score-good">59.0%</td>
+          <td class="ct score-ok">65.0%</td>
+          <td class="ct score-bad">75.0%</td>
+        </tr>
+        <tr>
+          <td>有息负债/总资本</td>
+          <td class="ct">55.0%</td>
+          <td class="ct score-good">55.0%</td>
+          <td class="ct score-ok">61.0%</td>
+          <td class="ct score-bad">72.0%</td>
+        </tr>
+        <tr>
+          <td>流动性比率（速动）</td>
+          <td class="ct">1.25</td>
+          <td class="ct score-good">1.15</td>
+          <td class="ct score-ok">0.90</td>
+          <td class="ct score-bad">0.62</td>
+        </tr>
+        <tr>
+          <td>应收账款周转天数</td>
+          <td class="ct">128天</td>
+          <td class="ct score-good">143天</td>
+          <td class="ct score-ok">168天</td>
+          <td class="ct score-bad">203天</td>
+        </tr>
+        <tr>
+          <td>融资成本率</td>
+          <td class="ct">2.8%</td>
+          <td class="ct score-good">3.3%</td>
+          <td class="ct score-ok">3.8%</td>
+          <td class="ct score-bad">4.8%</td>
+        </tr>
+        <tr>
+          <td>资产减值损失（亿元）</td>
+          <td class="ct">2.0</td>
+          <td class="ct">2.4</td>
+          <td class="ct">6.5</td>
+          <td class="ct score-bad">15.5</td>
+        </tr>
+        <tr>
+          <td>自由现金流（亿元）</td>
+          <td class="ct">-82</td>
+          <td class="ct score-good">-75</td>
+          <td class="ct score-ok">-92</td>
+          <td class="ct score-bad">-145</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box info-amber" style="margin-top:14px;">
+      <strong>指标分析关键发现：</strong>（1）Severe场景下所有核心信用指标均
+      突破警戒线——利息覆盖倍数跌破1.0x、现金跑道低于3个月警戒线、资产负债率
+      突破70%风控线；（2）Bear场景下利息覆盖倍数徘徊在1.8x，需密切关注再融资
+      （借新还旧）的可持续性，若城投债发行利率上行超过100bp，实际付息压力将
+      显著超过情景假设；（3）Base场景下信用指标尚可，但城投平台的固有特征——
+      高杠杆和经营性现金流与利息支出的长期错配——使其对融资环境变化高度敏感。
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 4 — 二阶效应分析 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">四、二阶效应分析</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+      压力场景的传导不仅限于第一阶财务指标，以下二级传导效应可能进一步放大
+      信用冲击。对于城投企业，二阶效应高度集中于信用担保链条断裂和政策传导
+      机制失效，其量化需结合地方财政生态和城投之间的互保网络。
+    </p>
+
+    <div class="grid-3">
+      <div class="card card-amber">
+        <h3>
+          <span class="signal signal-amber"></span>
+          互保链条连锁反应
+        </h3>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:8px;">
+          杭州市范围内城投平台之间存在较为密集的互相担保网络（互保总额约
+          350亿元）。Severe场景下若任一区县级城投出现流动性危机，将沿互保
+          链条传导至市级平台。杭州城投对外担保余额约128亿元，其中对区县级
+          城投的担保约占65%。一旦被担保方出现违约、代偿风险敞口可能达到
+          40-50亿元。互保链条的"多米诺骨牌"效应是城投行业特有的系统性
+          风险放大器。
+        </p>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="tag tag-amber">互保总额: 350亿</span>
+          <span class="tag tag-red">代偿风险: 40-50亿</span>
+          <span class="tag tag-amber">区县级风险传导</span>
+        </div>
+        <p style="font-size:12px; color:var(--text-tertiary); margin-top:8px;">
+          浙江省城投整体信用状况较好（AAA平台数量全国第一），但弱资质区县级
+          平台在土地收入大幅下滑时将首先承压。建议建立互保风险敞口月度监测
+          机制，提前识别代偿压力。
+        </p>
+      </div>
+
+      <div class="card card-red">
+        <h3>
+          <span class="signal signal-red"></span>
+          基础设施项目停工风险
+        </h3>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:8px;">
+          杭州城投承担大量城市基础设施建设项目（2026年在建项目总投资约
+          1,200亿元，年度投资计划约280亿元）。Severe场景下若融资渠道严重
+          收窄，公司将被迫优先保障存量债务兑付，项目建设资金将被挤压。
+          预计约20-25%的在建项目可能面临进度放缓或阶段性停工，直接影响
+          工程款支付和上下游供应商资金链。停工不仅产生合同违约风险，还将
+          削弱政府信用形象——城投信用与地方政府信用高度绑定。
+        </p>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="tag tag-red">项目停工比例: 20-25%</span>
+          <span class="tag tag-amber">年度投资计划: 280亿</span>
+          <span class="tag tag-amber">工程款拖欠风险</span>
+        </div>
+        <p style="font-size:12px; color:var(--text-tertiary); margin-top:8px;">
+          项目停工还将导致已投入资金的沉淀成本增加（资金占用费约每月1.5-2亿元），
+          进一步加剧流动性压力。建议对在建项目进行融资保障分级排序，核心民生
+          项目优先保障资金供给。
+        </p>
+      </div>
+
+      <div class="card card-red">
+        <h3>
+          <span class="signal signal-red"></span>
+          地方信用信心螺旋
+        </h3>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:8px;">
+          城投信用与地方财政信用高度关联。Severe场景下土地出让收入减半+
+          转移支付缩减将导致杭州市综合财力下降约12-15%。市场对杭州财政健康度
+          的重新定价将推高区域整体融资成本。区域内其他城投平台（如杭州地铁、
+          杭州商旅等）也将面临融资成本同步上升的压力。土地市场→地方财政→
+          城投信用→土地市场的负面螺旋一旦形成，将具有自我强化特征，恢复
+          周期显著长于单一企业信用事件。
+        </p>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="tag tag-red">综合财力下降: 12-15%</span>
+          <span class="tag tag-amber">区域融资成本联动</span>
+          <span class="tag tag-amber">负面螺旋风险</span>
+        </div>
+        <p style="font-size:12px; color:var(--text-tertiary); margin-top:8px;">
+          杭州市作为浙江省会和经济中心，财政弹性优于全国大多数城市。2025年
+          一般公共预算收入约2,500亿元，税收占比约85%，财政质量较高。
+          但土地出让收入占比逐年上升（2023年占综合财力约38%），对土地市场
+          的依赖度仍是主要信用脆弱点。
+        </p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:14px;">
+      <div class="card card-amber">
+        <h3>二阶效应：隐性债务显性化</h3>
+        <p style="font-size:13px; color:var(--text-secondary);">
+          在城市基础设施建设和土地一级开发过程中，城投平台常承担大量隐性债务
+          （包括未纳入资产负债表的应付工程款、BT回购义务、PPP项目回购等）。
+          杭州城投表外隐性债务估算约150-200亿元。Severe场景下融资平台现金
+          流紧张将促使这些隐性债务加速显性化——施工方因应收款逾期而诉诸法律、
+          PPP项目社会资本方要求政府回购。隐性债务显性化将一次性推高实际负债率
+          约3-5个百分点，并引发更严格的审计和监管关注。
+        </p>
+        <div style="margin-top:8px;">
+          <span class="tag tag-amber">表外债务: 150-200亿</span>
+          <span class="tag tag-red">显性化推高负债率3-5pp</span>
+        </div>
+      </div>
+      <div class="card card-amber">
+        <h3>二阶效应：再融资滚续困难</h3>
+        <p style="font-size:13px; color:var(--text-secondary);">
+          城投企业每年面临大量的到期债务滚续压力。杭州城投2026年到期债务约
+          380亿元（含城投债约200亿元、银行贷款约180亿元）。Severe场景下，
+          若债券市场对城投风险偏好骤降，公司可能面临新债发行利率飙升甚至
+          发行失败的风险。银行端虽然相对稳定，但可能要求提高风险溢价和追加
+          抵押。再融资滚续一旦出现缺口，将迫使公司动用现金储备偿还到期债务，
+          加速现金枯竭。建议提前与主要合作银行和承销商沟通应急融资安排。
+        </p>
+        <div style="margin-top:8px;">
+          <span class="tag tag-red">年度到期债务: 380亿</span>
+          <span class="tag tag-amber">市场波动下的发行风险</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box info-red" style="margin-top:14px;">
+      <strong>二阶效应综合评估：</strong>Severe场景下，二阶效应可使实际信用冲击
+      较一阶估算放大 <strong>1.3~1.6倍</strong>。其中互保链条连锁反应是最具
+      系统性的放大因素（潜在代偿敞口40-50亿元），其次是隐性债务显性化（额外
+      推高负债率3-5pp）和再融资滚续困难（可能导致380亿元到期债务无法顺利
+      接续）。城投信用风险的核心特征在于"时间换空间"——如果市场的悲观情绪
+      是短期的（6-12个月），企业可通过消耗现金储备和收缩投资度过危机；
+      但若融资环境持续收紧超过18个月，流动性枯竭风险将非线性上升。
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5 — 逆向压力测试 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">五、逆向压力测试</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+      逆向压力测试旨在回答：<strong>"什么程度的恶化会触发违约？"</strong>
+      我们不预设参数，而是反向推导：哪些关键指标的恶化至什么水平将导致杭州城投
+      发生技术性违约或实质性违约。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>违约触发条件</th>
+          <th>临界阈值</th>
+          <th>与Base差距</th>
+          <th>发生可能性</th>
+          <th>触发后的预期信用损失</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>利息覆盖倍数 &lt; 1.0x</td>
+          <td>EBIT降至约30亿元</td>
+          <td>差距约60亿元（67%降幅）</td>
+          <td><span class="tag tag-amber">中等偏高</span></td>
+          <td>Loss Given Default 约35-45%</td>
+        </tr>
+        <tr>
+          <td>现金跑道 &lt; 3个月</td>
+          <td>可用现金降至约120亿元</td>
+          <td>差距约80亿元（40%降幅）</td>
+          <td><span class="tag tag-amber">中等</span></td>
+          <td>急需借新还旧，展期难度大</td>
+        </tr>
+        <tr>
+          <td>资产负债率 &gt; 80%</td>
+          <td>权益侵蚀约250亿元</td>
+          <td>差距约150亿元</td>
+          <td><span class="tag tag-green">较低</span></td>
+          <td>债务重组或技术性违约</td>
+        </tr>
+        <tr>
+          <td>土地出让收入降幅 &gt; 65%</td>
+          <td>土地收入降至约78亿元</td>
+          <td>对标Severe再缩减30%</td>
+          <td><span class="tag tag-red">中等偏低但不可忽视</span></td>
+          <td>流动性危机 → 全面违约</td>
+        </tr>
+        <tr>
+          <td>再融资断裂（债券发行失败）</td>
+          <td>200亿元城投债无法按时续发</td>
+          <td>极端市场信心危机</td>
+          <td><span class="tag tag-amber">中等偏低</span></td>
+          <td>短期流动性枯竭，依赖银行支持</td>
+        </tr>
+        <tr>
+          <td>连续2个季度经营性现金流为负</td>
+          <td>经营现金流&lt;0持续 &gt;6个月</td>
+          <td>当前正现金流，差距约2个季度恶化</td>
+          <td><span class="tag tag-amber">中等</span></td>
+          <td>经营造血能力丧失，需财政支持</td>
+        </tr>
+        <tr>
+          <td>交叉违约条款触发</td>
+          <td>任一债项违约触发所有债务交叉违约</td>
+          <td>距当前AA+主体评级约3-4 notch差距</td>
+          <td><span class="tag tag-green">较低</span></td>
+          <td>集中到期压力，EAD约350亿元</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-blue" style="margin-top:14px;">
+      <h3>逆向压力测试结论</h3>
+      <p style="font-size:13px; color:var(--text-secondary);">
+        杭州城投的违约触发需要土地财政+融资环境+政策支持三重同步恶化。最可能的
+        违约路径：<strong>土地出让收入持续大幅下滑</strong> → 地方财政紧张导致
+        补贴和项目回款延迟 → 城投经营现金流恶化 → 再融资市场信心动摇 →
+        新债发行困难 → 交叉违约条款触发。考虑到杭州城投的政府背景和杭州市
+        较强的财政实力，极端情景下获得政府流动性支持的概率较高。但在
+        Severe情景中，若土地市场萎缩与中央转移支付缩减同时发生，地方政府
+        自身的财政腾挪空间也将受限，城投"救与不救"将成为艰难的政策抉择。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 6 — 临界点识别与预警信号 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">六、临界点识别与预警信号</h2>
+
+    <div class="info-box info-amber" style="margin-bottom:16px;">
+      <strong>监测框架：</strong>以下临界点指标应纳入常态化信用监控看板，
+      一旦触发即启动压力情景升级评估。两级预警：一级为"关注"级别，启动深度
+      分析流程；二级为"行动"级别，召集信用委员会决策。
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>临界指标</th>
+          <th class="ct">当前值</th>
+          <th class="ct">一级预警线</th>
+          <th class="ct">二级预警线</th>
+          <th>触发行动</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>单季土地出让收入同比</td>
+          <td class="ct">-5%</td>
+          <td class="ct">同比下降 &gt; 20%</td>
+          <td class="ct">同比下降 &gt; 40%</td>
+          <td>启动土地市场深度分析</td>
+        </tr>
+        <tr>
+          <td>利息覆盖倍数</td>
+          <td class="ct">3.5x</td>
+          <td class="ct">&lt; 2.0x</td>
+          <td class="ct">&lt; 1.2x</td>
+          <td>信用委员会召集紧急会议</td>
+        </tr>
+        <tr>
+          <td>现金跑道</td>
+          <td class="ct">6.2月</td>
+          <td class="ct">&lt; 4.0月</td>
+          <td class="ct">&lt; 2.5月</td>
+          <td>启动流动性应急方案</td>
+        </tr>
+        <tr>
+          <td>城投债发行利差（对国债）</td>
+          <td class="ct">85bp</td>
+          <td class="ct">&gt; 150bp</td>
+          <td class="ct">&gt; 250bp</td>
+          <td>评估市场情绪与投资者沟通</td>
+        </tr>
+        <tr>
+          <td>应收账款周转天数</td>
+          <td class="ct">128天</td>
+          <td class="ct">&gt; 155天</td>
+          <td class="ct">&gt; 185天</td>
+          <td>评估财政回款进度风险</td>
+        </tr>
+        <tr>
+          <td>经营现金流/总债务</td>
+          <td class="ct">0.015x</td>
+          <td class="ct">&lt; 0.008x</td>
+          <td class="ct">&lt; 0.003x</td>
+          <td>流动性风险审查</td>
+        </tr>
+        <tr>
+          <td>可用授信未用额度</td>
+          <td class="ct">380亿元</td>
+          <td class="ct">&lt; 200亿元</td>
+          <td class="ct">&lt; 100亿元</td>
+          <td>融资渠道稳定性评估</td>
+        </tr>
+        <tr>
+          <td>政府补贴到位率</td>
+          <td class="ct">95%</td>
+          <td class="ct">&lt; 80%</td>
+          <td class="ct">&lt; 60%</td>
+          <td>启动财政支持力度研判</td>
+        </tr>
+        <tr>
+          <td>对外担保代偿率</td>
+          <td class="ct">1.2%</td>
+          <td class="ct">&gt; 3.0%</td>
+          <td class="ct">&gt; 5.0%</td>
+          <td>评估互保链条传导风险</td>
+        </tr>
+        <tr>
+          <td>地区土地流拍率</td>
+          <td class="ct">8%</td>
+          <td class="ct">&gt; 20%</td>
+          <td class="ct">&gt; 35%</td>
+          <td>评估土地财政可持续性</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-red" style="margin-top:14px;">
+      <h3>临界点监测建议</h3>
+      <p style="font-size:13px; color:var(--text-secondary);">
+        上述10项临界指标应纳入月度跟踪看板。建议重点关注（1）土地出让收入——
+        城投信用质量的核心先行指标，土地市场的边际变化通常领先城投信用事件
+        3-6个月；（2）城投债发行利差——市场定价的实时信号，利差走阔超过
+        150bp通常意味着投资者对区域信用的重新定价；（3）政府补贴到位率——
+        地方政府对城投的支持意愿和能力的直接体现；（4）对外担保代偿率——
+        互保链条风险的晴雨表，代偿率的突然上升往往是区域信用风险扩散的第一
+        信号。同时建议跟踪杭州市一般公共预算收入的月度变化，综合评估地方
+        政府的财政腾挪空间。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 7 — 行业历史最大回撤校准 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">七、行业历史最大回撤校准</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+      将压力测试参数与城投行业历史周期的最大回撤数据及同类企业可比事件进行
+      校准，验证场景设定是否处在历史经验边界内。通过对比历史上城投行业重大
+      调整事件，评估Severe场景的极端程度和发生可能性。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>周期事件</th>
+          <th class="ct">时间</th>
+          <th class="ct">最大收入降幅</th>
+          <th class="ct">融资成本上行</th>
+          <th class="ct">信用利差峰值</th>
+          <th class="ct">恢复周期</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2014-2015 地方债务改革</td>
+          <td class="ct">2014Q3-2015Q4</td>
+          <td class="ct">-12%（城投收入）</td>
+          <td class="ct">+180bp</td>
+          <td class="ct">220bp</td>
+          <td class="ct">6个季度</td>
+        </tr>
+        <tr>
+          <td>2018 去杠杆+严控隐性债务</td>
+          <td class="ct">2018Q1-2018Q4</td>
+          <td class="ct">-8%（平台收入）</td>
+          <td class="ct">+120bp</td>
+          <td class="ct">180bp</td>
+          <td class="ct">4个季度</td>
+        </tr>
+        <tr>
+          <td>2020 新冠冲击</td>
+          <td class="ct">2020Q1-2020Q3</td>
+          <td class="ct">-10%</td>
+          <td class="ct">+80bp</td>
+          <td class="ct">150bp</td>
+          <td class="ct">2个季度</td>
+        </tr>
+        <tr>
+          <td>2022-2023 房地产+城投分化</td>
+          <td class="ct">2022Q2-2023Q4</td>
+          <td class="ct">-15%（土地收入-32%）</td>
+          <td class="ct">+160bp</td>
+          <td class="ct">280bp（弱资质）</td>
+          <td class="ct">5个季度</td>
+        </tr>
+        <tr>
+          <td>2024 化债新政窗口期</td>
+          <td class="ct">2024Q1-2025Q2</td>
+          <td class="ct">-5%（温和修复）</td>
+          <td class="ct">-50bp（收窄）</td>
+          <td class="ct">120bp（强资质）</td>
+          <td class="ct">修复中</td>
+        </tr>
+        <tr>
+          <td><strong>本次 Bear 场景</strong></td>
+          <td class="ct">—</td>
+          <td class="ct"><span class="text-amber">-10%</span></td>
+          <td class="ct"><span class="text-amber">+100bp</span></td>
+          <td class="ct"><span class="text-amber">~180bp</span></td>
+          <td class="ct">4-5个季度</td>
+        </tr>
+        <tr>
+          <td><strong>本次 Severe 场景</strong></td>
+          <td class="ct">—</td>
+          <td class="ct"><span class="text-red">-20%（土地-50%）</span></td>
+          <td class="ct"><span class="text-red">+200bp</span></td>
+          <td class="ct"><span class="text-red">~300bp</span></td>
+          <td class="ct">6-9个季度</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-purple" style="margin-top:14px;">
+      <h3>历史校准结论</h3>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:8px;">
+        <strong>Bear场景</strong>参数（收入-10%、融资成本+100bp）与2018年
+        去杠杆时期的冲击程度大致相当，属于历史上曾真实发生的压力水平。
+        <span class="text-green">场景合理且经验可循</span>。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:8px;">
+        <strong>Severe场景</strong>参数（收入-20%、土地出让-50%、融资成本
+        +200bp）超过了2014-2015地方债务改革的冲击幅度，但土地出让收入大幅
+        下滑在2022-2023年间已在部分地区（如昆明、贵阳等弱资质区域）经历过
+        类似程度的调整。对于杭州这样的强资质区域，Severe场景属于极端假设，
+        <span class="text-amber">但在全局性系统性风险中并非不可能</span>。
+      </p>
+      <p style="font-size:13px; color:var(--text-secondary);">
+        <strong>重要提示：</strong>城投行业信用风险的特征是"区域分化极端严重"。
+        杭州作为长三角核心城市，财政实力（一般公共预算收入约2,500亿元）和
+        经济基本面远优于弱资质区域。但在Severe场景中（土地收入-50%+转移
+        支付-20%），即使是强资质区域也可能面临显著的流动性压力。须注意：
+        城投信用分析中，"政府支持意愿"（Willingness to Support）和"政府
+        支持能力"（Ability to Support）是两个维度——Severe场景下地方政府
+        的支持能力将受到明显削弱，而支持意愿在高债务压力下也可能出现边际
+        变化。建议在压力测试中引入"地方政府信用质量"作为独立变量。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 8 — 综合压力测试结论 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">八、综合压力测试结论</h2>
+
+    <div class="grid-3">
+      <div class="card card-green">
+        <h3>Base 基准</h3>
+        <div style="text-align:center; margin:12px 0;">
+          <span style="font-size:36px; font-weight:800; color:var(--green);">AA+</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-secondary);">
+          当前经营和财政环境下信用质量维持稳定。不需调整评级。
+          核心关注点：土地市场走势和再融资环境变化，以及隐性债务
+          化解政策的推进节奏。
+        </p>
+      </div>
+      <div class="card card-amber">
+        <h3>Bear 熊市</h3>
+        <div style="text-align:center; margin:12px 0;">
+          <span style="font-size:36px; font-weight:800; color:var(--amber);">AA-</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-secondary);">
+          盈利能力和流动性将承受明显压力，但仍维持借新还旧能力。
+          建议下调1个notch。须提前安排备用流动性工具和到期债务
+          滚续预案，确保至少80%的当年到期债务已落实再融资安排。
+          预计度过压力期需要4-5个季度。
+        </p>
+      </div>
+      <div class="card card-red">
+        <h3>Severe 极端</h3>
+        <div style="text-align:center; margin:12px 0;">
+          <span style="font-size:36px; font-weight:800; color:var(--red);">A-</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-secondary);">
+          信用质量可能下调2-3个notch。利息覆盖倍数跌破1.0x标志着
+          技术性违约风险显著上升。违约概率估算(PD) 约为15-20%。
+          严重依赖地方政府流动性支持和国有金融机构的再融资配合。
+          建议立即启动与主管部门和主要债权银行的应急沟通机制。
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="info-box info-blue" style="margin-top:14px;">
+      <strong>最终结论：</strong>杭州城投在Base和Bear场景下信用质量尚可，
+      Severe场景下存在实质性违约风险。公司的核心信用优势在于：
+      （1）杭州市强劲的财政实力（一般公共预算收入全国城市排名第5）提供了
+      坚实的政府支持基础；（2）380亿元未使用银行授信提供了流动性缓冲；
+      （3）浙江省整体信用环境良好，区域内城投尚未出现过公开债违约记录。
+      主要信用脆弱点在于：（1）土地出让收入波动对现金流和盈利能力的显著
+      影响——土地整理收入占公司毛利润约45%；（2）高有息负债（2,280亿元）
+      带来的持续再融资压力，年到期债务约380亿元；（3）对外互保敞口
+      （128亿元）在区域信用下行时的潜在代偿风险。
+      建议维持主体 <strong>AA+</strong> 评级，展望 <span class="text-amber">稳定</span>，
+      同时建立季度土地市场监测和月度城投债利差跟踪机制，每半年滚动更新
+      压力测试参数。
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ================================================================ -->
+<!-- FOOTER -->
+<!-- ================================================================ -->
+<div class="footer">
+  <p><strong>Credence Report System</strong> — 压力测试报告</p>
+  <p>报告编号 STRESS-2026-Q3-031 · 生成于 2026-07-09 · 仅供内部参考</p>
+  <p>本报告基于杭州市城市建设投资集团2025年年报、浙江省财政厅公开数据及Wind城投行业数据分析生成</p>
+  <p style="margin-top:6px; font-size:10px; color:var(--text-tertiary);">
+    压力模型版本 v1.2 · 参数基准日 2026-07-01 · 历史数据窗口 15年 · 下次更新 2026-10-01
+  </p>
+</div>
+
+</body>
+</html>

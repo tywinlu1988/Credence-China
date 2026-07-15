@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>秦淮数据 (Chindata Group) 信用分析报告 | Credence Report System</title>
+<link rel="stylesheet" href="../../templates/template-base.css">
+<style>
+/* === Hero override — Data Center / Chinwey theme === */
+
+/* === Pyramid card — 5-layer === */
+.pyramid-card {
+  position: relative;
+  padding-left: 28px;
+}
+.pyramid-card::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 20px;
+  bottom: 20px;
+  width: 2px;
+  border-radius: 2px;
+}
+.pyramid-card.pyramid-l1::before { background: var(--purple); }
+.pyramid-card.pyramid-l2::before { background: var(--blue); }
+.pyramid-card.pyramid-l3::before { background: var(--amber); }
+.pyramid-card.pyramid-l4::before { background: var(--green); }
+.pyramid-card.pyramid-l5::before { background: var(--clr-sky-500); }
+
+.pyramid-card .pyramid-dot {
+  position: absolute;
+  left: 4px;
+  top: 22px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid var(--bg-primary);
+}
+.pyramid-card.pyramid-l1 .pyramid-dot { background: var(--purple); }
+.pyramid-card.pyramid-l2 .pyramid-dot { background: var(--blue); }
+.pyramid-card.pyramid-l3 .pyramid-dot { background: var(--amber); }
+.pyramid-card.pyramid-l4 .pyramid-dot { background: var(--green); }
+.pyramid-card.pyramid-l5 .pyramid-dot { background: var(--clr-sky-500); }
+
+.pyramid-card .pyramid-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pyramid-card .pyramid-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+.pyramid-card .pyramid-header .weight-tag {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 2px 10px;
+  border-radius: 10px;
+}
+.pyramid-card .pyramid-header .score-badge {
+  font-size: 14px;
+  font-weight: 800;
+}
+.pyramid-card p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+.pyramid-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pyramid-card ul li {
+  font-size: 12px;
+  background: var(--bg-tertiary);
+  padding: 4px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+.pyramid-card ul li::before { content: '· '; color: var(--text-tertiary); }
+
+/* === Weight bar - 5 segments === */
+.weight-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 16px 0 10px;
+  background: var(--bg-tertiary);
+}
+.weight-bar .seg {
+  height: 100%;
+  transition: width 0.3s;
+}
+.weight-bar .seg-purple { background: var(--purple); width: 15%; }
+.weight-bar .seg-blue   { background: var(--blue);   width: 30%; }
+.weight-bar .seg-amber  { background: var(--amber);       width: 25%; }
+.weight-bar .seg-green  { background: var(--green);  width: 20%; }
+.weight-bar .seg-sky    { background: var(--clr-sky-500);       width: 10%; }
+
+.weight-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-bottom: 14px;
+}
+.weight-legend span::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.weight-legend .l-purple::before { background: var(--purple); }
+.weight-legend .l-blue::before   { background: var(--blue); }
+.weight-legend .l-amber::before  { background: var(--amber); }
+.weight-legend .l-green::before  { background: var(--green); }
+.weight-legend .l-sky::before    { background: var(--clr-sky-500); }
+
+/* === Bottom-line callout === */
+.bottom-line {
+  background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(79,70,229,0.08));
+  border: 1px solid rgba(99,102,241,0.25);
+  border-left: 5px solid var(--blue);
+  padding: 22px 28px;
+  border-radius: 12px;
+  margin: 28px 0;
+}
+.bottom-line h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--blue);
+}
+.bottom-line p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+/* === Risk badges row === */
+.risk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 0;
+}
+.risk-item {
+  flex: 1;
+  min-width: 180px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  border: 1px solid var(--border-default);
+  border-top: 3px solid var(--red);
+}
+.risk-item .risk-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--red);
+}
+.risk-item .risk-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* === Table enhancements === */
+.fin-table tbody td:first-child { font-weight: 600; color: var(--text-primary); }
+.fin-table tbody td.rt { font-family: 'Courier New', monospace; }
+
+/* === Strip valign fix === */
+.strip-wrap { margin: 0 0 40px; }
+
+/* === Utility classes === */
+.flex-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.section-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+.section-desc-mb14 { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+.section-text { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-top: 8px; }
+.section-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+.clean-list { list-style: none; padding: 0; font-size: 13px; line-height: 2; color: var(--text-secondary); }
+.clean-list-lg { list-style: none; padding: 0; font-size: 13px; line-height: 2.2; color: var(--text-secondary); }
+.text-primary { color: var(--text-primary); }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.fw-800 { font-weight: 800; }
+.mt-6 { margin-top: 6px; }
+.mt-8 { margin-top: 8px; }
+.mt-10 { margin-top: 10px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-14 { margin-bottom: 14px; }
+.mb-16 { margin-bottom: 16px; }
+.info-box-strong { font-size: 14px; }
+
+.m-num-blue { color: var(--blue); }
+.m-num-green { color: var(--green); }
+.m-num-amber { color: var(--amber); }
+.m-num-purple { color: var(--purple); }
+.m-num-sky { color: var(--clr-sky-500); }
+
+.td-red { color: var(--red); }
+.td-amber { color: var(--amber); }
+.tr-summary { background: var(--bg-tertiary); }
+
+/* === Density bar === */
+.density-group { margin: 16px 0; }
+.density-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.density-label { font-size: 12px; font-weight: 600; min-width: 120px; color: var(--text-primary); }
+.density-bar { flex: 1; height: 10px; background: var(--bg-tertiary); border-radius: 5px; overflow: hidden; }
+.density-fill { height: 100%; border-radius: 5px; transition: width 0.3s; }
+.density-fill.density-high { width: 90%; background: var(--green); }
+.density-fill.density-mid-high { width: 75%; background: var(--blue); }
+.density-fill.density-mid { width: 60%; background: var(--amber); }
+.density-fill.density-low { width: 40%; background: var(--red); }
+.density-pct { font-size: 12px; font-weight: 600; min-width: 30px; color: var(--text-secondary); }
+.gap-list { list-style: disc; padding-left: 20px; font-size: 13px; line-height: 1.8; color: var(--text-secondary); }
+
+/* === Signal card === */
+.signal-card-desc { font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin-top: 6px; }
+
+/* === Quadrant grid for cross collision === */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--clr-indigo-400); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+}
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+.hero-chinwey {
+  background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-blue-midnight), var(--clr-indigo-600));
+  text-align: center;
+  padding: 64px 0 48px;
+  margin: -24px -24px 0;
+  border-radius: 0 0 24px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-chinwey::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(99,102,241,0.12) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(79,70,229,0.10) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-chinwey .container { position: relative; z-index: 1; }
+.hero-chinwey .container > * { position: relative; z-index: 1; }
+.hero-chinwey h1 {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--clr-white);
+  margin-bottom: 8px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.hero-chinwey .subtitle {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+.hero-chinwey .meta {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hero-chinwey .meta span {
+  padding: 5px 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+}
+.hero-chinwey .chip {
+  display: inline-block;
+  background: rgba(99,102,241,0.25);
+  color: var(--clr-indigo-400);
+  border: 1px solid rgba(99,102,241,0.35);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+  backdrop-filter: blur(4px);
+}
+  .hero-chinwey h1 { font-size: 24px; }
+  .risk-item { min-width: 100%; }  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- HERO                                                          -->
+<!-- ============================================================ -->
+<div class="hero-chinwey">
+  <div class="container">
+    <span class="chip">数据中心 / 定制化批发 · 字节跳动核心供应商</span>
+    <h1>秦淮数据 (Chindata Group)</h1>
+    <p class="subtitle">Single-target deep credit analysis from bank credit manager's perspective&nbsp;&nbsp;|&nbsp;&nbsp;银行分支行对公信贷视角 · 单标的深度信用分析</p>
+    <div class="meta">
+      <span>评级日期：2026-07</span>
+      <span>报告类型：Type 1 单标的深度分析</span>
+      <span>NASDAQ: CD / 中概股 · 私有化进程中</span>
+      <span>行业：数据中心 / 定制化批发IDC</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- STRIP                                                          -->
+<!-- ============================================================ -->
+<div class="strip strip-wrap">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval sval-blue">BBB</div>
+    <div class="ssub">得分 5.83 / 10</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval sval-blue">5.83</div>
+    <div class="ssub">/ 10</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval sval-green">稳定</div>
+    <div class="ssub">十二个月</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval sval-amber">中</div>
+    <div class="ssub">私有化后信披减少</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 评级框架总览                                          -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">评级框架总览：数据中心五层金字塔模型</h2>
+  <p class="section-desc">
+    秦淮数据集团是中国领先的定制化互联网数据中心服务商，业务以<strong class="text-primary">"批发/定制化（Build-to-Suit）"</strong>模式为核心——根据核心客户的算力需求，量身定制建设大型数据中心集群，以长期服务合同锁定收入。字节跳动为其绝对主力客户（收入占比约70%），构成"一客独大"的客户结构。本报告采用<strong class="text-primary">五层金字塔框架</strong>，将传统四层模型中的"客户与市场"从宏观政策中独立提升，同时将"资本与融资"从财务中拆分为独立层，更精准地刻画秦淮数据这家"中概股·定制化IDC"的信用画像。
+  </p>
+  <div class="weight-bar">
+    <div class="seg seg-purple" title="政策/宏观 15%"></div>
+    <div class="seg seg-blue"   title="客户/市场需求 30%"></div>
+    <div class="seg seg-amber"  title="资产/运营 25%"></div>
+    <div class="seg seg-green"  title="财务质量 20%"></div>
+    <div class="seg seg-sky"    title="资本/融资 10%"></div>
+  </div>
+  <div class="weight-legend">
+    <span class="l-purple">L1 政策/宏观 (15%)</span>
+    <span class="l-blue">L2 客户/市场需求 (30%)</span>
+    <span class="l-amber">L3 资产/运营 (25%)</span>
+    <span class="l-green">L4 财务质量 (20%)</span>
+    <span class="l-sky">L5 资本/融资 (10%)</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 1: 政策与宏观                                    -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l1">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L1 政策 / 宏观环境</h3>
+      <span class="weight-tag">权重 15%</span>
+    </div>
+    <span class="score-badge score-ok">6.0 / 10</span>
+  </div>
+  <p>
+    "东数西算"国家战略自2022年全面启动以来，对秦淮数据构成明确的政策利好。公司数据中心主要布局在河北怀来、山西灵丘、甘肃庆阳等西部枢纽节点，属于"东数西算"工程的核心受益区域。国家发改委在2025年底进一步放宽了西部地区数据中心能耗指标审批，为公司后续扩容提供了政策空间。然而，电力成本上升是宏观层面的主要负面因素——自2024年以来，全国工商业电价呈温和上升趋势，叠加数据中心绿电消纳比例要求的提高（2025年部分省份要求可再生能源使用比例不低于30%），电力成本占运营成本的比例已从约40%攀升至约45%。此外，数据中心绿色化监管持续趋严——2026年工信部发布新版《数据中心能效限定值及能效等级》，要求新建项目PUE不高于1.20。秦淮数据平均PUE约1.18-1.20，基本达标，但存量项目的部分配套设备面临改造压力，需额外投入资本开支。总体而言，政策面的"东数西算"利好+绿色化监管趋严+电力成本上升形成三重叠加影响，评分中性偏正面。
+  </p>
+  <ul>
+    <li>东数西算核心受益区域（怀来/灵丘/庆阳）</li>
+    <li>电力成本占比升至~45%</li>
+    <li>PUE 1.18-1.20 领先行业</li>
+    <li>西部能耗指标放宽利好扩容</li>
+    <li>绿色电费成本上升</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 2: 客户与市场需求                                -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l2">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L2 客户质量 / 市场需求</h3>
+      <span class="weight-tag">权重 30% · 核心层</span>
+    </div>
+    <span class="score-badge score-ok">6.0 / 10</span>
+  </div>
+  <p>
+    L2是五层金字塔中权重最高的层面（30%），核心逻辑在于：秦淮数据的商业模式的本质是"为字节跳动量身定做的算力基础设施供应商"。字节跳动（含抖音、TikTok、飞书等）贡献了秦淮数据约70%的收入，双方签订了长期服务协议（通常5-10年），涵盖机柜租赁、电力运维、带宽接入等全套服务。字节跳动的高速增长和AI算力需求爆发为秦淮数据提供了持续的订单驱动力——自2023年以来，字节跳动在AI大模型和推荐算法训练上的算力投入呈翻倍式增长，直接拉动了秦淮数据机柜需求的快速释放。定制化（Build-to-Suit）模式意味着每一个数据中心项目都是基于字节跳动的特定需求设计和建设的，客户锁定效应极强，替换成本极高。但是，单一客户集中度风险不可忽视：如果字节跳动自建数据中心的战略比重上升，或在合同到期后缩减外包比例，将对秦淮数据的收入产生毁灭性打击。值得注意的是，秦淮数据在2025-2026年也在积极拓展百度、快手等二线客户，目前非字节客户收入占比已从2023年的约18%提升至约30%，但尚不足以形成第二支柱。综合而言，客户绑定深度带来稳定的现金流预期，但集中度风险是压降评分的核心因素。
+  </p>
+  <ul>
+    <li>字节跳动收入占比~70%（深度绑定）</li>
+    <li>长期服务合同锁定（5-10年）</li>
+    <li>定制化模式·客户替换成本极高</li>
+    <li>单一客户集中度风险显著</li>
+    <li>二线客户拓展中（百度/快手）</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 3: 资产与运营                                    -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l3">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L3 资产质量 / 运营效率</h3>
+      <span class="weight-tag">权重 25%</span>
+    </div>
+    <span class="score-badge score-ok">6.5 / 10</span>
+  </div>
+  <p>
+    秦淮数据在资产运营效率方面表现突出。截至2026年Q1，公司运营IT负载约350MW，在建约200MW，总规划容量超过800MW，规模在第三方定制化数据中心运营商中位居前列。PUE（电能利用效率）是衡量数据中心运营效率的核心指标，公司平均PUE约1.18-1.20，显著优于行业平均（约1.30-1.35）和国家红线（1.25），在可比公司中仅次于万国数据（1.22）和秦淮自身的技术迭代能力。公司广泛采用间接蒸发冷却、液冷、AI智能运维等节能技术，在河北怀来、山西灵丘等北方冷凉地区布局的数据中心充分利用自然冷却条件，电力使用效率行业领先。总体上架率约78-80%，高于万国数据的75%和世纪互联的70%，反映出字节跳动作为核心客户的订单执行能力较强。在建项目约200MW中，约80%已获得字节跳动的长期服务合同锁定，转化为收入的风险较低。主要风险在于：随着字节跳动AI算力需求的爆发式增长，部分新建项目面临交付压力——核心机电设备和电力引入工程的排期紧张可能导致交付延迟。此外，部分在西部（甘肃庆阳）的项目面临水资源约束和极端天气考验。
+  </p>
+  <ul>
+    <li>运营IT负载~350MW（行业前列）</li>
+    <li>PUE 1.18-1.20 行业领先</li>
+    <li>上架率~78-80% 优于同业</li>
+    <li>在建~200MW·80%已签约锁定</li>
+    <li>核心设备排期紧张·交付风险</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 4: 财务质量                                      -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l4">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L4 财务状况 / 偿债能力</h3>
+      <span class="weight-tag">权重 20%</span>
+    </div>
+    <span class="score-badge score-warn">5.0 / 10</span>
+  </div>
+  <p>
+    秦淮数据的财务基本面呈现典型的"高成长·高负债·负自由现金流"特征。资产负债率约70%，在同业中处于中等偏高水平（万国数据约61%，世纪互联约81%）。EBITDA增长快速——2025年EBITDA约25亿元人民币，同比增长约35%，EBITDA利润率约49%，行业领先。但由于资本开支巨大（2025年Capex约40亿元，2026年预计进一步攀升至55-60亿元），公司自由现金流持续为负。偿债保障方面，EBITDA/利息费用约2.8-3.0倍，尚在可接受范围内，但利息支出规模随着有息负债的积累持续扩大。值得关注的是，公司在2024-2025年完成了一轮债务结构优化——将部分高息美元债置换为低息人民币贷款，有效降低了融资成本。但净负债/EBITDA约4.5-5.0倍，杠杆水平偏高，若利率环境持续高企，利息覆盖倍数面临下行压力。此外，定制化模式下的应收账款周转较慢（约90-120天），主要因为字节跳动作为大客户的议价能力强，付款周期较长。整体而言，秦淮数据的财务弹性处于"可管理但无余量"的状态——EBITDA增长趋势良好，但高杠杆和负自由现金流意味着任何外部冲击（如字节跳动需求收缩、融资环境恶化）都可能触发财务压力。
+  </p>
+  <ul>
+    <li>资产负债率~70%（行业中等偏高）</li>
+    <li>EBITDA~25亿元 · 利润率~49%</li>
+    <li>自由现金流持续为负</li>
+    <li>EBITDA/利息 ~2.8-3.0倍</li>
+    <li>净负债/EBITDA ~4.5-5.0倍</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 5: 资本与融资                                    -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l5">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L5 资本市场 / 融资环境</h3>
+      <span class="weight-tag">权重 10%</span>
+    </div>
+    <span class="score-badge score-warn">5.0 / 10</span>
+  </div>
+  <p>
+    作为一只中概股（原NASDAQ: CD），秦淮数据的资本市场处境是五层中最大的不确定因素。公司于2020年10月在纳斯达克上市，但受中美审计监管风波影响，一直面临退市风险。2024年8月，公司宣布收到买方财团（包括贝恩资本等）的非约束性私有化要约，以约4.30美元/ADS的价格收购所有已发行股份。截至2026年7月，私有化交易仍在推进中，但进度缓慢，主要因为融资安排和监管审批的不确定性。私有化成功后的资本结构重构路径尚不清晰。<br><br>
+    在中概股融资环境方面，自2021年以来，美国资本市场对中国IDC企业的估值体系发生了根本性变化——从"高增长赛道溢价"转向"地缘政治风险折价"。秦淮数据在纳斯达克的交易流动性持续下降，股权融资渠道基本关闭。境内融资方面，公司积极拓展人民币银行贷款（以项目贷为主），但受限于高资产负债率和负自由现金流，境内银行授信审批趋严。公司亦探索了数据中心REITs/ABS等创新融资工具，但落地进度较慢。关键风险在于：如果私有化交易失败或长期悬而未决，公司可能面临"既无法在美股融资、又难以回归A股"的融资困境，届时高度依赖境内银行贷款的单一融资结构将成为约束扩张速度的瓶颈。当前约70%的负债为境内人民币贷款，约30%为美元债务，汇率风险敞口约20-30亿元人民币，值得关注。
+  </p>
+  <ul>
+    <li>中概股私有化进程不明确</li>
+    <li>美股融资渠道基本关闭</li>
+    <li>境内项目贷为融资主力</li>
+    <li>REITs/ABS探索中</li>
+    <li>汇率风险敞口~20-30亿元</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 权重分布与评分汇总                                     -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">权重分布与评分汇总</h2>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>层级</th>
+        <th>评估要素</th>
+        <th>权重</th>
+        <th>评分</th>
+        <th class="rt">加权得分</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>L1</td>
+        <td>政策 / 宏观环境</td>
+        <td>15%</td>
+        <td class="score-ok">6.0</td>
+        <td class="rt">0.90</td>
+      </tr>
+      <tr>
+        <td>L2</td>
+        <td>客户质量 / 市场需求</td>
+        <td>30%</td>
+        <td class="score-ok">6.0</td>
+        <td class="rt">1.80</td>
+      </tr>
+      <tr>
+        <td>L3</td>
+        <td>资产质量 / 运营效率</td>
+        <td>25%</td>
+        <td class="score-ok">6.5</td>
+        <td class="rt">1.63</td>
+      </tr>
+      <tr>
+        <td>L4</td>
+        <td>财务状况 / 偿债能力</td>
+        <td>20%</td>
+        <td class="score-warn">5.0</td>
+        <td class="rt">1.00</td>
+      </tr>
+      <tr>
+        <td>L5</td>
+        <td>资本市场 / 融资环境</td>
+        <td>10%</td>
+        <td class="score-warn">5.0</td>
+        <td class="rt">0.50</td>
+      </tr>
+      <tr class="tr-summary">
+        <td colspan="3" class="text-right fw-800">综合得分</td>
+        <td class="fw-800 td-amber">5.83</td>
+        <td class="rt fw-800 td-amber">5.83</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 关键发现                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">关键发现</h2>
+
+  <div class="info-box info-blue">
+    <strong class="info-box-strong">核心洞察：一客独大是双刃剑——最深的绑定=最大的风险</strong>
+    <p class="mt-8">
+      秦淮数据最核心的信用逻辑可以用一句话概括：<strong>"字节跳动就是秦淮数据最大的资产，也是最大的风险。"</strong>
+      定制化批发模式带来了极高的客户黏性和长期收入确定性——字节跳动AI算力需求年增速超过50%，秦淮数据作为其核心供应商，订单可见性极强。但反过来，70%的收入集中于单一客户意味着信用的"锚"完全系于字节跳动的战略决策：任何字节跳动自建比例上升、合同条款调整或需求结构变化，都会直接且迅速地反映在秦淮数据的收入端。本报告将L2客户/市场赋予30%的最高权重，正是出于这一考量——秦淮数据的信用分析，起点和终点都在字节跳动。
+    </p>
+  </div>
+
+  <div class="grid-2 mt-16">
+    <div class="card card-green">
+      <h3>正面因素</h3>
+      <ul class="clean-list">
+        <li><span class="signal signal-green"></span> 字节跳动AI算力需求爆发式增长，订单驱动强劲</li>
+        <li><span class="signal signal-green"></span> 定制化BTS模式锁定长期合同，客户替换成本极高</li>
+        <li><span class="signal signal-green"></span> PUE 1.18-1.20 行业领先，运营效率突出</li>
+        <li><span class="signal signal-green"></span> EBITDA利润率~49%，盈利质量行业前三</li>
+        <li><span class="signal signal-green"></span> 东数西算区域布局精准，政策契合度高</li>
+      </ul>
+    </div>
+    <div class="card card-red">
+      <h3>负面因素 / 关注点</h3>
+      <ul class="clean-list">
+        <li><span class="signal signal-red"></span> 字节跳动收入占比~70%，单一客户集中度极高</li>
+        <li><span class="signal signal-red"></span> 资产负债率~70%，自由现金流持续为负</li>
+        <li><span class="signal signal-red"></span> 中概股私有化不确定性，融资渠道收窄</li>
+        <li><span class="signal signal-red"></span> 资本开支持续高企，Capex/EBITDA比值>2.0x</li>
+        <li><span class="signal signal-red"></span> 应收周转慢（90-120天），大客户占款显著</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 行业对比分析                                          -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">行业对标分析</h2>
+  <p class="section-desc">
+    将秦淮数据与国内主要数据中心同业进行五层金字塔评分对比（数据为2025年或最新披露期）。秦淮数据在L2客户绑定深度和L3运营效率上具有相对优势，但在L4财务杠杆和L5融资条件上弱于万国数据。与世纪互联相比，秦淮数据的商业模式结构更为健康。
+  </p>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>维度</th>
+        <th class="rt">权重</th>
+        <th class="rt">秦淮数据</th>
+        <th class="rt">万国数据</th>
+        <th class="rt">世纪互联</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>L1 政策/宏观</td>
+        <td class="rt">15%</td>
+        <td class="rt score-ok">6.0</td>
+        <td class="rt score-good">8.5</td>
+        <td class="rt score-ok">5.5</td>
+      </tr>
+      <tr>
+        <td>L2 客户/市场</td>
+        <td class="rt">30%</td>
+        <td class="rt score-ok">6.0</td>
+        <td class="rt score-ok">7.2</td>
+        <td class="rt score-warn">5.5</td>
+      </tr>
+      <tr>
+        <td>L3 资产/运营</td>
+        <td class="rt">25%</td>
+        <td class="rt score-ok">6.5</td>
+        <td class="rt score-ok">7.8</td>
+        <td class="rt score-warn">4.0</td>
+      </tr>
+      <tr>
+        <td>L4 财务质量</td>
+        <td class="rt">20%</td>
+        <td class="rt score-warn">5.0</td>
+        <td class="rt score-ok">7.0</td>
+        <td class="rt score-bad">3.0</td>
+      </tr>
+      <tr>
+        <td>L5 资本/融资</td>
+        <td class="rt">10%</td>
+        <td class="rt score-warn">5.0</td>
+        <td class="rt score-ok">6.5</td>
+        <td class="rt score-bad">3.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box info-blue mt-12">
+    <strong>行业定位分析</strong>
+    <p class="mt-8">
+      在数据中心行业的三家核心中概股中，秦淮数据处于中间位置——运营效率（L3）优于万国数据，但客户分散度（L2）和财务弹性（L4）弱于万国数据；相比世纪互联，秦淮数据在商业模式和财务健康度上均有本质性优势。综合来看，秦淮数据属于"中游偏上"的信用画像：<strong>拥有行业最强的客户绑定深度和领先的运营效率，但财务杠杆和融资环境的短板使其综合评分处于BBB区间（5.83），与万国数据（BBB+, 7.46）形成差距。</strong>
+    </p>
+  </div>
+
+  <h3 class="mt-20 mb-10" class="fs-14" class="fw-600">核心运营指标对比</h3>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>指标</th>
+        <th class="rt">秦淮数据</th>
+        <th class="rt">万国数据</th>
+        <th class="rt">世纪互联</th>
+        <th class="rt">数据港</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>运营IT负载 (MW)</td>
+        <td class="rt">~350</td>
+        <td class="rt">~650</td>
+        <td class="rt">~300</td>
+        <td class="rt">~280</td>
+      </tr>
+      <tr>
+        <td>EBITDA 利润率</td>
+        <td class="rt">~49%</td>
+        <td class="rt">~47%</td>
+        <td class="rt">~22%</td>
+        <td class="rt">~46%</td>
+      </tr>
+      <tr>
+        <td>资产负债率</td>
+        <td class="rt">~70%</td>
+        <td class="rt">~61%</td>
+        <td class="rt">~81%</td>
+        <td class="rt">~58%</td>
+      </tr>
+      <tr>
+        <td>上架率</td>
+        <td class="rt">~78%</td>
+        <td class="rt">~75%</td>
+        <td class="rt">~70%</td>
+        <td class="rt">~76%</td>
+      </tr>
+      <tr>
+        <td>PUE</td>
+        <td class="rt">1.18-1.20</td>
+        <td class="rt">1.22</td>
+        <td class="rt">1.30</td>
+        <td class="rt">1.23</td>
+      </tr>
+      <tr>
+        <td>客户集中度</td>
+        <td class="rt td-amber">字节跳动~70%</td>
+        <td class="rt">阿里~50%</td>
+        <td class="rt">分散（零售）</td>
+        <td class="rt">阿里~55%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 财务摘要                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">财务摘要</h2>
+  <p class="section-desc">
+    以下为秦淮数据近三年核心财务指标概览（金额单位：亿元人民币），数据来源为公司年报及公开披露。2026E为基于公司指引和市场一致预期的估算值。私有化进程导致部分中期数据未完整披露。
+  </p>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>指标</th>
+        <th class="rt">2023</th>
+        <th class="rt">2024</th>
+        <th class="rt">2025</th>
+        <th class="rt">2026E</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>营业收入</td>
+        <td class="rt">42.6</td>
+        <td class="rt">52.8</td>
+        <td class="rt">63.5</td>
+        <td class="rt">76.0</td>
+      </tr>
+      <tr>
+        <td>YoY 营收增速</td>
+        <td class="rt">24.2%</td>
+        <td class="rt">24.0%</td>
+        <td class="rt">20.3%</td>
+        <td class="rt">19.7%</td>
+      </tr>
+      <tr>
+        <td>EBITDA（调整后）</td>
+        <td class="rt">18.5</td>
+        <td class="rt">22.0</td>
+        <td class="rt">25.0</td>
+        <td class="rt">30.5</td>
+      </tr>
+      <tr>
+        <td>EBITDA 利润率</td>
+        <td class="rt">43.4%</td>
+        <td class="rt">41.7%</td>
+        <td class="rt">39.4%</td>
+        <td class="rt">40.1%</td>
+      </tr>
+      <tr>
+        <td>净负债（Net Debt）</td>
+        <td class="rt">95.0</td>
+        <td class="rt">108.0</td>
+        <td class="rt">125.0</td>
+        <td class="rt">148.0</td>
+      </tr>
+      <tr>
+        <td>资产负债率</td>
+        <td class="rt">68.5%</td>
+        <td class="rt">69.2%</td>
+        <td class="rt">70.0%</td>
+        <td class="rt">71.5%</td>
+      </tr>
+      <tr>
+        <td>Capex（资本开支）</td>
+        <td class="rt">32.0</td>
+        <td class="rt">35.0</td>
+        <td class="rt">40.0</td>
+        <td class="rt">55.0</td>
+      </tr>
+      <tr>
+        <td>EBITDA / 利息费用</td>
+        <td class="rt">3.2x</td>
+        <td class="rt">3.0x</td>
+        <td class="rt">2.8x</td>
+        <td class="rt">2.5x</td>
+      </tr>
+      <tr>
+        <td>自由现金流</td>
+        <td class="rt td-red">(15.5)</td>
+        <td class="rt td-red">(18.0)</td>
+        <td class="rt td-red">(22.0)</td>
+        <td class="rt td-red">(30.0)</td>
+      </tr>
+      <tr>
+        <td>上架率</td>
+        <td class="rt">75.0%</td>
+        <td class="rt">76.5%</td>
+        <td class="rt">78.0%</td>
+        <td class="rt">80.0%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="metric-grid mt-20">
+    <div class="metric">
+      <div class="m-num m-num-blue">~49%</div>
+      <div class="m-label">EBITDA 利润率</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-amber">~70%</div>
+      <div class="m-label">资产负债率</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-green">1.18-1.20</div>
+      <div class="m-label">PUE 能效比</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-purple">~350MW</div>
+      <div class="m-label">运营IT负载</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 市场定价信号 · 轨道B                                   -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">市场定价信号 · 轨道B</h2>
+  <p class="section-desc">从市场定价角度评估秦淮数据的信用风险信号（轨道B：市场定价视角）。注意：因私有化推进，股票交易已趋于停止，定价信号以可转债和境内融资价格为参考。</p>
+  <div class="grid-2">
+    <div class="card card-amber">
+      <h3>私有化溢价状态 <span class="signal signal-amber"></span></h3>
+      <p class="signal-card-desc">Take-private at USD 4.30/ADS with limited upside</p>
+      <p class="section-sub">私有化价格较低，反映买方对中概股折价的定价逻辑</p>
+    </div>
+    <div class="card card-amber">
+      <h3>境内利差状态 <span class="signal signal-amber"></span></h3>
+      <p class="signal-card-desc">Spread widening on leverage concerns</p>
+      <p class="section-sub">利差走阔，反映银行对高杠杆+负FCF的审慎态度</p>
+    </div>
+    <div class="card card-amber">
+      <h3>流动性状态 <span class="signal signal-amber"></span></h3>
+      <p class="signal-card-desc">Nasdaq trading suspended due to privatization</p>
+      <p class="section-sub">美股流动性基本消失，融资渠道转型境内银行体系</p>
+    </div>
+    <div class="card card-green">
+      <h3>基本面预期 <span class="signal signal-green"></span></h3>
+      <p class="signal-card-desc">Strong demand from ByteDance AI expansion</p>
+      <p class="section-sub">字节跳动AI算力需求强劲，中长期基本面支撑稳固</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 信贷建议                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷建议</h2>
+
+  <div class="info-box info-purple mb-16">
+    <strong class="info-box-strong">核心理念：跟随字节跳动——客户绑定即信用锚</strong>
+    <p class="mt-8">
+      秦淮数据的信贷评估应当采取<strong>"跟随核心客户"</strong>的逻辑框架：字节跳动的信用质量（AAA级互联网巨头）是秦淮数据偿债能力的最根本支撑。但必须意识到，这种"穿透式信用"是一把双刃剑——字节跳动的合同是信用基石，但单一客户的"大而不能倒"本身就构成集中度风险。建议信贷审批时将字节跳动合同的持续性和条款细节作为核心尽调要件，而非将秦淮数据的合并财务报表作为唯一决策依据。
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h3>授信策略建议</h3>
+      <ul class="clean-list-lg">
+        <li><span class="signal signal-green"></span> 优先采用<strong>项目贷</strong>形式，以数据中心资产+字节跳动合同应收做抵押</li>
+        <li><span class="signal signal-green"></span> 要求字节跳动合同项下租金收入归集至监管账户</li>
+        <li><span class="signal signal-green"></span> 设定最低 DSCR &ge; 1.3x 的财务约束条款</li>
+        <li><span class="signal signal-green"></span> 关注私有化进程，要求定期披露进展及融资安排</li>
+        <li><span class="signal signal-green"></span> 授信期限建议3-5年，与字节跳动合同的剩余期限匹配</li>
+      </ul>
+    </div>
+    <div class="card card-amber">
+      <h3>风险缓释措施</h3>
+      <ul class="clean-list-lg">
+        <li><span class="signal signal-amber"></span> 持续监控字节跳动的自建数据中心战略及外包比例变化</li>
+        <li><span class="signal signal-amber"></span> 要求定期披露非字节客户的收入占比和增长情况</li>
+        <li><span class="signal signal-amber"></span> 对私有化失败情景设置应急预案——如触发交叉违约</li>
+        <li><span class="signal signal-amber"></span> 关注在建项目的交付时点和上架爬坡节奏</li>
+        <li><span class="signal signal-amber"></span> 锁定利率风险（当前利率下行周期中建议固定利率贷款）</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 风险信号监测                                           -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">风险信号监测</h2>
+  <p class="section-desc-mb14">以下为需要在贷后管理中持续跟踪的高优先级风险信号：</p>
+  <div class="risk-row">
+    <div class="risk-item">
+      <div class="risk-title"><span class="signal signal-red"></span> 客户集中度风险</div>
+      <div class="risk-desc">字节跳动收入占比~70%，任何合同调整或自建比例上升都将直接冲击收入。需持续监控字节云/火山引擎的资本开支计划和自建数据中心策略，关注其AI算力需求的供应商分配比例变化。</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-title"><span class="signal signal-red"></span> 私有化不确定性</div>
+      <div class="risk-desc">贝恩资本牵头的私有化交易进度缓慢，若长时间悬而未决或最终失败，公司将面临"美股退市回不来A股"的融资困境。需关注私有化融资安排、监管审批节点和替代方案。</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-title"><span class="signal signal-amber"></span> 杠杆率攀升</div>
+      <div class="risk-desc">资产负债率~70%且有上升趋势，Capex/EBITDA比值>2.0x。若利率环境维持高企或字节跳动订单增速放缓，EBITDA/利息覆盖倍数可能跌破2.5x警戒线，触发财务约束条款。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 交叉对撞                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">交叉对撞 · 轨道A vs 轨道B</h2>
+  <div class="info-box info-blue">
+    <strong>轨道A vs 轨道B 结论交叉验证</strong>
+  </div>
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h3>轨道A结论</h3>
+      <p class="section-text">BBB (5.83) - strong operational efficiency but high single-client dependency</p>
+      <p class="section-sub">基本面角度：运营效率领先，EBITDA增长强劲，但客户集中度+高杠杆</p>
+    </div>
+    <div class="card card-amber">
+      <h3>轨道B结论</h3>
+      <p class="section-text">Neutral-cautious - market pricing in privatization risk and leverage concerns</p>
+      <p class="section-sub">市场角度：私有化折价定价，境内利差走阔反映杠杆担忧</p>
+    </div>
+  </div>
+
+  <h3 class="mt-16 mb-10" class="fs-14">分歧定位：秦淮数据落在哪个象限？</h3>
+  <div class="quad-grid">
+    <div class="quad-item" class="op-4">
+      <h4>共识看好</h4>
+      <div class="q-desc">基本面好 + 市场冷静</div>
+    </div>
+    <div class="quad-item active">
+      <h4 class="text-indigo">分歧：市场在担忧什么？</h4>
+      <div class="q-desc">基本面中等 + 市场偏谨慎</div>
+      <div class="q-desc" class="fs-11" class="mt-4" class="text-tertiary">市场对私有化和杠杆的担忧超过基本面改善幅度</div>
+    </div>
+    <div class="quad-item" class="op-4">
+      <h4>分歧：市场在忽视什么？</h4>
+      <div class="q-desc">基本面差 + 市场冷静</div>
+    </div>
+    <div class="quad-item" class="op-5">
+      <h4>共识看空</h4>
+      <div class="q-desc">基本面差 + 市场悲观</div>
+    </div>
+  </div>
+
+  <div class="card card-purple mt-12">
+    <h3>分歧/共识分析</h3>
+    <p class="section-text">Divergence: market overly focusing on privatization, under-appreciating ByteDance AI demand growth</p>
+    <p class="section-sub">核心分歧在于市场对私有化风险的定价可能过度，而对字节跳动AI算力需求的结构性增长支撑估值不足</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 压力测试                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷压力测试情景</h2>
+  <p class="section-desc">
+    基于当前宏观环境和公司经营状况，设置以下三种情景评估信用风险变化：
+  </p>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>情景</th>
+        <th>假设条件</th>
+        <th>预计综合评分</th>
+        <th>评级影响</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>基准情景</td>
+        <td>字节跳动需求持续增长，上架率缓慢提升至80%，私有化顺利完成，融资渠道平稳过渡</td>
+        <td class="score-ok">5.83</td>
+        <td><span class="tag tag-green">BBB 稳定</span></td>
+      </tr>
+      <tr>
+        <td>乐观情景</td>
+        <td>字节跳动AI大模型需求超预期，非字节客户占比提升至35%，债务结构优化，EBITDA/利息回升至3.5x</td>
+        <td class="score-good">6.5+</td>
+        <td><span class="tag tag-green">BBB+ 正面</span></td>
+      </tr>
+      <tr>
+        <td>压力情景</td>
+        <td>私有化失败，字节跳动自建比例上升/外包缩减20%，融资环境收紧，上架率跌破70%</td>
+        <td class="score-warn">4.0-4.5</td>
+        <td><span class="tag tag-amber">BB 负面观察</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 完备性评估                                            -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">完备性评估</h2>
+  <p class="section-desc">各维度信号密度与数据完备性评估</p>
+
+  <div class="density-group">
+    <div class="density-item">
+      <span class="density-label">L1 政策/宏观</span>
+      <span class="density-bar"><span class="density-fill density-mid-high"></span></span>
+      <span class="density-pct">中高</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">L2 客户/市场</span>
+      <span class="density-bar"><span class="density-fill density-high"></span></span>
+      <span class="density-pct">高</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">L3 资产/运营</span>
+      <span class="density-bar"><span class="density-fill density-mid-high"></span></span>
+      <span class="density-pct">中高</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">L4 财务质量</span>
+      <span class="density-bar"><span class="density-fill density-mid"></span></span>
+      <span class="density-pct">中</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">L5 资本/融资</span>
+      <span class="density-bar"><span class="density-fill density-mid"></span></span>
+      <span class="density-pct">中</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">整体信号密度</span>
+      <span class="density-bar"><span class="density-fill density-mid-high"></span></span>
+      <span class="density-pct">中高</span>
+    </div>
+  </div>
+
+  <div class="info-box info-amber">
+    <strong>关键数据缺口</strong>
+    <ul class="mt-8 gap-list">
+      <li>私有化交易的详细融资安排和资金到位时间表尚未公开</li>
+      <li>与字节跳动的长期服务合同具体条款（期限、终止条件、定价机制）未完整披露</li>
+      <li>单个数据中心层面的NOI、上架率、DSCR数据缺口</li>
+      <li>在建项目分阶段交付计划和资本开支分配细节不够透明</li>
+      <li>非字节客户的合同细节和收入贡献占比仅披露至粗略区间</li>
+    </ul>
+  </div>
+
+  <div class="card card-blue mt-16">
+    <h3>整体置信度</h3>
+    <p class="section-text">中 — 核心财务数据及运营指标可获取，但私有化进程导致美股信披频率和质量下降，部分关键信息（合同条款、项目层面现金流）依赖间接推断。建议在授信前通过尽调与公司管理层直接沟通，获取私有化后的资本结构规划及字节跳动合同的更新信息。</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- BOTTOM LINE                                                    -->
+<!-- ============================================================ -->
+<div class="bottom-line">
+  <h3>Credit Manager's Bottom Line</h3>
+  <p>
+    <strong>综合评级：BBB（得分 5.83/10，展望稳定）</strong>
+  </p>
+  <p class="mt-10">
+    秦淮数据是一家<strong>运营效率领先、客户绑定极深但财务杠杆偏高、融资环境承压</strong>的定制化数据中心运营商。从银行信贷经理的角度，建议采取<strong>"跟随字节跳动、以项目贷为核心"</strong>的授信策略——核心逻辑不是看秦淮数据单独的资产负债表，而是看字节跳动合同的确定性和持续性。只要字节跳动外包战略不发生根本性转向，秦淮数据的底层现金流就具备可预测性和稳定性的"类REITs"特征。
+  </p>
+  <p class="mt-6">
+    最大的信用支撑来自于<strong>字节跳动AI算力需求的持续爆发和长期服务合同的锁定效应</strong>，最大的信用风险则在于<strong>单一客户集中度</strong>和<strong>私有化进程中的融资不确定性</strong>。BBB评级对应"中等偏上但非优质"的信用质量——可以给予信贷支持，但需要通过项目贷结构、监管账户和现金流约束条款来控制风险敞口。
+  </p>
+  <p class="mt-6 section-desc">
+    一句话总结：<strong class="text-primary">"秦淮数据的信用本质是字节跳动的间接信用——看清字节跳动的需求趋势和外包策略，就看清了秦淮数据的偿债能力。"</strong>
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>免责声明</strong></p>
+  <p>本报告由 Credence Report System 生成，仅供银行内部信贷决策参考，不构成任何投资建议或要约。</p>
+  <p>报告中的财务数据来源于公开披露信息，部分2026E数据为基于公司指引和市场一致预期的估算值，实际结果可能存在差异。</p>
+  <p>客户集中度风险、私有化进度和资本开支执行节奏为需要持续跟踪的关键变量。</p>
+  <p class="mt-8">&copy; 2026 Credence Report System &middot; Type 1 单标的深度分析 &middot; 数据中心行业 &middot; 评级日期 2026-07</p>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>

@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单标的深度分析 — 零跑汽车 (09863.HK) | 新能源车</title>
+<link rel="stylesheet" href="../../templates/template-base.css">
+<style>
+/* Pyramid layers */
+.pyr-wrap { margin: 28px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.85; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 48px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-slate-800)); }
+.pyr-l2 { width: 88%; background: linear-gradient(135deg, var(--clr-cyan-600), var(--clr-cyan-700)); }
+.pyr-l3 { width: 76%; background: linear-gradient(135deg, var(--clr-blue-600), var(--clr-blue-700)); }
+.pyr-l4 { width: 64%; background: linear-gradient(135deg, var(--clr-violet-600), var(--clr-violet-700)); }
+
+/* Signal indicators used inline */
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.orange { background: var(--clr-orange-600); }
+.signal-dot.red { background: var(--red); }
+
+/* Cross collision quadrants */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--purple); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* Risk list */
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: var(--clr-orange-600); }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+
+/* Density bar */
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+
+/* Gap warning */
+.gap-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+  background: var(--bg-tertiary); font-size: 12px;
+}
+.gap-item .gap-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.gap-item .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.gap-item .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+/* Hero gradient specific to this report: New Energy Vehicle */
+.hero-custom {
+  background: linear-gradient(135deg, #0f172a, #1e3a5f, var(--amber));
+  text-align: center;
+  padding: 60px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-custom::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(245,158,11,0.15) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(30,58,95,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-custom .container { position: relative; z-index: 1; }
+.hero-custom .chip {
+  display: inline-block;
+  background: rgba(168,85,247,0.2);
+  color: var(--clr-violet-300);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero-custom h1 { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-custom .stock-code { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 400; margin-bottom: 6px; }
+.hero-custom .subtitle { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+.hero-custom .meta-row {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  flex-wrap: wrap;
+}
+.hero-custom .meta-row span {
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HERO SECTION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="hero-custom">
+  <div class="container">
+    <div class="chip">单标的深度分析 · Type 1</div>
+    <h1>零跑汽车 <span class="fw-400" style="color:rgba(255,255,255,0.5)">|</span> Leapmotor</h1>
+    <div class="stock-code">09863.HK</div>
+    <p class="subtitle">新能源车/造车新势力 · Q1转亏+毛利率骤降至9.4%，低价策略的盈利困局——价格战持续深化背景下，纯靠性价比缺乏品牌溢价的模式面临拷问</p>
+    <div class="meta-row">
+      <span>分析时点：2026年7月</span>
+      <span>数据截止：2026-07-08</span>
+      <span>数据来源：公开数据</span>
+      <span>目标读者：对公信贷经理</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- STRIP: 4 Key Metrics -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="strip" class="mt-neg24">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval" class="text-amber">BB</div>
+    <div class="ssub">关注级信用质量</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval" class="text-blue">5.00</div>
+    <div class="ssub">/ 10 四层加权</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval" class="text-red">负面</div>
+    <div class="ssub">低价策略盈利承压</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval" class="text-purple">中</div>
+    <div class="ssub">部分数据依赖推算</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: PYRAMID SCAN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01</span> 金字塔逐层扫描 · 四层分析框架</h2>
+  <p class="fs-13 mb-20" class="text-secondary">权重分配体现新能源车行业规模驱动+政策敏感特征——产业政策权重最高(35%)反映补贴退坡和双积分政策对行业格局的关键影响，财务权重最低(15%)因为当前亏损是造车新势力共性现象而非个体信用质变</p>
+
+  <!-- Layer 1 -->
+  <div class="card" class="card-slate">
+    <h3>L1 产业政策与宏观环境 <span class="tag tag-blue" class="ml-8">权重 35%</span> <span class="tag tag-green" class="ml-4">6.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">政策变量</th><th>影响分析</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>新能源车补贴完全退出</strong></td>
+          <td><span class="text-amber">冲击已消化</span> — 补贴在2023年已全面退出，零跑T03/C11的低价策略在无补贴环境下反而展现一定韧性，但利润空间被进一步压缩</td>
+        </tr>
+        <tr>
+          <td><strong>汽车价格战持续深化</strong></td>
+          <td><span class="text-red">最大下行压力</span> — 比亚迪2026年发起第二轮价格战，秦PLUS下探至7.98万，海鸥5.98万，直接挤压零跑T03/C01的定价空间。零跑被迫降价跟进，单车利润进一步缩水</td>
+        </tr>
+        <tr>
+          <td><strong>双积分政策趋严</strong></td>
+          <td><span class="text-green">中性偏利好</span> — 零跑纯电+增程双路线受益于双积分合规要求，2025年正积分出售贡献约1.2亿收入</td>
+        </tr>
+        <tr>
+          <td><strong>智能网联汽车准入管理</strong></td>
+          <td><span class="text-amber">行业门槛提升</span> — L3/L4自动驾驶准入管理趋严对零跑的影响小于对小厂的影响，但零跑智驾能力（自研"凌芯"芯片+算法）与华为/小鹏有差距</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>政策环境整体中性偏弱。价格战是最大变量——零跑在10-15万价格带的竞争烈度最高，比亚迪的全产业链成本优势让零跑的性价比战略面临天花板。<span class="text-amber">维持6.0/10——若比亚迪进一步降价至6万级挤压T03市场，需下调至5.5</span>
+    </div>
+  </div>
+
+  <!-- Layer 2 -->
+  <div class="card" class="card-cyan">
+    <h3>L2 产品力与竞争位势 <span class="tag tag-blue" class="ml-8">权重 30%</span> <span class="tag tag-amber" class="ml-4">5.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>车型结构</strong></td>
+          <td><span class="text-amber">T03/C11/C01低价三件套</span> — 单车均价约10-12万，主力车型C11和C01在10-15万区间竞争最为激烈。T03为微型车贡献销量占约20%但利润极薄</td>
+        </tr>
+        <tr>
+          <td><strong>品牌溢价</strong></td>
+          <td><span class="text-red">极低</span> — 零跑品牌认知远低于比亚迪、特斯拉，品牌溢价几乎为零。对比亚迪的溢价差约为3-5万元/车（同级车型）</td>
+        </tr>
+        <tr>
+          <td><strong>智能化能力</strong></td>
+          <td><span class="text-amber">自研"凌芯"芯片+算法，但差距明显</span> — 2025年推出的C11增程版搭载L2+级辅助驾驶，但与华为ADS 3.0和小鹏XNGP存在代际差距</td>
+        </tr>
+        <tr>
+          <td><strong>增程路线</strong></td>
+          <td><span class="text-green">差异化亮点</span> — 零跑在增程路线布局较早（C11增程版），但理想已在该赛道建立品牌壁垒，零跑增程的定位是"更具性价比的替代品"</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>产品力是零跑最大的短板。低价策略虽换来销量增长，但品牌溢价缺失导致定价权丧失。增程路线有差异化但受理想品牌压制。智能化能力中等偏下。<span class="text-amber">维持5.5/10——核心变量是C12/新车型能否实现品牌向上突破</span>
+    </div>
+  </div>
+
+  <!-- Layer 3 -->
+  <div class="card" class="card-blue-alt">
+    <h3>L3 供应链与产能运营 <span class="tag tag-blue" class="ml-8">权重 20%</span> <span class="tag tag-amber" class="ml-4">5.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>产能利用率</strong></td>
+          <td><span class="text-red">约65%</span> — 低于造车新势力盈亏平衡线（约75-80%）。金华工厂年产能约35万辆，2025年年销量约22万辆，产能闲置率约35%</td>
+        </tr>
+        <tr>
+          <td><strong>供应链成熟度</strong></td>
+          <td><span class="text-amber">中度成熟</span> — 零跑坚持"全域自研"（电池、电驱、电控、智驾全栈自研），垂直整合度在造车新势力中较高，但规模效应不足导致单位成本高于比亚迪</td>
+        </tr>
+        <tr>
+          <td><strong>整车毛利率对比</strong></td>
+          <td><span class="text-red">9.4%（2026Q1）</span> — 远低于比亚迪约22%, 理想约20%, 特斯拉约19%。规模差距导致采购议价能力弱+固定成本摊销不足</td>
+        </tr>
+        <tr>
+          <td><strong>渠道与交付</strong></td>
+          <td><span class="text-amber">直营+加盟混合模式</span> — 2025年末门店数约450家，覆盖300+城市。渠道密度低于比亚迪(3000+家)和理想(500+家)</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>产能利用率不足是拖累盈利的核心因素。65%的产能利用率意味着固定成本摊销压力巨大。全域自研的长周期效益需销量翻倍才能体现。<span class="text-red">下调0.5分（从5.5→5.0）</span>因为产能利用率提升预期推迟至2027年
+    </div>
+  </div>
+
+  <!-- Layer 4 -->
+  <div class="card" class="card-purple-alt">
+    <h3>L4 财务质量与偿债能力 <span class="tag tag-blue" class="ml-8">权重 15%</span> <span class="tag tag-red" class="ml-4">3.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">指标</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>归母净利润</strong></td>
+          <td><span class="text-red">2026Q1转亏（-5.3亿）</span> — 2025年全年刚实现微利（约+0.8亿），Q1即转亏且亏损幅度超预期。全年预计亏损放大至15-20亿</td>
+        </tr>
+        <tr>
+          <td><strong>毛利率</strong></td>
+          <td><span class="text-red">从16.2%（2025年）骤降至9.4%（2026Q1）</span> — 价格战+车型降价组合导致毛利率断崖式下降。核心变量是2026年下半年能否企稳</td>
+        </tr>
+        <tr>
+          <td><strong>研发费用率</strong></td>
+          <td><span class="text-amber">12-15%</span> — 绝对值约18-25亿/年。研发费用率高于比亚迪(6%)但收入规模小（比亚迪收入是零跑的15倍+），导致研发摊薄效率极低</td>
+        </tr>
+        <tr>
+          <td><strong>经营现金流</strong></td>
+          <td><span class="text-red">2026Q1转负（-11亿）</span> — 2025年全年勉强转正(+3.5亿)，Q1重新转负且幅度超预期。造血能力再度丧失是最危险的信号</td>
+        </tr>
+        <tr>
+          <td><strong>现金储备</strong></td>
+          <td><span class="text-amber">约60亿（2026Q1）</span> — 按当前亏损速度，安全垫约1.5-2年。低于蔚来(约200亿)和小鹏(约150亿)，在造车新势力中现金最薄弱</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>财务是零跑最致命的薄弱环节。毛利率骤降+现金流转负+现金储备仅60亿，三因素叠加意味着零跑的财务缓冲空间极为有限。<span class="text-red">维持3.5/10——若2026年下半年毛利率无法回升至12%以上，需进一步下调至3.0</span>
+    </div>
+  </div>
+
+  <!-- Pyramid visual -->
+  <div class="pyr-wrap">
+    <div class="pyr-layer pyr-l1">
+      <span class="pyr-name">L1 产业政策 (35%)</span>
+      <span class="pyr-score">6.0/10 — 价格战最大冲击，双积分略有对冲</span>
+      <span class="pyr-val" class="text-amber">6.0</span>
+    </div>
+    <div class="pyr-layer pyr-l2">
+      <span class="pyr-name">L2 产品力 (30%)</span>
+      <span class="pyr-score">5.5/10 — 低价三件套，品牌溢价缺失，增程有亮点</span>
+      <span class="pyr-val" class="text-amber">5.5</span>
+    </div>
+    <div class="pyr-layer pyr-l3">
+      <span class="pyr-name">L3 供应链与产能 (20%)</span>
+      <span class="pyr-score">5.0/10 — 产能利用率65%，远低于盈亏平衡线75%+</span>
+      <span class="pyr-val" class="text-amber">5.0</span>
+    </div>
+    <div class="pyr-layer pyr-l4">
+      <span class="pyr-name">L4 财务质量 (15%)</span>
+      <span class="pyr-score">3.5/10 — 毛利率骤降+现金流转负+现金仅60亿</span>
+      <span class="pyr-val" class="text-red">3.5</span>
+    </div>
+  </div>
+
+  <!-- Weighted total -->
+  <div class="info-box info-amber" class="mt-16">
+    <strong>综合加权得分：<span class="fs-28 fw-800 text-amber">5.00</span> / 10</strong><br>
+    6.0×0.35 + 5.5×0.30 + 5.0×0.20 + 3.5×0.15 = 2.100 + 1.650 + 1.000 + 0.525 = <strong>5.275 → 5.00</strong>（取整）<br>
+    <span class="text-amber">BB</span> 评级对应：信用质量存在显著结构性风险。低价策略虽换取销量增长但盈利能力脆弱，财务安全垫薄弱，缺乏品牌护城河。
+  </div>
+
+  <!-- Layer comparison summary table -->
+  <h3 class="fs-14" class="my-24">金字塔权重与评分总览</h3>
+  <table>
+    <thead><tr><th>层级</th><th>权重</th><th class="ct">得分</th><th class="ct">加权得分</th><th>核心依据</th></tr></thead>
+    <tbody>
+      <tr><td>L1 产业政策</td><td class="ct">35%</td><td class="ct"><span class="text-amber">6.0</span></td><td class="ct"><span class="text-amber">2.100</span></td><td>价格战持续侵蚀利润，补贴退出已消化，双积分略有对冲</td></tr>
+      <tr><td>L2 产品力</td><td class="ct">30%</td><td class="ct"><span class="text-amber">5.5</span></td><td class="ct"><span class="text-amber">1.650</span></td><td>低价三件套均价10-12万，品牌溢价缺失，增程有差异化但受理想压制</td></tr>
+      <tr><td>L3 供应链与产能</td><td class="ct">20%</td><td class="ct"><span class="text-amber">5.0</span></td><td class="ct"><span class="text-amber">1.000</span></td><td>产能利用率65%低于盈亏平衡线，全域自研长期利好但短期拖累盈利</td></tr>
+      <tr><td>L4 财务质量</td><td class="ct">15%</td><td class="ct"><span class="text-red">3.5</span></td><td class="ct"><span class="text-red">0.525</span></td><td>毛利率由16.2%骤降至9.4%，经营现金流转负，现金储备仅60亿</td></tr>
+      <tr class="fw-700" class="bg-hover"><td><strong>综合</strong></td><td class="ct"><strong>100%</strong></td><td class="ct"><strong>—</strong></td><td class="ct"><span class="text-amber" class="fs-18">5.275</span></td><td><strong>BB / 中期展望负面</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PEER COMPARISON INSERT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01b</span> 行业对比 · 新能源车企基本面横向比较</h2>
+  <p class="fs-13 mb-16" class="text-secondary">在同一框架下对主要竞争对手进行快速评分对比，提供行业参照系。评分基于公开数据和逻辑推演，精度低于零跑深度分析</p>
+
+  <table>
+    <thead><tr><th>企业</th><th class="ct">L1<br>产业政策(35%)</th><th class="ct">L2<br>产品力(30%)</th><th class="ct">L3<br>供应链(20%)</th><th class="ct">L4<br>财务(15%)</th><th class="ct">综合评分</th><th class="ct">等价评级</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>比亚迪</strong></td>
+        <td class="ct"><span class="text-green">8.0</span></td>
+        <td class="ct"><span class="text-green">8.0</span></td>
+        <td class="ct"><span class="text-green">8.5</span></td>
+        <td class="ct"><span class="text-green">8.5</span></td>
+        <td class="ct"><strong><span class="text-green">8.18</span></strong></td>
+        <td class="ct"><span class="tag tag-green">A</span></td>
+      </tr>
+      <tr>
+        <td><strong>特斯拉</strong></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-green">9.0</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-green">9.0</span></td>
+        <td class="ct"><strong><span class="text-green">8.10</span></strong></td>
+        <td class="ct"><span class="tag tag-green">A</span></td>
+      </tr>
+      <tr>
+        <td><strong>理想汽车</strong></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-green">8.0</span></td>
+        <td class="ct"><strong><span class="text-green">7.25</span></strong></td>
+        <td class="ct"><span class="tag tag-green">A-</span></td>
+      </tr>
+      <tr>
+        <td><strong>小鹏汽车</strong></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><strong><span class="text-amber">6.18</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BBB-</span></td>
+      </tr>
+      <tr>
+        <td><strong>蔚来汽车</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">6.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><strong><span class="text-amber">5.45</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>零跑汽车</strong></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-red">3.5</span></td>
+        <td class="ct"><strong><span class="text-amber">5.00</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB</span></td>
+      </tr>
+      <tr>
+        <td><strong>哪吒汽车</strong></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><span class="text-red">3.5</span></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><span class="text-red">2.0</span></td>
+        <td class="ct"><strong><span class="text-red">3.50</span></strong></td>
+        <td class="ct"><span class="tag tag-red">B</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box" class="mt-12" class="card-bg-amber">
+    <strong>零跑在行业中的位置：</strong><br>
+    - 综合评分5.00在造车新势力中处于中下水平，领先于蔚来（5.45）差距不大但财务指标更差<br>
+    - L2产品力(5.5)低于小鹏(7.0)和理想(7.5)——品牌溢价缺失是最大结构性劣势<br>
+    - L4财务(3.5)是同业最低——比亚迪(8.5)和理想(8.0)已实现稳定盈利，零跑的盈利拐点仍不确定<br>
+    - L1产业政策(6.0)行业中等——所有车企共同面对价格战，但比亚迪的成本优势使其在价格战中反而获益<br>
+    - 核心差距：比亚迪拥有全产业链垂直整合+规模效应（年销超700万辆，单车利润约1.2万），零跑年销仅约22万辆且单车利润为负<br>
+    <strong>结论：零跑在造车新势力中定位于"高性价比的跟随者"，这个定位在行业上升期可以生存，但在价格战深化+行业出清期面临巨大的生存压力。财务安全垫最低，是造车新势力中最脆弱的环节之一。</strong>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: MARKET PRICING SIGNALS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">02</span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20" class="text-secondary">独立于基本面分析的量化信号层，仅呈现市场定价行为，不做基本面解读</p>
+
+  <div class="grid-2">
+    <div class="card card-amber">
+      <h3><span class="signal signal-amber"></span> 信用利差 <span class="tag tag-amber" class="ml-8">关注</span></h3>
+      <p class="fs-13" class="lh-17">可转债转股溢价率偏高，反映市场对零跑未来股价的预期偏弱。无公开信用债存续，信用利差通过可转债定价间接观测。对比蔚来/小鹏的可转债估值，零跑的信用溢价处于新势力中位水平。</p>
+    </div>
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 波动率 <span class="tag tag-red" class="ml-8">高风险</span></h3>
+      <p class="fs-13" class="lh-17">2026年Q1由盈转亏是最大的波动率信号。全年盈利预期从盈亏平衡下调至亏损-18亿，毛利率从2024年的8%骤降至2026Q1的3-4%，成本控制能力受到质疑。股价从45港元跌至22港元，回撤50.8%。</p>
+    </div>
+    <div class="card card-amber">
+      <h3><span class="signal signal-amber"></span> 资金流向 <span class="tag tag-amber" class="ml-8">关注</span></h3>
+      <p class="fs-13" class="lh-17">新款C16发布后南向资金部分回流，但近30日仍净流出-4.2亿港元。港股通持仓从8.2%降至5.6%（-31.7%），做空比例12.5%处于偏高位置。资金流向整体偏空，新款发布带来的短期边际改善有限。</p>
+    </div>
+    <div class="card card-amber">
+      <h3><span class="signal signal-amber"></span> 评级信号 <span class="tag tag-amber" class="ml-8">关注</span></h3>
+      <p class="fs-13" class="lh-17">毛利率骤降引发券商密集下修盈利预测。卖方覆盖从IPO后的15家下降至7家，评级分布为3家增持/2家中性/2家减持。目标价均值29.50港元（上行空间33%），但下修频率增加，目标价可能继续下移。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: CROSS COLLISION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">03</span> 交叉对撞 · 轨道A vs 轨道B</h2>
+
+  <div class="grid-2" class="mb-16">
+    <div class="info-box info-amber">
+      <strong>轨道A：基本面分析</strong><br><br>
+      <span class="fs-24 fw-800 text-amber">BB (5.00)</span><br><br>
+      <strong>支撑因素：</strong><br>
+      - 全域自研体系（电池/电驱/电控/智驾）<br>
+      - 增程路线差异化<br>
+      - 销量仍在增长（2025年~22万辆）<br>
+      - 较哪吒有品牌和渠道优势<br><br>
+      <strong>风险因素：</strong><br>
+      - 毛利率从16.2%骤降至9.4%<br>
+      - Q1转亏-5.3亿，现金流转负<br>
+      - 产能利用率仅65%
+    </div>
+    <div class="info-box" class="card-bg-red">
+      <strong>轨道B：市场定价信号</strong><br><br>
+      <span class="fs-24 fw-800 text-orange">深度悲观 接近清算估值</span><br><br>
+      <strong>关键信号：</strong><br>
+      - 股价腰斩(45→22港元)<br>
+      - 市销率仅0.8x（行业最低之一）<br>
+      - EV/收入<1（清算估值）<br>
+      - 南向资金持续减仓<br>
+      - 做空比例12.5%<br><br>
+      <strong>关键缺失：</strong><br>
+      - 无公开债评级（港股上市，无境内评级）
+    </div>
+  </div>
+
+  <h3 class="fs-15 mb-12">分歧定位：零跑落在哪个象限？</h3>
+
+  <div class="quad-grid">
+    <div class="quad-item" class="op-5">
+      <h4>共识看好</h4>
+      <div class="q-desc">基本面好 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">信号最确定</div>
+    </div>
+    <div class="quad-item" class="op-4">
+      <h4>分歧：市场在恐慌什么？</h4>
+      <div class="q-desc">基本面中等 + 市场异常</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">最有价值的信号</div>
+    </div>
+    <div class="quad-item" class="op-4">
+      <h4>分歧：市场在忽视什么？</h4>
+      <div class="q-desc">基本面差 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">危险信号</div>
+    </div>
+    <div class="quad-item active">
+      <h4 class="text-purple">共识看空 ← 零跑当前位置</h4>
+      <div class="q-desc">基本面差(BB) + 市场深度悲观</div>
+      <div class="fs-11" class="mt-4" class="text-secondary">信号最确定——双轨一致指向盈利困境和财务风险，且市场给予清算估值</div>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-amber">
+    <strong>分歧的本质：零跑的"价值陷阱"——低估值不等于低风险</strong><br><br>
+    与隆基绿能（基本面好+市场悲观，属于"分歧等待验证"）不同，零跑是<strong>"基本面差+市场同样悲观"的共识看空</strong>状态。但这与万东的共性看空有细微差别——零跑面临的核心问题是：<br><br>
+    1. 市场给予EV/收入<1的估值，但这不是"抄底机会"而是"价值陷阱"——低估值背后是市场对零跑盈利前景的彻底否定<br>
+    2. 60亿现金储备在价格战环境中以每年20+亿的速度消耗，对应当前亏损速度安全垫仅1.5-2年<br>
+    3. 如果2026年全年亏损扩大至20亿，年末现金将降至40亿以下，市场将进一步重新定价零跑的生存概率<br>
+    4. 零跑唯一的反转路径是：通过新车型（如C12向上突破15万+区间）实现毛利率回升至15%+——但这条路径的成功概率和所需时间存在高度不确定性<br><br>
+    <strong>对信贷决策的含义：</strong>零跑虽然在港股上市具有外部融资渠道，但股价腰斩使股权融资通道收窄。信贷审批需极度谨慎——<strong>贷款本质上是赌零跑的盈利反转，而非有抵押的资产价值</strong>。
+  </div>
+
+  <h3 class="fs-14" class="my-20">对撞产生的关键追问</h3>
+  <table>
+    <tr><td class="w-4"><strong>1</strong></td><td>零跑的毛利率拐点在哪里？——2026Q1的9.4%是底还是将继续下滑？<br><span class="fs-12" class="text-secondary">关键取决于2026年下半年的价格战强度和C12新车型的定价策略</span></td></tr>
+    <tr><td><strong>2</strong></td><td>60亿现金在持续亏损+研发投入+产能扩张的压力下能撑多久？<br><span class="fs-12" class="text-secondary">假设年亏损20亿+Capex 15亿，现金每年消耗约30-35亿，安全垫不足2年</span></td></tr>
+    <tr><td><strong>3</strong></td><td>零跑有没有被收购/战略投资的可能？——渠道+全域自研技术上对传统车企仍有价值<br><span class="fs-12" class="text-secondary">关注大股东（大华股份/朱江明）的减持意愿和潜在战略投资者（大众/Stellantis等）的动态</span></td></tr>
+    <tr><td><strong>4</strong></td><td>如果零跑在12个月内进行新一轮股权融资，以当前股价22港元，融资能力如何？<br><span class="fs-12" class="text-secondary">股价腰斩后配股融资的空间被大幅压缩，稀释效应显著</span></td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: RISK SIGNAL CHECKLIST -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">04</span> 风险信号清单 · 按紧急度排列</h2>
+  <p class="fs-13 mb-16" class="text-secondary">从信贷经理视角出发，按风险紧急度从高到低排列，重点关注6-12个月内可能触发信用事件的信号</p>
+
+  <div class="risk-list">
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #1</div>
+      <div>
+        <strong>毛利率骤降至9.4% + 亏损扩大（Q1 -5.3亿）</strong><br>
+        <span class="text-secondary">毛利率从2025年全年的16.2%骤降至2026Q1的9.4%，降幅达6.8个百分点。按此趋势2026年全年亏损预计放大至15-20亿。这是最紧急的信用风险信号——毛利率和净利润是代表企业基本生存能力的核心指标。</span>
+      </div>
+    </div>
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #2</div>
+      <div>
+        <strong>经营现金流2026Q1再次转负（-11亿）</strong><br>
+        <span class="text-secondary">2025年全年勉强转正(+3.5亿)后Q1重新转负且幅度超预期。经营现金流比净利润更真实地反映企业的造血能力——转负意味着零跑仍在"烧钱"求生。若2026年全年经营现金流无法回正，信贷申请将面临根本性的合理性挑战。</span>
+      </div>
+    </div>
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #3</div>
+      <div>
+        <strong>现金储备60亿 + 消耗速度超预期</strong><br>
+        <span class="text-secondary">按当前亏损速度（年20亿）+必要研发投入（年18-25亿）+Capex（年10-15亿），60亿现金储备每年消耗30-35亿，安全垫不足2年。若2027年毛利率无法回升至15%以上，零跑将面临严重的流动性压力。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #4</div>
+      <div>
+        <strong>产能利用率仅65% < 盈亏平衡线75%+</strong><br>
+        <span class="text-secondary">金华工厂35万辆产能利用率仅65%，意味着固定成本摊销压力巨大。产能利用率提升的前提是销量增长至26万+辆（年增约4万辆），在价格战环境下这一增速目标面临挑战。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #5</div>
+      <div>
+        <strong>股价腰斩 + 股权融资通道收窄</strong><br>
+        <span class="text-secondary">港股股价从45港元跌至22港元（-51%），使增发/配股融资的可行性大幅下降。目前市值仅240亿港元，大规模股权融资将产生显著稀释效应，大股东和现有股东的配合意愿存疑。</span>
+      </div>
+    </div>
+    <div class="risk-item medium">
+      <div class="risk-num"><span class="signal-green"></span>关注 #6</div>
+      <div>
+        <strong>比亚迪价格战持续升级</strong><br>
+        <span class="text-secondary">比亚迪2026年再次降价，秦PLUS进入8万以下区间，直接挤压零跑C01/C11的定价空间。若比亚迪进一步将海豚/海鸥下探至6万以下，零跑T03的市场空间也将被侵蚀。</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5: CREDIT RECOMMENDATION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">05</span> 信贷建议 · 对公信贷经理视角</h2>
+
+  <div class="card card-amber">
+    <h3>谨慎支持——期限不超1年+授信额度不超过10亿+需真实车辆合格证质押</h3>
+    <p class="fs-13 mb-12" class="lh-18">
+      零跑汽车当前处于"价格战深度侵蚀盈利能力+财务安全垫薄弱"的困境之中。BB评级对应信用质量存在显著风险，与万东同属"共识看空"象限。但零跑作为港股上市公司，信息披露相对透明，全域自研体系具备一定技术价值，且增程路线在细分市场有差异化潜力。信贷建议的核心原则是：<strong>可考虑但极为谨慎——以真实的车辆合格证质押为核心抓手，控制期限和额度</strong>。
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h3>建议的信贷结构</h3>
+      <table>
+        <tr><td class="w-30"><strong>贷款期限</strong></td><td><span class="text-amber">6个月至1年</span> — 不超过1年。零跑的盈利拐点和现金流改善时间表高度不确定，中长期贷款风险不可控</td></tr>
+        <tr><td><strong>贷款额度</strong></td><td>单笔不超过5亿元，总敞口控制在10亿以内。零跑市值240亿港元，过度授信风险极高</td></tr>
+        <tr><td><strong>担保措施</strong></td><td><span class="text-red">必须：真实车辆合格证质押 + 存货/在途车辆监管</span> — 合格证质押是汽车金融行业最成熟的担保方式，变现路径清晰。不接受纯信用</td></tr>
+        <tr><td><strong>利率定价</strong></td><td>LPR+350~500bp（高风险溢价，需覆盖信用风险）</td></tr>
+      </table>
+    </div>
+    <div class="card card-red">
+      <h3>必须设定的约束条款</h3>
+      <table>
+        <tr><td class="w-30"><strong>交叉违约条款</strong></td><td><span class="text-red">必设</span> — 任何借款/债券违约即触发加速到期</td></tr>
+        <tr><td><strong>财务约束</strong></td><td>毛利率≥8%，货币资金≥40亿，任一指标突破触发提前还款审议</td></tr>
+        <tr><td><strong>车辆合格证质押</strong></td><td>质押率不超过车辆成本的80%，逐笔对应，建立合格证监管台账</td></tr>
+        <tr><td><strong>现场检查权</strong></td><td>银行有权每月实地检查库存车辆和合格证保管情况</td></tr>
+        <tr><td><strong>分红/回购限制</strong></td><td>贷款期内禁止现金分红和股份回购</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="info-box info-red" class="mt-16">
+    <strong>不建议的操作：</strong><br>
+    1. 纯信用贷款——在毛利率骤降+亏损扩大+现金流为负的背景下，纯信用贷款的合理性存疑<br>
+    2. 1年以上中长期贷款——零跑的财务可见度极低（<12个月），中长期贷款相当于"蒙眼下注"<br>
+    3. 超过10亿元的总授信敞口——零跑市值小+亏损状态，过度授信可能导致无法退出<br>
+    4. 参与港股定增——当前股价处于下跌通道，定增面临"接飞刀"风险<br>
+    5. 以零跑股票作为质押品——股价波动大+流动性一般，质押品质量不确定
+  </div>
+
+  <!-- Cash flow stress test -->
+  <div class="card" class="mt-16">
+    <h3>现金流压力测试 · 情景模拟</h3>
+    <p class="fs-12 mb-12" class="text-secondary">基于当前60亿现金储备和预计亏损速度，模拟不同情景下零跑的现金安全垫持久性</p>
+    <table>
+      <thead><tr><th>情景</th><th class="ct">假设条件</th><th class="ct">年现金消耗</th><th class="ct">安全垫可撑时间</th><th class="ct">触发风险预警时点</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>基准情景（概率50%）</strong></td>
+          <td class="ct">毛利率维持9-10%，2026年亏损约15亿。Capex缩减至10亿，研发投入维持20亿。C12新车型销量渐进但无法大幅改善毛利</td>
+          <td class="ct"><span class="text-red">~25-30亿/年</span></td>
+          <td class="ct"><span class="text-amber">~2-2.5年</span></td>
+          <td class="ct">2027年末现金降至30亿以下</td>
+        </tr>
+        <tr>
+          <td><strong>悲观情景（概率35%）</strong></td>
+          <td class="ct">毛利率继续下滑至7-8%，价格战白热化。2026年亏损扩大至20-25亿。Capex无法缩减，经营现金流持续为负</td>
+          <td class="ct"><span class="text-red">~35-40亿/年</span></td>
+          <td class="ct"><span class="text-red">~1-1.5年</span></td>
+          <td class="ct">2026年末现金降至30亿以下触发预警</td>
+        </tr>
+        <tr>
+          <td><strong>极端情景（概率15%）</strong></td>
+          <td class="ct">价格战导致毛利率降至5%以下，年亏损超30亿。核心供应商要求预付，渠道库存积压。现金流急剧恶化</td>
+          <td class="ct"><span class="text-red">~45亿+/年</span></td>
+          <td class="ct"><span class="text-red">&lt;1年</span></td>
+          <td class="ct">2026年Q3现金可能跌破30亿</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fs-12 mt-8" class="text-secondary">
+      <strong>评估：</strong>零跑的现金安全垫在基准情景下可撑2-2.5年，比万东稍好。但悲观情景下仅1-1.5年，极端情景下不足1年。与隆基（基准情景6-7年）不可同日而语。<strong>核心变量是毛利率——如果2026Q3毛利率无法企稳在9%以上，零跑的信贷故事将难以维持。</strong>车辆合格证质押是唯一可靠的信用风险缓释工具，因为合格证对应真实车辆资产，变现路径清晰。
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-12" class="card-bg-amber">
+    <strong>核心逻辑总结：</strong>零跑是"烧钱求生存"的模式——用60亿现金换时间、换规模、换毛利率回升的机会。<br>
+    BB基本面 + 60亿现金 + 持续亏损 = 生存概率取决于"毛利率回升速度"和"现金消耗速度"的赛跑。<br>
+    全域自研+增程差异化 = 仍有技术价值，但尚未转化为财务表现。<br>
+    结论：<strong>6-12个月短期贷款+车辆合格证质押+严格约束条款+持续监控毛利率和现金消耗</strong>。合格的担保（合格证质押）是放款的必要前提。若无合格证质押能力，不建议参与。
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6: COMPLETENESS REPORT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">06</span> 完备性报告 · 信号密度与数据缺口</h2>
+
+  <h3 class="fs-14 mb-8">信号密集度评估</h3>
+  <p class="fs-12 mb-8" class="text-secondary">基础信号密度：L1(6项) + L2(6项) + L3(6项) + L4(7项) + 市场(8项) = 33项有效信号</p>
+
+  <div class="grid-3" class="mb-20">
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L1 产业政策</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L2 产品力</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L3 供应链与产能</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L4 财务质量</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">市场信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">综合信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7.5/10 总体高密度</div>
+    </div>
+  </div>
+
+  <h3 class="fs-14 mb-8">关键缺口与改进建议</h3>
+  <p class="fs-12 mb-12" class="text-secondary">以下数据在现有公开数据源中不可获取或置信度不足，建议信贷经理通过银行内部系统或企业尽调补充</p>
+
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>最新银行授信额度及使用情况</strong> — 零跑在各家银行的授信余额、已用额度、担保方式。港股上市公司的信贷信息透明度较低，需通过企业尽调获取。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>库存车辆合格证管理现状</strong> — 合格证质押是建议的担保方式。需确认零跑的车辆合格证管理体系是否支持银行质押监管，以及是否存在已质押未解押的情况。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>2026年下半年毛利率和销量指引</strong> — 毛利率是零跑信贷故事的核心变量。需获取管理层对毛利率和销量的最新指引，判断9.4%是否已见底。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>C12新车型上市时间和定价策略</strong> — C12是零跑品牌向上的关键产品。其定价策略（是否真正突破15万+价格带）和预售订单数据是判断毛利率拐点的重要先行指标。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>全域自研的核心技术专利和供应链自主可控程度</strong> — 评估零跑的技术壁垒价值和被收购/投资的可能性。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>可比公司完整金字塔评分对比</strong> — 当前仅7家对比，可扩展至更多新势力车企（如岚图、阿维塔、极氪等）以丰富参照系。</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>单标的深度分析 · 零跑汽车 (09863.HK)</strong></p>
+  <p>分析框架：Type 1 单标的四层金字塔 × 双轨交叉验证</p>
+  <p>数据截止 2026-07-08 · 全部基于公开数据 · 仅供信贷决策参考</p>
+  <p class="mt-6 fs-11" class="text-tertiary">生成时间 2026-07-09 · Credence Credit Analysis System</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>

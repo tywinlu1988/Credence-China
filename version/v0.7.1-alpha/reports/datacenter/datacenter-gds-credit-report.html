@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>万国数据 (GDS Holdings) 信用分析报告 | Credence Report System</title>
+  <link rel="stylesheet" href="../../templates/template-base.css">
+  <style>
+    /* === Hero override — Data Center theme === */
+    .hero-datacenter {
+      background: linear-gradient(135deg, #0f172a, #1e3a5f, var(--blue));
+      text-align: center;
+      padding: 64px 0 48px;
+      margin: -24px -24px 0;
+      border-radius: 0 0 24px 24px;
+    }
+    .hero-datacenter .container > * { position: relative; z-index: 1; }
+    .hero-datacenter h1 {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .hero-datacenter .subtitle {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .hero-datacenter .meta {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-datacenter .meta span {
+      padding: 5px 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+    }
+    .hero-datacenter .chip {
+      display: inline-block;
+      background: rgba(168,85,247,0.35);
+      color: #c084fc;
+      border: 1px solid rgba(168,85,247,0.4);
+      border-radius: 20px;
+      padding: 5px 18px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* === Pyramid visual — layered card accent === */
+    .pyramid-card {
+      position: relative;
+      padding-left: 28px;
+    }
+    .pyramid-card::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 20px;
+      bottom: 20px;
+      width: 2px;
+      border-radius: 2px;
+    }
+    .pyramid-card.pyramid-l1::before { background: var(--purple); }
+    .pyramid-card.pyramid-l2::before { background: var(--blue); }
+    .pyramid-card.pyramid-l3::before { background: var(--amber); }
+    .pyramid-card.pyramid-l4::before { background: var(--green); }
+
+    .pyramid-card .pyramid-dot {
+      position: absolute;
+      left: 4px;
+      top: 22px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 3px solid var(--bg-primary);
+    }
+    .pyramid-card.pyramid-l1 .pyramid-dot { background: var(--purple); }
+    .pyramid-card.pyramid-l2 .pyramid-dot { background: var(--blue); }
+    .pyramid-card.pyramid-l3 .pyramid-dot { background: var(--amber); }
+    .pyramid-card.pyramid-l4 .pyramid-dot { background: var(--green); }
+
+    .pyramid-card .pyramid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pyramid-card .pyramid-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+    .pyramid-card .pyramid-header .weight-tag {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      background: var(--bg-tertiary);
+      padding: 2px 10px;
+      border-radius: 10px;
+    }
+    .pyramid-card .pyramid-header .score-badge {
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .pyramid-card p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+    .pyramid-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pyramid-card ul li {
+      font-size: 12px;
+      background: var(--bg-tertiary);
+      padding: 4px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border-default);
+      color: var(--text-primary);
+    }
+    .pyramid-card ul li::before { content: '· '; color: var(--text-tertiary); }
+
+    /* === Bottom-line callout === */
+    .bottom-line {
+      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(34,197,94,0.08));
+      border: 1px solid rgba(99,102,241,0.25);
+      border-left: 5px solid var(--blue);
+      padding: 22px 28px;
+      border-radius: 12px;
+      margin: 28px 0;
+    }
+    .bottom-line h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--blue);
+    }
+    .bottom-line p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-primary);
+    }
+
+    /* === Risk badges row === */
+    .risk-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .risk-item {
+      flex: 1;
+      min-width: 180px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      border: 1px solid var(--border-default);
+      border-top: 3px solid var(--red);
+    }
+    .risk-item .risk-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--red);
+    }
+    .risk-item .risk-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* === Table enhancements === */
+    .fin-table tbody td:first-child { font-weight: 600; color: var(--text-primary); }
+    .fin-table tbody td.rt { font-family: 'Courier New', monospace; }
+
+    /* === Strip valign fix for our 4 col === */
+    .strip-wrap { margin: 0 0 40px; }
+
+    /* === Weight bar === */
+    .weight-bar {
+      display: flex;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 16px 0 10px;
+      background: var(--bg-tertiary);
+    }
+    .weight-bar .seg {
+      height: 100%;
+      transition: width 0.3s;
+    }
+    .weight-bar .seg-purple { background: var(--purple); width: 15%; }
+    .weight-bar .seg-blue   { background: var(--blue);   width: 20%; }
+    .weight-bar .seg-amber  { background: var(--amber);  width: 35%; }
+    .weight-bar .seg-green  { background: var(--green);  width: 30%; }
+
+    .weight-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-bottom: 14px;
+    }
+    .weight-legend span::before {
+      content: '';
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+    .weight-legend .l-purple::before { background: var(--purple); }
+    .weight-legend .l-blue::before   { background: var(--blue); }
+    .weight-legend .l-amber::before  { background: var(--amber); }
+    .weight-legend .l-green::before  { background: var(--green); }
+
+    /* === Heading sizes === */
+    h2 { font-size: 19px; }
+    h3 { font-size: 15px; }
+
+    /* === Strip sval color classes === */
+    .sval-blue { color: var(--blue); }
+    .sval-green { color: var(--green); }
+    .sval-amber { color: var(--amber); }
+
+    /* === Utility classes to replace inline styles === */
+    .flex-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .section-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+    .section-desc-mb14 { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+    .section-text { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-top: 8px; }
+    .section-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+    .clean-list { list-style: none; padding: 0; font-size: 13px; line-height: 2; color: var(--text-secondary); }
+    .clean-list-lg { list-style: none; padding: 0; font-size: 13px; line-height: 2.2; color: var(--text-secondary); }
+    .text-primary { color: var(--text-primary); }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .fw-800 { font-weight: 800; }
+    .mt-6 { margin-top: 6px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-10 { margin-top: 10px; }
+    .mt-12 { margin-top: 12px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-20 { margin-top: 20px; }
+    .mb-10 { margin-bottom: 10px; }
+    .mb-14 { margin-bottom: 14px; }
+    .mb-16 { margin-bottom: 16px; }
+    .info-box-strong { font-size: 14px; }
+
+    /* === Metric number color classes === */
+    .m-num-blue { color: var(--blue); }
+    .m-num-green { color: var(--green); }
+    .m-num-amber { color: var(--amber); }
+    .m-num-purple { color: var(--purple); }
+
+    /* === Table cell colors === */
+    .td-red { color: var(--red); }
+    .td-amber { color: var(--amber); }
+
+    /* === Background row for table summary === */
+    .tr-summary { background: var(--bg-tertiary); }
+
+    /* === Density bar styles for 完备性评估 === */
+    .density-group { margin: 16px 0; }
+    .density-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .density-label { font-size: 12px; font-weight: 600; min-width: 120px; color: var(--text-primary); }
+    .density-bar { flex: 1; height: 10px; background: var(--bg-tertiary); border-radius: 5px; overflow: hidden; }
+    .density-fill { height: 100%; border-radius: 5px; transition: width 0.3s; }
+    .density-fill.density-high { width: 90%; background: var(--green); }
+    .density-fill.density-mid-high { width: 75%; background: var(--blue); }
+    .density-fill.density-mid { width: 60%; background: var(--amber); }
+    .density-fill.density-low { width: 40%; background: var(--red); }
+    .density-pct { font-size: 12px; font-weight: 600; min-width: 30px; color: var(--text-secondary); }
+
+    /* === Signal card text === */
+    .signal-card-desc { font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin-top: 6px; }
+
+    /* === Gap list for 完备性评估 === */
+    .gap-list { list-style: disc; padding-left: 20px; font-size: 13px; line-height: 1.8; color: var(--text-secondary); }
+
+    /* responsive tweaks */
+    @media (max-width: 768px) {
+      .hero-datacenter h1 { font-size: 24px; }
+      .risk-item { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- HERO                                                          -->
+<!-- ============================================================ -->
+<div class="hero-datacenter">
+  <div class="container">
+    <span class="chip">数据中心 / 算力基建 · 资产租约型</span>
+    <h1>万国数据 (GDS Holdings)</h1>
+    <p class="subtitle">Single-target deep credit analysis from bank credit manager's perspective&nbsp;&nbsp;|&nbsp;&nbsp;银行分支行对公信贷视角 · 单标的深度信用分析</p>
+    <div class="meta">
+      <span>评级日期：2026-07</span>
+      <span>报告类型：Type 1 单标的深度分析</span>
+      <span>NASDAQ: GDS / HKEX: 9698</span>
+      <span>行业：数据中心 / 算力基础设施</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- STRIP                                                          -->
+<!-- ============================================================ -->
+<div class="strip strip-wrap">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval sval-blue">BBB+</div>
+    <div class="ssub">得分 7.46 / 10</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">得分</div>
+    <div class="sval sval-blue">7.46</div>
+    <div class="ssub">/ 10</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval sval-green">稳定</div>
+    <div class="ssub">十二个月</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval sval-amber">中</div>
+    <div class="ssub">DSCR / WALE 未公开</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 评级框架总览                                          -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">评级框架总览：数据中心四层金字塔模型</h2>
+  <p class="section-desc">
+    万国数据是亚太地区最大的数据中心运营商之一，业务模式属于典型的<strong class="text-primary">"资产租约型"</strong>——通过自建或合建数据中心机房，以长期租约形式向互联网巨头及云厂商提供机柜托管与算力基础设施服务。传统的银行信贷分析以财务指标为重心，但对于数据中心行业，<strong class="text-primary">最重的因子不在报表上</strong>。本报告采用四层金字塔框架，自下而上赋予不同权重，综合评定信用等级。
+  </p>
+  <div class="weight-bar">
+    <div class="seg seg-purple" title="政策/宏观 15%"></div>
+    <div class="seg seg-blue"   title="技术/算力 20%"></div>
+    <div class="seg seg-amber"  title="客户/租约质量 35%"></div>
+    <div class="seg seg-green"  title="财务/资产 30%"></div>
+  </div>
+  <div class="weight-legend">
+    <span class="l-purple">L1 政策/宏观 (15%)</span>
+    <span class="l-blue">L2 技术/算力 (20%)</span>
+    <span class="l-amber">L3 客户/租约质量 (35%)</span>
+    <span class="l-green">L4 财务/资产 (30%)</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 1: 政策/宏观                                     -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l1">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L1 政策 / 宏观环境</h3>
+      <span class="weight-tag">权重 15%</span>
+    </div>
+    <span class="score-badge score-good">8.5 / 10</span>
+  </div>
+  <p>
+    数据中心是国家"新基建"七大领域的核心组成部分，也是"东数西算"工程的关键载体。自2022年"东数西算"全面启动以来，国家发改委、工信部等部门密集出台政策，明确鼓励算力基础设施的集约化、绿色化发展，并对一线城市数据中心实施PUE（电能利用效率）红线管控。万国数据在国内核心枢纽（北京、上海、广州、深圳、张家口、廊坊、成都等）均有战略布局，其中长三角、京津冀、粤港澳三大集群的卡位最为关键，政策契合度极高。公司当前平均PUE 1.22，显著优于国家规定的1.25红线（新建项目要求趋严至1.20），在未来的能耗指标审批中具备明显优势。此外，"十四五"数字经济发展规划提出到2025年算力需求年均增长30%以上，政策端对算力基础设施的中长期支持方向明确。主要风险在于地方政府对数据中心能耗总量的刚性约束可能进一步收紧，但头部运营商凭借存量指标和技术壁垒反而受益于供给侧出清。
+  </p>
+  <ul>
+    <li>新基建核心受益行业</li>
+    <li>东数西算工程卡位最优</li>
+    <li>PUE 1.22 优于国家1.25红线</li>
+    <li>能耗双控下头部集中度提升</li>
+    <li>"十四五"算力需求 CAGR &gt;30%</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 2: 技术/算力                                     -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l2">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L2 技术 / 算力基础设施能力</h3>
+      <span class="weight-tag">权重 20%</span>
+    </div>
+    <span class="score-badge score-ok">7.8 / 10</span>
+  </div>
+  <p>
+    万国数据是行业内最早大规模部署液冷技术的运营商之一，在新建大型项目中广泛采用"液冷+自然冷却"混合散热方案，有效将PUE控制在行业领先水平。公司技术路线覆盖冷板式液冷和浸没式液冷双路径，单机柜功率密度可支持20kW-100kW+，能满足AI训练等高算力场景的散热需求。在GPU服务器供应链方面，受美国对华半导体出口管制升级影响，英伟达高端AI芯片（如H100、H200及后续迭代）的对华供应持续受限，万国数据的部分客户（尤其是互联网大厂）面临算力卡供给的不确定性。对此，公司已启动昇腾生态适配工作，在部分新建数据中心预留国产算力架构的部署条件。整体来看，技术能力本身处于行业第一梯队，但GPU供应瓶颈属于不可控的外部变量，可能影响下游客户的上架节奏和新签需求，从而间接拖累公司机柜上架率和租金现金流。
+  </p>
+  <ul>
+    <li>液冷+自然冷却混合技术</li>
+    <li>PUE 行业领先水平 (1.22)</li>
+    <li>单机柜功率 20kW-100kW+</li>
+    <li>GPU供应风险（美国禁令影响）</li>
+    <li>昇腾生态适配中</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 3: 客户/租约质量                                 -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l3">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L3 客户质量 / 租约结构</h3>
+      <span class="weight-tag">权重 35% · 核心层</span>
+    </div>
+    <span class="score-badge score-ok">7.2 / 10</span>
+  </div>
+  <p>
+    L3是四层金字塔中权重最高的层面（35%），因为数据中心信用分析的核心逻辑是"谁租的、租多久、上架率是多少"——这直接决定了租金现金流的可预测性和稳定性。万国数据的客户以超大规模云厂商和互联网巨头为主，其中阿里巴巴为其核心客户，贡献超过50%的营收。阿里系与万国数据建立了深度绑定关系，包括长期租约（通常5-10年）和定制化数据中心建设（Build-to-Suit），客户锁定效应很强，切换成本高，但客户集中度风险也不容忽视。截至2026年Q1，公司整体上架率约75.5%，签约率约93%，签约率与上架率之间存在约17.5个百分点的差额（已签约待上架），反映出客户需求正在逐步释放中。Q1新签约约200MW，表明下游需求仍然旺盛。值得关注的是，非阿里客户的占比和增速是未来降低集中度风险的关键，公司近年也在积极拓展字节跳动、腾讯等新客户，但短期内阿里仍为压倒性主力。租约期限结构方面，加权平均剩余租约期限（WALE）未公开披露，构成数据置信度层面的减分项。
+  </p>
+  <ul>
+    <li>阿里为核心客户（&gt;50%营收但锁定效应强）</li>
+    <li>上架率 75.5%</li>
+    <li>签约率 93%</li>
+    <li>Q1 新签约 200MW</li>
+    <li>WALE 未公开披露</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- PYRAMID LAYER 4: 财务/资产                                     -->
+<!-- ============================================================ -->
+<div class="card pyramid-card pyramid-l4">
+  <span class="pyramid-dot"></span>
+  <div class="pyramid-header">
+    <div class="flex-row">
+      <h3>L4 财务状况 / 资产质量</h3>
+      <span class="weight-tag">权重 30%</span>
+    </div>
+    <span class="score-badge score-ok">7.0 / 10</span>
+  </div>
+  <p>
+    在传统银行信贷视角下，万国数据的财务指标呈现"高负债、高资本开支、但资产价值明确"的特征。资产负债率约61.4%，且呈缓慢下降趋势——这得益于公司近年积极引入股权融资（包括2024年可转债回购与配股）和资产层面的合作基金（如与高瓴、厚朴等成立数据中心投资基金）来优化杠杆结构。但与此同时，2026年Capex预算从2025年的约45亿元人民币翻倍至约90亿元，扩张节奏明显激进，主要用于在建项目的投入和新增土地储备。以Cap Rate（资本化率）衡量的资产收益率约为7.75%，在数据中心行业中处于合理水平。利息覆盖倍数是关键关注点：在利率上行周期中，大规模有息负债带来的利息支出对利润的侵蚀效应不可忽视。由于公司仍处于高速扩张期，自由现金流持续为负，依赖融资性现金流支撑投资缺口。但值得注意的是，已投产项目的NOI（净营运收入）增长稳健，单个数据中心项目的现金流稳定性较强，体现了"类REITs"的底层资产逻辑。
+  </p>
+  <ul>
+    <li>Cap Rate 7.75%</li>
+    <li>负债率 61.4%（呈下降趋势）</li>
+    <li>Capex 翻倍至 90 亿（扩张激进）</li>
+    <li>自由现金流持续为负</li>
+    <li>类REITs 底层资产逻辑</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 权重分布与评分汇总                                     -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">权重分布与评分汇总</h2>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>层级</th>
+        <th>评估要素</th>
+        <th>权重</th>
+        <th>评分</th>
+        <th class="rt">加权得分</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>L1</td>
+        <td>政策 / 宏观环境</td>
+        <td>15%</td>
+        <td class="score-good">8.5</td>
+        <td class="rt">1.28</td>
+      </tr>
+      <tr>
+        <td>L2</td>
+        <td>技术 / 算力基础设施</td>
+        <td>20%</td>
+        <td class="score-ok">7.8</td>
+        <td class="rt">1.56</td>
+      </tr>
+      <tr>
+        <td>L3</td>
+        <td>客户质量 / 租约结构</td>
+        <td>35%</td>
+        <td class="score-ok">7.2</td>
+        <td class="rt">2.52</td>
+      </tr>
+      <tr>
+        <td>L4</td>
+        <td>财务状况 / 资产质量</td>
+        <td>30%</td>
+        <td class="score-ok">7.0</td>
+        <td class="rt">2.10</td>
+      </tr>
+      <tr class="tr-summary">
+        <td colspan="3" class="text-right fw-800">综合得分</td>
+        <td class="fw-800 td-amber">7.46</td>
+        <td class="rt fw-800 td-amber">7.46</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 关键发现                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">关键发现</h2>
+
+  <div class="info-box info-blue">
+    <strong class="info-box-strong">核心洞察：最重的因子不在报表上</strong>
+    <p class="mt-8">
+      万国数据的信用分析中最重要的一项洞见是：<strong>对于数据中心类资产，决定信用质量的不是传统财务报表中的资产负债率或流动比率，而是"谁租的、租多久、上架率是多少"。</strong>
+      本报告的权重体系充分体现了这一原则——L3客户/租约质量（35%）权重最高，高于L4财务状况（30%）。一家数据中心如果租约质量高（核心客户、长期限、高上架率），即使负债率略高，其现金流的可预测性和稳定性也足以支撑信用质量；反之，如果上架率低或租约即将集中到期，即使账面财务指标看似稳健，实际信用风险也可能远高于表面。
+    </p>
+  </div>
+
+  <div class="grid-2 mt-16">
+    <div class="card card-green">
+      <h3>正面因素</h3>
+      <ul class="clean-list">
+        <li><span class="signal signal-green"></span> 政策确定性极强，属新基建核心赛道</li>
+        <li><span class="signal signal-green"></span> 阿里深度绑定，客户锁定效应强</li>
+        <li><span class="signal signal-green"></span> PUE 行业领先，能耗指标优势可持续</li>
+        <li><span class="signal signal-green"></span> 签约率 93%，已锁定收入预期</li>
+        <li><span class="signal signal-green"></span> 负债率缓慢下降，资本结构优化中</li>
+      </ul>
+    </div>
+    <div class="card card-red">
+      <h3>负面因素 / 关注点</h3>
+      <ul class="clean-list">
+        <li><span class="signal signal-red"></span> 阿里客户集中度 &gt;50%，单一依赖风险</li>
+        <li><span class="signal signal-red"></span> 2026年 Capex 翻倍，现金流压力凸显</li>
+        <li><span class="signal signal-red"></span> GPU供应瓶颈影响下游客户上架节奏</li>
+        <li><span class="signal signal-red"></span> 自由现金流持续为负</li>
+        <li><span class="signal signal-red"></span> DSCR / WALE 未公开，透明度不足</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 信贷建议                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷建议</h2>
+
+  <div class="info-box info-purple mb-16">
+    <strong class="info-box-strong">核心理念：类REITs逻辑——看NOI/DSCR而非传统财务指标</strong>
+    <p class="mt-8">
+      对于数据中心信贷审批，建议采用"类REITs"的评估框架：核心关注单个数据中心资产的NOI（净营运收入）稳定性和DSCR（偿债覆盖比率），而非将集团层面的财务报表作为唯一决策依据。每个数据中心项目应被视为独立的现金流单元，其价值取决于该项目的租约结构、客户信用和上架率。
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h3>授信策略建议</h3>
+      <ul class="clean-list-lg">
+        <li><span class="signal signal-green"></span> 优先采用<strong>项目贷</strong>形式，以具体数据中心资产做抵押</li>
+        <li><span class="signal signal-green"></span> 基于单个项目NOI核定授信额度，避免集团信用混用</li>
+        <li><span class="signal signal-green"></span> 要求将项目租金收入归集至监管账户</li>
+        <li><span class="signal signal-green"></span> 设定最低 DSCR &ge; 1.3x 的财务约束条款</li>
+        <li><span class="signal signal-green"></span> 对于在建项目，要求签约率达80%以上方可提款</li>
+      </ul>
+    </div>
+    <div class="card card-amber">
+      <h3>风险缓释措施</h3>
+      <ul class="clean-list-lg">
+        <li><span class="signal signal-amber"></span> 监控阿里及其生态的采购合同续签节奏</li>
+        <li><span class="signal signal-amber"></span> 要求定期披露各项目层面上架率及签约率</li>
+        <li><span class="signal signal-amber"></span> 对GPU供应链不确定性设置情景压力测试</li>
+        <li><span class="signal signal-amber"></span> 关注2026年下半年 Capex 执行进度和回款情况</li>
+        <li><span class="signal signal-amber"></span> 如涉及跨境，加入汇率风险对冲条款</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 风险信号                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">风险信号监测</h2>
+  <p class="section-desc-mb14">以下为需要在贷后管理中持续跟踪的高优先级风险信号：</p>
+  <div class="risk-row">
+    <div class="risk-item">
+      <div class="risk-title"><span class="signal signal-red"></span> 客户集中度风险</div>
+      <div class="risk-desc">阿里贡献超过50%营收，若阿里自建数据中心比例上升或合同到期后缩减规模，将对公司收入产生重大冲击。需持续监控阿里云的资本开支计划和自建策略。</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-title"><span class="signal signal-red"></span> GPU供应瓶颈</div>
+      <div class="risk-desc">美国对华芯片出口管制持续升级，高端AI GPU供货受限可能延缓客户算力部署进度，影响新建项目的上架爬坡周期和新签约需求增长。</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-title"><span class="signal signal-red"></span> Capex扩张节奏</div>
+      <div class="risk-desc">2026年Capex从45亿翻倍至90亿，若上架爬坡慢于预期或融资环境变化，可能引发流动性压力。需关注各季度现金流匹配情况。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 财务摘要                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">财务摘要</h2>
+  <p class="section-desc">
+    以下为万国数据近三年核心财务指标概览（金额单位：亿元人民币），数据来源为公司年报及公开披露。2026E 为根据公司指引和市场一致预期的估算值。
+  </p>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>指标</th>
+        <th class="rt">2023</th>
+        <th class="rt">2024</th>
+        <th class="rt">2025</th>
+        <th class="rt">2026E</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>营业收入</td>
+        <td class="rt">99.6</td>
+        <td class="rt">112.4</td>
+        <td class="rt">126.8</td>
+        <td class="rt">145.0</td>
+      </tr>
+      <tr>
+        <td>YoY 营收增速</td>
+        <td class="rt">7.8%</td>
+        <td class="rt">12.9%</td>
+        <td class="rt">12.8%</td>
+        <td class="rt">14.3%</td>
+      </tr>
+      <tr>
+        <td>EBITDA（调整后）</td>
+        <td class="rt">46.8</td>
+        <td class="rt">53.5</td>
+        <td class="rt">60.2</td>
+        <td class="rt">70.0</td>
+      </tr>
+      <tr>
+        <td>EBITDA 利润率</td>
+        <td class="rt">47.0%</td>
+        <td class="rt">47.6%</td>
+        <td class="rt">47.5%</td>
+        <td class="rt">48.3%</td>
+      </tr>
+      <tr>
+        <td>净负债（Net Debt）</td>
+        <td class="rt">238.5</td>
+        <td class="rt">262.0</td>
+        <td class="rt">285.0</td>
+        <td class="rt">340.0</td>
+      </tr>
+      <tr>
+        <td>资产负债率</td>
+        <td class="rt">65.2%</td>
+        <td class="rt">63.8%</td>
+        <td class="rt">61.4%</td>
+        <td class="rt">60.5%</td>
+      </tr>
+      <tr>
+        <td>Capex（资本开支）</td>
+        <td class="rt">35.0</td>
+        <td class="rt">38.5</td>
+        <td class="rt">45.0</td>
+        <td class="rt">90.0</td>
+      </tr>
+      <tr>
+        <td>EBITDA / 利息费用</td>
+        <td class="rt">2.8x</td>
+        <td class="rt">2.6x</td>
+        <td class="rt">2.5x</td>
+        <td class="rt">2.3x</td>
+      </tr>
+      <tr>
+        <td>自由现金流</td>
+        <td class="rt td-red">(22.5)</td>
+        <td class="rt td-red">(28.0)</td>
+        <td class="rt td-red">(35.0)</td>
+        <td class="rt td-red">(72.0)</td>
+      </tr>
+      <tr>
+        <td>上架率</td>
+        <td class="rt">72.0%</td>
+        <td class="rt">73.5%</td>
+        <td class="rt">74.8%</td>
+        <td class="rt">77.0%</td>
+      </tr>
+      <tr>
+        <td>签约率</td>
+        <td class="rt">90.5%</td>
+        <td class="rt">91.8%</td>
+        <td class="rt">92.5%</td>
+        <td class="rt">94.0%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="metric-grid mt-20">
+    <div class="metric">
+      <div class="m-num m-num-blue">7.75%</div>
+      <div class="m-label">Cap Rate 资本化率</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-green">93%</div>
+      <div class="m-label">签约率（2025）</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-amber">2.5x</div>
+      <div class="m-label">EBITDA / 利息费用（2025）</div>
+    </div>
+    <div class="metric">
+      <div class="m-num m-num-purple">47.5%</div>
+      <div class="m-label">EBITDA 利润率（2025）</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 行业可比分析                                          -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">行业对标分析</h2>
+  <p class="section-desc">
+    将万国数据与国内主要数据中心上市同业进行关键指标对比（数据为2025年或最新披露期）：
+  </p>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>指标</th>
+        <th class="rt">万国数据</th>
+        <th class="rt">世纪互联</th>
+        <th class="rt">秦淮数据</th>
+        <th class="rt">数据港</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>EBITDA 利润率</td>
+        <td class="rt">47.5%</td>
+        <td class="rt">42.0%</td>
+        <td class="rt">49.2%</td>
+        <td class="rt">45.8%</td>
+      </tr>
+      <tr>
+        <td>资产负债率</td>
+        <td class="rt">61.4%</td>
+        <td class="rt">68.5%</td>
+        <td class="rt">55.0%</td>
+        <td class="rt">58.2%</td>
+      </tr>
+      <tr>
+        <td>上架率</td>
+        <td class="rt">74.8%</td>
+        <td class="rt">70.2%</td>
+        <td class="rt">78.5%</td>
+        <td class="rt">76.0%</td>
+      </tr>
+      <tr>
+        <td>PUE</td>
+        <td class="rt">1.22</td>
+        <td class="rt">1.30</td>
+        <td class="rt">1.20</td>
+        <td class="rt">1.23</td>
+      </tr>
+      <tr>
+        <td>Cap Rate</td>
+        <td class="rt">7.75%</td>
+        <td class="rt">8.20%</td>
+        <td class="rt">7.50%</td>
+        <td class="rt">7.60%</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="info-box info-blue mt-12">
+    <strong>分析要点：</strong> 万国数据在EBITDA利润率和PUE方面均处于行业中上水平，但资产负债率高于秦淮数据和数据港。上架率仍有提升空间，签约率93%但上架率仅74.8%，意味着约18个百分点的已签约产能尚未转化为收入——这部分一旦爬坡完成，将带来显著的现金流改善。综合评价，万国数据在规模效应和客户深度上优于同业，但财务杠杆较高、客户集中度偏大是主要劣势。
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 压力测试情景                                          -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷压力测试情景</h2>
+  <p class="section-desc">
+    基于当前宏观环境和公司经营状况，设置以下三种情景评估信用风险变化：
+  </p>
+  <table class="fin-table">
+    <thead>
+      <tr>
+        <th>情景</th>
+        <th>假设条件</th>
+        <th>预计综合评分</th>
+        <th>评级影响</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>基准情景</td>
+        <td>上架率逐步提升至77%，Capex按计划执行，客户无重大流失</td>
+        <td class="score-ok">7.46</td>
+        <td><span class="tag tag-green">BBB+ 稳定</span></td>
+      </tr>
+      <tr>
+        <td>乐观情景</td>
+        <td>阿里续签超预期，国产算力快速部署拉动新增需求，Capex压力缓解</td>
+        <td class="score-good">8.0+</td>
+        <td><span class="tag tag-green">A- 正面</span></td>
+      </tr>
+      <tr>
+        <td>压力情景</td>
+        <td>阿里缩减外包比例或转向自建，上架率跌破70%，融资环境收紧</td>
+        <td class="score-warn">5.5-6.0</td>
+        <td><span class="tag tag-amber">BB+ 负面观察</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 市场定价信号 · 轨道B                                   -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">市场定价信号 · 轨道B</h2>
+  <p class="section-desc">从市场定价角度评估万国数据的信用风险信号（轨道B：市场定价视角）</p>
+  <div class="grid-2">
+    <div class="card card-amber">
+      <h3>利差状态 <span class="signal signal-amber"></span></h3>
+      <p class="signal-card-desc">Spread widening due to capex concerns</p>
+      <p class="section-sub">利差走阔，反映市场对Capex翻倍后的现金流压力担忧</p>
+    </div>
+    <div class="card card-amber">
+      <h3>波动率状态 <span class="signal signal-amber"></span></h3>
+      <p class="signal-card-desc">Volatile due to regulatory news</p>
+      <p class="section-sub">波动率偏高，受监管政策变化及中美关系影响</p>
+    </div>
+    <div class="card card-green">
+      <h3>资金流向状态 <span class="signal signal-green"></span></h3>
+      <p class="signal-card-desc">Institutional interest in data center AI theme</p>
+      <p class="section-sub">机构资金持续流入，AI算力主题受追捧</p>
+    </div>
+    <div class="card card-amber">
+      <h3>评级事件状态 <span class="signal signal-amber"></span></h3>
+      <p class="signal-card-desc">BBB+ with stable outlook</p>
+      <p class="section-sub">评级稳定，但需关注杠杆率变化</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 交叉对撞                                              -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">交叉对撞</h2>
+  <div class="info-box info-blue">
+    <strong>轨道A vs 轨道B 结论交叉验证</strong>
+  </div>
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h3>轨道A结论</h3>
+      <p class="section-text">BBB+ (7.46) - strong asset quality but high leverage</p>
+      <p class="section-sub">基本面角度：资产质量扎实，但财务杠杆偏高</p>
+    </div>
+    <div class="card card-amber">
+      <h3>轨道B结论</h3>
+      <p class="section-text">Mixed - market cautious on capex but positive on AI demand</p>
+      <p class="section-sub">市场角度：对Capex持谨慎态度，但对AI需求前景乐观</p>
+    </div>
+  </div>
+  <div class="card card-purple mt-12">
+    <h3>分歧/共识分析</h3>
+    <p class="section-text">Consensus on asset quality, divergence on near-term cash flow pressure</p>
+    <p class="section-sub">在资产质量上达成共识，但在短期现金流压力上存在分歧</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: 完备性评估                                            -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2 class="section-title">完备性评估</h2>
+  <p class="section-desc">各维度信号密度与数据完备性评估</p>
+
+  <div class="density-group">
+    <div class="density-item">
+      <span class="density-label">L1 政策/宏观</span>
+      <span class="density-bar"><span class="density-fill density-high"></span></span>
+      <span class="density-pct">高</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">L2 技术/算力</span>
+      <span class="density-bar"><span class="density-fill density-mid-high"></span></span>
+      <span class="density-pct">中高</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">L3 客户/租约</span>
+      <span class="density-bar"><span class="density-fill density-mid"></span></span>
+      <span class="density-pct">中</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">L4 财务/资产</span>
+      <span class="density-bar"><span class="density-fill density-mid-high"></span></span>
+      <span class="density-pct">中高</span>
+    </div>
+    <div class="density-item">
+      <span class="density-label">整体信号密度</span>
+      <span class="density-bar"><span class="density-fill density-mid-high"></span></span>
+      <span class="density-pct">中高</span>
+    </div>
+  </div>
+
+  <div class="info-box info-amber">
+    <strong>关键数据缺口</strong>
+    <ul class="mt-8 gap-list">
+      <li>WALE（加权平均剩余租约期限）未公开披露</li>
+      <li>DSCR（偿债覆盖比率）未按项目层面披露</li>
+      <li>GPU供应链采购合同具体条款不透明</li>
+      <li>新建项目分阶段上架时间表不够详细</li>
+    </ul>
+  </div>
+
+  <div class="card card-blue mt-16">
+    <h3>整体置信度</h3>
+    <p class="section-text">中高 — 核心财务数据及运营指标可获取，但部分关键细节（WALE、DSCR）未公开披露，影响精确判断。建议在授信前通过尽调补充缺失数据。</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- BOTTOM LINE                                                    -->
+<!-- ============================================================ -->
+<div class="bottom-line">
+  <h3>Credit Manager's Bottom Line</h3>
+  <p>
+    <strong>综合评级：BBB+（得分 7.46/10，展望稳定）</strong>
+  </p>
+  <p class="mt-10">
+    万国数据是一家<strong>资产质量扎实但财务扩张激进</strong>的数据中心运营商。从银行信贷经理的角度，建议采取<strong>"项目导向、资产锁定"</strong>的授信策略——以具体数据中心项目的NOI和租约质量为审批核心，而非依赖集团合并报表。该模式可有效隔离风险，即使集团层面出现流动性压力，单个优质项目仍能产生稳定的偿债现金流。
+  </p>
+  <p class="mt-6">
+    最大的信用支撑来自于<strong>阿里深度绑定</strong>带来的长期租约稳定性，最大的信用风险则在于<strong>客户集中度</strong>和<strong>Capex翻倍后的现金流压力</strong>。建议将授信额度与项目上架率和DSCR挂钩，设置分阶段提款条件，并持续跟踪（1）阿里采购合同的续签节奏、（2）新建项目的上架爬坡速度、（3）融资渠道的通畅程度。对于寻求稳健配置的银行分支机构，<strong>建议以已投产项目的存量资产为主要授信投向，谨慎介入在建项目的纯信用融资</strong>。
+  </p>
+  <p class="mt-6 section-desc">
+    一句话总结：<strong class="text-primary">"看数据中心，不要只看资产负债率，要看谁租的、租多久、上架率是多少。"</strong>
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>免责声明</strong></p>
+  <p>本报告由 Credence Report System 生成，仅供银行内部信贷决策参考，不构成任何投资建议或要约。</p>
+  <p>报告中的财务数据来源于公开披露信息，部分2026E数据为基于公司指引和市场一致预期的估算值，实际结果可能存在差异。</p>
+  <p>客户集中度、GPU供应链和Capex执行风险为需要持续跟踪的关键变量。</p>
+  <p class="mt-8">&copy; 2026 Credence Report System &middot; Type 1 单标的深度分析 &middot; 数据中心行业 &middot; 评级日期 2026-07</p>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>

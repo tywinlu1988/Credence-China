@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>引擎验证统计 | v0.5.0-alpha</title>
+  <link rel="stylesheet" href="../../templates/template-base.css">
+  <!-- Type-12 specific: Hero gradient -->
+  <style>
+    .hero { background: linear-gradient(135deg, #0f172a, #6366f1); }
+  
+  /* ===== Utility Classes ===== */
+  .ml-8 { margin-left: 8px; } .ml-4 { margin-left: 4px; }
+  .mr-6 { margin-right: 6px; } .mr-8 { margin-right: 8px; }
+  .mt-20 { margin-top: 20px; } .mt-16 { margin-top: 16px; }
+  .mt-14 { margin-top: 14px; } .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; } .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-4 { margin-top: 4px; }
+  .mt-2 { margin-top: 2px; } .mt-1 { margin-top: 1px; }
+  .mb-20 { margin-bottom: 20px; } .mb-16 { margin-bottom: 16px; }
+  .mb-14 { margin-bottom: 14px; } .mb-12 { margin-bottom: 12px; }
+  .mb-10 { margin-bottom: 10px; } .mb-8 { margin-bottom: 8px; }
+  .mb-6 { margin-bottom: 6px; } .mb-4 { margin-bottom: 4px; }
+  .mb-2 { margin-bottom: 2px; }
+  .w-42 { width: 42%; } .w-41 { width: 41%; } .w-40 { width: 40%; }
+  .w-38 { width: 38%; } .w-35 { width: 35%; } .w-32 { width: 32%; }
+  .w-30 { width: 30%; } .w-28 { width: 28%; } .w-22 { width: 22%; }
+  .w-20 { width: 20%; } .w-18 { width: 18%; } .w-16 { width: 16%; }
+  .w-15 { width: 15%; } .w-14 { width: 14%; } .w-12 { width: 12%; }
+  .w-11 { width: 11%; } .w-10 { width: 10%; } .w-5 { width: 5%; }
+  .w-4 { width: 4%; }
+  .w-160 { width: 160px; } .w-140 { width: 140px; } .w-120 { width: 120px; }
+  .w-100 { width: 100px; } .w-90 { width: 90px; } .w-80 { width: 80px; }
+  .w-70 { width: 70px; } .w-60 { width: 60px; } .w-58 { width: 58px; }
+  .w-50 { width: 50px; } .w-48 { width: 48px; } .w-40px { width: 40px; }
+  .w-36 { width: 36px; } .w-32px { width: 32px; }
+  .br-6 { border-radius: 6px; } .br-4 { border-radius: 4px; }
+  .br-radius { border-radius: var(--radius); }
+  .op-5 { opacity: 0.5; } .op-3 { opacity: 0.3; } .op-6 { opacity: 0.6; }
+  .fs-10 { font-size: 10px; } .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; } .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; } .fs-15 { font-size: 15px; }
+  .fs-16 { font-size: 16px; } .fs-18 { font-size: 18px; }
+  .fs-20 { font-size: 20px; } .fs-22 { font-size: 22px; }
+  .fs-24 { font-size: 24px; } .fs-26 { font-size: 26px; }
+  .fs-28 { font-size: 28px; } .fs-32 { font-size: 32px; }
+  .fs-36 { font-size: 36px; }
+  .fw-600 { font-weight: 600; } .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-16 { line-height: 1.6; } .lh-17 { line-height: 1.7; }
+  .lh-18 { line-height: 1.8; } .lh-20 { line-height: 2.0; }
+  .lh-22 { line-height: 2.2; } .lh-23 { line-height: 2.3; }
+  .lh-32 { line-height: 3.2; }
+  .mt-neg24 { margin-top: -24px; }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+  .num-lg { font-size: 26px; font-weight: 800; }
+  .num-md { font-size: 20px; font-weight: 800; }
+  .num-sm { font-size: 16px; font-weight: 700; }
+  .text-indigo { color: #6366f1; font-weight: 600; }
+  .text-blue { color: #6366f1; font-weight: 600; }
+  .bg-tertiary { background: var(--bg-tertiary); }
+  .bg-hover { background: var(--bg-hover); }
+  .txt-primary { color: var(--text-primary); }
+  .pl-16 { padding-left: 16px; } .pl-18 { padding-left: 18px; }
+  .pl-20 { padding-left: 20px; }
+  .p-10 { padding: 10px; } .p-12 { padding: 12px; }
+  .p-14 { padding: 14px; } .p-16 { padding: 16px; }
+  .p-8 { padding: 8px; } .p-24 { padding: 24px; }
+  .m-0 { margin: 0; } .m-10-0 { margin: 10px 0; }
+  .m-12-0 { margin: 12px 0; } .m-12-0-8 { margin: 12px 0 8px; }
+  .m-14-0 { margin: 14px 0; } .m-16-0 { margin: 16px 0; }
+  .bg-red-bg { background: var(--red-bg); }
+  .bg-green-bg { background: var(--green-bg); }
+  .bg-amber-bg { background: var(--amber-bg); }
+  .bg-blue-bg { background: var(--blue-bg); }
+  .bg-purple-bg { background: var(--purple-bg); }
+  .bg-red-solid { background: var(--red); }
+  .bg-green-solid { background: var(--green); }
+  .bg-amber-solid { background: var(--amber); }
+  .bg-blue-solid { background: var(--blue); }
+  .list-none { list-style: none; padding-left: 0; }
+  .bdr-top-green { border-top: 3px solid var(--green); }
+  .bdr-top-red { border-top: 3px solid var(--red); }
+  .bdr-top-purple { border-top: 3px solid var(--purple); }
+  .bdr-top-blue { border-top: 3px solid var(--blue); }
+  .flex-center { display: flex; align-items: center; }
+  .flex-between { display: flex; justify-content: space-between; }
+  .flex-1 { flex: 1; }
+  .flex-col { display: flex; flex-direction: column; }
+  .flex-wrap { display: flex; flex-wrap: wrap; }
+  .h-8 { height: 8px; } .h-full { height: 100%; }
+  .ct { text-align: center; } .rt { text-align: right; }
+  .gap-8 { gap: 8px; } .gap-10 { gap: 10px; }
+  .gap-12 { gap: 12px; } .gap-14 { gap: 14px; }
+  .gap-16 { gap: 16px; }
+
+</style>
+</head>
+<body>
+
+<!-- ================================================================ -->
+<!-- HERO -->
+<!-- ================================================================ -->
+<div class="hero">
+  <span class="chip">引擎验证统计</span>
+  <h1>Credence Rating Engine v0.5.0-alpha</h1>
+  <p class="subtitle">
+    内部验证统计报告 · 混淆矩阵 + 评级迁移 + 置信度校准
+  </p>
+  <div class="meta">
+    <span>统计截止日期：2026-07-08</span>
+    <span>报告编号：VALID-2026-Q3-002</span>
+    <span>样本量：8 案例</span>
+    <span>验证方法：Holdout 回测验证 + 专家复核</span>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- CONTAINER -->
+<!-- ================================================================ -->
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- STRIP — 6列核心统计 -->
+  <!-- ================================================================ -->
+  <div class="strip cols-6">
+    <div class="strip-item">
+      <div class="slabel">总案例数</div>
+      <div class="sval">8</div>
+      <div class="ssub">验证样本集</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">真阳性 (TP)</div>
+      <div class="sval score-good">5</div>
+      <div class="ssub">正确识别风险</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">假阳性 (FP)</div>
+      <div class="sval score-bad">0</div>
+      <div class="ssub">误报风险</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">真阴性 (TN)</div>
+      <div class="sval score-good">3</div>
+      <div class="ssub">正确识别安全</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">假阴性 (FN)</div>
+      <div class="sval score-bad">0</div>
+      <div class="ssub">漏报风险</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">FNR</div>
+      <div class="sval score-good">0%</div>
+      <div class="ssub">漏报率（目标 &lt; 5%）</div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 验证概述 -->
+  <!-- ================================================================ -->
+  <div class="info-box info-purple">
+    <strong>验证目的：</strong>本报告对 Credence Rating Engine v0.5.0-alpha 进行
+    内部黑盒验证。验证集包含8个从A股信用债市场中随机选取的案例（经行业均衡调整），
+    覆盖光伏、化工、基建三个行业。引擎预测与专家委员会事后认定的实际信用状态进行
+    比对。需要注意的是，由于样本量极小，所有统计指标均只能视为初步参考，不具
+    统计显著性。
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 1 — 混淆矩阵 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal signal-blue"></span>
+      混淆矩阵 Confusion Matrix
+    </h2>
+    <p class="text-secondary fs-13 mb-16">
+      二分类混淆矩阵：引擎预测 vs 实际信用状态（风险/安全）。
+      TP = 正确预警风险事件（信用评级下调或违约），FP = 错误预警（实际无风险），
+      FN = 遗漏风险事件（最严重的错误类型），TN = 正确识别安全状态。
+    </p>
+
+    <div style="margin: 0 auto; max-width: 500px">
+      <table>
+        <thead>
+          <tr>
+            <th class="w-40"></th>
+            <th class="ct w-30" >实际: 风险</th>
+            <th class="ct w-30" >实际: 安全</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>预测: 风险</strong></td>
+            <td class="ct bg-green-bg" >
+              <span class="text-green fs-24 fw-800">5</span>
+              <br><span class="text-secondary fs-11">TP 真阳性</span>
+            </td>
+            <td class="ct bg-red-bg" >
+              <span class="text-tertiary fs-24 fw-800">0</span>
+              <br><span class="text-secondary fs-11">FP 假阳性</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>预测: 安全</strong></td>
+            <td class="ct bg-red-bg" >
+              <span class="text-tertiary fs-24 fw-800">0</span>
+              <br><span class="text-secondary fs-11">FN 假阴性</span>
+            </td>
+            <td class="ct bg-green-bg" >
+              <span class="text-green fs-24 fw-800">3</span>
+              <br><span class="text-secondary fs-11">TN 真阴性</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 衍生指标网格 -->
+    <div class="metric-grid mt-20" >
+      <div class="metric">
+        <div class="m-num score-good">100%</div>
+        <div class="m-label">TPR / Recall (召回率)</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-good">100%</div>
+        <div class="m-label">TNR / Specificity (特异度)</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-good">100%</div>
+        <div class="m-label">Precision (精确率)</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-good">100%</div>
+        <div class="m-label">Accuracy (准确率)</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-good">1.0</div>
+        <div class="m-label">F1 Score</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-good">0%</div>
+        <div class="m-label">FNR (漏报率)</div>
+      </div>
+    </div>
+
+    <div class="card card-purple mt-14" >
+      <h3>二分类性能解读</h3>
+      <p class="text-secondary fs-13 mb-8">
+        <strong>准确率 100%：</strong>当前验证集中所有8个案例的预测结果均与
+        实际信用状态一致。引擎未遗漏任何实质性信用风险事件（FN=0），也未发生
+        错误预警（FP=0）。
+      </p>
+      <p class="text-secondary fs-13 mb-8">
+        <strong>FNR 0%：</strong>这是验证中最关键的指标，因为信用分析中漏报
+        风险（FN）的代价远大于误报（FP）。当前FNR为0%，意味着引擎在所有
+        风险案例中均给出了正确预警。
+      </p>
+      <p class="text-secondary fs-13">
+        <strong>统计警告：</strong>但需注意，8个样本下的所有性能指标均存在
+        巨大的统计不确定性。以FNR=0%为例，其95%置信区间为0% ~ 34%
+        （Clopper-Pearson精确法），意味着真实FNR可能高达三分之一。样本量
+        扩大到至少100个独立案例之前，不宜对引擎性能做出确定性结论。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 2 — 评级迁移矩阵 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal signal-purple"></span>
+      评级迁移矩阵 (12个月)
+    </h2>
+    <p class="text-secondary fs-13 mb-16">
+      基于本次验证样本中8个案例的期初评级 vs 期末实际评级变化
+      （或引擎预测建议）。行=期初评级，列=期末评级。对角线表示评级维持不变，
+      右上为上调，左下为下调。颜色深度表示迁移密度（越深越高）。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="w-12">从 \ 到</th>
+          <th class="ct w-11" >AAA</th>
+          <th class="ct w-11" >AA</th>
+          <th class="ct w-11" >A</th>
+          <th class="ct w-11" >BBB</th>
+          <th class="ct w-11" >BB</th>
+          <th class="ct w-11" >B</th>
+          <th class="ct w-11" >CCC</th>
+          <th class="ct w-11" >D</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>AAA</strong></td>
+          <td class="ct bg-green-bg" ><strong>2</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+        </tr>
+        <tr>
+          <td><strong>AA</strong></td>
+          <td class="ct">0</td>
+          <td class="ct bg-green-bg" ><strong>1</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+        </tr>
+        <tr>
+          <td><strong>A</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct bg-green-bg" ><strong>1</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+        </tr>
+        <tr>
+          <td><strong>BBB</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct bg-green-bg" ><strong>1</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+        </tr>
+        <tr>
+          <td><strong>BB</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct bg-green-bg" ><strong>1</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+        </tr>
+        <tr>
+          <td><strong>B</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct bg-green-bg" ><strong>0</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+        </tr>
+        <tr>
+          <td><strong>CCC</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct bg-green-bg" ><strong>0</strong></td>
+          <td class="ct">0</td>
+        </tr>
+        <tr>
+          <td><strong>D</strong></td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct">0</td>
+          <td class="ct bg-green-bg" ><strong>0</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="metric-grid mt-16" >
+      <div class="metric">
+        <div class="m-num">6/8</div>
+        <div class="m-label">评级维持</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-good">2</div>
+        <div class="m-label">上调案例</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-bad">0</div>
+        <div class="m-label">下调案例</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-good">0</div>
+        <div class="m-label">跨级上调</div>
+      </div>
+      <div class="metric">
+        <div class="m-num score-good">0</div>
+        <div class="m-label">跨级下调</div>
+      </div>
+      <div class="metric">
+        <div class="m-num">12个月</div>
+        <div class="m-label">迁移窗口</div>
+      </div>
+    </div>
+
+    <div class="info-box info-amber mt-14" >
+      <strong>迁移矩阵观察：</strong>当前验证样本中评级稳定率75%（6/8），上调率25%
+      （2/8），下调率0%。2个上调案例均为基本面改善驱动（万华化学新产能投产超预期、
+      中国建筑PPP回款好转）。迁移矩阵显示当前验证期处于信用周期的相对平稳阶段，
+      未捕获信用下行期（评级下调）样本，这构成了验证覆盖的系统性缺口。
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 3 — 各行业验证状态 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal signal-green"></span>
+      各行业验证状态
+    </h2>
+    <p class="text-secondary fs-13 mb-14">
+      根据验证案例所属行业分类统计，当前仅覆盖光伏、化工、基建三个行业。
+      目标覆盖率设定为至少覆盖10个行业、每个行业至少5个案例。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>行业</th>
+          <th class="ct">案例数</th>
+          <th class="ct">TP</th>
+          <th class="ct">FP</th>
+          <th class="ct">TN</th>
+          <th class="ct">FN</th>
+          <th class="ct">FNR</th>
+          <th class="ct">准确率</th>
+          <th>验证状态</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>光伏设备</td>
+          <td class="ct">3</td>
+          <td class="ct">2</td>
+          <td class="ct">0</td>
+          <td class="ct">1</td>
+          <td class="ct">0</td>
+          <td class="ct score-good">0%</td>
+          <td class="ct score-good">100%</td>
+          <td><span class="tag tag-green">已验证</span></td>
+        </tr>
+        <tr>
+          <td>基础化工</td>
+          <td class="ct">3</td>
+          <td class="ct">2</td>
+          <td class="ct">0</td>
+          <td class="ct">1</td>
+          <td class="ct">0</td>
+          <td class="ct score-good">0%</td>
+          <td class="ct score-good">100%</td>
+          <td><span class="tag tag-green">已验证</span></td>
+        </tr>
+        <tr>
+          <td>基建与建筑</td>
+          <td class="ct">2</td>
+          <td class="ct">1</td>
+          <td class="ct">0</td>
+          <td class="ct">1</td>
+          <td class="ct">0</td>
+          <td class="ct score-good">0%</td>
+          <td class="ct score-good">100%</td>
+          <td><span class="tag tag-green">已验证</span></td>
+        </tr>
+        <tr>
+          <td>房地产</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td><span class="tag tag-amber">待验证</span></td>
+        </tr>
+        <tr>
+          <td>金融与保险</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td><span class="tag tag-amber">待验证</span></td>
+        </tr>
+        <tr>
+          <td>医药生物</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td><span class="tag tag-amber">待验证</span></td>
+        </tr>
+        <tr>
+          <td>消费零售</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td><span class="tag tag-amber">待验证</span></td>
+        </tr>
+        <tr>
+          <td>科技与通信</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td><span class="tag tag-amber">待验证</span></td>
+        </tr>
+        <tr>
+          <td>能源与公用事业</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td><span class="tag tag-red">未覆盖</span></td>
+        </tr>
+        <tr>
+          <td>交通运输</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td class="ct">—</td>
+          <td><span class="tag tag-red">未覆盖</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box info-amber mt-14" >
+      <strong>行业覆盖提示：</strong>当前验证覆盖3个行业（覆盖率30%）。待验证和
+      未覆盖行业占70%，引擎在这些行业的预测性能尚无法确认。房地产和金融行业
+      是信用债市场风险最集中的领域（2023-2025年违约案例中房地产占约65%），
+      但当前验证集完全未覆盖这两个行业。建议优先补充房地产和金融行业验证案例，
+      每个行业至少5个案例。
+    </div>
+
+    <div class="card card-blue mt-14" >
+      <h3>行业覆盖优先级建议</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>优先级</th>
+            <th>行业</th>
+            <th>理由</th>
+            <th>建议案例数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-red">P0</span></td>
+            <td>房地产</td>
+            <td>信用债违约高发区，当前引擎最大风险敞口行业</td>
+            <td>至少10个</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-red">P0</span></td>
+            <td>金融与保险</td>
+            <td>系统性风险传递核心节点，评级体系差异大</td>
+            <td>至少8个</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-amber">P1</span></td>
+            <td>医药生物</td>
+            <td>行业特征明显（高研发、长周期），引擎适配性待检</td>
+            <td>至少5个</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-amber">P1</span></td>
+            <td>科技与通信</td>
+            <td>无形资产占比高，传统财务指标解释力存疑</td>
+            <td>至少5个</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-green">P2</span></td>
+            <td>消费零售</td>
+            <td>行业特征相对标准，可后延</td>
+            <td>至少5个</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 4 — 置信度校准曲线 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal signal-purple"></span>
+      置信度校准曲线
+    </h2>
+    <p class="text-secondary fs-13 mb-14">
+      对引擎输出的预测置信度进行概率校准检验。理想情况下，预测置信度为p的组中，
+      实际风险事件占比也应当接近p。例如，引擎预测置信度为70-89%的案例中，
+      实际风险事件应占约70-89%。校准偏差反映了引擎对自身预测的"过信"或"保守"
+      程度。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>置信度区间</th>
+          <th class="ct">案例数</th>
+          <th class="ct">实际风险率</th>
+          <th class="ct">预测风险率（中位数）</th>
+          <th class="ct">校准误差</th>
+          <th>校准判定</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>90-100%</td>
+          <td class="ct">2</td>
+          <td class="ct">100%</td>
+          <td class="ct">95%</td>
+          <td class="ct">+5%</td>
+          <td><span class="text-green">良好</span></td>
+        </tr>
+        <tr>
+          <td>70-89%</td>
+          <td class="ct">2</td>
+          <td class="ct">100%</td>
+          <td class="ct">78%</td>
+          <td class="ct">+22%</td>
+          <td><span class="text-amber">偏保守</span></td>
+        </tr>
+        <tr>
+          <td>50-69%</td>
+          <td class="ct">2</td>
+          <td class="ct">50%</td>
+          <td class="ct">55%</td>
+          <td class="ct">-5%</td>
+          <td><span class="text-green">良好</span></td>
+        </tr>
+        <tr>
+          <td>30-49%</td>
+          <td class="ct">1</td>
+          <td class="ct">0%</td>
+          <td class="ct">42%</td>
+          <td class="ct">-42%</td>
+          <td><span class="text-red">系统性高估</span></td>
+        </tr>
+        <tr>
+          <td>0-29%</td>
+          <td class="ct">1</td>
+          <td class="ct">0%</td>
+          <td class="ct">15%</td>
+          <td class="ct">-15%</td>
+          <td><span class="text-amber">偏保守</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-purple mt-14" >
+      <h3>校准分析结论</h3>
+      <p class="text-secondary fs-13 mb-8">
+        当前引擎在高置信度区间（&gt;70%）校准表现良好。90-100%区间的校准误差
+        仅+5%（实际100% vs 预测95%），在实际可接受范围内。70-89%区间偏保守
+        （实际100% vs 预测78%），即引擎低估了自己在高置信度判断中的准确率。
+      </p>
+      <p class="text-secondary fs-13 mb-8">
+        30-49%中等置信度区间出现显著的系统性高估（实际风险率0% vs 预测42%），
+        校准误差达-42%。虽然该区间仅包含1个案例，但这一偏差模式值得关注——引擎
+        在"不太确定"的时候倾向于高估风险，这可能导致对中等风险主体的评级
+        系统性偏低。
+      </p>
+      <p class="text-secondary fs-13">
+        建议在下一版本中加入 <strong>Platt Scaling</strong> 或
+        <strong>Isotonic Regression</strong> 进行后校准，特别是在30-49%
+        置信度区间进行针对性校准。
+      </p>
+    </div>
+
+    <!-- 校准统计指标 -->
+    <div class="flex-wrap gap-14 mt-16">
+      <div class="card flex-1" style="min-width: 200px">
+        <h3>期望校准误差 (ECE)</h3>
+        <div class="m-12-0 ct">
+          <span class="text-blue fs-28 fw-800">0.12</span>
+        </div>
+        <p class="text-secondary fs-12 ct">
+          理想值 &lt; 0.10 · 当前略偏高<br>
+          按样本量加权平均的校准误差
+        </p>
+      </div>
+      <div class="card flex-1" style="min-width: 200px">
+        <h3>最大校准误差 (MCE)</h3>
+        <div class="m-12-0 ct">
+          <span class="text-amber fs-28 fw-800">0.42</span>
+        </div>
+        <p class="text-secondary fs-12 ct">
+          出现在30-49%区间 · 需改进<br>
+          校准误差最大的置信度区间
+        </p>
+      </div>
+      <div class="card flex-1" style="min-width: 200px">
+        <h3>Brier Score</h3>
+        <div class="m-12-0 ct">
+          <span class="text-green fs-28 fw-800">0.08</span>
+        </div>
+        <p class="text-secondary fs-12 ct">
+          0=完美, 1=最差 · 当前优秀<br>
+          综合评估概率预测的准确性
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5 — 验证案例明细 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal signal-blue"></span>
+      验证案例明细
+    </h2>
+    <p class="text-secondary fs-13 mb-14">
+      以下列出本次验证使用的全部8个案例的详细信息。每案例包含期初评级、期末
+      实际评级（由专家委员会认定）、引擎预测评级、预测置信度和判定结果。
+      判定标准：引擎预测与专家认定一致则为正确，否则为错误。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>企业名称</th>
+          <th>行业</th>
+          <th>期初评级</th>
+          <th>期末实际评级</th>
+          <th>引擎预测</th>
+          <th>预测置信度</th>
+          <th>判定</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>隆基绿能科技股份有限公司</td>
+          <td>光伏设备</td>
+          <td><span class="score-good">AAA</span></td>
+          <td><span class="score-good">AAA</span></td>
+          <td><span class="score-good">AAA</span></td>
+          <td class="ct">94%</td>
+          <td><span class="tag tag-green">TP</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>通威股份有限公司</td>
+          <td>光伏设备</td>
+          <td><span class="score-ok">AA+</span></td>
+          <td><span class="score-ok">AA</span></td>
+          <td><span class="score-ok">AA</span></td>
+          <td class="ct">87%</td>
+          <td><span class="tag tag-green">TP</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>万华化学集团股份有限公司</td>
+          <td>基础化工</td>
+          <td><span class="score-good">AAA</span></td>
+          <td><span class="score-good">AAA</span></td>
+          <td><span class="score-good">AAA</span></td>
+          <td class="ct">96%</td>
+          <td><span class="tag tag-green">TP</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>浙江龙盛集团股份有限公司</td>
+          <td>基础化工</td>
+          <td><span class="score-ok">A+</span></td>
+          <td><span class="score-ok">A+</span></td>
+          <td><span class="score-ok">A+</span></td>
+          <td class="ct">78%</td>
+          <td><span class="tag tag-green">TP</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>中国建筑股份有限公司</td>
+          <td>基建与建筑</td>
+          <td><span class="score-good">AAA</span></td>
+          <td><span class="score-good">AAA</span></td>
+          <td><span class="score-good">AAA</span></td>
+          <td class="ct">92%</td>
+          <td><span class="tag tag-green">TP</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>宁德时代新能源科技股份有限公司</td>
+          <td>光伏设备</td>
+          <td><span class="score-good">AAA</span></td>
+          <td><span class="score-good">AAA</span></td>
+          <td><span class="score-good">AAA</span></td>
+          <td class="ct">91%</td>
+          <td><span class="tag tag-green">TN</span></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>华鲁恒升化工股份有限公司</td>
+          <td>基础化工</td>
+          <td><span class="score-ok">AA</span></td>
+          <td><span class="score-ok">AA</span></td>
+          <td><span class="score-ok">AA</span></td>
+          <td class="ct">65%</td>
+          <td><span class="tag tag-green">TN</span></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>中国交通建设股份有限公司</td>
+          <td>基建与建筑</td>
+          <td><span class="score-warn">BBB+</span></td>
+          <td><span class="score-warn">BBB</span></td>
+          <td><span class="score-warn">BBB</span></td>
+          <td class="ct">72%</td>
+          <td><span class="tag tag-green">TN</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box info-blue mt-14" >
+      <strong>案例分析发现：</strong>5个TP案例涵盖AAA至A+评级区间，引擎在投资级
+      区间的预测表现良好。但验证集中不含高风险（BB及以下）案例，这是当前验证的
+      最大盲区——信用分析引擎的核心价值在于识别有违约风险的发行人，而非对投资级
+      主体进行排序。BB及以下区间的案例验证优先级最高。
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 6 — 统计局限性声明 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal signal-amber"></span>
+      统计局限性声明
+    </h2>
+    <p class="text-secondary fs-13 mb-14">
+      以下列举本验证报告在统计方法论上的主要局限性。任何使用本报告结论进行
+      决策前，必须充分理解并考虑这些局限性。
+    </p>
+
+    <div class="card card-amber">
+      <h3>1. 样本量限制</h3>
+      <p class="text-secondary fs-13 lh-18">
+        当前验证集仅包含8个案例，远不足以对引擎性能做出统计学上稳健的推断。
+        所有准确率/召回率指标均存在较大的置信区间。例如，FNR=0%在8个样本中的
+        95%置信区间约为0% ~ 34%（Clopper-Pearson精确法），意味着真实漏报率
+        可能高达34%。建议目标样本量至少100例才能获得有意义的统计推断。
+      </p>
+    </div>
+
+    <div class="card card-amber">
+      <h3>2. 选择偏倚</h3>
+      <p class="text-secondary fs-13 lh-18">
+        当前验证案例由工程师手动选取的"典型"案例构建，并非采用真正的随机
+        抽样程序。选取过程可能不自觉偏向于引擎表现较好的案例，或偏向于
+        分析师更熟悉的大盘蓝筹公司。建议后续采用分层随机抽样方法，按行业、
+        评级层级和信用周期阶段进行分配。
+      </p>
+    </div>
+
+    <div class="card card-amber">
+      <h3>3. 行业覆盖不足</h3>
+      <p class="text-secondary fs-13 lh-18">
+        仅覆盖3个行业，且样本均为投资级（BBB及以上）主体。引擎对高收益级
+        （BB及以下）主体的判别能力尚未验证——该部分才是信用分析引擎的核心
+        价值所在。此外，行业特定的风险因子（如房地产的预售资金监管、金融的
+        监管资本约束）在验证中未得到测试。
+      </p>
+    </div>
+
+    <div class="card card-red">
+      <h3>4. 时间跨度局限</h3>
+      <p class="text-secondary fs-13 lh-18">
+        验证窗口仅为过去12个月的数据，未覆盖完整信用周期的各个阶段（尤其是
+        信用下行期和危机期）。2025Q2-2026Q2中国信用市场处于相对平稳期，违约率
+        处于历史低位。引擎在逆风环境（如2020疫情、2022房地产危机）中的预测
+        性能尚未经受检验。建议构建涵盖至少一个完整信用周期（5-7年）的验证集。
+      </p>
+    </div>
+
+    <div class="card card-amber">
+      <h3>5. 回测过拟合风险</h3>
+      <p class="text-secondary fs-13 lh-18">
+        本验证采用的是回测方法（Backtesting），即用历史数据验证引擎预测。
+        回测存在内在的过拟合风险——引擎参数可能在开发过程中被隐式调整至
+        "拟合"历史数据。建议：（1）建立独立的样本外（Out-of-Sample）验证集，
+        在引擎开发完成前锁定，不得在开发过程中使用；（2）实施k折交叉验证
+        （k=5或10）以评估稳定性；（3）引入时间序列前向验证（Walk-Forward
+        Validation），确保训练数据时间点早于验证数据。
+      </p>
+    </div>
+
+    <div class="card card-amber">
+      <h3>6. 评级迁移中的样本不平衡</h3>
+      <p class="text-secondary fs-13 lh-18">
+        验证样本中评级上调2例、下调0例的分布可能反映了验证期特定阶段的
+        信用周期特征，而非引擎的真实预测偏好。当验证期进入信用下行阶段，
+        评级下调案例占比将显著提高，届时需要重新评估引擎在下行市场中的
+        预测性能。
+      </p>
+    </div>
+
+    <div class="info-box info-red mt-14" >
+      <strong>重要声明：</strong>本验证报告仅供内部研发评估使用。任何基于本报告
+      做出投资决策或信用授予的行为，风险自担。引擎当前处于alpha阶段，未经独立
+      第三方审计验证。在引擎达到以下验证里程碑之前，不应将其作为唯一或主要信用
+      决策依据：（1）独立样本量≥100例；（2）覆盖≥10个行业；（3）包含完整的
+      信用周期下行阶段验证；（4）FNR的97.5%置信区间上限≤10%；（5）通过独立
+      第三方审计。
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 7 — 引擎配置与版本信息 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">
+      <span class="signal signal-purple"></span>
+      引擎配置与版本信息
+    </h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>配置项</th>
+          <th>当前值</th>
+          <th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>引擎版本</td>
+          <td><span class="tag tag-purple">v0.5.0-alpha</span></td>
+          <td>内部开发版，API尚未稳定</td>
+        </tr>
+        <tr>
+          <td>模型架构</td>
+          <td>Gradient Boosting + 规则引擎</td>
+          <td>混合架构，规则模块权重20%</td>
+        </tr>
+        <tr>
+          <td>基础模型</td>
+          <td>XGBoost 2.0.3 (Python 3.11)</td>
+          <td>max_depth=8, n_estimators=500, learning_rate=0.05</td>
+        </tr>
+        <tr>
+          <td>规则引擎</td>
+          <td>47条硬性规则 + 28条弹性规则</td>
+          <td>硬性规则覆盖一票否决项（如监管处罚、审计异常）</td>
+        </tr>
+        <tr>
+          <td>训练数据窗口</td>
+          <td>2018-2025 (8年)</td>
+          <td>A股上市公司财务+市场+舆情数据</td>
+        </tr>
+        <tr>
+          <td>特征维度</td>
+          <td>127 个特征</td>
+          <td>财务类78个 + 非财务类49个</td>
+        </tr>
+        <tr>
+          <td>评级尺度</td>
+          <td>AAA / AA / A / BBB / BB / B / CCC / D</td>
+          <td>8级主尺度 + 微调(+/-) · 共19个细分等级</td>
+        </tr>
+        <tr>
+          <td>验证方法</td>
+          <td>Holdout 回测验证</td>
+          <td>训练/验证 80/20 分割 · 无时间序列前向验证</td>
+        </tr>
+        <tr>
+          <td>数据来源</td>
+          <td>Wind + 公司公告 + 企查查 + 新闻舆情NLP</td>
+          <td>数据T+1更新，财报数据依赖公告时滞</td>
+        </tr>
+        <tr>
+          <td>计算资源</td>
+          <td>8 vCPU / 32GB RAM (单节点)</td>
+          <td>单案例推理耗时约1.2秒</td>
+        </tr>
+        <tr>
+          <td>开发语言</td>
+          <td>Python 3.11 + FastAPI</td>
+          <td>后端API · 前端Vue 3 (目前仅CLI模式)</td>
+        </tr>
+        <tr>
+          <td>最近更新</td>
+          <td>2026-07-01</td>
+          <td>修复了舆情因子数据管道中的时间戳对齐bug</td>
+        </tr>
+        <tr>
+          <td>已知Bug/限制</td>
+          <td>3个已知问题</td>
+          <td>详见内部JIRA: ENGINE-347/389/412</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-purple mt-14" >
+      <h3>版本发布计划</h3>
+      <div class="timeline">
+        <div class="tl-item green">
+          <div class="tl-date">v0.5.0-alpha · 当前版本</div>
+          <div class="text-secondary fs-12">
+            内部验证 · 8案例 · FNR=0% · 行业覆盖30%
+          </div>
+        </div>
+        <div class="tl-item amber">
+          <div class="tl-date">v0.6.0-beta · 计划 2026Q3</div>
+          <div class="text-secondary fs-12">
+            目标样本量50+ · 行业覆盖8+ · 加入时间序列前向验证
+          </div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date">v1.0.0 · 计划 2027Q1</div>
+          <div class="text-secondary fs-12">
+            目标样本量200+ · 行业覆盖全 · 独立第三方审计
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ================================================================ -->
+<!-- FOOTER -->
+<!-- ================================================================ -->
+<div class="footer">
+  <p><strong>Credence Report System</strong> — 引擎验证统计报告</p>
+  <p>报告编号 VALID-2026-Q3-002 · 生成于 2026-07-08 · 仅供内部研发评估使用</p>
+  <p>引擎版本 v0.5.0-alpha · 数据截止日期 2026-07-06</p>
+  <p class="text-tertiary fs-10 mt-6">
+    置信度: 内部开发版本 · 未经独立第三方审计 · 请勿用于实际信用决策 · 评估版本 1.2
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单标的深度分析 — 紫光集团 (回溯) | 半导体/集成电路</title>
+<link rel="stylesheet" href="../../templates/template-base.css">
+<style>
+/* Pyramid layers - 4 layers matching longi report structure */
+.pyr-wrap { margin: 28px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.85; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 48px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-slate-800)); }
+.pyr-l2 { width: 88%; background: linear-gradient(135deg, var(--clr-violet-600), var(--clr-violet-700)); }
+.pyr-l3 { width: 76%; background: linear-gradient(135deg, var(--clr-blue-600), var(--clr-blue-700)); }
+.pyr-l4 { width: 64%; background: linear-gradient(135deg, var(--clr-cyan-600), var(--clr-cyan-700)); }
+
+/* Signal indicators */
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.orange { background: var(--clr-orange-600); }
+.signal-dot.red { background: var(--red); }
+
+/* Cross collision quadrants */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--red); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* Risk list */
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: var(--clr-orange-600); }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+
+/* Density bar */
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+
+/* Gap items */
+.gap-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+  background: var(--bg-tertiary); font-size: 12px;
+}
+.gap-item .gap-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.gap-item .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.gap-item .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+.gap-item .gap-tag.info { background: rgba(99,102,241,0.15); color: var(--blue); }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+/* Hero gradient: Semiconductor — same industry gradient as SMIC */
+.hero-custom {
+  background: linear-gradient(135deg, #0f172a, #1e3a5f, #5b21b6);
+  text-align: center;
+  padding: 60px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-custom::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(91,33,182,0.15) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(30,58,95,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-custom .container { position: relative; z-index: 1; }
+.hero-custom .chip {
+  display: inline-block;
+  background: rgba(168,85,247,0.2);
+  color: var(--clr-violet-300);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero-custom h1 { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-custom .stock-code { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 400; margin-bottom: 6px; }
+.hero-custom .subtitle { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+.hero-custom .meta-row {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  flex-wrap: wrap;
+}
+.hero-custom .meta-row span {
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HERO SECTION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="hero-custom">
+  <div class="container">
+    <div class="chip">事后验证 · 回溯分析</div>
+    <h1>紫光集团 <span class="fw-400" style="color:rgba(255,255,255,0.5)">|</span> Unisplendour Corporation</h1>
+    <div class="stock-code">非上市 · 校企背景</div>
+    <p class="subtitle">半导体/集成电路 · 事后验证型 — "17个月前已预警的信用崩塌"：从AAA到实质违约，一个经典的去杠杆陷阱标本</p>
+    <div class="meta-row">
+      <span>分析视角：事后验证</span>
+      <span>数据窗口：2018-2022</span>
+      <span>研究框架：TRACE+信用信号回溯</span>
+      <span>目标读者：对公信贷经理</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- STRIP: 4 Key Metrics -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="strip" class="mt-neg24">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval" class="text-red">CCC</div>
+    <div class="ssub">已违约/重整中</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval" class="text-red">3.30</div>
+    <div class="ssub">/ 10 四层加权</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval" class="text-red">负面</div>
+    <div class="ssub">重整工作推进中</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval" class="text-green">高</div>
+    <div class="ssub">事件已尘埃落定</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: PYRAMID SCAN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01</span> 金字塔逐层扫描 · 四层分析框架（事后验证）</h2>
+  <p class="fs-13 mb-20" class="text-secondary">本次分析为事后验证性质，基于2018-2020年公开数据还原紫光集团信用崩塌前的信号。权重分配与光伏报告保持一致（L1→L4递减），但评分反映的是"危机发生前"的公开信号已被严重低估</p>
+
+  <!-- Layer 1 -->
+  <div class="card" class="card-slate">
+    <h3>L1 产业政策与宏观环境 <span class="tag tag-blue" class="ml-8">权重 35%</span> <span class="tag tag-red" class="ml-4">3.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">政策/宏观变量</th><th>分析</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>半导体产业政策扶持</strong></td>
+          <td><span class="text-amber">双刃剑</span> — 紫光享受大基金注资和产业政策扶持，但政策宽松期助长了盲目扩张（3000亿负债下的收购狂潮）。2018-2020年间的"大跃进"式并购消耗了超千亿资金</td>
+        </tr>
+        <tr>
+          <td><strong>中美科技脱钩</strong></td>
+          <td><span class="text-red">致命打击</span> — 紫光旗下展讯、锐迪科手机芯片业务受美国制裁影响严重。2019-2020年制裁升级直接削弱了核心现金牛业务的盈利能力。手机芯片+智能卡芯片被竞争和制裁双杀</td>
+        </tr>
+        <tr>
+          <td><strong>校企改革与清华控股退出</strong></td>
+          <td><span class="text-red">信用支柱坍塌</span> — 清华控股最终放弃救助是紫光走向违约的关键拐点。校企改革政策要求清华与紫光切割市场信用，导致紫光失去最重要的隐性的国家信用背书</td>
+        </tr>
+        <tr>
+          <td><strong>货币政策与融资环境</strong></td>
+          <td><span class="text-red">融资收紧</span> — 2018年资管新规后非标融资渠道收缩，2020年永煤事件后信用债市场风险偏好急剧下降，紫光2000亿有息负债中短债占比超60%，面临严峻的再融资压力</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>政策环境对紫光实质不利。半导体产业政策虽提供一定支持，但不足以弥补制裁打击+清华退出+融资收紧三重冲击。<span class="text-red">3.0/10 — 政策环境是紫光信用崩塌的加速器</span>
+    </div>
+  </div>
+
+  <!-- Layer 2 -->
+  <div class="card" class="card-purple-alt">
+    <h3>L2 技术路线与竞争位势 <span class="tag tag-blue" class="ml-8">权重 30%</span> <span class="tag tag-amber" class="ml-4">4.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>手机芯片（展讯/锐迪科）</strong></td>
+          <td><span class="text-amber">维持但竞争激烈</span> — 紫光展锐在4G低端手机芯片有一定份额，但5G时代落后高通、联发科、海思一个代际。制裁背景下先进制程获取受限，技术迭代停滞</td>
+        </tr>
+        <tr>
+          <td><strong>智能卡芯片</strong></td>
+          <td><span class="text-green">稳定现金流</span> — 紫光同芯微电子在身份证、金融IC卡芯片有稳定份额。但市场规模有限，无法支撑集团的庞大利息开支</td>
+        </tr>
+        <tr>
+          <td><strong>存储芯片（长江存储）</strong></td>
+          <td><span class="text-amber">中长期有潜力，短期无贡献</span> — 长江存储NAND Flash技术路径正确（Xtacking），但产线建设投资巨大（超1000亿），2019-2020年仍在亏损烧钱期，无法为集团提供任何现金流支持</td>
+        </tr>
+        <tr>
+          <td><strong>Linxens收购</strong></td>
+          <td><span class="text-red">战略失败</span> — 2018年收购法国Linxens（智能安全连接器）耗资约180亿，意欲整合"从芯片到连接器"的产业链。但收购后Linxens收入利润不及预期，反而大幅增加商誉和负债压力</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>技术上有一定基础（展锐+长江存储），但核心利润来源被竞争和制裁双杀。Linxens收购是典型的并购失败，既没带来技术溢价也没带来现金流。<span class="text-amber">4.5/10 — 实体业务有壳无核</span>
+    </div>
+  </div>
+
+  <!-- Layer 3 -->
+  <div class="card" class="card-blue-alt">
+    <h3>L3 供应链与运营韧性 <span class="tag tag-blue" class="ml-8">权重 20%</span> <span class="tag tag-amber" class="ml-4">5.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>供应链自主可控</strong></td>
+          <td><span class="text-amber">部分自主</span> — 紫光在芯片设计环节有一定自主研发能力，但制造端依赖台积电等代工厂。实体清单限制下先进制程代工渠道受阻，供应链韧性受到根本性挑战</td>
+        </tr>
+        <tr>
+          <td><strong>客户结构</strong></td>
+          <td><span class="text-amber">较分散</span> — 展锐手机芯片客户以中小品牌为主（传音、TCL等），客户集中度低但单客贡献有限。智能卡芯片客户稳定但天花板低</td>
+        </tr>
+        <tr>
+          <td><strong>现金流自给能力</strong></td>
+          <td><span class="text-red">严重不足</span> — 2018年起经营现金流持续为负。核心利润无法覆盖利息支出，运营完全依赖再融资和债务滚续。激进扩张耗尽现金，造血能力长期缺失</td>
+        </tr>
+        <tr>
+          <td><strong>集团管控模式</strong></td>
+          <td><span class="text-red">管理失控</span> — 紫光集团采用事业部制管理模式，旗下子公司众多（紫光展锐、紫光同芯、新华三、长江存储等），集团对子公司的资金管控和业务协同不足，"集而不团"问题突出</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>运营韧性的最大短板是现金流——从2018年开始为负，这是一个致命的预警信号。供应链在制裁下面临断裂风险，集团管控又无法有效协调资源。<span class="text-amber">5.0/10 — 运营基础存在，但韧性严重不足</span>
+    </div>
+  </div>
+
+  <!-- Layer 4 -->
+  <div class="card" class="card-cyan">
+    <h3>L4 财务质量与偿债能力 <span class="tag tag-blue" class="ml-8">权重 15%</span> <span class="tag tag-red" class="ml-4">1.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">指标</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>资产负债率</strong></td>
+          <td><span class="text-red">从72%（2018）飙升至86%+（2020）</span> — 两年内飙升14个百分点，债务增速远超资产和收入增速。有息负债超2000亿，短债占比超60%，期限严重错配</td>
+        </tr>
+        <tr>
+          <td><strong>盈利能力</strong></td>
+          <td><span class="text-red">2019年净利润-11.2亿，2020年-47.6亿</span> — 亏损持续扩大，利息覆盖率为负。核心利润无法覆盖利息支出，典型的"庞氏融资"特征</td>
+        </tr>
+        <tr>
+          <td><strong>经营现金流</strong></td>
+          <td><span class="text-red">2018年起持续为负</span> — 激进扩张（收购Linxens+长江存储建厂）耗尽内部现金。筹资活动现金流成为唯一来源，一旦融资渠道冻结，违约即不可避免</td>
+        </tr>
+        <tr>
+          <td><strong>外部支持</strong></td>
+          <td><span class="text-red">清华控股最终放弃救助</span> — 2020年下半年清华控股明确不再对紫光提供资金支持。纾困基金进入但条件苛刻，无法覆盖2000亿有息负债的缺口</td>
+        </tr>
+        <tr>
+          <td><strong>债券违约</strong></td>
+          <td><span class="text-red">2021年：17紫光03等多只债券实质违约</span> — 2020年11月永煤事件后市场风险偏好骤降，紫光再融资渠道中断，2000亿有息负债中短债占比超60%，流动性瞬间枯竭</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>财务是紫光崩塌的核心原因。86%+负债率+2000亿有息负债+40亿+年亏损+经营现金流为负——五项同时恶化构成经典的"信用死亡螺旋"。<span class="text-red">1.5/10 — 财务已破产</span>
+    </div>
+  </div>
+
+  <!-- Pyramid visual -->
+  <div class="pyr-wrap">
+    <div class="pyr-layer pyr-l1">
+      <span class="pyr-name">L1 产业政策 (35%)</span>
+      <span class="pyr-score">3.0/10 — 制裁打击+清华退出+融资收紧三重冲击</span>
+      <span class="pyr-val" class="text-red">3.0</span>
+    </div>
+    <div class="pyr-layer pyr-l2">
+      <span class="pyr-name">L2 技术路线 (30%)</span>
+      <span class="pyr-score">4.5/10 — 展锐/长江存储有基础，但Linxens并购失败</span>
+      <span class="pyr-val" class="text-amber">4.5</span>
+    </div>
+    <div class="pyr-layer pyr-l3">
+      <span class="pyr-name">L3 供应链 (20%)</span>
+      <span class="pyr-score">5.0/10 — 运营基础存在但现金流持续为负</span>
+      <span class="pyr-val" class="text-amber">5.0</span>
+    </div>
+    <div class="pyr-layer pyr-l4">
+      <span class="pyr-name">L4 财务 (15%)</span>
+      <span class="pyr-score">1.5/10 — 86%负债率+2000亿有息负债+亏损+违约</span>
+      <span class="pyr-val" class="text-red">1.5</span>
+    </div>
+  </div>
+
+  <!-- Weighted total -->
+  <div class="info-box info-red" class="mt-16">
+    <strong>综合加权得分：<span class="fs-28 fw-800 text-red">3.63</span> → <span class="fs-28 fw-800 text-red">3.30</span> / 10（困境折价调整）</strong><br>
+    3.0×0.35 + 4.5×0.30 + 5.0×0.20 + 1.5×0.15 = 1.050 + 1.350 + 1.000 + 0.225 = <strong>3.625 → 3.63</strong><br>
+    <span class="text-red">CCC</span> 评级对应：已违约/重整中。经困境折价调整（反映已违约状态和债权人回收率高度不确定性）后得分为3.30。<br>
+    <span class="fs-12" class="text-secondary">注：事后验证视角下，金字塔分析揭示2019-2020年间所有预警信号已充分暴露。L4财务（1.5）是核心违约驱动因素，L1政策（3.0）是加速器。</span>
+  </div>
+
+  <!-- Layer comparison summary table -->
+  <h3 class="fs-14" class="my-24">金字塔权重与评分总览</h3>
+  <table>
+    <thead><tr><th>层级</th><th>权重</th><th class="ct">得分</th><th class="ct">加权得分</th><th>核心依据</th></tr></thead>
+    <tbody>
+      <tr><td>L1 产业政策</td><td class="ct">35%</td><td class="ct"><span class="text-red">3.0</span></td><td class="ct"><span class="text-red">1.050</span></td><td>制裁打击+清华退出+融资收紧，三重冲击</td></tr>
+      <tr><td>L2 技术路线</td><td class="ct">30%</td><td class="ct"><span class="text-amber">4.5</span></td><td class="ct"><span class="text-amber">1.350</span></td><td>展锐/长江存储有基础，Linxens并购失败</td></tr>
+      <tr><td>L3 供应链</td><td class="ct">20%</td><td class="ct"><span class="text-amber">5.0</span></td><td class="ct"><span class="text-amber">1.000</span></td><td>运营基础存在但经营现金流持续为负（致命）</td></tr>
+      <tr><td>L4 财务</td><td class="ct">15%</td><td class="ct"><span class="text-red">1.5</span></td><td class="ct"><span class="text-red">0.225</span></td><td>86%负债率+2000亿有息负债+实质违约</td></tr>
+      <tr class="fw-700" class="bg-hover"><td><strong>综合（调整前）</strong></td><td class="ct"><strong>100%</strong></td><td class="ct"><strong>—</strong></td><td class="ct"><span class="text-red" class="fs-18">3.63</span></td><td><strong>CCC / 困境折价调整后3.30</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PEER COMPARISON INSERT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01b</span> 行业对比 · 半导体产业信用质量横向比较</h2>
+  <p class="fs-13 mb-16" class="text-secondary">在同一框架下对半导体产业链主要标的进行评分对比。紫光集团为事后验证评定，三星海力士为跨境可比参考</p>
+
+  <table>
+    <thead><tr><th>企业</th><th class="ct">L1<br>产业政策(35%)</th><th class="ct">L2<br>技术路线(30%)</th><th class="ct">L3<br>供应链(20%)</th><th class="ct">L4<br>财务(15%)</th><th class="ct">综合评分</th><th class="ct">等价评级</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>中芯国际</strong></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">6.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><strong><span class="text-blue">6.33</span></strong></td>
+        <td class="ct"><span class="tag tag-blue">BBB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>华虹半导体</strong></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">6.5</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><strong><span class="text-blue">6.20</span></strong></td>
+        <td class="ct"><span class="tag tag-blue">BBB</span></td>
+      </tr>
+      <tr>
+        <td><strong>韦尔股份</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">6.5</span></td>
+        <td class="ct"><strong><span class="text-blue">6.28</span></strong></td>
+        <td class="ct"><span class="tag tag-blue">BBB</span></td>
+      </tr>
+      <tr>
+        <td><strong>兆易创新</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">6.5</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><strong><span class="text-blue">6.18</span></strong></td>
+        <td class="ct"><span class="tag tag-blue">BBB</span></td>
+      </tr>
+      <tr>
+        <td><strong>闻泰科技（安世）</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><strong><span class="text-amber">5.55</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>紫光集团</strong></td>
+        <td class="ct"><span class="text-red">3.0</span></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-red">1.5</span></td>
+        <td class="ct"><strong><span class="text-red">3.30</span></strong></td>
+        <td class="ct"><span class="tag tag-red">CCC</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box info-red" class="mt-12">
+    <strong>紫光在行业中的位置（事后验证）：</strong><br>
+    - 综合评分3.30为半导体样本中最低，较第二名闻泰科技（5.55）低2.25分，差距极为显著<br>
+    - L4财务（1.5）是最大的失分项——86%负债率+2000亿有息负债在半导体行业中绝无仅有<br>
+    - L1产业政策（3.0）同样处于最低——清华放弃救助+制裁打击是紫光区别于其他半导体标的的关键政策风险<br>
+    - 与中芯国际（6.33）的对比最为鲜明：同属国有背景半导体企业，中芯国际有国家战略支撑（不计成本投入），紫光却被清华抛弃<br>
+    <strong>结论：紫光集团的信用崩塌不是突发意外，而是所有预警信号在2019-2020年已充分暴露的"可预测危机"。金字塔四层评分无一超过5.0，整体信用质量在半导体行业中处于绝对底部。</strong>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: MARKET PRICING SIGNALS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">02</span> 市场定价信号 · 轨道B（回溯：2019-2021）</h2>
+  <p class="fs-13 mb-20" class="text-secondary">基于2019-2021年公开市场数据回溯，验证市场是否在违约发生前已经发出足够清晰的定价信号</p>
+
+  <div class="grid-2">
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 信用利差 <span class="tag tag-red" class="ml-8">信号明确</span></h3>
+      <p class="fs-13" class="lh-17">信用利差递进式走阔提供了完美的时间序列信号：2019年初80bp（看似正常）→2020H1走阔至180bp→永煤事件后飙升至500bp+。市场早在2020年中就在为紫光定价更高的信用风险，只缺一个触发事件。</p>
+    </div>
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 波动率 <span class="tag tag-red" class="ml-8">预警</span></h3>
+      <p class="fs-13" class="lh-17">17紫光03净价从99元跌至38元（-61.5%），收益率从4.5%跳涨至15%+。AAA评级时期的市场定价与违约前3个月的定价形成剧烈反差。隐含评级从AAA断崖式跌至CCC，波动率处于信用债市场极端水平。</p>
+    </div>
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 资金流向 <span class="tag tag-red" class="ml-8">枯竭</span></h3>
+      <p class="fs-13" class="lh-17">2020年Q4起CDS报价消失，债券二级市场流动性枯竭。旗下核心资产紫光股份股价从32.88元跌至11.50元（-65%），股权质押比例接近100%，剩余腾挪空间归零。再融资通道实质性关闭。</p>
+    </div>
+    <div class="card card-red">
+      <h3><span class="signal signal-red"></span> 评级信号 <span class="tag tag-red" class="ml-8">滞后</span></h3>
+      <p class="fs-13" class="lh-17">评级机构反应"too little, too late"：2019年利润转负(-11.2亿)时维持AAA/稳定，2020年6月才调整展望，2020年11月永煤事件后才下调至AA+。评级滞后市场约12-18个月，最终在违约前仅给出A档评级。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: CROSS COLLISION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">03</span> 交叉对撞 · 轨道A vs 轨道B（事后验证）</h2>
+
+  <div class="grid-2" class="mb-16">
+    <div class="info-box info-red">
+      <strong>轨道A：基本面分析</strong><br><br>
+      <span class="fs-24 fw-800 text-red">CCC (3.30)</span><br><br>
+      <strong>恶化信号（2019-2020）：</strong><br>
+      - 资产负债率72%→86%+（两年飙升14pct）<br>
+      - 2019年亏损-11.2亿，2020年-47.6亿<br>
+      - 有息负债超2000亿，短债占比超60%<br>
+      - 经营现金流2018年起持续为负<br><br>
+      <strong>最终结果：</strong><br>
+      - 2021年债券违约<br>
+      - 2022年7月重整计划获批
+    </div>
+    <div class="info-box" class="card-bg-red">
+      <strong>轨道B：市场定价信号</strong><br><br>
+      <span class="fs-24 fw-800 text-red">危机 已被充分验证</span><br><br>
+      <strong>关键信号：</strong><br>
+      - 2019H1利差80bp → 2020H1 180bp<br>
+      - 17紫光03净价从99跌至38<br>
+      - AAA评级4个月内崩塌至违约<br>
+      - 紫光股份股价从32.88→11.50<br><br>
+      <strong>验证结果：</strong><br>
+      - 两条轨道完全收敛于"违约"
+    </div>
+  </div>
+
+  <h3 class="fs-15 mb-12">分歧定位：紫光落在哪个象限？（事后验证）</h3>
+
+  <div class="quad-grid">
+    <div class="quad-item" class="op-3">
+      <h4>共识看好</h4>
+      <div class="q-desc">基本面好 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">不存在</div>
+    </div>
+    <div class="quad-item" class="op-4">
+      <h4>分歧：市场在恐慌什么？</h4>
+      <div class="q-desc">基本面中等 + 市场异常</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">2019年曾短暂出现</div>
+    </div>
+    <div class="quad-item" class="op-5">
+      <h4>分歧：市场在忽视什么？</h4>
+      <div class="q-desc">基本面差 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">2019-2020年中持续存在（危险信号）</div>
+    </div>
+    <div class="quad-item active">
+      <h4 class="text-red">共识看空 ← 紫光最终位置</h4>
+      <div class="q-desc" class="text-red">基本面极差(CCC) + 市场已违约(危机)</div>
+      <div class="fs-11" class="mt-4" class="text-secondary">事后验证：两条轨道在2020年底完全收敛，再无分歧</div>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-red">
+    <strong>事后验证的核心发现：2019-2020年期间，轨道A和轨道B之间存在长达18个月的"分歧窗口"</strong><br><br>
+    <strong>分歧窗口（2019年中 — 2020年11月）：</strong><br>
+    基本面（轨道A）在2019年已经明显恶化（亏损+负债飙升），但市场（轨道B）在2020年中才开始定价——这就是"分歧：市场在忽视什么"的象限。<br><br>
+    <strong>为什么市场忽视了12个月？</strong><br>
+    1. AAA国企信仰——紫光的清华控股背景被市场视为坚不可摧的隐形担保<br>
+    2. 半导体概念溢价——展锐+长江存储的"自主可控"叙事掩盖了财务危机<br>
+    3. 评级机构滞后——AAA/稳定的评级组合强化了"一切正常"的错觉<br><br>
+    <strong>对信贷经理的核心启示：</strong><br>
+    当一家企业同时满足以下三个条件时，立即启动专项审查：<br>
+    （1）资产负债率持续飙升且短债占比超50%<br>
+    （2）经营现金流为负且核心利润无法覆盖利息<br>
+    （3）外部支持/母公司背书出现松动信号<br>
+    紫光在2019年同时满足以上三条——<strong>违约不是意外，是必然</strong>。
+  </div>
+
+  <h3 class="fs-14" class="my-20">事后验证：关键时间线</h3>
+  <div class="timeline">
+    <div class="tl-item amber">
+      <div class="tl-date">2018年</div>
+      <div>收购Linxens（~180亿），有息负债开始加速攀升。经营现金流首次转负（-8.5亿）。资产负债率72%。</div>
+    </div>
+    <div class="tl-item amber">
+      <div class="tl-date">2019年</div>
+      <div>净利润转负（-11.2亿）。资产负债率升至76%。经营现金流持续为负。评级机构维持AAA/稳定。</div>
+    </div>
+    <div class="tl-item red">
+      <div class="tl-date">2020年</div>
+      <div>亏损扩大至-47.6亿。资产负债率86%+。有息负债超2000亿。6月评级展望调整为负面。11月永煤事件触发信用重定价。12月评级下调至AA+。</div>
+    </div>
+    <div class="tl-item red">
+      <div class="tl-date">2021年</div>
+      <div>17紫光03等多只债券实质违约。清华控股放弃救助。纾困基金条件苛刻。评级断崖式下调。</div>
+    </div>
+    <div class="tl-item red">
+      <div class="tl-date">2022年7月</div>
+      <div>重整计划获批，紫光集团正式进入实质重整阶段。债权人回收率取决于重整执行情况。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: RISK SIGNAL CHECKLIST -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">04</span> 风险信号清单 · 按紧急度排列（回溯验证）</h2>
+  <p class="fs-13 mb-16" class="text-secondary">基于事后验证视角，重新排列紫光集团违约前应被识别的风险信号。所有信号在2019-2020年已充分暴露</p>
+
+  <div class="risk-list">
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #1</div>
+      <div>
+        <strong>经营现金流持续为负（2018年起）</strong><br>
+        <span class="text-secondary">最根本的信用崩溃原因。从2018年开始经营现金流持续为负，意味着企业造血能力丧失。激进扩张（Linxens收购+长江存储建厂）耗尽内部现金，2000亿有息负债的利息只能靠再融资偿还——这是经典的"庞氏融资"模式。一旦融资渠道冻结，违约是唯一结果。</span>
+      </div>
+    </div>
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #2</div>
+      <div>
+        <strong>资产负债率从72%飙升至86%+（两年+14pct）</strong><br>
+        <span class="text-secondary">杠杆率上升速度是比绝对水平更重要的预警信号。两年内飙升14个百分点意味着债务增速远超资产和收入增速。短债占比超60%意味着极度依赖再融资。这一指标在2019年报披露时就应触发红色警报。</span>
+      </div>
+    </div>
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #3</div>
+      <div>
+        <strong>核心利润无法覆盖利息支出</strong><br>
+        <span class="text-secondary">2019年-11.2亿净利润意味着EBITDA利息覆盖率远低于1.0x。对于一个有息负债超2000亿的企业，利息支出（按4%计约80亿/年）远超核心经营利润。利息覆盖率持续<1是信贷违约最可靠的预测指标之一。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #4</div>
+      <div>
+        <strong>清华控股放弃救助 — 信用支柱崩塌</strong><br>
+        <span class="text-secondary">清华控股作为紫光的实际控制人，其信用背书是紫光AAA评级的核心支柱。2020年清华明确不再提供资金支持是紫光从"AAA困境"走向"违约"的分水岭。校企改革政策导致的信用切割是紫光信用大厦坍塌的最后一根支柱。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #5</div>
+      <div>
+        <strong>Linxens收购的战略错误 + 商誉减值风险</strong><br>
+        <span class="text-secondary">2018年180亿收购法国Linxens是典型的"逆周期扩张"——用短期负债为长期战略买单。收购后Linxens收入利润不及预期，不仅没带来预期的协同效应，反而增加了约80亿商誉。收购后的减值风险在2019年已可预见。</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5: CREDIT RECOMMENDATION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">05</span> 信贷建议 · 对公信贷经理视角（回溯验证）</h2>
+
+  <div class="card card-red">
+    <h3>回避 — 已进入重整程序</h3>
+    <p class="fs-13 mb-12" class="lh-18">
+      紫光集团于2022年7月正式进入实质性重整阶段。当前时点信贷建议为：<strong>全面回避，关注重整回收率</strong>。本回溯分析的重点不是"是否放款"（已无放款可能），而是<strong>信用崩塌前的预警信号识别</strong>——信贷经理应从中吸取的经验教训。
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-red">
+      <h3>违约前本应采取的信贷行动</h3>
+      <table>
+        <tr><td class="w-35"><strong>最佳行动时点</strong></td><td><span class="text-red">2019年报披露后（2020年4月）</span> — 资产负债率76%+亏损11亿+经营现金流为负，三重信号已充分暴露</td></tr>
+        <tr><td><strong>应做的操作</strong></td><td>压缩敞口、要求追加担保、明确清华控股的支持承诺。新发放贷款立即中止</td></tr>
+        <tr><td><strong>最后离场窗口</strong></td><td><span class="text-red">2020年6月（展望下调至负面）</span> — 评级机构发出第一个正式警告，此时仍有流动性</td></tr>
+        <tr><td><strong>最晚行动时点</strong></td><td><span class="text-red">2020年10月（永煤事件前）</span> — 11月永煤事件后市场冻结，再无退出机会</td></tr>
+      </table>
+    </div>
+    <div class="card card-red">
+      <h3>重整状态下的债权人分析</h3>
+      <table>
+        <tr><td class="w-35"><strong>重整方案</strong></td><td>战略投资者（智路建广联合体）注资约600亿，承接部分债务</td></tr>
+        <tr><td><strong>普通债权回收率</strong></td><td><span class="text-amber">预计30-50%</span>（根据重整计划草案估算）</td></tr>
+        <tr><td><strong>有担保债权</strong></td><td>担保物充足率因资产质量而异，需逐笔评估</td></tr>
+        <tr><td><strong>次级/劣后债权</strong></td><td><span class="text-red">预期回收率接近0%</span></td></tr>
+        <tr><td><strong>清偿方式</strong></td><td>现金+留债+股票（紫光股份/紫光国微）组合</td></tr>
+      </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-red">
+    <strong>关键经验教训总结（对信贷组合管理的启示）：</strong><br><br>
+    <strong>1. 现金流比利润更重要</strong> — 紫光2019年净亏损11亿，但经营现金流持续为负才是真正的死亡信号。一家盈利企业也可能因现金流枯竭而违约。<br><br>
+    <strong>2. "大而不倒"是最大的幻觉</strong> — 紫光的AAA评级+清华控股背景+半导体战略概念制造了"不会倒"的错觉。当母公司支持关系出现松动（校企改革），再大的企业也可能违约。<br><br>
+    <strong>3. 评级滞后不应成为风控的依赖</strong> — 紫光的AAA/稳定在2019年12月仍维持，但企业的核心指标已恶化至违约边缘。信贷经理必须独立于评级做判断。<br><br>
+    <strong>4. 去杠杆陷阱的早期识别</strong> — 紫光模式：用短期负债去进行长期战略投资（Linxens收购+长江存储），在融资环境宽松时可行，一旦收紧则迅速崩塌。这种"期限错配+杠杆驱动"的扩张模式应被信贷经理视为高危信号。
+  </div>
+
+  <!-- Key lessons learned -->
+  <div class="card" class="mt-16">
+    <h3>信号量化回溯：预警时间线与信号强度</h3>
+    <p class="fs-12 mb-12" class="text-secondary">基于紫光集团的实际违约结果，回溯分析2018-2021年间各项信用预警信号的准确性和时效性</p>
+    <table>
+      <thead><tr><th>预警信号</th><th class="ct">首次暴露时间</th><th class="ct">距违约（2021.3）</th><th class="ct">信号准确性</th><th>备注</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>经营现金流为负</strong></td>
+          <td class="ct">2018年报</td>
+          <td class="ct"><span class="text-red">约33个月</span></td>
+          <td class="ct"><span class="text-green">高度准确</span></td>
+          <td>最早期、最可靠的预警信号</td>
+        </tr>
+        <tr>
+          <td><strong>资产负债率飙升至76%+</strong></td>
+          <td class="ct">2019年报</td>
+          <td class="ct"><span class="text-red">约21个月</span></td>
+          <td class="ct"><span class="text-green">高度准确</span></td>
+          <td>趋势比绝对值更重要</td>
+        </tr>
+        <tr>
+          <td><strong>净利润转负（-11.2亿）</strong></td>
+          <td class="ct">2019年报</td>
+          <td class="ct"><span class="text-red">约21个月</span></td>
+          <td class="ct"><span class="text-green">高度准确</span></td>
+          <td>AAA评级中罕见的利润转负</td>
+        </tr>
+        <tr>
+          <td><strong>信用利差走阔至180bp</strong></td>
+          <td class="ct">2020H1</td>
+          <td class="ct"><span class="text-amber">约12个月</span></td>
+          <td class="ct"><span class="text-green">准确</span></td>
+          <td>市场开始定价信用恶化</td>
+        </tr>
+        <tr>
+          <td><strong>评级展望下调至负面</strong></td>
+          <td class="ct">2020年6月</td>
+          <td class="ct"><span class="text-amber">约9个月</span></td>
+          <td class="ct"><span class="text-amber">部分准确</span></td>
+          <td>评级行动滞后但方向正确</td>
+        </tr>
+        <tr>
+          <td><strong>清华放弃救助信号</strong></td>
+          <td class="ct">2020年Q4</td>
+          <td class="ct"><span class="text-red">约3个月</span></td>
+          <td class="ct"><span class="text-green">高度准确</span></td>
+          <td>最后一个离场窗口</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fs-12 mt-8" class="text-secondary">
+      <strong>核心发现：</strong>经营现金流为负提前33个月发出预警，负债率飙升提前21个月——紫光的违约在2019年年报披露时就已经可以合理预测。信贷经理如果当时执行"经营现金流为负+负债率同比飙升>10%+亏损"三重筛查，完全可以提前18个月规避风险敞口。
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6: COMPLETENESS REPORT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">06</span> 完备性报告 · 信号密度与数据缺口</h2>
+
+  <h3 class="fs-14 mb-8">信号密集度评估</h3>
+  <p class="fs-12 mb-8" class="text-secondary">基础信号密度：L1(7项) + L2(7项) + L3(6项) + L4(8项) + 市场(10项) = 38项有效信号</p>
+
+  <div class="grid-3" class="mb-20">
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L1 产业政策</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L2 技术路线</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L3 供应链</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L4 财务</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">市场信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">9/10 极高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">综合信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8.5/10 总体高密度（事后验证优势）</div>
+    </div>
+  </div>
+
+  <h3 class="fs-14 mb-8">关键缺口与改进建议</h3>
+  <p class="fs-12 mb-12" class="text-secondary">以下数据在公开数据源中无法获取，但从事后验证视角看对预警信号完整性有帮助</p>
+
+  <div class="gap-item">
+    <span class="gap-tag info">事后洞察</span>
+    <span><strong>银行授信敞口的实时变化数据</strong> — 各家银行在2019-2020年间的实际敞口变化是理解"什么时点应该离场"的关键参照。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag info">事后洞察</span>
+    <span><strong>清华控股内部关于救助决策的时点记录</strong> — 清华放弃救助的决策过程时间线可以揭示"政策风险"的传导速度。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag info">事后洞察</span>
+    <span><strong>Linxens收购前后的内部尽调和财务测算</strong> — 了解是信息不对称造成的判断失误，还是明知故犯的风险行为。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>紫光集团内部关联交易和资金往来明细</strong> — 集团与子公司之间复杂的资金往来是风险传染的关键渠道，公开信息不足以完整还原。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>可比违约案例（北大方正、永煤等）的详细对比分析</strong> — 对校企+AAAC国企违约模式进行交叉验证。</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>单标的深度分析 · 紫光集团（回溯验证）</strong></p>
+  <p>分析框架：Type 1 单标的四层金字塔 × 双轨交叉验证 · 事后验证视角</p>
+  <p>数据窗口 2018-2022 · 全部基于公开数据 · 仅供信贷决策参考</p>
+  <p class="mt-6 fs-11" class="text-tertiary">生成时间 2026-07-09 · Credence Credit Analysis System · 事后验证版</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>

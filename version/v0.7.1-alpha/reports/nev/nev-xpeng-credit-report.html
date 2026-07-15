@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小鹏汽车(9868.HK/XPEV) — 单标的深度信贷分析报告</title>
+<link rel="stylesheet" href="../../templates/template-base.css">
+<style>
+  /* ===== Hero ===== */
+  h3 { font-size: 15px; }
+
+  /* ===== Pyramid ===== */
+  .pyramid { margin: 40px 0; }
+  .pyramid-layer {
+    display: flex; gap: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .pyramid-layer:hover { border-color: var(--border-strong); }
+  .pyramid-layer .layer-weight {
+    flex-shrink: 0;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; line-height: 1.3;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-default);
+  }
+  .pyramid-layer .layer-weight .pct { font-size: 14px; }
+  .pyramid-layer .layer-body { flex: 1; min-width: 0; }
+  .pyramid-layer .layer-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px; flex-wrap: wrap; gap: 8px;
+  }
+  .pyramid-layer .layer-header h3 {
+    font-size: 15px; font-weight: 700; margin: 0;
+  }
+  .pyramid-layer .layer-header .score {
+    font-size: 20px; font-weight: 800;
+  }
+  .pyramid-layer .layer-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+  .pyramid-layer .layer-desc strong { color: var(--text-primary); }
+  .pyramid-layer .layer-desc .highlight { color: var(--amber); font-weight: 600; }
+  .pyramid-layer .layer-desc .warn { color: var(--red); font-weight: 600; }
+  .pyramid-layer .layer-desc .good { color: var(--green); font-weight: 600; }
+
+  /* ===== Finding Grid ===== */
+  .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  @media (max-width: 640px) { .finding-grid { grid-template-columns: 1fr; } }
+  .finding-card {
+    background: var(--bg-secondary); border: 1px solid var(--border-default);
+    border-radius: var(--radius); padding: 18px 20px;
+  }
+  .finding-card .fc-icon { font-size: 22px; margin-bottom: 6px; }
+  .finding-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .finding-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ===== Risk Signal ===== */
+  .risk-bar {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--red-bg); border: 1px solid rgba(239,68,68,0.2);
+    border-radius: var(--radius); padding: 14px 20px; margin: 10px 0;
+  }
+  .risk-bar .r-icon { font-size: 20px; flex-shrink: 0; }
+  .risk-bar .r-body { flex: 1; font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+  .risk-bar .r-body strong { color: var(--red); }
+  .risk-amber { background: var(--amber-bg); border-color: rgba(245,158,11,0.2); }
+  .risk-amber .r-body strong { color: var(--amber); }
+  .risk-green { background: var(--green-bg); border-color: rgba(34,197,94,0.2); }
+  .risk-green .r-body strong { color: var(--green); }
+
+  /* ===== Credit Suggestion ===== */
+  .credit-box {
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 18px 0;
+  }
+  .credit-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .credit-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+  .credit-box p strong { color: var(--text-primary); }
+  .credit-box ul { margin: 8px 0 0 18px; font-size: 13px; color: var(--text-secondary); line-height: 1.9; }
+  .credit-box ul li strong { color: var(--text-primary); }
+
+  /* ===== Financial Data Table ===== */
+  .fin-table-wrap { overflow-x: auto; margin: 14px 0; }
+  .fin-table-wrap table { min-width: 600px; }
+  .fin-table-wrap td.rt { font-variant-numeric: tabular-nums; }
+
+  /* ===== Section Subtitle ===== */
+  .section-sub { font-size: 12px; color: var(--text-tertiary); margin-top: -10px; margin-bottom: 16px; }
+
+  /* ===== Pills ===== */
+  .pill {
+    display: inline-block; padding: 2px 10px;
+    border-radius: 10px; font-size: 11px; font-weight: 600;
+  }
+  .pill-green { background: var(--green-bg); color: var(--green); }
+  .pill-amber { background: var(--amber-bg); color: var(--amber); }
+  .pill-red   { background: var(--red-bg);   color: var(--red); }
+  .pill-blue  { background: var(--blue-bg);  color: var(--blue); }
+  .pill-purple { background: var(--purple-bg); color: var(--purple); }
+
+  /* ===== Segment Bar ===== */
+  .segment-bar-wrap { margin: 16px 0; }
+  .segment-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .segment-row .seg-label {
+    width: 100px; flex-shrink: 0;
+    font-size: 12px; font-weight: 600; text-align: right;
+  }
+  .segment-row .seg-track {
+    flex: 1; height: 24px;
+    background: var(--bg-tertiary);
+    border-radius: 4px; overflow: hidden;
+  }
+  .segment-row .seg-track .seg-fill {
+    height: 100%; border-radius: 4px;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 8px;
+    font-size: 11px; font-weight: 700; color: #fff;
+  }
+  .segment-row .seg-val {
+    width: 80px; flex-shrink: 0;
+    font-size: 12px; font-weight: 600; text-align: right;
+  }
+
+  /* ===== Border Color Utilities ===== */
+  .border-amber { border-color: var(--amber); }
+  .border-purple { border-color: var(--purple); }
+  .border-red { border-color: var(--red); }
+  .border-blue { border-color: var(--blue); }
+  .border-green { border-color: var(--green); }
+
+  /* ===== Finding Card Border Left ===== */
+  .finding-card-purple { border-left: 4px solid var(--purple); }
+  .finding-card-red { border-left: 4px solid var(--red); }
+  .finding-card-green { border-left: 4px solid var(--green); }
+  .finding-card-amber { border-left: 4px solid var(--amber); }
+
+  /* ===== Margin Utilities ===== */
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-neg8 { margin-top: -8px; }
+
+  /* ===== Score Unit ===== */
+  .score-unit { font-size: 13px; font-weight: 400; color: var(--text-tertiary); }
+
+  /* ===== Tfoot Row ===== */
+  .tfoot-row { background: var(--bg-tertiary); font-weight: 700; }
+
+  /* ===== Signal Card (市场定价信号) ===== */
+  .signal-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .signal-card .signal-icon { font-size: 28px; margin-bottom: 8px; }
+  .signal-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .signal-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ===== Collision Card (交叉对撞) ===== */
+  .collision-grid { margin-bottom: 14px; }
+  .collision-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .collision-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .collision-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ===== Completeness Grid ===== */
+  .completeness-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+  }
+  @media (max-width: 640px) { .completeness-grid { grid-template-columns: 1fr; } }
+  .completeness-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .completeness-item .completeness-label {
+    display: block; font-size: 11px; font-weight: 600;
+    color: var(--text-tertiary); text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 6px;
+  }
+  .completeness-item .completeness-value {
+    display: block; font-size: 13px; color: var(--text-primary); line-height: 1.5;
+  }
+
+  /* ===== Segment Fill Colors ===== */
+  .seg-fill-amber { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .seg-fill-blue { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .seg-fill-purple { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+
+  /* ===== Best in class ===== */
+  .best-in-class { color: var(--green); font-weight: 700; }
+
+  /* ===== Gap Item ===== */
+  .gap-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+    background: var(--bg-tertiary); font-size: 12px;
+  }
+  .gap-item .gap-tag {
+    padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+  }
+  .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+  .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  /* ===== Density Bar ===== */
+  .density-bar { display: flex; align-items: center; gap: 4px; margin: 12px 0; }
+  .density-bar .seg { height: 14px; border-radius: 3px; flex: 1; }
+  .density-bar .seg.filled-green { background: var(--green); }
+  .density-bar .seg.filled-amber { background: var(--amber); }
+  .density-bar .seg.filled-red { background: var(--red); }
+  .density-bar .seg.empty { background: var(--bg-tertiary); }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+  .hero-xpeng {
+    background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-blue-midnight), var(--amber));
+    text-align: center;
+    padding: 64px 24px 48px;
+    border-radius: 0 0 24px 24px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-xpeng::after {
+    content: "";
+    position: absolute;
+    top: -60%; right: -20%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-xpeng .stock { font-size: 14px; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
+  .hero-xpeng h1 { font-size: 30px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin: 8px 0 10px; }
+  .hero-xpeng .industry-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 6px 20px;
+    font-size: 13px; color: rgba(255,255,255,0.9);
+    margin: 6px 0 12px;
+  }
+  .hero-xpeng .industry-tag .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--amber); display: inline-block;
+  }
+  .hero-xpeng .sub-meta {
+    display: flex; justify-content: center; gap: 28px;
+    margin-top: 18px; flex-wrap: wrap;
+  }
+  .hero-xpeng .sub-meta span {
+    font-size: 12px; color: rgba(255,255,255,0.55);
+  }
+  .hero-xpeng .sub-meta strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+  /* ===== Typography ===== */
+  h2 { font-size: 19px; }  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<div class="hero-xpeng">
+  <div class="stock">9868.HK / XPEV.NYSE</div>
+  <h1>小鹏汽车</h1>
+  <div class="industry-tag">
+    <span class="dot"></span> 新能源汽车 · 技术突围型(智驾领先·亏损中)
+  </div>
+  <div class="sub-meta">
+    <span>分析时点: <strong>2026-07</strong></span>
+    <span>报告类型: <strong>Type 1 — 单标的深度分析</strong></span>
+    <span>目标读者: <strong>分支行对公信贷经理</strong></span>
+    <span>模板版本: <strong>v1.0</strong></span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================
+     Strip 4-Column
+     ============================================================ -->
+<div class="strip">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval text-amber">BBB-</div>
+    <div class="ssub">中性偏弱</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval text-amber">5.57</div>
+    <div class="ssub">满分10.00</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval text-red">负面</div>
+    <div class="ssub">12个月</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval text-purple">中</div>
+    <div class="ssub">基于2025年报+公开数据</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Executive Summary
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷执行摘要</h2>
+  <div class="card card-amber">
+    <p>
+      小鹏汽车是中国领先的智能电动汽车制造商，以<strong>XNGP智能驾驶系统</strong>为核心差异化优势，是行业城市NOA覆盖率最高的企业之一。2025年累计交付量突破60万辆，年营收约350亿元，毛利率已转正至约5%，但仍处于<strong class="warn">净亏损状态（年亏损约50亿元）</strong>。综合评级<strong class="text-amber">BBB-</strong>，得分<strong class="text-amber">5.57/10</strong>，展望<strong class="text-red">负面</strong>。核心优势在于智驾技术领先（L2评分7.5/10为最高分）、MONA品牌下沉贡献增量、大众汽车战略合作背书；主要风险为持续大额亏损消耗现金、销量规模仍显著低于理想/蔚来/比亚迪、特斯拉FSD入华加大竞争压力。建议<strong>审慎参与、控制敞口不超过15亿元</strong>，以短期流贷为主，绑定智驾技术相关知识产权质押。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Pyramid Layers: NEV 五维存活模型
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">新能源车五维存活模型深度扫描</h2>
+  <p class="section-sub">L1 政策与宏观(20%) | L2 技术与智驾(30%) | L3 产品与销量(25%) | L4 供应链与成本(15%) | L5 财务质量(10%)</p>
+  <div class="pyramid">
+
+    <!-- L1 政策与宏观 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-amber">
+        <span class="pct text-amber">20%</span>
+        <span>L1</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L1 政策与宏观环境 <span class="pill pill-amber">权重20%</span></h3>
+          <div class="score text-amber">6.0 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>新能源政策整体利好，但边际效用递减。</strong><br><br>
+          <strong>购置税减免延续：</strong>新能源汽车购置税减免政策延续至2027年（纯电和插混），对终端需求形成托底支撑。小鹏主力车型（P7+、G6、G9）集中在20-35万元价格带，购置税减免幅度约1.5-3万元/车，对消费者决策有一定正面影响。但减免政策的边际拉动效应逐年递减——新能源渗透率已超50%，政策驱动正在让位于产品驱动。<br><br>
+          <strong>充电基础设施加速：</strong>国内充电桩保有量突破1,200万台（截至2025年末），车桩比从2023年的2.5:1改善至约2.1:1。小鹏自营超充站约2,000座（含S4超快充），覆盖全国超350个城市，是造车新势力中充电网络最完善的之一。800V高压平台车型（G9、G6、P7+）兼容公共快充桩，充电15分钟可补充续航300km+。<br><br>
+          <strong>碳积分交易：</strong>双积分政策趋严，正积分价格自2024年以来有所回升（约2,500-3,000元/分）。小鹏作为纯电动为主的车企（纯电占比约85%），每年可产生正积分约30-40万分，对应额外收入约<strong class="good">7.5-12亿元</strong>，对亏损状态的企业构成一定财务缓冲。<br><br>
+          <strong>宏观经济压力：</strong>国内消费信心偏弱（2025年社零增速约4.2%），对25-35万元价格带的"可选消费"属性车型需求形成压制。小鹏核心客户群体为科技敏感型中高收入人群，消费降级趋势对该细分市场有一定影响。
+        </div>
+      </div>
+    </div>
+
+    <!-- L2 技术与智驾 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-purple">
+        <span class="pct text-purple">30%</span>
+        <span>L2</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L2 技术与智能驾驶 <span class="pill pill-purple">权重30%</span></h3>
+          <div class="score text-green">7.5 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>智驾行业领先——小鹏最核心的差异化竞争优势，L2评分7.5/10为五维最高分。</strong><br><br>
+          <strong>XNGP智能驾驶系统：</strong>小鹏XNGP（XPeng Navigated Guided Pilot）是国内首屈一指的城市NOA系统，截至2026年Q1已覆盖全国<strong class="highlight">超350个城市</strong>（含全部地级市），城市NOA开城数量和覆盖广度居行业首位。XNGP基于端到端大模型架构（XBrain+XPlanner+XNet），不依赖高精地图，实现"全国皆可开"。核心指标：城市NGP渗透率约<strong class="good">68%</strong>（即68%的小鹏车主在可用路段主动使用城市NGP），用户粘性极高。<br><br>
+          <strong>技术品牌溢价：</strong>在小鹏的车主调研中，约<strong class="good">55%的购车用户</strong>将"智能驾驶"列为第一决策因素。XNGP构成了小鹏最重要的品牌护城河——在2026年C-NCAP智驾测评中，小鹏G9获行业最高分。技术品牌溢价使得小鹏在25-35万元价格带具备一定定价权，相较于零跑（无智能驾驶溢价）和蔚来（换电溢价）形成差异化定位。<br><br>
+          <strong>技术路线的领先性：</strong>小鹏是行业首个宣布实现"端到端"大模型量产上车的车企之一，采用了"大模型+规则兜底"的混合架构。XPLANNER大模型规划器可模拟人类驾驶决策，复杂路口通过率约<strong class="highlight">95%</strong>。2025年底推出的AI代驾功能（AI Valet Driver），支持用户在固定路线上实现"一次学习、永久代驾"，是行业独有的特色功能。<br><br>
+          <strong>竞争压力——特斯拉FSD入华：</strong>特斯拉FSD（Full Self-Driving）于2025年在华获批，以订阅制模式（月费约600元）进入中国市场。FSD在北美市场表现优秀（城市NOA事故率低于人类驾驶约5倍），进入中国后虽需算法本土化适配，但仍对XNGP构成<strong class="warn">直接竞争</strong>。特斯拉的品牌号召力+FSD的技术实力，可能分流部分科技敏感型购车用户。但FSD入华初期功能受限（需适应中国交规和路况），小鹏的领先窗口期预计仍有<strong class="warn">12-18个月</strong>。
+        </div>
+      </div>
+    </div>
+
+    <!-- L3 产品与销量 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-blue">
+        <span class="pct text-blue">25%</span>
+        <span>L3</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L3 产品与销量 <span class="pill pill-blue">权重25%</span></h3>
+          <div class="score text-amber">5.5 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>M03/P7+新品周期带来增量，但总量规模仍不及主要竞品。</strong><br><br>
+          <strong>产品矩阵：</strong>小鹏当前主力车型包括：<strong>P7+</strong>（轿跑，25-35万，2025年改款后月销约6,000-8,000辆）、<strong>G6</strong>（中型SUV，20-28万，月销约4,000-5,000辆）、<strong>G9</strong>（中大型SUV，28-38万，月销约2,500-3,500辆）、<strong>M03</strong>（MONA品牌首款车型，15-20万，2025年上市后月销快速爬坡至约5,000-7,000辆）、<strong>X9</strong>（MPV，35-42万，月销约1,500-2,000辆）。2025年全年交付约<strong class="highlight">22万辆</strong>，2026年目标约30-35万辆。<br><br>
+          <strong>MONA品牌下沉：</strong>MONA（Made Of New AI）是小鹏2025年推出的第二品牌，定位15-20万元大众市场，首款车型M03基于小鹏-滴滴合作平台开发。M03搭载XNGP Lite（城市NGP功能略有精简但保留高速NGP），以"智驾平权"为核心卖点，进入比亚迪秦PLUS/海豹、埃安S等车型的核心竞争区间。M03的上市是小鹏<strong class="highlight">销量增长的最大增量来源</strong>，但也拉低了整体单车均价（从约28万降至约22万）。<br><br>
+          <strong>销量比较：</strong>2025年小鹏交付约22万辆，对比亚迪(460万辆)、理想(52万辆)、蔚来(18万辆)、零跑(25万辆)。小鹏<strong class="warn">销量规模在头部新势力中处于中下水平</strong>，低于理想和零跑，略高于蔚来。核心问题在于G9、G6等主力车型未能实现原定月销破万的目标，X9所在的MPV细分市场规模有限。<br><br>
+          <strong>大众战略合作：</strong>大众汽车2023年以约7亿美元收购小鹏约5%股权，双方达成技术合作框架——小鹏向大众提供EEA（电子电气架构）和XNGP技术授权，用于大众品牌在华电动车型（2026年起搭载）。合作带来的<strong class="good">技术授权收入</strong>（预计约10-15亿/年）和供应链协同效应，为小鹏提供了额外的收入来源和品牌背书。
+        </div>
+      </div>
+    </div>
+
+    <!-- L4 供应链与成本 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-red">
+        <span class="pct text-red">15%</span>
+        <span>L4</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L4 供应链与成本管理 <span class="pill pill-red">权重15%</span></h3>
+          <div class="score text-red">4.5 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>降本持续推进但供应链能力仍是一般水平。</strong><br><br>
+          <strong>平台化降本：</strong>小鹏自2024年起推进"一代平台"战略，将G9、G6、P7+统一至<strong>Edward平台</strong>（800V+SiC），实现零部件通用率约<strong class="good">65%</strong>（较上一代平台提升约20个百分点）。平台化带来的BOM成本下降约<strong class="good">8-12%</strong>，是2025年毛利率转正的核心驱动力。M03基于前滴滴平台的"Damai"平台，供应链与主品牌共享约50%的采购体系。<br><br>
+          <strong>采购规模劣势：</strong>小鹏年采购额约220-250亿元，对比比亚迪(3,500亿+)的采购规模相差超过10倍，导致对上游供应商的议价能力明显不足。核心部件（芯片、传感器、电池）的采购成本显著高于比亚迪——以动力电池为例，小鹏采购成本约0.65-0.70元/Wh，比亚迪自供电池成本约0.45-0.50元/Wh，<strong class="warn">单车电池成本差距约8,000-12,000元</strong>。<br><br>
+          <strong>供应链风险——激光雷达依赖：</strong>小鹏XNGP系统搭载2颗激光雷达（G9为2颗速腾聚创M系列激光雷达），激光雷达占总BOM成本约<strong class="warn">6-8%</strong>（约1.2-1.8万元/车）。相比特斯拉FSD纯视觉方案（无激光雷达），小鹏的传感器配置成本更高。若特斯拉FSD在中国证明纯视觉方案足够安全有效，小鹏可能面临"技术路线成本劣势"。<br><br>
+          <strong>智能制造：</strong>广州工厂（年产能约20万辆）和武汉工厂（年产能约15万辆）合计产能约35万辆，2025年产能利用率约<strong class="warn">63%</strong>。M03的加入有助于提升产能利用率，但距离75%的盈亏平衡利用率仍有差距。武汉工厂为新建智能制造基地（冲压-焊装-涂装-总装四联一体化），自动化率约85%。
+        </div>
+      </div>
+    </div>
+
+    <!-- L5 财务质量 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-green">
+        <span class="pct text-green">10%</span>
+        <span>L5</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L5 财务质量与偿债能力 <span class="pill pill-green">权重10%</span></h3>
+          <div class="score text-red">3.5 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>仍在大幅亏损，现金消耗速度较快——五维中评分最低，3.5/10。</strong><br><br>
+          <strong>盈利表现：</strong>2025年全年营收约<strong class="highlight">350亿元</strong>（同比+28%），毛利率转正至约<strong class="warn">5.0%</strong>（2024年约为-1.5%）。但净亏损仍约<strong class="warn">50亿元</strong>（2024年净亏损约75亿元，同比收窄约33%）。亏损收窄主要得益于毛利率改善和费用控制（研发费用率约18%→15%），但绝对值仍高企。核心问题在于：单车均价约22万，单车毛利约1.1万，但单车SG&A+研发费用约3.3万，<strong class="warn">单车净亏损约2.2万元</strong>。<br><br>
+          <strong>现金储备：</strong>截至2025年末，现金及等价物（含短期投资）约<strong class="highlight">250亿元</strong>。按当前年亏损50亿+资本开支约30-35亿/年（含武汉工厂建设、超充网络铺设），<strong class="warn">年现金消耗约80-85亿元</strong>，安全垫约<strong class="warn">3年</strong>。虽然远优于零跑的1.5-2年安全垫，但仍显著低于理想的现金储备和使用效率。且现金消耗速度如果随着销量增长不能有效改善，安全垫将快速缩短。<br><br>
+          <strong>资产负债表：</strong>资产负债率约<strong class="warn">55%</strong>，在造车新势力中处于中等水平（蔚来约62%、理想约48%、零跑约60%）。有息负债率约22%，以可转债和长期借款为主。短期债务约80亿元，现金覆盖倍数约<strong class="warn">3.1x</strong>，短期流动性无虞。但需关注：约80亿元的可转债将于2027-2028年到期，届时若股价低于转股价可能面临兑付压力。<br><br>
+          <strong>现金流：</strong>2025年经营性现金流约<strong class="warn">-15亿元</strong>（较2024年的-52亿元大幅改善，但仍未转正）。自由现金流约<strong class="warn">-45亿元</strong>。经营现金流尚未转正意味着主业仍无法自给自足，需依赖融资（股权+债权）维持运转。大众战略合作的7亿美元股权投资已基本使用，后续融资将更多依赖债券市场和银行借款。<br><br>
+          <strong>融资能力：</strong>作为港股+美股双上市企业，小鹏拥有相对多元的融资渠道。2025年成功发行约30亿元可转债（利率3.5%），银行授信总额度约200亿元（已使用约70亿元）。但股价自2024年以来持续低迷（从约60港元跌至约35-40港元区间），股权融资的稀释效应较大，稀释通道收窄。
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.pyramid -->
+</div><!-- /.section -->
+
+<!-- ============================================================
+     Revenue & Platform Analysis
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">收入结构与平台化降本分析</h2>
+  <p class="section-sub">基于2025年报数据，产品线收入拆分与平台化进展</p>
+
+  <div class="segment-bar-wrap">
+    <div class="segment-row">
+      <span class="seg-label">G6/G9(SUV)</span>
+      <div class="seg-track">
+        <div class="seg-fill" class="grad-bar-amber-dark w-38">38%</div>
+      </div>
+      <span class="seg-val text-amber">~133亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">P7+(轿车)</span>
+      <div class="seg-track">
+        <div class="seg-fill" class="grad-bar-blue-dark w-28">28%</div>
+      </div>
+      <span class="seg-val text-blue">~98亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">M03(MONA)</span>
+      <div class="seg-track">
+        <div class="seg-fill" class="w-18" class="grad-bar-purple-dark">18%</div>
+      </div>
+      <span class="seg-val text-purple">~63亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">X9及其他</span>
+      <div class="seg-track">
+        <div class="seg-fill" class="grad-bar-green-dark w-10">10%</div>
+      </div>
+      <span class="seg-val text-green">~35亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">技术授权/服务</span>
+      <div class="seg-track">
+        <div class="seg-fill" class="grad-bar-indigo-dark w-6">6%</div>
+      </div>
+      <span class="seg-val text-purple">~21亿</span>
+    </div>
+  </div>
+
+  <div class="card card-amber mt-12">
+    <h3>平台化进展</h3>
+    <p>
+      <strong>Edward平台：</strong>小鹏主力车型（G9、G6、P7+）已全部切换至Edward平台（800V+SiC），该平台覆盖20-38万元价格带，是当前最核心的收入来源。Edward平台零部件通用率约65%，相比上一代平台，BOM成本降低约8-12%。<br>
+      <strong>Damai平台：</strong>基于原滴滴造车项目开发的MONA专用平台，面向15-20万元市场。M03是该平台首款车型，2025年上市后贡献约18%的收入。Damai平台与Edward平台共享部分电子电气架构，但底盘和动力系统差异较大，平台协同效应有限。<br>
+      <strong>技术授权收入：</strong>与大众汽车的战略合作开始贡献技术授权收入（约10-15亿/年），毛利率极高（>80%），是改善整体盈利能力的结构性亮点。预计2027年大众合作车型量产上市后，技术授权收入将进一步提升至20-30亿/年。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Core Financial Data
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">核心财务数据</h2>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th class="rt">2023A</th>
+          <th class="rt">2024A</th>
+          <th class="rt">2025A</th>
+          <th class="rt">2026Q1</th>
+          <th>趋势评价</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>营业收入(亿元)</td>
+          <td class="rt">240</td>
+          <td class="rt">273</td>
+          <td class="rt">350</td>
+          <td class="rt">92</td>
+          <td><span class="text-green">稳定增长</span></td>
+        </tr>
+        <tr>
+          <td>归母净利润(亿元)</td>
+          <td class="rt">-103</td>
+          <td class="rt">-75</td>
+          <td class="rt">-50</td>
+          <td class="rt">-12</td>
+          <td><span class="text-amber">亏损收窄但未扭亏</span></td>
+        </tr>
+        <tr>
+          <td>毛利率(%)</td>
+          <td class="rt">-1.6</td>
+          <td class="rt">-1.5</td>
+          <td class="rt">5.0</td>
+          <td class="rt">5.8</td>
+          <td><span class="text-green">转正后持续改善</span></td>
+        </tr>
+        <tr>
+          <td>研发费用(亿元)</td>
+          <td class="rt">48</td>
+          <td class="rt">52</td>
+          <td class="rt">53</td>
+          <td class="rt">13</td>
+          <td><span class="text-amber">基本稳定，费用率下降</span></td>
+        </tr>
+        <tr>
+          <td>经营性现金流(亿元)</td>
+          <td class="rt">-62</td>
+          <td class="rt">-52</td>
+          <td class="rt">-15</td>
+          <td class="rt">-3</td>
+          <td><span class="text-amber">改善中但未转正</span></td>
+        </tr>
+        <tr>
+          <td>自由现金流(亿元)</td>
+          <td class="rt">-110</td>
+          <td class="rt">-82</td>
+          <td class="rt">-45</td>
+          <td class="rt">-10</td>
+          <td><span class="text-amber">消耗放缓</span></td>
+        </tr>
+        <tr>
+          <td>现金及等价物(亿元)</td>
+          <td class="rt">310</td>
+          <td class="rt">280</td>
+          <td class="rt">250</td>
+          <td class="rt">238</td>
+          <td><span class="text-amber">消耗中</span></td>
+        </tr>
+        <tr>
+          <td>短期债务(亿元)</td>
+          <td class="rt">52</td>
+          <td class="rt">68</td>
+          <td class="rt">80</td>
+          <td class="rt">82</td>
+          <td><span class="text-amber">小幅上升</span></td>
+        </tr>
+        <tr>
+          <td>资产负债率(%)</td>
+          <td class="rt">52.0</td>
+          <td class="rt">53.5</td>
+          <td class="rt">55.0</td>
+          <td class="rt">55.5</td>
+          <td><span class="text-amber">缓慢上升</span></td>
+        </tr>
+        <tr>
+          <td>交付量(辆)</td>
+          <td class="rt">141,601</td>
+          <td class="rt">181,532</td>
+          <td class="rt">220,000</td>
+          <td class="rt">58,000</td>
+          <td><span class="text-green">持续增长</span></td>
+        </tr>
+        <tr>
+          <td>单车均价(万元)</td>
+          <td class="rt">24.5</td>
+          <td class="rt">23.2</td>
+          <td class="rt">22.0</td>
+          <td class="rt">21.5</td>
+          <td><span class="text-amber">MONA拉低均价</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="section-sub">数据来源: 公司年度报告、Wind资讯、公司公告 | 注: 2026Q1为未经审计数据</p>
+</div>
+
+<!-- ============================================================
+     Key Operating Metrics
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">关键运营指标</h2>
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="m-num text-green">22万</div>
+      <div class="m-label">2025年交付量</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-green">68%</div>
+      <div class="m-label">城市NGP渗透率</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-amber">~250亿</div>
+      <div class="m-label">现金储备(2025末)</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-red">-50亿</div>
+      <div class="m-label">年度净亏损</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-green">350</div>
+      <div class="m-label">XNGP覆盖城市数</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-amber">5.0%</div>
+      <div class="m-label">毛利率(2025年)</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-amber">~3年</div>
+      <div class="m-label">现金安全垫(估)</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-green">大众合作</div>
+      <div class="m-label">战略背书+技术授权</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Peer Comparison
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">同业对比分析</h2>
+  <p class="section-sub">小鹏汽车 vs 核心竞品 (2025年数据)</p>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th class="rt">小鹏</th>
+          <th class="rt">比亚迪</th>
+          <th class="rt">理想</th>
+          <th class="rt">蔚来</th>
+          <th class="rt">零跑</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>交付量(万辆)</td>
+          <td class="rt">22.0</td>
+          <td class="rt"><span class="best-in-class">460</span></td>
+          <td class="rt">52.0</td>
+          <td class="rt">18.0</td>
+          <td class="rt">25.0</td>
+        </tr>
+        <tr>
+          <td>营收(亿元)</td>
+          <td class="rt">350</td>
+          <td class="rt"><span class="best-in-class">6,040</span></td>
+          <td class="rt">1,280</td>
+          <td class="rt">380</td>
+          <td class="rt">280</td>
+        </tr>
+        <tr>
+          <td>毛利率(%)</td>
+          <td class="rt text-amber">5.0</td>
+          <td class="rt"><span class="best-in-class">18.81</span></td>
+          <td class="rt">22.1</td>
+          <td class="rt">8.5</td>
+          <td class="rt">16.2</td>
+        </tr>
+        <tr>
+          <td>净利率(%)</td>
+          <td class="rt text-red">-14.3</td>
+          <td class="rt"><span class="best-in-class">5.2</span></td>
+          <td class="rt">6.5</td>
+          <td class="rt text-red">-12.5</td>
+          <td class="rt text-red">-0.3</td>
+        </tr>
+        <tr>
+          <td>经营现金流(亿元)</td>
+          <td class="rt text-red">-15</td>
+          <td class="rt"><span class="best-in-class">222</span></td>
+          <td class="rt">88</td>
+          <td class="rt text-red">-32</td>
+          <td class="rt text-amber">3.5</td>
+        </tr>
+        <tr>
+          <td>现金储备(亿元)</td>
+          <td class="rt">250</td>
+          <td class="rt"><span class="best-in-class">734</span></td>
+          <td class="rt">580</td>
+          <td class="rt">200</td>
+          <td class="rt">60</td>
+        </tr>
+        <tr>
+          <td>单车均价(万元)</td>
+          <td class="rt text-amber">22.0</td>
+          <td class="rt"><span class="best-in-class">15.0</span></td>
+          <td class="rt">32.5</td>
+          <td class="rt">35.0</td>
+          <td class="rt">10.5</td>
+        </tr>
+        <tr>
+          <td>智驾城市NOA</td>
+          <td class="rt"><span class="best-in-class">350+城</span></td>
+          <td class="rt">全国</td>
+          <td class="rt">120+城</td>
+          <td class="rt">80+城</td>
+          <td class="rt">40+城</td>
+        </tr>
+        <tr>
+          <td>市值(亿港元)</td>
+          <td class="rt">~550</td>
+          <td class="rt"><span class="best-in-class">~8,000</span></td>
+          <td class="rt">~2,200</td>
+          <td class="rt">~380</td>
+          <td class="rt">~240</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card card-amber mt-10">
+    <p>
+      在可比公司中，小鹏<strong>以智驾技术见长</strong>——城市NOA覆盖350+城，开城数量遥遥领先，XNGP的技术品牌溢价是其最核心的差异化优势。但<strong>财务指标全面落后</strong>：毛利率(5%)为新能源车中最低水平之一（仅优于亏损的蔚来），净利率(-14.3%)和经营现金流(-15亿)仍为负值，"烧钱换技术领先"的模式尚未进入正向循环。理想汽车以高端化定位实现了行业最优的盈利指标（毛利率22.1%、净利率6.5%），比亚迪凭借规模效应在毛利率和现金流上表现最佳。小鹏的<strong>规模劣势</strong>是最突出的短板——22万辆的年交付量远不足以支撑其研发投入（53亿/年）和资本开支的摊薄。
+    </p>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- A4: MARKET PRICING SIGNALS (轨道B) -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="signal signal-amber"></span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20 text-secondary">独立于基本面分析的量化信号层，仅呈现市场定价行为，不做基本面解读</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 信用利差</h3>
+      <p>持续亏损导致信用利差偏高，可转债收益率约6.5-7.5%</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 波动率</h3>
+      <p>股价波动率偏高，特斯拉FSD入华增加竞争不确定性</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 资金流向</h3>
+      <p>南向资金持仓约12%，近30日净流出约3.5亿港元</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 评级事件</h3>
+      <p>BBB- 展望负面，盈利拐点可见度低</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Cross Collision (交叉对撞)
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">交叉对撞</h2>
+  <p class="section-sub">轨道A（基本面分析）与轨道B（市场定价信号）的分歧/共识对比</p>
+  <div class="grid-2 collision-grid">
+    <div class="collision-card">
+      <h3>轨道A：5.57 (BBB-)</h3>
+      <p>智驾技术领先但财务拖累严重——亏损年50亿、现金年消耗85亿、毛利率仅5%、经营现金流为负。技术优势尚未转化为财务表现。展望负面——盈利拐点可见度低，特斯拉FSD入华带来竞争不确定性。</p>
+    </div>
+    <div class="collision-card">
+      <h3>轨道B：信号偏中性</h3>
+      <p>PS 2.5x定价合理（高于蔚来/零跑，低于理想）。可转债利差中性偏高，反映财务风险溢价但未到恐慌程度。卖方一致预期偏乐观（2027年盈亏平衡），但股价表现疲弱反映投资者对盈利时间表缺乏信心。</p>
+    </div>
+  </div>
+  <div class="credit-box">
+    <h4>分歧/共识</h4>
+    <p>存在一定分歧。轨道A对财务风险和亏损持续性的关注更为审慎（给L5财务质量仅3.5/10），而轨道B的定价中隐含了市场对"智驾领先→销量增长→规模效应→扭亏为盈"这一逻辑链的正面预期。相比比亚迪（运营效率拖累但市场对海外增长定价乐观）和零跑（基本面差+市场同样悲观的双轨共识看空），小鹏处于<strong>中间状态——基本面中性偏弱，市场定价中性偏强</strong>，核心分歧点在于<strong>盈利拐点的可预见性</strong>。关键追问：2027年能否实现盈亏平衡？若特斯拉FSD显著分流XNGP用户，盈利曲线将如何改变？MONA品牌下沉带来的毛利率稀释效应有多大？</p>
+  </div>
+  <div class="card card-blue mt-10">
+    <h3>对撞产生的关键追问</h3>
+    <table>
+      <tr><td class="w-4"><strong>1</strong></td><td>小鹏的毛利率拐点在哪里？——5%的毛利率是否已见底？<br><span class="fs-12" class="text-secondary">核心取决于：平台化降本的节奏、MONA品牌对平均毛利率的稀释效应、技术授权收入的增量贡献</span></td></tr>
+      <tr><td><strong>2</strong></td><td>经营现金流何时能够转正？——从-15亿到0的路径是什么？<br><span class="fs-12" class="text-secondary">经营现金流转正的前提是销量达到约35-40万辆/年（产能利用率>75%），按当前增速预计2027-2028年实现</span></td></tr>
+      <tr><td><strong>3</strong></td><td>特斯拉FSD入华对XNGP的实质性冲击有多大？<br><span class="fs-12" class="text-secondary">预计12-18个月内FSD的本土化适配尚需时间，但2027年后竞争压力将显著上升</span></td></tr>
+      <tr><td><strong>4</strong></td><td>250亿现金储备的实际安全垫是否足够？<br><span class="fs-12" class="text-secondary">年消耗约85亿看似可撑3年，但若亏损扩大或融资环境恶化，实际安全垫可能缩短至2年</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================
+     Risk Signals
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">风险信号监测</h2>
+
+  <div class="risk-bar">
+    <div class="r-icon">&#x1f534;</div>
+    <div class="r-body">
+      <strong>高危：持续大额亏损（年约50亿），盈利拐点不确定</strong> —— 小鹏已连续6年净亏损，累计亏损超400亿元。2025年亏损收窄至50亿（同比-33%），但核心驱动是毛利率改善（从-1.5%到5.0%）而非收入高速增长。净利率-14.3%在造车新势力中仅优于蔚来(-12.5%)，远弱于理想(6.5%)。若2026年毛利率无法进一步提升至8-10%，盈利拐点将推迟至2028年之后。
+    </div>
+  </div>
+
+  <div class="risk-bar">
+    <div class="r-icon">&#x1f534;</div>
+    <div class="r-body">
+      <strong>高危：经营现金流持续为负（-15亿），主业尚未造血</strong> —— 虽然经营现金流从-62亿（2023）改善至-15亿（2025），但未转正意味着企业经营活动仍在消耗现金。对于信贷而言，经营现金流为负意味着借款人持续处于"投资>运营"阶段，偿债来源高度依赖外部融资和现金储备。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中危：特斯拉FSD入华带来竞争变数</strong> —— FSD以订阅制进入中国市场（月费约600元），具备特斯拉品牌号召力和北美验证的技术背书。若FSD在中国城市NOA表现达到XNGP同等水平，小鹏的核心差异化优势将被削弱。当前12-18个月的领先窗口期是盈利改善和规模增长的关键期。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中危：MONA品牌下沉带来的毛利率稀释和品牌稀释风险</strong> —— MONA品牌（15-20万）拉低整体单车均价（从28万降至22万），且与主品牌共用部分销售渠道和服务网络，可能造成品牌定位模糊。MONA车型毛利率约2-3%，显著低于主品牌约7-8%的毛利率，结构上拉低了整体毛利率。若MONA销量占比超过30%，整体毛利率改善将受到明显拖累。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中危：现金年消耗85亿，融资需求持续存在</strong> —— 250亿现金按年消耗85亿速度，安全垫约3年。但考虑到行业价格战态不确定性、研发投入的刚性（每年50亿+）、资本开支的持续性（超充网络+新车型开发），实际现金消耗速度可能超预期。可转债（约80亿，2027-2028年到期）如到期未能转股，将额外增加偿债压力。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中低：产能利用率偏低（约63%）</strong> —— 广州+武汉工厂合计产能35万辆，2025年利用率约63%，低于75%的盈亏平衡线。M03的加入有助于提升利用率至约70%，但仍存在固定成本摊销不足的问题。若2026年销量目标30万辆达成，利用率可提升至约85%，届时将成为重要的盈利改善催化剂。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-green">
+    <div class="r-icon">&#x1f7e2;</div>
+    <div class="r-body">
+      <strong>低危：资产负债率55%，短期流动性尚可</strong> —— 现金/短期债务覆盖率约3.1x，短期流动性充裕。有息负债率约22%，杠杆水平在造车新势力中较为适中。可转债到期日较远（2027-2028年），短期偿债压力较小。资产负债率虽在缓慢上升但仍在可控范围内。
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     Weighted Score Summary
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">加权评分总览</h2>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>层级</th>
+          <th>指标</th>
+          <th>权重</th>
+          <th class="rt">得分</th>
+          <th class="rt">加权得分</th>
+          <th>评级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>L1</td>
+          <td>政策与宏观环境</td>
+          <td>20%</td>
+          <td class="rt score-warn">6.0</td>
+          <td class="rt">1.200</td>
+          <td><span class="tag tag-amber">中性偏利好</span></td>
+        </tr>
+        <tr>
+          <td>L2</td>
+          <td>技术与智能驾驶</td>
+          <td>30%</td>
+          <td class="rt score-good">7.5</td>
+          <td class="rt">2.250</td>
+          <td><span class="tag tag-green">行业领先</span></td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>产品与销量</td>
+          <td>25%</td>
+          <td class="rt score-warn">5.5</td>
+          <td class="rt">1.375</td>
+          <td><span class="tag tag-amber">规模不足</span></td>
+        </tr>
+        <tr>
+          <td>L4</td>
+          <td>供应链与成本</td>
+          <td>15%</td>
+          <td class="rt score-bad">4.5</td>
+          <td class="rt">0.675</td>
+          <td><span class="tag tag-red">采购规模劣势</span></td>
+        </tr>
+        <tr>
+          <td>L5</td>
+          <td>财务质量</td>
+          <td>10%</td>
+          <td class="rt score-bad">3.5</td>
+          <td class="rt">0.350</td>
+          <td><span class="tag tag-red">持续亏损</span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="tfoot-row">
+          <td colspan="3">综合评价</td>
+          <td class="rt"><span class="text-amber">5.57</span></td>
+          <td class="rt text-amber">加权总分</td>
+          <td><span class="tag tag-amber">BBB- / 负面</span></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="card card-amber mt-12">
+    <h3>评分解读</h3>
+    <p>
+      小鹏汽车综合得分<strong>5.57/10</strong>，对应框架评级<strong>BBB-</strong>（中性偏弱），展望<strong>负面</strong>。L2智驾技术7.5分为最高分，体现XNGP在国内城市NOA领域的领先地位和强大的用户粘性，是小鹏最核心的信用支撑因素；L1政策/宏观6.0分反映政策环境整体利好但边际效应递减。L3产品/销量5.5分——M03带来增量但规模仍远不及理想/比亚迪；L4供应链/成本4.5分——采购规模劣势导致成本偏高，平台化降本正在推进中但效果尚需时间显现。L5财务质量3.5分是五维最低分——年亏损50亿、经营现金流为负、现金年消耗85亿，财务是压制评级向上的核心瓶颈。整体而言，小鹏是一家<strong>"技术领先、财务承压"</strong>的企业，BBB-评级处于中性偏弱水平，信贷策略应以控制风险敞口为首要原则。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Key Findings
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">关键发现</h2>
+  <div class="finding-grid">
+
+    <div class="finding-card finding-card-purple">
+      <div class="fc-icon">&#x1f4a1;</div>
+      <h4>L2智驾领先 vs L5财务承压——技术优势与财务困局的"冰与火"</h4>
+      <p>小鹏呈现出"<strong>技术属性强、金融属性弱</strong>"的典型特征。L2技术得分7.5（五维最高）vs L5财务得分3.5（五维最低），分差高达4.0分。XNGP智驾系统在小鹏的核心竞争优势无可替代，但这一优势尚未有效转化为财务改善——年亏损50亿且经营现金流为负。核心信贷逻辑是：<strong>智驾领先能否在12-18个月内驱动销量规模跨越盈亏平衡点？</strong>若否，BBB-评级存在进一步下调风险。</p>
+    </div>
+
+    <div class="finding-card finding-card-red">
+      <div class="fc-icon">&#x1f4b0;</div>
+      <h4>现金年消耗85亿——250亿储备的"倒计时"</h4>
+      <p>按当前亏损+资本开支速度，250亿现金每年消耗约85亿，名义安全垫约3年。但需注意：①经营现金流转正之前，企业始终处于"烧钱换增长"模式；②可转债到期（80亿，2027-2028年）若未能转股将额外增加偿债压力；③若价格战加剧或FSD入华冲击销量，现金消耗速度可能加速。建议信贷审核中<strong>重点关注现金消耗速度和融资计划的匹配性</strong>。</p>
+    </div>
+
+    <div class="finding-card finding-card-green">
+      <div class="fc-icon">&#x1f30d;</div>
+      <h4>大众战略合作——技术变现的成功样本</h4>
+      <p>大众汽车以约7亿美元入股并达成技术合作，是小鹏<strong>最重要的信用增强因素</strong>。技术授权收入（10-15亿/年，毛利率>80%）直接改善盈利能力，大众品牌背书提升了小鹏的品牌信誉和供应链议价能力。这种"中国智驾技术向外输出"的模式在中国车企中尚属首例，是小鹏区别于其他新势力的<strong>结构性信用加分项</strong>。</p>
+    </div>
+
+    <div class="finding-card finding-card-amber">
+      <div class="fc-icon">&#x26a1;</div>
+      <h4>特斯拉FSD入华——核心竞争逻辑的"变量因子"</h4>
+      <p>FSD入华是小鹏当前面临的最大战略不确定性。目前12-18个月的领先窗口期——FSD本土化需适配中国交通规则和道路环境——决定了小鹏的盈利改善节奏。若FSD在2027年达到XNGP同等水平，小鹏的核心智驾溢价将面临挑战，直接影响其品牌定位（"智驾领先"→"智驾同质化"）和定价能力。这是<strong>BBB-展望负面</strong>的核心驱动因素。</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     Credit Recommendation
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷建议</h2>
+
+  <div class="credit-box">
+    <h4 class="text-amber">综合授信方案</h4>
+    <p><strong>智驾技术领先但财务承压，建议审慎参与、控制敞口。</strong> 小鹏在智驾领域的领先地位和大众合作带来的技术变现模式是中国新能源车企中独特的信用加分项，但持续亏损（年50亿）、经营现金流未转正和现金持续消耗构成突出的信用压力。建议以<strong>控制敞口、短期品种、强化担保</strong>为原则。</p>
+    <ul>
+      <li><strong>授信额度和品种：</strong> 建议给予综合授信额度<strong>10-15亿元</strong>（单家分行/区域级），以<strong>1年期流动资金贷款</strong>为主要品种，辅以银行承兑汇票（5-8亿元）和进口信用证/保函（3-5亿元）。不建议参与长期项目贷款（新工厂建设风险较高）。</li>
+      <li><strong>分期放款机制：</strong> 流贷额度建议分两阶段放款——首笔放款50%，待经营现金流转正或亏损收窄至年30亿以下后再投放剩余部分。以季度为节点审阅<strong>毛利率、经营现金流、现金储备</strong>三大核心指标。</li>
+      <li><strong>担保措施：</strong> 建议以<strong>智驾技术相关知识产权质押</strong>（XNGP核心专利、软件著作权等）作为差异化担保措施，同时可追加<strong>车辆合格证质押</strong>作为补充增信。技术知识产权质押的评估难度较高，但小鹏的XNGP技术具备行业领先性和可估值性。</li>
+    </ul>
+  </div>
+
+  <div class="credit-box mt-12">
+    <h4 class="text-red">贷后管理方案</h4>
+    <ul>
+      <li><strong>关键监控指标：</strong> 月度跟踪<strong>交付量</strong>（月度产销快报）、<strong>毛利率</strong>（预警：低于3%）、<strong>现金储备</strong>（预警：低于180亿）、<strong>经营现金流</strong>（预警：单季度低于-5亿）。</li>
+      <li><strong>更新频率：</strong> 建议<strong>月度</strong>跟踪交付量和财务快报，<strong>季度</strong>全面更新模型评分。每季度获取公司季度报告交叉验证。</li>
+      <li><strong>退出触发条件：</strong> 毛利率跌破3%且两个季度未能恢复；现金储备低于180亿元且融资计划未落实；特斯拉FSD在中国城市NOA覆盖超过小鹏（核心竞争逻辑受损）；或大众减持股份信号出现。</li>
+      <li><strong>交叉销售机会：</strong> 供应链金融（小鹏上游供应商约800家，年采购额约250亿元）、跨境结算+外汇套保（海外业务扩张中）、智驾数据资产金融服务（XNGP数据资产的创新金融产品）。</li>
+    </ul>
+  </div>
+
+  <div class="grid-2 mt-12">
+    <div class="card card-blue">
+      <h3>情景分析与评级的可能路径</h3>
+      <table>
+        <thead><tr><th>情景</th><th>概率</th><th class="ct">评分</th><th>评级</th></tr></thead>
+        <tbody>
+          <tr><td><strong>基准情景</strong></td><td>55%</td><td class="ct" class="score-warn">5.5</td><td><span class="tag tag-amber">BBB- 负面</span></td></tr>
+          <tr><td><strong>乐观情景</strong><br><span class="fs-11" class="text-secondary">销量突破35万辆+毛利率>10%+现金流转正+FSD冲击低于预期</span></td><td>15%</td><td class="ct" class="score-good">6.8</td><td><span class="tag tag-green">BBB+ 稳定</span></td></tr>
+          <tr><td><strong>压力情景</strong><br><span class="fs-11" class="text-secondary">FSD压制XNGP+毛利率<3%+现金加速消耗+融资困难</span></td><td>20%</td><td class="ct" class="score-bad">4.2</td><td><span class="tag tag-red">BB 负面</span></td></tr>
+          <tr><td><strong>极端情景</strong><br><span class="fs-11" class="text-secondary">行业价格战白热化+FSD全面冲击+亏损扩大至80亿+</span></td><td>10%</td><td class="ct" class="score-bad">3.0</td><td><span class="tag tag-red">B+ 负面观察</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card card-red">
+      <h3>约束条款</h3>
+      <table>
+        <tr><td class="w-30"><strong>交叉违约条款</strong></td><td><span class="text-red">必设</span> — 任何借款/债券违约即触发加速到期</td></tr>
+        <tr><td><strong>财务约束</strong></td><td>毛利率&ge;3%，现金储备&ge;180亿元，任一指标突破触发提前还款审议</td></tr>
+        <tr><td><strong>经营约束</strong></td><td>年度交付量不低于20万辆（连续两个季度低于5万辆触发预警）</td></tr>
+        <tr><td><strong>重大事项知情权</strong></td><td>涉及FSD入华影响的战略评估报告、大众合作重大变化的及时通知</td></tr>
+        <tr><td><strong>分红/回购限制</strong></td><td>贷款期内禁止现金分红和股份回购</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="info-box info-amber mt-12">
+    <strong>核心逻辑总结：</strong> 小鹏是"用技术换空间"的模式——以智驾领先为矛、以现金储备为盾，在行业价格战和竞争洗牌中力争穿越周期。<br>
+    BBB-基本面 + 250亿现金 + 持续亏损 = 生存概率取决于"智驾领先能否驱动规模增长"和"现金消耗速度"的赛跑。<br>
+    XNGP+大众合作 = 技术变现的独特模式，构成信用加分项。<br>
+    结论：<strong>可审慎参与，但控制敞口（10-15亿），以短期品种为主，绑定知识产权质押</strong>。重点监控毛利率趋势和现金消耗速度，一旦毛利率跌破3%或FSD入华实质性影响XNGP竞争力，需立即启动贷后审查和退出评估。
+  </div>
+
+</div>
+
+<!-- ============================================================
+     Completeness Assessment
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">完备性评估</h2>
+  <p class="section-sub">数据可得性与置信度评估</p>
+  <div class="completeness-grid">
+    <div class="completeness-item">
+      <span class="completeness-label">信号密度</span>
+      <span class="completeness-value">充分（港股+美股双上市，公开财报数据完整，卖方覆盖充足）</span>
+    </div>
+    <div class="completeness-item">
+      <span class="completeness-label">关键缺口</span>
+      <span class="completeness-value">分车型毛利率数据，特斯拉FSD入华的实际冲击程度，XNGP vs FSD的用户满意度对比数据</span>
+    </div>
+    <div class="completeness-item">
+      <span class="completeness-label">置信度</span>
+      <span class="completeness-value">中等（财务数据质量较高，但对FSD入华影响和盈利拐点的预测置信度偏低）</span>
+    </div>
+  </div>
+
+  <h3 class="fs-14" class="my-20">关键数据缺口与改进建议</h3>
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>小鹏在各家银行的授信余额及使用情况</strong> — 需通过企业尽调确认当前银行融资的具体结构和条件</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>M03车型的月度销量和毛利率趋势</strong> — MONA品牌的盈利表现是判断整体毛利率走向的关键</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>大众合作的技术授权收入确权节奏和付款条件</strong> — 评估技术授权收入的确定性和持续性</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>特斯拉FSD中国的用户数据和实际表现</strong> — 跟踪FSD入华后的城市NOA覆盖和用户体验评价</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>武汉工厂产能爬坡计划和实际产出</strong> — 产能利用率提升是盈利改善的重要催化剂</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     Footer
+     ============================================================ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>免责声明</strong></p>
+  <p>本报告基于公开信息和分析模型生成，仅供内部信贷评审参考，不构成投资建议或授信承诺。</p>
+  <p>报告中涉及的公司名称、财务数据、行业分析等内容均来源于公司公告、Wind资讯及行业研究，分析模型为银行信贷视角设计。</p>
+  <p>评级结果为相对信用评价，不代表对未来的投资收益预测或违约概率保证。</p>
+  <p>报告生成时间: 2026-07-09 | 模板: Type 1 单标的深度分析 | 版本: v1.0</p>
+  <p>&copy; 2026 Credit Analysis System — 银行对公信贷内部使用</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>

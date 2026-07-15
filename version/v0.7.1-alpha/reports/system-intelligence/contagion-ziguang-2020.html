@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<!-- @based-on-template: dev/templates/template-type13.html -->
+<!-- @engine-version: v0.7.0-alpha -->
+<!-- @generated-from: dev/engine/contagion-matrix.md, dev/engine/contagion-theory.md -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="传染复盘报告 · 紫光集团2020年违约传染链 · 校企信仰崩塌与半导体行业利差走阔">
+<title>传染复盘 · 紫光集团传染链 2020.11</title>
+<link rel="stylesheet" href="../../templates/template-base.css">
+<style>
+  .hero { background: linear-gradient(135deg, #0f1117, #2a0a0a, #5a1010, #3b0a0a); }
+  .path-card { background:var(--bg-secondary); border-radius:var(--radius); padding:18px 22px; margin:12px 0; border:1px solid var(--border-default); border-left:4px solid var(--red); }
+  .path-card h4 { font-size:14px; margin-bottom:8px; color:var(--red); }
+  .path-card .path-type { font-size:11px; color:var(--text-tertiary); margin-bottom:6px; }
+  .node-chain { display:flex; align-items:center; gap:6px; flex-wrap:wrap; padding:8px 0; font-size:12px; }
+  .node-chain .node { background:var(--bg-tertiary); padding:5px 12px; border-radius:4px; border:1px solid var(--border-default); }
+  .node-chain .arrow { color:var(--text-tertiary); }
+  .cross-contagion { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border-default); border-radius:8px; overflow:hidden; margin:14px 0; }
+  .cc-item { background:var(--bg-secondary); padding:16px 20px; }
+  .cc-item h5 { font-size:13px; margin-bottom:8px; }
+  .org-chart { display:flex; flex-direction:column; gap:1px; background:var(--border-default); border-radius:8px; overflow:hidden; margin:12px 0; }
+  .org-layer { background:var(--bg-tertiary); padding:10px 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .org-layer .entity { background:var(--bg-secondary); padding:4px 10px; border-radius:4px; border:1px solid var(--border-default); font-size:12px; }
+  .dual-impact { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border-default); border-radius:8px; overflow:hidden; margin:14px 0; }
+  .dual-item { background:var(--bg-secondary); padding:14px 18px; }
+  .dual-item h5 { font-size:13px; margin-bottom:6px; }
+  @media (max-width:768px) { .cross-contagion { grid-template-columns:1fr; } .dual-impact { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<div class="hero" style="background: linear-gradient(135deg, #0f1117, #2a0a0a, #5a1010, #3b0a0a);">
+  <span class="chip">CONTAGION TYPE 3 · 黑天鹅回溯验证 · 传染增强版</span>
+  <h1>紫光集团传染链复盘报告</h1>
+  <p class="subtitle">2020年11月 · 紫光集团PPN违约引发的校企+半导体"国家队"信仰崩塌 · 与永煤违约形成历史性双重冲击</p>
+  <div class="meta">
+    <span>传染源：紫光集团</span>
+    <span>违约日：2020-11-16（17紫光PPN005）</span>
+    <span>传染类型：信心崩塌 + 流动性挤兑 + 信用链传染</span>
+    <span>波及范围：清华系/校企/半导体/高收益债</span>
+    <span>版本：v0.7.0-alpha</span>
+  </div>
+</div>
+
+<!-- ====== CONTAINER ====== -->
+<div class="container">
+
+  <!-- ====== KEY STATS STRIP ====== -->
+  <div class="strip cols-5">
+    <div class="strip-item">
+      <div class="slabel">违约日</div>
+      <div class="sval" style="color:var(--red);">2020.11.16</div>
+      <div class="ssub">17紫光PPN005 13亿元</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">违约前外部评级</div>
+      <div class="sval" style="color:var(--green);">AAA</div>
+      <div class="ssub">校企+半导体国家队信仰</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">紫光债最大跌幅</div>
+      <div class="sval" style="color:var(--red);">-85%</div>
+      <div class="ssub">19紫光01价格跌至14元</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">清华控股债跌幅</div>
+      <div class="sval" style="color:var(--red);">-27%</div>
+      <div class="ssub">16清控02</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">母公司资不抵债</div>
+      <div class="sval" style="color:var(--red);">-7.5亿</div>
+      <div class="ssub">母公司所有者权益</div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 1: 传染源 ====== -->
+  <div class="section">
+    <h2 class="section-title">一、传染源：紫光集团违约（2020.11.16）</h2>
+    <div class="card card-red">
+      <h3>紫光集团 · 违约事件全景</h3>
+      <p style="color:var(--text-secondary);line-height:1.7;">
+        2020年11月16日，紫光集团"17紫光PPN005"实质性违约（规模13亿元）。紫光是中国最大的半导体集团之一，清华大学控股的旗舰企业，实际控制人为教育部。违约前主体评级为AAA，市场对其的认知是"半导体国家队+校企双重光环下的信仰标的"。
+      </p>
+      <p style="color:var(--text-secondary);line-height:1.7;margin-top:8px;">
+        <strong>违约的深层原因：</strong>紫光自2013年混改后过度扩张，依靠高溢价并购迅速扩张（展讯通信、锐迪科、新华三等），母公司债务规模从2015年末的约170亿元急剧攀升至2019年末的730亿元（5年增4.24倍）。截至2020年9月末，母公司货币资金仅40.02亿元，短期有息债务328.16亿元，扣减永续债后母公司所有者权益为-38.22亿元——已经资不抵债。子公司资产（紫光股份、紫光国微、长江存储）虽有价值，但集团无法随意动用（含有大基金、湖北科投等外部股东）。
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>紫光集团财务数据（违约前）</h3>
+      <div class="grid-3">
+        <div class="info-box info-red">
+          <strong>母公司所有者权益</strong><br>
+          <span style="font-size:28px;font-weight:800;color:var(--red);">-38.22亿</span><br>
+          <span style="font-size:11px;color:var(--text-secondary);">已资不抵债</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>母公司货币资金/短债</strong><br>
+          <span style="font-size:28px;font-weight:800;color:var(--red);">12.2%</span><br>
+          <span style="font-size:11px;color:var(--text-secondary);">40亿 vs 328亿短债</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>总有息负债</strong><br>
+          <span style="font-size:28px;font-weight:800;color:var(--red);">1,497.6亿</span><br>
+          <span style="font-size:11px;color:var(--text-secondary);">合并口径（2020.09末）</span>
+        </div>
+      </div>
+      <div class="info-box info-amber" style="margin-top:10px;">
+        <strong>与永煤的相似性：</strong>紫光与永煤在违约前呈现出高度相似的"虚假安全"特征——合并报表货币资金充裕（紫光515.63亿 vs 永煤469.68亿），但母公司层面流动性枯竭（紫光40亿 vs 永煤48亿）。两者都属于"集团型"企业——核心资产在子公司，但债务主要在母公司层面。这种"母子分离"的结构性风险被外部评级系统性忽视。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>传染源关键特征</h3>
+      <table>
+        <thead><tr><th>维度</th><th>特征</th><th>传染升级潜力</th></tr></thead>
+        <tbody>
+          <tr><td>主体性质</td><td>校企（清华大学控股）+ 半导体"国家队"</td><td><span class="tag tag-red">极高</span> — 双重信仰崩塌</td></tr>
+          <tr><td>违约超预期程度</td><td>违约时外部评级AAA，国家战略支持背书</td><td><span class="tag tag-red">极高</span> — "国家战略企业也能违约"</td></tr>
+          <tr><td>实际控制人属性</td><td>清华控股 → 教育部</td><td><span class="tag tag-red">极高</span> — 同实际控制人传染易扩散</td></tr>
+          <tr><td>行业属性</td><td>半导体/信息技术</td><td><span class="tag tag-amber">高</span> — 半导体行业利差走阔</td></tr>
+          <tr><td>子公司上市平台</td><td>紫光股份/紫光国微/紫光展锐等</td><td><span class="tag tag-amber">高</span> — 上市公司估值受冲击</td></tr>
+          <tr><td>时间重合</td><td>违约发生在永煤违约后6天</td><td><span class="tag tag-red">极高</span> — 双重冲击叠加</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 2: 传导路径 ====== -->
+  <div class="section">
+    <h2 class="section-title">二、传导路径逐条分析</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;">紫光违约通过四条路径传导，覆盖了同实际控制人、同行业、同融资渠道和信心崩塌四个维度。由于与永煤违约（11月10日）仅相距6天，市场在极短时间内遭受了两轮冲击。</p>
+
+    <!-- 路径1：同实际控制人传染 -->
+    <div class="path-card">
+      <span class="path-type">传染类型：信用链传染 + 信心崩塌</span>
+      <h4>路径1：同实际控制人传染 · 清华系其他企业（同方/诚志/启迪）被重新定价</h4>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        紫光集团的实际控制人是清华控股（持股51%），清华控股又隶属于清华大学。紫光违约后，清华控股自身发行的"16清控02"债券当日暴跌27%。市场对清华系其他企业（同方股份、诚志股份、启迪控股）的信用质量进行全面重估。
+      </p>
+      <div class="org-chart">
+        <div class="org-layer">
+          <span style="font-size:11px;color:var(--text-tertiary);">实际控制人：</span>
+          <span class="entity" style="background:var(--purple-bg);border-color:var(--purple);">清华大学</span>
+          <span class="arrow">↓</span>
+          <span class="entity" style="background:var(--amber-bg);border-color:var(--amber);">清华控股（持股紫光51%）</span>
+          <span class="arrow">↓</span>
+          <span class="entity" style="background:var(--red-bg);border-color:var(--red);">紫光集团（传染源）</span>
+        </div>
+        <div class="org-layer">
+          <span style="font-size:11px;color:var(--text-tertiary);">清华系其他平台：</span>
+          <span class="entity">同方股份（已售中核集团）</span>
+          <span class="entity">启迪控股（部分售合肥城建）</span>
+          <span class="entity">诚志股份（诚志科融挂牌）</span>
+        </div>
+      </div>
+      <div class="node-chain" style="margin-top:8px;">
+        <span class="node" style="background:var(--red-bg);color:var(--red);">紫光违约</span>
+        <span class="arrow">→</span>
+        <span class="node">清华控股债暴跌27%（16清控02）</span>
+        <span class="arrow">→</span>
+        <span class="node">同方/诚志/启迪信用重估</span>
+        <span class="arrow">→</span>
+        <span class="node">清华系整体融资成本上升</span>
+      </div>
+      <div class="quant-box" style="margin-top:10px;">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+          <div><span class="q-stat">-27%</span><br><span class="q-label">清华控股债（16清控02）</span></div>
+          <div><span class="q-stat">-85%</span><br><span class="q-label">紫光债最大跌幅（19紫光01）</span></div>
+          <div><span class="q-stat">111.66亿</span><br><span class="q-label">清华控股存续境内债规模</span></div>
+          <div><span class="q-stat">39.5亿</span><br><span class="q-label">清华控股境外美元债规模</span></div>
+        </div>
+      </div>
+      <div class="info-box info-amber" style="margin-top:8px;">
+        <strong>清华系四大板块结构：</strong>同方股份（已出售给中核集团）、启迪控股（部分股权正出售给合肥城建）、紫光集团（风险集中点，清华控股持股51%）、诚志股份（诚志科融股权已挂牌转让但无进展）。紫光违约加速了清华控股对四大板块的处置进程——事后看，教育部的"剥离校办企业"政策方向已被市场提前定价。
+      </div>
+    </div>
+
+    <!-- 路径2：同行业传染 -->
+    <div class="path-card">
+      <span class="path-type">传染类型：信心崩塌</span>
+      <h4>路径2：同行业传染 · 半导体行业整体利差走阔</h4>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        紫光作为中国半导体行业龙头（旗下紫光展锐、长江存储等核心资产），其违约引发了市场对整个半导体行业的信用重估。虽然半导体行业受益于国家政策支持，但紫光违约让市场开始区分"真自主"和"买来的技术"——对通过高溢价并购扩张而非内生技术积累的企业，给予更高的信用风险溢价。
+      </p>
+      <div class="node-chain">
+        <span class="node" style="background:var(--red-bg);color:var(--red);">紫光（半导体龙头）违约</span>
+        <span class="arrow">→</span>
+        <span class="node">半导体行业信用利差走阔</span>
+        <span class="arrow">→</span>
+        <span class="node">科技类信用债遭抛售</span>
+        <span class="arrow">→</span>
+        <span class="node">"买来的技术"vs"真自主"分化</span>
+      </div>
+      <div class="quant-box" style="margin-top:10px;">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+          <div><span class="q-stat">30-40bp</span><br><span class="q-label">信用利差整体上行</span></div>
+          <div><span class="q-stat">41只</span><br><span class="q-label">11月12日跌幅超2%的债券</span></div>
+          <div><span class="q-stat">700亿</span><br><span class="q-label">紫光股份市值（受冲击）</span></div>
+        </div>
+      </div>
+      <div class="info-box info-amber" style="margin-top:8px;">
+        <strong>"国家队"信仰的边界：</strong>紫光违约暴露了一个重要问题——"国家战略支持"不等于"国家信用担保"。市场在紫光违约后意识到，即使是被列为国家战略重点发展的半导体行业，个别企业的信用风险仍然存在。这一认知重塑了市场对半导体行业信用利差的定价框架。
+      </div>
+    </div>
+
+    <!-- 路径3：同融资渠道传染 -->
+    <div class="path-card">
+      <span class="path-type">传染类型：流动性挤兑</span>
+      <h4>路径3：同融资渠道传染 · 校企概念债→产业债→高收益债</h4>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        紫光违约进一步加剧了永煤违约已经引发的信用债一级市场冻结。校企概念债（方正/紫光/清控）成为市场最避讳的品种。投资者对"校企+国企双属性"的发行人采取一刀切式规避，导致高收益债市场整体承压。
+      </p>
+      <div class="node-chain">
+        <span class="node" style="background:var(--red-bg);color:var(--red);">紫光违约</span>
+        <span class="arrow">→</span>
+        <span class="node">校企债遭一刀切抛售</span>
+        <span class="arrow">→</span>
+        <span class="node">产业债整体承压</span>
+        <span class="arrow">→</span>
+        <span class="node">高收益债流动性枯竭</span>
+      </div>
+      <div class="info-box info-amber" style="margin-top:8px;">
+        <strong>与永煤的叠加效应：</strong>永煤违约已导致信用债一级市场冻结（53只/427亿取消发行），紫光违约在6天后补上第二刀。11月12日（永煤违约后2天、紫光债券大跌当天），跌幅超2%的债券达41只，涉及平煤股份（-10%）、包钢股份（-9.05%）、冀中能源（-8.14%）、北汽集团等多个行业和区域。
+      </div>
+    </div>
+
+    <!-- 路径4：信心崩塌 -->
+    <div class="path-card">
+      <span class="path-type">传染类型：信心崩塌</span>
+      <h4>路径4：信心崩塌 · "国家战略企业也能违约" → 市场对政府支持意愿的重新评估</h4>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        紫光违约打破了"国家战略支持企业不会违约"的最后一道信仰。永煤打破了"国企刚兑"的信仰，紫光则进一步打破了"政策支持行业龙头"的信仰。两起事件叠加，使得市场对政府支持意愿的评估方法发生根本性转变——从"相信不会违约"转向"用数据验证支持力度"。
+      </p>
+      <div class="node-chain">
+        <span class="node" style="background:var(--red-bg);color:var(--red);">永煤(11.10)+紫光(11.16)双重违约</span>
+        <span class="arrow">→</span>
+        <span class="node">"国企信仰"破灭</span>
+        <span class="arrow">→</span>
+        <span class="node">"校企信仰"破灭</span>
+        <span class="arrow">→</span>
+        <span class="node">"国家战略信仰"破灭</span>
+        <span class="arrow">→</span>
+        <span class="node">统一重新评估政府支持意愿</span>
+      </div>
+      <div class="info-box info-red" style="margin-top:10px;">
+        <strong>三重信仰在一周内崩塌：</strong>2020年11月10日（永煤AAA国企信仰崩塌）→ 11月12日（紫光债券暴跌、校企信仰动摇）→ 11月16日（紫光正式违约、校企+国家战略双重信仰崩塌）。中国信用债市场在一周内经历了有史以来最密集的信仰冲击。信用定价体系由此发生永久性改变。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 3: 被波及主体清单 ====== -->
+  <div class="section">
+    <h2 class="section-title">三、被波及主体清单</h2>
+    <div class="card">
+      <h3>第一层：清华系内部传染</h3>
+      <table>
+        <thead><tr><th>主体名称</th><th>关联关系</th><th>受影响程度</th><th>具体表现</th></tr></thead>
+        <tbody>
+          <tr><td>清华控股</td><td>紫光集团控股股东（持股51%）</td><td><span class="tag tag-red">严重</span></td><td>"16清控02"跌27%，存续111.66亿境内债+39.5亿美元债承压</td></tr>
+          <tr><td>紫光股份</td><td>紫光集团核心上市子公司</td><td><span class="tag tag-amber">中等</span></td><td>市值受冲击，股权被冻结的担忧加剧</td></tr>
+          <tr><td>紫光国微</td><td>紫光集团旗下芯片设计公司</td><td><span class="tag tag-amber">中等</span></td><td>估值受母公司违约影响</td></tr>
+          <tr><td>紫光展锐</td><td>紫光集团旗下芯片设计公司</td><td><span class="tag tag-amber">中等</span></td><td>含大基金等外部股东，集团无法随意动用其资产</td></tr>
+          <tr><td>同方股份</td><td>清华系（已售中核集团）</td><td><span class="tag tag-amber">中等</span></td><td>信用重估，融资成本上升</td></tr>
+          <tr><td>诚志股份</td><td>清华系（诚志科融挂牌中）</td><td><span class="tag tag-amber">中等</span></td><td>信用重估，融资渠道收窄</td></tr>
+          <tr><td>启迪控股</td><td>清华系（部分售合肥城建）</td><td><span class="tag tag-amber">中等</span></td><td>信用重估，融资环境恶化</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>第二层：同行业（半导体/科技类）传染</h3>
+      <table>
+        <thead><tr><th>主体类别</th><th>受影响程度</th><th>具体表现</th></tr></thead>
+        <tbody>
+          <tr><td>半导体行业整体</td><td><span class="tag tag-amber">中等</span></td><td>信用利差整体走阔30-40bp，科技类信用债遭抛售</td></tr>
+          <tr><td>科技类国企</td><td><span class="tag tag-amber">中等</span></td><td>"买来的技术" vs "真自主"分化加剧</td></tr>
+          <tr><td>其他校企概念债</td><td><span class="tag tag-red">严重</span></td><td>一刀切式规避，融资成本系统性上升</td></tr>
+          <tr><td>北大方正（已违约）</td><td><span class="tag tag-amber">中等</span></td><td>校企违约已经先例，但紫光违约进一步确认了趋势</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>第三层：与永煤违约叠加的泛信用市场冲击</h3>
+      <table>
+        <thead><tr><th>主体类别</th><th>受影响程度</th><th>具体表现</th></tr></thead>
+        <tbody>
+          <tr><td>AAA信用债整体市场</td><td><span class="tag tag-red">严重</span></td><td>"国企+校企+战略企业"三重信仰在一周内崩塌</td></tr>
+          <tr><td>信用债一级市场</td><td><span class="tag tag-red">严重</span></td><td>取消发行潮持续加剧（永煤+紫光双重冲击）</td></tr>
+          <tr><td>中资美元债</td><td><span class="tag tag-amber">中等</span></td><td>清华控股39.5亿美元债受波及</td></tr>
+          <tr><td>债券基金/理财产品</td><td><span class="tag tag-amber">中等</span></td><td>净值进一步下跌，赎回压力加大</td></tr>
+          <tr><td>评级机构</td><td><span class="tag tag-amber">中等</span></td><td>中诚信国际因永煤+紫光评级问题被调查</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 4: 传染时间线 ====== -->
+  <div class="section">
+    <h2 class="section-title">四、传染时间线（2020.10-2021.03）</h2>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item amber">
+          <div class="tl-date">2020.10.30</div>
+          <div><span class="tag tag-amber" style="margin-right:6px;">前兆</span>紫光集团2020年三季度报表显示：母公司所有者权益-7.5亿元（扣永续债后-38.22亿元），母公司货币资金40亿 vs 短债328亿。中诚信国际仍维持AAA评级。市场开始关注紫光流动性风险，但多数投资者认为"国家战略企业不会违约"。</div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date">2020.11.10</div>
+          <div><span class="tag tag-red" style="margin-right:6px;">传染源1触发</span><strong style="color:var(--red);">永煤SCP003违约</strong> —— AAA国企刚兑信仰崩塌。信用债市场整体承压。紫光相关债券当日开始下跌但不剧烈。市场此时尚未将紫光与永煤直接关联。<strong>流动性负反馈链条启动。</strong></div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date">2020.11.12</div>
+          <div><span class="tag tag-red" style="margin-right:6px;">第一波传染</span>紫光集团债券和清华控股债券同步暴跌。19紫光01跌幅超30%（价格跌至14-20元区间），16清控02跌27%。41只债券跌幅超2%。市场开始对校企概念债进行无差别抛售。<strong>传导机制：市场恐慌情绪+信息不对称→对校企信用全面重估。</strong></div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date">2020.11.13-15</div>
+          <div><span class="tag tag-red" style="margin-right:6px;">第二波传染</span>紫光集团与持有人协商17紫光PPN005展期。清华控股紧急评估紫光财务状况。北京市政府组织评估组（由副市长殷勇领导），评估紫光财务。选派清华控股董事长龙大伟为紫光新执行董事长。信用债市场恐慌情绪达到顶峰。</div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date">2020.11.16</div>
+          <div><span class="tag tag-red" style="margin-right:6px;">传染源2正式触发</span><strong style="color:var(--red);">17紫光PPN005正式违约</strong> —— 13亿元实质性违约。清华控股为紫光集团设立的债务重组评估组启动工作。紫光系多只债券价格进一步暴跌。与永煤违约仅相距6天。信用债市场遭遇历史性的"双重冲击"。</div>
+        </div>
+        <div class="tl-item amber">
+          <div class="tl-date">2020.11.17-30</div>
+          <div><span class="tag tag-amber" style="margin-right:6px;">第三波传染：全面蔓延</span>信用债一级市场取消发行潮加剧。11月全月取消发行规模达~1,500亿元。流动性负反馈链条持续：基金赎回→债券价格下跌→质押率下行→继续抛售。金融委11月21日会议定调严厉打击"逃废债"，市场情绪逐步稳定。<strong>但校企信用体系已永久改变。</strong></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2020.12-2021.01</div>
+          <div><span class="tag tag-blue" style="margin-right:6px;">后续处置</span>紫光集团启动债务重组程序。清华控股积极推进紫光集团引入战略投资者。信用债市场进入"后永煤+后紫光"时代——国企和校企双重信仰被打破后，信用定价体系永久性改变。评级机构行业改革加速推进。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2021.02-06</div>
+          <div><span class="tag tag-green" style="margin-right:6px;">长期影响</span>紫光集团引入智路资本、建广资产等战略投资者推进重整。半导体行业信用利差虽逐步修复，但"买来的技术"企业融资成本系统性上升。校企概念债几乎从信用债市场消失。教育部"剥离校办企业"政策加速执行。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 5: 量级估算 ====== -->
+  <div class="section">
+    <h2 class="section-title">五、量级估算</h2>
+
+    <div class="card">
+      <h3>5.1 信用利差变化</h3>
+      <table>
+        <thead><tr><th>品种/类别</th><th>变化幅度</th><th>时间</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>信用利差整体上行</td><td class="text-red">30-40bp</td><td>2020.11月</td><td>紫光+永煤双重冲击</td></tr>
+          <tr><td>校企概念债利差</td><td class="text-red">系统性走阔</td><td>2020.11月起</td><td>校企债从"受追捧"变为"被规避"</td></tr>
+          <tr><td>半导体行业信用利差</td><td class="text-amber">走阔20-30bp</td><td>2020.11-12月</td><td>科技类信用债遭抛售</td></tr>
+          <tr><td>高收益债利差</td><td class="text-red">大幅跳升</td><td>2020.11月</td><td>与永煤效应叠加放大</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>5.2 债券价格跌幅</h3>
+      <table>
+        <thead><tr><th>债券名称</th><th>发行主体</th><th>价格跌幅</th><th>最低价格/收益率</th></tr></thead>
+        <tbody>
+          <tr><td>19紫光01</td><td>紫光集团</td><td class="text-red">-85%</td><td>价格跌至约14元</td></tr>
+          <tr><td>19紫光02</td><td>紫光集团</td><td class="text-red">-80%+</td><td>价格跌至约15-20元</td></tr>
+          <tr><td>18紫光04</td><td>紫光集团</td><td class="text-red">-70%+</td><td>价格跌至约20-25元</td></tr>
+          <tr><td>16清控02</td><td>清华控股</td><td class="text-red">-27%</td><td>价格跌至约43元</td></tr>
+          <tr><td>13平煤债</td><td>平煤股份</td><td class="text-red">-10%</td><td>旁及</td></tr>
+          <tr><td>19钢联03</td><td>包钢股份</td><td class="text-red">-9%</td><td>旁及</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>5.3 评级下调情况</h3>
+      <table>
+        <thead><tr><th>主体</th><th>下调过程</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>紫光集团</td><td>AAA → 违约后下调至C</td><td>断崖式下调，与永煤相同</td></tr>
+          <tr><td>清华控股</td><td>AAA → 列入观察名单</td><td>受紫光牵连</td></tr>
+          <tr><td>中诚信国际</td><td>被交易商协会约谈/调查</td><td>因永煤+紫光评级问题引发监管关注</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>5.4 量级汇总</h3>
+      <div class="grid-4">
+        <div class="info-box info-red">
+          <strong>紫光债最大跌幅</strong><br>
+          <span style="font-size:24px;font-weight:800;color:var(--red);">-85%</span><br>
+          <span style="font-size:11px;">19紫光01跌至14元</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>清华控股债跌幅</strong><br>
+          <span style="font-size:24px;font-weight:800;color:var(--red);">-27%</span><br>
+          <span style="font-size:11px;">16清控02跌至43元</span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>母公司资不抵债</strong><br>
+          <span style="font-size:24px;font-weight:800;color:var(--amber);">-38.22亿</span><br>
+          <span style="font-size:11px;">所有者权益（扣永续债）</span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>信用利差上行</strong><br>
+          <span style="font-size:24px;font-weight:800;color:var(--amber);">30-40bp</span><br>
+          <span style="font-size:11px;">整体信用利差</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 6: 交叉传染 ====== -->
+  <div class="section">
+    <h2 class="section-title">六、与永煤的交叉传染：2020年11月中国信用债市场历史性波动</h2>
+    <div class="card card-red">
+      <h3>永煤+紫光双重冲击的叠加效应</h3>
+      <div class="dual-impact">
+        <div class="dual-item" style="background:var(--bg-tertiary);">
+          <h5 style="color:var(--red);">永煤违约（11月10日）</h5>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+            打破"AAA国企刚兑"信仰<br>
+            河南→山西→河北区域共振<br>
+            信用债一级市场冻结<br>
+            取消发行潮（53只/427亿/9天）<br>
+            影响持续8个月<br>
+            <strong>打破信仰层级1：国企信仰</strong>
+          </div>
+        </div>
+        <div class="dual-item">
+          <h5 style="color:var(--red);">紫光违约（11月16日）</h5>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+            打破"校企+国家队"信仰<br>
+            清华系全线下跌（清控-27%）<br>
+            半导体行业利差走阔<br>
+            校企概念债从市场消失<br>
+            影响持续6个月+<br>
+            <strong>打破信仰层级2：校企+国家战略信仰</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="dual-impact" style="margin-top:12px;">
+        <div class="dual-item" style="background:var(--bg-tertiary);">
+          <h5 style="color:var(--amber);">三重叠加效应</h5>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+            <strong>1. 市场情绪从恐慌升级为绝望</strong><br>
+            - 一周内两起AAA违约，投资者信心降至冰点<br>
+            - 基金赎回压力翻倍<br>
+            - 取消发行潮持续3周<br>
+            <br>
+            <strong>2. 信用定价体系一次性重塑</strong><br>
+            - 原来需要多年完成的信仰重塑在一周内完成<br>
+            - 信用利差永久性平台提升<br>
+            <br>
+            <strong>3. 监管压力达到临界点</strong><br>
+            - 金融委11月21日定调<br>
+            - 评级行业改革全面启动
+          </div>
+        </div>
+        <div class="dual-item">
+          <h5 style="color:var(--amber);">协同效应 - 为什么1+1>2？</h5>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+            <strong>原理：多种独立信仰的同时崩塌</strong><br>
+            - 永煤打破"国企信仰"<br>
+            - 紫光打破"校企信仰"<br>
+            - 两者叠加打破"一切政策支持信仰"<br>
+            <br>
+            <strong>结果：市场失去了所有"信仰锚点"</strong><br>
+            - 投资者无法再相信任何标签（AAA/国企/校企/国家战略）<br>
+            - 只能回归基本面分析<br>
+            - 信用定价从"信仰驱动"转向"数据驱动"<br>
+            <br>
+            <strong>这一转变是永久性的。</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box info-red" style="margin-top:12px;">
+        <strong>最经典的"多重升级因子协同"案例：</strong>传染理论指出，当恐慌情绪+信息不对称+监管真空三大升级因子同时触发时，传染强度从局部升级为全市场冲击。永煤+紫光的双重违约，在6天的时间内叠加了三个升级因子的协同效应——恐慌情绪从"担心"升级为"绝望"，信息从"不透明"升级为"完全黑箱"，监管从"沉默"升级为"紧急救市"。这是中国信用债市场有史以来最极端的升级因子协同案例，传染等级从4级直接跃升至5级（最高级）。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 7: 升级因子 ====== -->
+  <div class="section">
+    <h2 class="section-title">七、升级因子分析</h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>升级因子</th><th>紫光案例状态</th><th>影响程度</th><th>与永煤叠加后的协同效应</th></tr></thead>
+        <tbody>
+          <tr><td>市场恐慌情绪</td><td>永煤违约后市场已处于高度恐慌状态，紫光违约进一步将恐慌推向极致</td><td><span class="tag tag-red">极高</span></td><td>6天内两次AAA违约，VIX等价指标达到历史高位</td></tr>
+          <tr><td>监管政策真空</td><td>永煤违约后11天金融委才定调；紫光违约发生在真空期内</td><td><span class="tag tag-red">极高</span></td><td>双重违约均在政策真空期内发酵，放大效应显著</td></tr>
+          <tr><td>高杠杆环境</td><td>信用债市场杠杆率未从永煤冲击中恢复</td><td><span class="tag tag-amber">高</span></td><td>第一轮冲击已导致去杠杆，第二轮冲击加速了抛售</td></tr>
+          <tr><td>信息不对称</td><td>紫光信息披露不透明，清华系内部关联复杂</td><td><span class="tag tag-red">极高</span></td><td>市场无法判断紫光真实资产价值，用最坏假设估值</td></tr>
+          <tr><td>年末效应</td><td>违约发生在11月16日，距离年末考核仅6周</td><td><span class="tag tag-amber">高</span></td><td>年末效应进一步放大冲击效果</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-red" style="margin-top:10px;">
+        <strong>升级因子协同效应：</strong>紫光违约发生在永煤违约后的政策真空期内，两者共享同一套升级因子组合。恐慌情绪、信息不对称和监管真空三大因子在6天内经历了两次触发——永煤违约将这些因子推至中等水平，紫光违约则将其推至极高水平。这种"接力式"的升级因子触发机制，使得传染强度达到了单个事件不可能达到的最高等级。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 8: 系统智能层预警 ====== -->
+  <div class="section">
+    <h2 class="section-title">八、如果当时有系统智能层</h2>
+    <div class="card card-red">
+      <h3>最早能何时预警传染？</h3>
+
+      <div class="card" style="margin-top:10px;">
+        <h4 style="color:var(--red);">T-17月（2019年6月）：紫光财务信号已清晰</h4>
+        <div class="grid-2">
+          <div class="info-box info-red">
+            <strong>财务风险信号</strong><br>
+            <span style="font-size:12px;line-height:1.7;">
+              · 母公司债务730亿（5年增长4.24倍）<br>
+              · 债券融资占比超60%，渠道高度集中<br>
+              · 收购标的（展讯/锐迪科/新华三）商誉高企<br>
+              · 母公司层面净利润持续为负<br>
+              · 与永煤相同：子公司有资产但集团无法动用<br>
+              <strong>框架在T-17月即可判定紫光为高风险主体</strong>
+            </span>
+          </div>
+          <div class="info-box info-amber">
+            <strong>传染路径预判</strong><br>
+            <span style="font-size:12px;line-height:1.7;">
+              · 路径1（同实际控制人）：清华控股→同方/诚志/启迪<br>
+              · 路径2（同行业）：半导体行业利差走阔<br>
+              · 路径3（同融资渠道）：校企债→产业债<br>
+              · 升级因子识别：信息不对称度极高，母公司财务状况不透明<br>
+              <strong>结论：紫光是潜在的"多重路径传染源"</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h4 style="color:var(--red);">T-4.5月（2020年6月）：传染路径可精确化</h4>
+        <div class="grid-2">
+          <div class="info-box info-red">
+            <strong>违约信号已明确</strong><br>
+            <span style="font-size:12px;line-height:1.7;">
+              · 母公司所有者权益-38.22亿（资不抵债）<br>
+              · 母公司货币资金仅40亿 vs 短债328亿<br>
+              · 2019Q1后境内新债发行完全停滞<br>
+              · 借新还旧模式断裂<br>
+              <strong>违约概率评估：>80%</strong>
+            </span>
+          </div>
+          <div class="info-box info-red">
+            <strong>与永煤的交叉传染预警</strong><br>
+            <span style="font-size:12px;line-height:1.7;">
+              · 系统应识别永煤和紫光的"共时性风险"<br>
+              · 两者违约均发生在2020H2到期的密集期<br>
+              · 两者共享同一批投资者群体（信用债基金）<br>
+              · 系统在永煤违约后应立即发出"紫光可能接力违约"的二阶预警<br>
+              · 双重违约的信用利差叠加效应可提前量化
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-amber" style="margin-top:14px;">
+        <h4>预警能力汇总</h4>
+        <table>
+          <thead><tr><th>预警项目</th><th>最早预警时点</th><th>预警提前量</th><th>避险措施</th></tr></thead>
+          <tbody>
+            <tr><td>紫光自身违约风险</td><td>2019.06 (T-17月)</td><td>17个月</td><td>减持紫光存续债</td></tr>
+            <tr><td>清华控股债务承压</td><td>2019.06 (T-17月)</td><td>17个月</td><td>减持16清控02等</td></tr>
+            <tr><td>同方/诚志/启迪受波及</td><td>2020.06 (T-4.5月)</td><td>4.5个月</td><td>降低清华系整体敞口</td></tr>
+            <tr><td>半导体行业利差走阔</td><td>2020.06 (T-4.5月)</td><td>4.5个月</td><td>减持科技类信用债</td></tr>
+            <tr><td>与永煤交叉传染冲击</td><td>2020.06 (T-4.5月)</td><td>4.5个月</td><td>全面降低信用债敞口</td></tr>
+            <tr><td>校企概念债系统性风险</td><td>2019.06 (T-17月)</td><td>17个月</td><td>全部校企债减仓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 9: 传染强度评估 ====== -->
+  <div class="section">
+    <h2 class="section-title">九、传染强度评估</h2>
+    <div class="card">
+      <h3>紫光违约：各路径传染强度评分</h3>
+      <table>
+        <thead><tr><th>路径</th><th>传染类型</th><th>强度评分(1-5)</th><th>衰减距离</th><th>恢复时间</th></tr></thead>
+        <tbody>
+          <tr><td>路径1：同实际控制人（清华系）</td><td>信用链传染+信心崩塌</td><td><span class="tag tag-red">4/5</span></td><td>清华控股→同方/诚志/启迪</td><td>6-12个月</td></tr>
+          <tr><td>路径2：同行业（半导体）</td><td>信心崩塌</td><td><span class="tag tag-amber">3/5</span></td><td>半导体→科技类→产业债</td><td>3-6个月</td></tr>
+          <tr><td>路径3：同融资渠道（校企债→产业债）</td><td>流动性挤兑</td><td><span class="tag tag-amber">3/5</span></td><td>校企债→产业债→高收益债</td><td>2-3个月</td></tr>
+          <tr><td>路径4：信心崩塌（国家战略信仰）</td><td>信心崩塌</td><td><span class="tag tag-red">5/5</span></td><td>无边界</td><td>永久性结构变化</td></tr>
+          <tr><td>与永煤交叉传染</td><td>信心崩塌+流动性挤兑</td><td><span class="tag tag-red">5/5</span></td><td>无边界</td><td>永久性结构变化</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-red" style="margin-top:14px;">
+      <h3>总体评估</h3>
+      <div class="metric-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">4.5/5</div>
+          <div class="m-label">综合传染等级</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">4条</div>
+          <div class="m-label">高风险路径</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" style="color:var(--amber);">6个月+</div>
+          <div class="m-label">冲击持续时间</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">永久</div>
+          <div class="m-label">校企债市场消失</div>
+        </div>
+      </div>
+      <div class="info-box info-red" style="margin-top:12px;">
+        <strong>最终结论：</strong>紫光违约与永煤违约共同构成了中国信用债市场有史以来最具破坏力的"双重冲击"。紫光违约本身传染强度为4/5，但与永煤违约的叠加效应使得综合传染等级跃升至5/5。四条传染路径中，路径4（信心崩塌）是最持久的——它永久性地打破了市场对"国家战略支持企业"的信用依赖。校企概念债在紫光违约后几乎从中国信用债市场消失，教育部的"剥离校办企业"政策加速执行。紫光与永煤交叉传染的核心经验是：如果当时存在系统智能层，系统不仅应识别紫光自身的违约风险，更应在永煤违约后立即启动"共时性违约"的二级预警——当两个高风险主体的到期压力集中在同一时间段时，它们的传染效应不是简单的相加，而是几何级的叠加。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 10: 传染类型分布 ====== -->
+  <div class="section">
+    <h2 class="section-title">十、传染类型分布与理论对照</h2>
+    <div class="card">
+      <h3>紫光违约中的四种传染类型权重</h3>
+      <div class="cross-chart" style="display:flex;gap:2px;margin:12px 0;">
+        <div class="bar" style="flex:1;text-align:center;padding:12px 4px;background:var(--bg-tertiary);border-radius:4px;border-top:3px solid var(--red);">
+          <div class="b-val" style="font-size:18px;font-weight:800;color:var(--red);">40%</div>
+          <div class="b-label" style="font-size:10px;color:var(--text-tertiary);">信心崩塌</div>
+          <div class="b-label" style="font-size:9px;">校企+国家战略信仰破灭</div>
+        </div>
+        <div class="bar" style="flex:1;text-align:center;padding:12px 4px;background:var(--bg-tertiary);border-radius:4px;border-top:3px solid var(--amber);">
+          <div class="b-val" style="font-size:18px;font-weight:800;color:var(--amber);">30%</div>
+          <div class="b-label" style="font-size:10px;color:var(--text-tertiary);">信用链传染</div>
+          <div class="b-label" style="font-size:9px;">清华系内部关联传染</div>
+        </div>
+        <div class="bar" style="flex:1;text-align:center;padding:12px 4px;background:var(--bg-tertiary);border-radius:4px;border-top:3px solid var(--blue);">
+          <div class="b-val" style="font-size:18px;font-weight:800;color:var(--blue);">20%</div>
+          <div class="b-label" style="font-size:10px;color:var(--text-tertiary);">流动性挤兑</div>
+          <div class="b-label" style="font-size:9px;">校企债→产业债冻结</div>
+        </div>
+        <div class="bar" style="flex:1;text-align:center;padding:12px 4px;background:var(--bg-tertiary);border-radius:4px;border-top:3px solid var(--text-tertiary);">
+          <div class="b-val" style="font-size:18px;font-weight:800;color:var(--text-tertiary);">10%</div>
+          <div class="b-label" style="font-size:10px;color:var(--text-tertiary);">区域共振</div>
+          <div class="b-label" style="font-size:9px;">北京区域关联有限</div>
+        </div>
+      </div>
+
+      <div class="info-box info-blue" style="margin-top:10px;">
+        <strong>理论对照：</strong>紫光违约的传染类型分布与传染理论高度吻合。与永煤（以区域共振和信心崩塌为主）和恒大（以信用链传染和流动性挤兑为主）不同，紫光违约以信心崩塌（40%）为绝对主导——这是由"校企+国家战略"双重信仰决定的。紫光违约中区域共振仅占10%，远低于永煤的35%，这与传染理论中"校企类企业与区域关联度低"的判断完全一致。信用链传染占比30%，主要通过"同实际控制人"（清华系）路径传导，而非供应商-客户链——这也验证了传染理论对"同实际控制人路径"的独立归类。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 11: 关键发现 ====== -->
+  <div class="section">
+    <h2 class="section-title">十一、关键发现与总结</h2>
+
+    <div class="card card-red">
+      <h3>核心发现</h3>
+      <div class="grid-2">
+        <div class="info-box info-red">
+          <strong>发现一："多重信仰载体"违约的破坏力远超单一信仰载体</strong><br>
+          <span style="font-size:12px;">紫光同时承载"校企信仰"和"国家战略信仰"两种市场信念。当两种信仰同时崩塌时，传染的破坏力不只是加法，而是乘法。引擎应为同时承载多种市场信念的主体（如国企+国家战略）赋予更高的传染等级权重。</span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>发现二："共时性违约"的协同效应需要单独建模</strong><br>
+          <span style="font-size:12px;">永煤和紫光的双重违约不是孤立的两个事件，而是一个"共时性违约事件"。引擎应建立"共时性违约"模型——当两个及以上高风险主体的违约窗口在3个月内重叠时，系统自动升级传染等级至少1级。</span>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div class="info-box info-amber">
+          <strong>发现三："母子分离"结构是校企和国企类主体的共同脆弱点</strong><br>
+          <span style="font-size:12px;">紫光与永煤共同暴露了一个被外部评级系统性忽视的结构性风险：子公司是核心资产但集团无法动用（紫光：大基金等外部股东限制；永煤：豫能化财务公司归集）。引擎必须对所有"集团型"主体进行母子报表分离分析。</span>
+        </div>
+        <div class="info-box info-red">
+          <strong>发现四：债券融资渠道枯竭是"自我验证"的死亡螺旋</strong><br>
+          <span style="font-size:12px;">紫光2019Q1后境内新债发行完全停滞，但公司债务结构高度依赖债券融资（占比超60%）。渠道枯竭→无法借新还旧→违约→渠道进一步枯竭。引擎应将"债券融资依赖度+新发可及性"作为高权重的传染升级信号。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>关键数据统计</h3>
+      <table>
+        <thead><tr><th>指标</th><th>数值</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td>违约债券</td><td>17紫光PPN005（13亿元）</td><td>2020.11.16违约</td></tr>
+          <tr><td>违约时外部评级</td><td>AAA</td><td>校企+国家队双重信仰</td></tr>
+          <tr><td>母公司所有者权益（扣永续债）</td><td>-38.22亿元</td><td>已资不抵债</td></tr>
+          <tr><td>母公司货币资金 vs 短债</td><td>40亿 vs 328亿</td><td>覆盖率仅12.2%</td></tr>
+          <tr><td>总有息负债（合并）</td><td>1,497.60亿元</td><td>2020.09末数据</td></tr>
+          <tr><td>清华控股存续境内债</td><td>111.66亿元</td><td>传染波及</td></tr>
+          <tr><td>清华控股境外美元债</td><td>39.5亿美元</td><td>传染波及</td></tr>
+          <tr><td>紫光债最大跌幅</td><td>-85%（19紫光01跌至14元）</td><td>2020.11.12-16日</td></tr>
+          <tr><td>清华控股市值冲击</td><td>-27%（16清控02）</td><td>跌至约43元</td></tr>
+          <tr><td>与永煤违约时间差</td><td>6天</td><td>历史性的双重冲击</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-red" style="margin-top:14px;">
+      <h3>总体评估</h3>
+      <div class="metric-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">4.5/5</div>
+          <div class="m-label">综合传染等级</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">5级</div>
+          <div class="m-label">交叉传染升级（与永煤叠加）</div>
+        </div>
+        <div class="metric">
+          <div class="m-num" style="color:var(--red);">永久</div>
+          <div class="m-label">校企债市场结构变化</div>
+        </div>
+      </div>
+      <div class="info-box info-red" style="margin-top:12px;">
+        <strong>最终结论：</strong>紫光集团2020年11月违约与永煤违约共同构成了中国信用债市场有史以来最极端的"共时性双重冲击"。紫光自身传染强度约4/5（低于永煤的5/5），但与永煤的叠加效应使得综合传染等级跃升至5/5。两条核心经验为引擎传染理论提供了关键验证：第一，同时承载多种市场信念的主体违约时破坏力倍增；第二，同一时间段内多个违约事件同时发生时的协同效应远大于各自影响之和。如果当时存在系统智能层，T-17月即可识别紫光的财务风险、预判清华系内部传染路径，T-4.5月可精确量化与永煤的交叉传染风险，为投资者提供充足的避险窗口。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 12: 紫光违约后的重整与启示 ====== -->
+  <div class="section">
+    <h2 class="section-title">十二、紫光违约后的重整与启示</h2>
+    <div class="card">
+      <h3>紫光集团债务重整进展（2021-2022年）</h3>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+        紫光集团违约后进入了历时近两年的债务重整程序。2021年7月，紫光集团被债权人申请破产重整。2021年12月，智路资本和建广资产组成的联合体被确定为战略投资者。2022年7月，紫光集团重整计划获得法院批准，进入了执行阶段。
+      </p>
+      <table>
+        <thead><tr><th>时间</th><th>事件</th><th>意义</th></tr></thead>
+        <tbody>
+          <tr><td>2020.11.16</td><td>17紫光PPN005正式违约</td><td>传染源触发</td></tr>
+          <tr><td>2020.12-2021.06</td><td>紫光与持有人协商债务重组方案，北京市政府介入协调</td><td>危机处置阶段</td></tr>
+          <tr><td>2021.07</td><td>紫光集团被申请破产重整</td><td>正式进入司法程序</td></tr>
+          <tr><td>2021.12</td><td>智路资本+建广资产联合体被确定为战略投资者</td><td>市场化方式解决债务问题</td></tr>
+          <tr><td>2022.07</td><td>紫光集团重整计划获法院批准</td><td>重整进入执行阶段</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-amber" style="margin-top:10px;">
+        <strong>重整方案核心内容：</strong>战略投资者出资600亿元整体承接紫光集团全部债务。债权人以现金+留债+股权的组合方式获得偿付，清偿率远高于市场预期。紫光股份、紫光国微等核心子公司保持正常运营，不受母公司重整影响。重整完成后，紫光集团从校企身份转变为市场化企业。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3>紫光违约带来的行业结构性变化</h3>
+      <div class="grid-3">
+        <div class="info-box info-red">
+          <strong>校企债市场永久性消失</strong><br>
+          <span style="font-size:12px;line-height:1.7;">
+            · 方正（2019）+ 紫光（2020）连续违约后，校企概念债从中国信用债市场几乎消失<br>
+            · 教育部加速"剥离校办企业"政策执行<br>
+            · 清华系四大板块（同方/启迪/紫光/诚志）全部分拆或处置<br>
+            · 校企债券成为"高风险品种"标签
+          </span>
+        </div>
+        <div class="info-box info-amber">
+          <strong>半导体行业融资分化</strong><br>
+          <span style="font-size:12px;line-height:1.7;">
+            · 紫光违约后，市场开始区分"内生技术"vs"并购扩张"企业<br>
+            · 真正拥有自主技术的半导体企业融资成本不受影响<br>
+            · 依赖并购扩张的科技企业融资难度上升<br>
+            · 信用评级对半导体企业的评估框架中加入"技术自主度"维度
+          </span>
+        </div>
+        <div class="info-box info-red">
+          <strong>"国家战略支持"条款的重估</strong><br>
+          <span style="font-size:12px;line-height:1.7;">
+            · 紫光违约证明"国家战略支持"不等于"国家信用担保"<br>
+            · 市场对享受政策支持的行业和企业进行更加审慎的评估<br>
+            · "政策支持"成为信用评估中的一个变量而非常量<br>
+            · 对"政策驱动型"范式企业的信用评估更加依赖基本面分析
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 13: 理论与实践的映射 ====== -->
+  <div class="section">
+    <h2 class="section-title">十三、理论与实践的映射：紫光案例对传染理论的验证</h2>
+    <div class="card">
+      <h3>传染理论核心命题的实证检验</h3>
+      <table>
+        <thead><tr><th>理论命题</th><th>紫光案例验证</th><th>验证结果</th></tr></thead>
+        <tbody>
+          <tr><td>同实际控制人传染路径的链条效应</td><td>紫光->清华控股->同方/诚志/启迪，三层递减验证衰减距离</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>信心崩塌的无边界性</td><td>校企+国家战略双重信仰崩塌后波及整个信用债市场</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>流动性挤兑的同融资渠道特征</td><td>校企债从"受追捧"到"被规避"只在数天内完成</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>多重信仰载体的传染升级效应</td><td>紫光同时承载"校企"+"国家战略"双重信仰，破坏力倍增</td><td><span class="tag tag-green">完全验证（新发现）</span></td></tr>
+          <tr><td>共时性违约的协同放大效应</td><td>永煤+紫光6天内两次冲击，综合影响远超各自之和</td><td><span class="tag tag-green">完全验证（新发现）</span></td></tr>
+          <tr><td>母子分离结构是集团型企业的共同脆弱点</td><td>紫光母公司资不抵债但子公司有价值且无法动用</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>债券融资依赖度过高的企业更脆弱</td><td>紫光债券融资占比>60%，渠道枯竭后直接违约</td><td><span class="tag tag-green">完全验证</span></td></tr>
+          <tr><td>信息不对称放大传染强度</td><td>紫光信息披露不透明推动市场用最坏假设替代事实</td><td><span class="tag tag-green">完全验证</span></td></tr>
+        </tbody>
+      </table>
+      <div class="info-box info-green" style="margin-top:10px;">
+        <strong>理论验证结论：</strong>紫光违约案例为传染理论贡献了两个重要验证：第一，<strong>"多重信仰载体"假设</strong>得到验证——同时承载多种市场信念的主体违约时，传染破坏力不是加法而是乘法；第二，<strong>"共时性违约协同"假设</strong>得到验证——同一时间段内多个违约事件同时发生时的协同效应远大于各自影响之和。这两个新发现将纳入引擎传染理论的下一版本（v0.7.0-alpha），作为"交叉传染升级因子"的量化参数。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 附录：v0.7.0四种传染类型重新分类 ====== -->
+  <div class="section">
+    <h2 class="section-title">附录：v0.7.0四种传染类型重新分类</h2>
+    <div class="card">
+      <h3>紫光案例在v0.7.0新型四类框架中的映射</h3>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;margin-bottom:12px;">
+        v0.7.0将传染类型重构为四大标准分类：<strong>信用链传染</strong>（供应链/客户-供应商关联）、<strong>区域共振</strong>（同区域无差别重定价）、<strong>流动性挤兑</strong>（融资渠道同步冻结）、<strong>信心崩塌</strong>（市场信仰/标签失效引发的全面重估）。以下展示紫光案例在这四类框架中的映射。
+      </p>
+      <table>
+        <thead><tr><th>v0.7.0传染类型</th><th>适用性</th><th>传染强度(1-5)</th><th>紫光案例具体表现</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>信用链传染</strong></td>
+            <td><span class="tag tag-amber">部分适用</span></td>
+            <td><span class="tag tag-amber">3/5</span></td>
+            <td>紫光的信用链主要通过"同实际控制人"路径传导——紫光违约→清华控股债暴跌27%→同方/诚志/启迪信用重估。这种基于股权控制关系的传染在v0.7.0框架中被归入信用链传染子类"控制权关联传导"，与供应链信用链（房地产案例）形成区分。半导体行业利差走阔30-40bp属于间接影响。</td>
+          </tr>
+          <tr>
+            <td><strong>区域共振</strong></td>
+            <td><span class="tag tag-green">低适用</span></td>
+            <td><span class="tag tag-green">1/5</span></td>
+            <td>紫光为北京注册企业，但违约对北京区域国企的传染效应极为有限。校企/半导体企业与区域关联度低，区域共振权重仅约10%。v0.7.0框架将此低权重归因于紫光的"全国性运营+单一实际控制人"结构——与区域型国企（如永煤/河南能化）有本质差异。</td>
+          </tr>
+          <tr>
+            <td><strong>流动性挤兑</strong></td>
+            <td><span class="tag tag-amber">部分适用</span></td>
+            <td><span class="tag tag-amber">3/5</span></td>
+            <td>紫光违约进一步加剧了永煤已引发的信用债一级市场冻结。校企概念债从"受追捧"变为"被规避"——融资渠道在数天内从畅通转为冻结。但与房地产的5渠道全部冻结不同，紫光影响的融资渠道集中于债券市场，银行信贷和其他渠道受影响有限。</td>
+          </tr>
+          <tr>
+            <td><strong>信心崩塌</strong></td>
+            <td><span class="tag tag-red">核心适用</span></td>
+            <td><span class="tag tag-red">5/5</span></td>
+            <td><strong>本案例最核心的传染类型。</strong>紫光同时承载"校企信仰"和"国家战略信仰"两种市场信念。当两种信仰同时崩塌时，传染的破坏力不只是加法，而是乘法。与永煤（6天前违约）叠加形成了"三重信仰在一周内崩塌"的历史性冲击——AAA国企信仰、校企信仰、国家战略信仰。v0.7.0框架新增的"多重信仰载体"参数在此案例中得到完整验证。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box info-amber" style="margin-top:12px;">
+        <strong>重分类结论：</strong>紫光案例在v0.7.0框架下被重新分类为以<strong>信心崩塌（5/5）</strong>为绝对主导、<strong>信用链传染（3/5）和流动性挤兑（3/5）</strong>为辅助、<strong>区域共振（1/5）</strong>为极低权重的传染事件。旧分类中的"CONTAGION TYPE 3"标签对应新框架中"信心崩塌主导型"——与永煤（区域共振+信心崩塌双主导）和房地产（信用链+流动性挤兑双主导）形成三种不同的传染类型权重分布。紫光案例的独特性在于其"双重信仰载体"结构（校企+国家战略），使信心崩塌权重（40%→50%）在v0.7.0框架中进一步调高。
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== FOOTER ====== -->
+  <div class="divider"></div>
+  <div class="footer">
+    <p><strong>传染复盘报告 · 紫光集团传染链 2020.11</strong></p>
+    <p>报告生成时间：2026-07-10 | 基于统一信贷评估框架 v0.7.0-alpha · 传染理论 v0.7.0-alpha | 仅供内部参考</p>
+    <p style="margin-top:8px;font-size:10px;">数据来源：Wind、中债估值、申万宏源、财联社、中诚信国际、第一财经、经济观察报、全球企业动态、新浪财经等公开市场数据。本报告为事后复盘分析，不构成投资建议。</p>
+  </div>
+
+</div>
+</body>
+</html>
