@@ -6,12 +6,21 @@ import re
 import sys
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parent.parent
 ENGINE_DIR = ROOT / "dev" / "engine"
 TEMPLATES_DIR = ROOT / "dev" / "templates"
 SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "SKILL.md"
 SKILL_REFERENCES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "references"
 SKILL_TEMPLATES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "templates"
+ROUTER_SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "credit-analysis-router" / "SKILL.md"
+
+# Make `src` importable when this script is run directly (python scripts/consistency_check.py),
+# where sys.path[0] is the scripts/ dir rather than the repo root.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from src.path_sheet import load_registry_paths, validate_path_sheet  # noqa: E402
 
 EXPECTED_VERSION = "v0.7.1-release"
 
@@ -118,6 +127,8 @@ REFERENCE_TO_ENGINE_MAP = {
     "stakeholder-paths.md": "multi-stakeholder.md",
 }
 VERSION_HEADER_RE = re.compile(r"\*\*(?:版本|对应引擎版本)\*\*\s*[:：]?\s*([^\s|]+)")
+YAML_BLOCK_RE = re.compile(r"```yaml\s*\n(.*?)```", re.DOTALL)
+PATH_SHEET_SECTION_RE = re.compile(r"## Path Sheet Output[^\n]*\n(.*?)(?=\n## |\Z)", re.DOTALL)
 
 
 def _extract_version_header(text: str) -> str | None:
@@ -292,6 +303,36 @@ def check_skill_template_drift() -> list[str]:
     return []
 
 
+def check_path_sheets() -> list[str]:
+    """Validate the router's concrete work-path sheet(s) against the registry (v0.7.5).
+
+    The router emits a 《工作路径单》 whose path_id must resolve to a registered work
+    path and whose active-path templates must exist on disk. We parse the registry and
+    validate every concrete example sheet in the router's Path Sheet Output section
+    (the blank template, whose path_id is empty, is skipped). A real violation — an
+    illegal enum, an unknown path_id, or a dangling active-path template — surfaces
+    here as a PATH_SHEET error.
+    """
+    registry_path = ENGINE_DIR / "work-path-registry.md"
+    if not ROUTER_SKILL_FILE.exists() or not registry_path.exists():
+        return []
+    registry_paths = load_registry_paths(registry_path)
+    text = ROUTER_SKILL_FILE.read_text(encoding="utf-8")
+    match = PATH_SHEET_SECTION_RE.search(text)
+    if not match:
+        return []
+    errors = []
+    for block in YAML_BLOCK_RE.findall(match.group(1)):
+        data = yaml.safe_load(block)
+        if not isinstance(data, dict):
+            continue
+        if not str(data.get("path_id") or "").strip():
+            continue  # the blank path-sheet template, not a concrete sheet
+        for err in validate_path_sheet(data, registry_paths):
+            errors.append(f"PATH_SHEET: {err}")
+    return errors
+
+
 def _parse_contagion_industries(path: Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
     start = text.find("### 1.2 范式映射表")
@@ -354,6 +395,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_rating_map())
     errors.extend(check_audit_versions())
     errors.extend(check_skill_template_drift())
+    errors.extend(check_path_sheets())
     return errors
 
 
