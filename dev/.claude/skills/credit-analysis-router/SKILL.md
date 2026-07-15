@@ -88,7 +88,7 @@ notes: "信息不足时降级为 L1 决策快照并附数据缺口清单"
 - **不复制引擎内容**：本 skill 只引用路径 ID 与文档名/章节，不复制任何阈值、权重、评级映射。规则正文一律以 `engine_reading_order` 指向的引擎文档为准。
 - **Mode B 护栏**：用户未显式提供数据源（CSV/API/MCP）时，`mode` 不得置为 B；所有 Mode B 字段视为数据缺口，不得编造外部数据值。
 - **planned 路径如实告知**：推荐到 🔴 planned 路径（如 WP-M2-01、WP-M5-01）时，必须明示"该路径待开发"，并给出可替代的 active 路径，不得伪造能力。
-- **路由即移交**：路径单产出后，切换到 `fixed-income-credit-analysis` skill，按 `engine_reading_order` 顺序阅读引擎文档并执行，质量门按 `quality_gates` 校验。
+- **路由即移交**：路径单产出后，切换到 `fixed-income-credit-analysis` skill，按 `engine_reading_order` 顺序阅读引擎文档并执行，质量门按 `quality_gates` 校验。（按路径单驱动阅读由 v0.7.4 执行层重构启用；当前执行 skill 读固定文档集 + 请求点名的专题文档。）
 
 ## References
 
