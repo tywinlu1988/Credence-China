@@ -519,9 +519,9 @@ M4组合风控在v0.7.0中通过系统智能层获得完整实现，详见以下
 
 | 模板 | 用途 | 对应文档 |
 |---|---|---|
-| **Type 13** 传染分析报告 | 以单行业为传染源，追踪传导路径到波及行业/发行人 | [template-type13.html](../design/templates/template-type13.html) |
-| **Type 14** 组合集中度报告 | 五维热力图+高风险项识别+分散化建议 | [template-type14.html](../design/templates/template-type14.html) |
-| **Type 15** 系统性风险警报 | SRI温度计读数+红色行业清单+行动建议 | [template-type15.html](../design/templates/template-type15.html) |
+| **Type 13** 传染分析报告 | 以单行业为传染源，追踪传导路径到波及行业/发行人 | [template-type13.html](../templates/template-type13.html) |
+| **Type 14** 组合集中度报告 | 五维热力图+高风险项识别+分散化建议 | [template-type14.html](../templates/template-type14.html) |
+| **Type 15** 系统性风险警报 | SRI温度计读数+红色行业清单+行动建议 | [template-type15.html](../templates/template-type15.html) |
 
 **M4工作流**（经系统智能层增强）：
 

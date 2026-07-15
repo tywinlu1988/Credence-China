@@ -376,16 +376,16 @@ Two-time-point methodology (T1: 17-18 months, T2: 4-5 months before default). Al
 - `dev/engine/external-support-framework.md` — External support assessment framework
 - `dev/engine/false-positive-negative-testing.md` — False positive/negative testing methodology
 - `dev/engine/output-layered-framework.md` — Layered output system specification
-- `templates/report-template.html` — HTML report template (dark theme)
+- `dev/templates/template-type1.html` — HTML report template (dark theme, Type 1 单标的深度分析)
 - `dev/engine/contagion-theory.md` — Contagion types, transmission paths, upgrade factors
 - `dev/engine/contagion-matrix.md` — 13×13 cross-industry contagion matrix
 - `dev/engine/concentration-framework.md` — Five-dimensional concentration framework
 - `dev/engine/systemic-warning-framework.md` — SRI algorithm and thermometer
 - `dev/engine/paradigm-brand-channel.md` — Brand+channel paradigm specification
 - `dev/engine/paradigm-network-traffic.md` — Network+traffic paradigm specification
-- `templates/template-type13.html` — Contagion report template
-- `templates/template-type14.html` — Concentration report template
-- `templates/template-type15.html` — Systemic warning report template
+- `dev/templates/template-type13.html` — Contagion report template
+- `dev/templates/template-type14.html` — Concentration report template
+- `dev/templates/template-type15.html` — Systemic warning report template
 
 ## Version History
 

@@ -891,7 +891,7 @@ TemplateSystem:
     每种类型对应一个HTML模板文件和一个Hero渐变配置。
 
   # ── 模板目录结构（已有设计）──
-  directory: "design/templates/"
+  directory: "dev/templates/"
   files:
     base: "template-base.css"         # 14KB，所有类型共享的基础样式
     components: "components/components.css"  # 组件样式（未创建）

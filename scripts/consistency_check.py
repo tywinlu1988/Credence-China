@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 ENGINE_DIR = ROOT / "dev" / "engine"
-TEMPLATES_DIR = ROOT / "dev" / "design" / "templates"
+TEMPLATES_DIR = ROOT / "dev" / "templates"
 SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "SKILL.md"
 SKILL_REFERENCES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "references"
 

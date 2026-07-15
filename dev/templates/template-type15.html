@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!-- @template: dev/templates/template-type15.html -->
+<!-- @engine-version: v0.7.0-alpha -->
 <html lang="zh-CN">
 <!-- 实例报告: systemic-warning-2026q2.html -->
 <head>
@@ -112,7 +114,7 @@
     <div class="strip-item">
       <div class="slabel">SRI系统性风险指数</div>
       <div class="sval" style="color:var(--red);">{SRI读数}</div>
-      <div class="ssub">0-4范围 · 越高风险越大</div>
+      <div class="ssub">0-3+范围 · 越高风险越大</div>
     </div>
     <div class="strip-item">
       <div class="slabel">温度计等级</div>
@@ -1364,6 +1366,7 @@
 
     <div class="card" style="margin-top:14px;">
       <h3>9.4 完整度评分</h3>
+      <!-- BEFORE outputting any rating in this template, confirm that all dimensions used meet the density rules in mosaic-engine.md §4. If not, output '信息不足无法评估' instead. -->
       <table>
         <thead>
           <tr>
@@ -1543,7 +1546,7 @@
   <p><strong>系统性风险警报报告</strong> — Type 15 模板</p>
   <p>报告编号 T15-{报告编号} · 版本 v0.7.0-alpha · 生成于 {生成日期} · 仅供内部风险评估使用</p>
   <p style="margin-top:6px; font-size:10px; color:var(--text-tertiary);">
-    基于统一信贷评估框架 v0.7.0-alpha · 系统性预警框架 v0.6.8-alpha · 所有分析均为内部推演，不构成投资建议
+    基于统一信贷评估框架 v0.7.0-alpha · 系统性预警框架 v0.7.0-alpha · 所有分析均为内部推演，不构成投资建议
   </p>
 </div>
 
