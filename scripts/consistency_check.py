@@ -13,7 +13,7 @@ SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis
 SKILL_REFERENCES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "references"
 SKILL_TEMPLATES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "templates"
 
-EXPECTED_VERSION = "v0.7.0-alpha"
+EXPECTED_VERSION = "v0.7.1-release"
 
 CORE_DOCS = [
     "engine-overview.md",
@@ -187,6 +187,12 @@ def check_audit_versions() -> list[str]:
     errors = []
     pattern = re.compile(r"\*\*对应引擎版本\*\*\s*:\s*" + re.escape(EXPECTED_VERSION) + r"\b")
     for path in ENGINE_DIR.rglob("*.md"):
+        # audits/ holds frozen historical reports. Their 对应引擎版本 records the
+        # engine era under review (e.g. v0.7.0-alpha/v0.5.4-alpha) on an independent
+        # report-version scheme (v1.0/v1.1), so it must not track EXPECTED_VERSION.
+        # The audit-version requirement applies only to current (non-archived) docs.
+        if "audits" in path.relative_to(ENGINE_DIR).parts:
+            continue
         name = path.name
         if not (name.endswith("-audit.md") or re.match(r".*-review-.*\.md$", name) or name.startswith("self-assessment-")):
             continue

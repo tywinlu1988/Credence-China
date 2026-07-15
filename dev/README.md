@@ -1,7 +1,7 @@
 # 固收信贷智能分析引擎
 
 **项目代号**: Credence
-**版本**: v0.7.1-alpha
+**版本**: v0.7.1-release
 **状态**: 方法论文档阶段 · 产品设计完成 · 13行业覆盖 · 系统智能层上线 · 文档结构重整完成
 
 ---
@@ -136,6 +136,7 @@ dev/
 | **v0.7.0-alpha** | **2026-07-10** | **系统智能层发布：传染图谱（4份复盘+13×13矩阵+Type 13）·集中度仪表盘（五维框架+3份情景+Type 14）·系统性预警（SRI温度计+Type 15）。引擎架构升级至四层。M4组合风控完整实现。13行业全量覆盖。L0温度计卡片。15种报告模板体系。** |
 | **v0.7.1-alpha** | **2026-07-15** | **开发栈结构重整：模板单源化 `templates/`（Type 1-15 + template-base.css）、engine 26份现行+15份归档 `engine/audits/`、72份报告按15个子目录归类、design/data 归位、README 与磁盘现实严格对齐。** |
 | v0.7.1-alpha（快照重建） | 2026-07-15 | 验证产物分离：72 份测试报告与测试执行记录迁出至根级 validation/（非项目本体，永不入快照）；README/SKILL 移除验证结果表格与案例清单；engine 现行文档 25 份；v0.7.1 快照按新边界重建 |
+| **v0.7.1-release** | **2026-07-15** | **正式发布：开发栈结构重整（模板单源 templates/、engine 25份现行+audits/、design/data 归位）+ 验证产物分离（validation/ 永不入快照）。全量一致性检查与 63 项测试通过。** |
 
 > **注**：v0.6.x系列为模块级预发布版本（contagion-matrix.md、concentration-framework.md、systemic-warning-framework.md 等独立发布），功能统一纳入 v0.7.0-alpha。
 

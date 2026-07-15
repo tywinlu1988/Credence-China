@@ -1,6 +1,6 @@
 # 固定收益信用分析引擎 — 架构总览
 
-**版本**: v0.7.0-alpha | **日期**: 2026-07-10
+**版本**: v0.7.1-release | **日期**: 2026-07-10
 
 ---
 
@@ -203,24 +203,24 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 
 | 版本体系 | 适用范围 | 示例 | 说明 |
 |---|---|---|---|
-| **引擎版本** | 核心方法论文档 | v0.7.0-alpha | 反映引擎方法论的整体迭代阶段，所有核心方法论文档统一标注此版本 |
-| **审查报告版本** | 审计/自评/终审文档 | v1.0, v1.1 | 独立的审查报告版本体系，在文件头标注"对应引擎版本: v0.7.0-alpha" |
+| **引擎版本** | 核心方法论文档 | v0.7.1-release | 反映引擎方法论的整体迭代阶段，所有核心方法论文档统一标注此版本 |
+| **审查报告版本** | 审计/自评/终审文档 | v1.0, v1.1 | 独立的审查报告版本体系，在文件头标注"对应引擎版本: v0.7.1-release" |
 
 ### 7.2 核心方法论文档版本对应关系
 
 | 文档 | 当前版本 | 说明 |
 |---|---|---|
-| engine-overview.md | v0.7.0-alpha | 引擎架构总览 |
-| dual-track-methodology.md | v0.7.0-alpha | 双轨分析方法论 |
-| industry-framework.md | v0.7.0-alpha | 行业分类与分析框架 |
-| qualitative-analysis.md | v0.7.0-alpha | 定性分析方法论 |
-| quantitative-analysis.md | v0.7.0-alpha | 定量分析方法论 |
-| mosaic-engine.md | v0.7.0-alpha | 马赛克引擎 |
-| output-layered-framework.md | v0.7.0-alpha | 分层输出框架 |
-| contagion-theory.md | v0.7.0-alpha | 传染理论基础（系统智能层） |
-| contagion-matrix.md | v0.7.0-alpha | 13行业传染矩阵 |
-| concentration-framework.md | v0.7.0-alpha | 五维集中度分析框架 |
-| systemic-warning-framework.md | v0.7.0-alpha | 系统性预警框架 |
+| engine-overview.md | v0.7.1-release | 引擎架构总览 |
+| dual-track-methodology.md | v0.7.1-release | 双轨分析方法论 |
+| industry-framework.md | v0.7.1-release | 行业分类与分析框架 |
+| qualitative-analysis.md | v0.7.1-release | 定性分析方法论 |
+| quantitative-analysis.md | v0.7.1-release | 定量分析方法论 |
+| mosaic-engine.md | v0.7.1-release | 马赛克引擎 |
+| output-layered-framework.md | v0.7.1-release | 分层输出框架 |
+| contagion-theory.md | v0.7.1-release | 传染理论基础（系统智能层） |
+| contagion-matrix.md | v0.7.1-release | 13行业传染矩阵 |
+| concentration-framework.md | v0.7.1-release | 五维集中度分析框架 |
+| systemic-warning-framework.md | v0.7.1-release | 系统性预警框架 |
 
 **职责边界说明：** 原有M4组合风控框架（multi-stakeholder.md §5）承担单发行人/单组合的风控职能（集中度限额/压力测试/评级调整）。系统智能层（contagion-matrix.md/concentration-framework.md/systemic-warning-framework.md）在M4基础上增加跨发行人/跨组合的系统性风险分析——传染矩阵覆盖全市场行业对传导、集中度框架覆盖五维组合集中度、预警框架提供全市场SRI读数。两者分工明确：原有M4做单发行人风控·系统智能层做跨发行人系统性风险。
 

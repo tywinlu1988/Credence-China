@@ -18,7 +18,7 @@ When this Skill is invoked:
 4. If a required threshold, weight, or mapping is missing from the engine documents, output `引擎未定义` and do not invent a value.
 5. Do not invoke Mode B or generate external-data values unless the user has explicitly provided a CSV upload, API endpoint, or MCP server. Treat Mode B fields as data gaps until then.
 
-# Fixed Income Credit Analysis Engine v0.7.0-alpha
+# Fixed Income Credit Analysis Engine v0.7.1-release
 
 ## Overview
 
@@ -374,3 +374,4 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | 0.5.0-release | 2026-07-09 | Release stabilization. Complete supporting documentation for all expanded capabilities. Production-ready layered output system. Full 8-industry, 30-document, 15-template coverage. |
 | 0.7.0-alpha | 2026-07-13 | System-intelligence layer: contagion theory/matrix, five-dimensional concentration framework, systemic warning (SRI), 13-industry coverage, six analytical paradigms. Skill synchronized with engine release. |
 | 0.7.1-alpha | 2026-07-15 | Dev-stack structure reorganization: templates consolidated to dev/templates/ (single source, Type 1-15), engine current+audits split, reports organized into 15 subdirectories. Skill templates/ copies removed; references point to dev/templates/. |
+| 0.7.1-release | 2026-07-15 | Release: dev-stack reorganization finalized, validation artifacts separated from project body (root validation/, never in snapshots). Version headers promoted. |
