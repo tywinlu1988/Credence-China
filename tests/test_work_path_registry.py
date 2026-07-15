@@ -15,15 +15,18 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 REGISTRY = ROOT / "dev" / "engine" / "work-path-registry.md"
 
-# Fields every registered path must declare (T2.1).
+# Fields every registered path must declare (T2.1, full 11-field schema).
 REQUIRED_FIELDS = [
     "id",
     "name",
     "status",
     "role",
+    "trigger",
     "depth",
     "engine_sequence",
+    "paradigm_selection",
     "templates",
+    "outputs",
     "quality_gates",
 ]
 
