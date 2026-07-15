@@ -237,3 +237,58 @@ def test_check_rating_map_consistency_accepts_legitimate_12_notch(tmp_path, monk
     )
     monkeypatch.setattr(cc, "ENGINE_DIR", fake_engine)
     assert cc.check_rating_map_consistency() == []
+
+
+def test_check_links_resolves_sibling_in_archived_subdir(tmp_path, monkeypatch):
+    """A doc inside an archived subdir links to a same-dir sibling: resolves directly."""
+    cc = _import_checker()
+    fake_engine = tmp_path / "engine"
+    archived = fake_engine / "audits"
+    archived.mkdir(parents=True)
+    (archived / "target.md").write_text("# target\n", encoding="utf-8")
+    (archived / "source.md").write_text("See [target](target.md)\n", encoding="utf-8")
+    monkeypatch.setattr(cc, "ENGINE_DIR", fake_engine)
+    assert cc.check_links() == []
+
+
+def test_check_links_falls_back_to_engine_root(tmp_path, monkeypatch):
+    """A doc inside a subdir links to a file present only at the engine root: fallback resolves."""
+    cc = _import_checker()
+    fake_engine = tmp_path / "engine"
+    archived = fake_engine / "audits"
+    archived.mkdir(parents=True)
+    (fake_engine / "engine-overview.md").write_text("# overview\n", encoding="utf-8")
+    (archived / "source.md").write_text(
+        "See [overview](engine-overview.md)\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(cc, "ENGINE_DIR", fake_engine)
+    assert cc.check_links() == []
+
+
+def test_check_links_flags_target_missing_everywhere(tmp_path, monkeypatch):
+    """A link whose target exists neither beside the source nor at the engine root still breaks."""
+    cc = _import_checker()
+    fake_engine = tmp_path / "engine"
+    archived = fake_engine / "audits"
+    archived.mkdir(parents=True)
+    (archived / "source.md").write_text(
+        "See [missing](no-such-file.md)\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(cc, "ENGINE_DIR", fake_engine)
+    errors = cc.check_links()
+    assert any("BROKEN_LINK" in e and "no-such-file.md" in e for e in errors)
+
+
+def test_check_skill_template_drift_flags_skill_templates_dir(tmp_path, monkeypatch):
+    cc = _import_checker()
+    skill_templates = tmp_path / "templates"
+    skill_templates.mkdir()
+    monkeypatch.setattr(cc, "SKILL_TEMPLATES_DIR", skill_templates)
+    errors = cc.check_skill_template_drift()
+    assert any("SKILL_TEMPLATE_DRIFT" in e for e in errors)
+
+
+def test_check_skill_template_drift_absent_is_clean(tmp_path, monkeypatch):
+    cc = _import_checker()
+    monkeypatch.setattr(cc, "SKILL_TEMPLATES_DIR", tmp_path / "templates")
+    assert cc.check_skill_template_drift() == []

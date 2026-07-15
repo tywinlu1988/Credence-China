@@ -11,6 +11,7 @@ ENGINE_DIR = ROOT / "dev" / "engine"
 TEMPLATES_DIR = ROOT / "dev" / "templates"
 SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "SKILL.md"
 SKILL_REFERENCES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "references"
+SKILL_TEMPLATES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "templates"
 
 EXPECTED_VERSION = "v0.7.0-alpha"
 
@@ -273,6 +274,16 @@ def check_skill_references() -> list[str]:
     return errors
 
 
+def check_skill_template_drift() -> list[str]:
+    """Templates are single-sourced under dev/templates/; the skill must not keep copies."""
+    if SKILL_TEMPLATES_DIR.exists():
+        return [
+            "SKILL_TEMPLATE_DRIFT: skill must not keep its own templates/ copies; "
+            "dev/templates/ is the single source"
+        ]
+    return []
+
+
 def _parse_contagion_industries(path: Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
     start = text.find("### 1.2 范式映射表")
@@ -334,6 +345,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_sri_scale())
     errors.extend(check_rating_map())
     errors.extend(check_audit_versions())
+    errors.extend(check_skill_template_drift())
     return errors
 
 
