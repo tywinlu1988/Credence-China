@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>比亚迪(002594) — 单标的深度信贷分析报告</title>
+<link rel="stylesheet" href="../../../dev/templates/template-base.css">
+<style>
+  /* ===== Hero ===== */
+  .hero-byd {
+    background: linear-gradient(135deg, #0f172a, #1e3a5f, var(--amber));
+    text-align: center;
+    padding: 64px 24px 48px;
+    border-radius: 0 0 24px 24px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-byd::after {
+    content: "";
+    position: absolute;
+    top: -60%; right: -20%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(180,83,9,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-byd .stock { font-size: 14px; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
+  .hero-byd h1 { font-size: 30px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin: 8px 0 10px; }
+  .hero-byd .industry-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 6px 20px;
+    font-size: 13px; color: rgba(255,255,255,0.9);
+    margin: 6px 0 12px;
+  }
+  .hero-byd .industry-tag .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--amber); display: inline-block;
+  }
+  .hero-byd .sub-meta {
+    display: flex; justify-content: center; gap: 28px;
+    margin-top: 18px; flex-wrap: wrap;
+  }
+  /* ===== Typography ===== */
+  h2 { font-size: 19px; }
+  h3 { font-size: 15px; }
+
+  .hero-byd .sub-meta span {
+    font-size: 12px; color: rgba(255,255,255,0.55);
+  }
+  .hero-byd .sub-meta strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+  /* ===== Pyramid ===== */
+  .pyramid { margin: 40px 0; }
+  .pyramid-layer {
+    display: flex; gap: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .pyramid-layer:hover { border-color: var(--border-strong); }
+  .pyramid-layer .layer-weight {
+    flex-shrink: 0;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; line-height: 1.3;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-default);
+  }
+  .pyramid-layer .layer-weight .pct { font-size: 14px; }
+  .pyramid-layer .layer-body { flex: 1; min-width: 0; }
+  .pyramid-layer .layer-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px; flex-wrap: wrap; gap: 8px;
+  }
+  .pyramid-layer .layer-header h3 {
+    font-size: 15px; font-weight: 700; margin: 0;
+  }
+  .pyramid-layer .layer-header .score {
+    font-size: 20px; font-weight: 800;
+  }
+  .pyramid-layer .layer-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+  .pyramid-layer .layer-desc strong { color: var(--text-primary); }
+  .pyramid-layer .layer-desc .highlight { color: var(--amber); font-weight: 600; }
+  .pyramid-layer .layer-desc .warn { color: var(--red); font-weight: 600; }
+  .pyramid-layer .layer-desc .good { color: var(--green); font-weight: 600; }
+
+  /* ===== Key Finding ===== */
+  .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  @media (max-width: 640px) { .finding-grid { grid-template-columns: 1fr; } }
+  .finding-card {
+    background: var(--bg-secondary); border: 1px solid var(--border-default);
+    border-radius: var(--radius); padding: 18px 20px;
+  }
+  .finding-card .fc-icon { font-size: 22px; margin-bottom: 6px; }
+  .finding-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .finding-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ===== Risk Signal ===== */
+  .risk-bar {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--red-bg); border: 1px solid rgba(239,68,68,0.2);
+    border-radius: var(--radius); padding: 14px 20px; margin: 10px 0;
+  }
+  .risk-bar .r-icon { font-size: 20px; flex-shrink: 0; }
+  .risk-bar .r-body { flex: 1; font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+  .risk-bar .r-body strong { color: var(--red); }
+
+  .risk-amber {
+    background: var(--amber-bg); border-color: rgba(245,158,11,0.2);
+  }
+  .risk-amber .r-body strong { color: var(--amber); }
+
+  .risk-green {
+    background: var(--green-bg); border-color: rgba(34,197,94,0.2);
+  }
+  .risk-green .r-body strong { color: var(--green); }
+
+  /* ===== Credit Suggestion ===== */
+  .credit-box {
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 18px 0;
+  }
+  .credit-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .credit-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+  .credit-box p strong { color: var(--text-primary); }
+  .credit-box ul { margin: 8px 0 0 18px; font-size: 13px; color: var(--text-secondary); line-height: 1.9; }
+  .credit-box ul li strong { color: var(--text-primary); }
+
+  /* ===== Financial Data Table ===== */
+  .fin-table-wrap {
+    overflow-x: auto;
+    margin: 14px 0;
+  }
+  .fin-table-wrap table { min-width: 600px; }
+  .fin-table-wrap td.rt { font-variant-numeric: tabular-nums; }
+
+  /* ===== Section Subtitle ===== */
+  .section-sub { font-size: 12px; color: var(--text-tertiary); margin-top: -10px; margin-bottom: 16px; }
+
+  /* ===== Pill ===== */
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pill-green { background: var(--green-bg); color: var(--green); }
+  .pill-amber { background: var(--amber-bg); color: var(--amber); }
+  .pill-red   { background: var(--red-bg);   color: var(--red); }
+  .pill-blue  { background: var(--blue-bg);  color: var(--blue); }
+  .pill-purple { background: var(--purple-bg); color: var(--purple); }
+
+  /* ===== Segment Bar ===== */
+  .segment-bar-wrap { margin: 16px 0; }
+  .segment-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .segment-row .seg-label {
+    width: 100px; flex-shrink: 0;
+    font-size: 12px; font-weight: 600; text-align: right;
+  }
+  .segment-row .seg-track {
+    flex: 1; height: 24px;
+    background: var(--bg-tertiary);
+    border-radius: 4px; overflow: hidden;
+  }
+  .segment-row .seg-track .seg-fill {
+    height: 100%; border-radius: 4px;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 8px;
+    font-size: 11px; font-weight: 700; color: #fff;
+  }
+  .segment-row .seg-val {
+    width: 80px; flex-shrink: 0;
+    font-size: 12px; font-weight: 600;
+    text-align: right;
+  }
+
+  /* ===== Competitor Comparison ===== */
+  .best-in-class { color: var(--green); font-weight: 700; }
+
+  /* ===== Capacity Utilization Bar ===== */
+  .cap-bar {
+    display: flex; align-items: center; gap: 16px;
+    margin: 8px 0;
+  }
+  .cap-bar .cap-label { width: 100px; font-size: 12px; font-weight: 600; text-align: right; }
+  .cap-bar .cap-track {
+    flex: 1; height: 22px;
+    background: var(--bg-tertiary);
+    border-radius: 4px; overflow: hidden;
+    position: relative;
+  }
+  .cap-bar .cap-track .cap-fill {
+    height: 100%; border-radius: 4px;
+    transition: width 0.3s;
+  }
+  .cap-bar .cap-pct { width: 50px; font-size: 12px; font-weight: 700; text-align: right; }
+
+  /* ===== Width Utilities ===== */
+  .w-78 { width: 78%; }
+  .w-18 { width: 18%; }
+  .w-12 { width: 12%; }
+  .w-85 { width: 85%; }
+  .w-92 { width: 92%; }
+  .w-55 { width: 55%; }
+  .w-35 { width: 35%; }
+  .w-20 { width: 20%; }
+
+  /* ===== Segment Fill Colors ===== */
+  .seg-fill-amber { background: linear-gradient(90deg, var(--amber), var(--amber)); }
+  .seg-fill-blue { background: linear-gradient(90deg, var(--blue), var(--blue)); }
+  .seg-fill-purple { background: linear-gradient(90deg, var(--purple), var(--purple)); }
+
+  /* ===== Capacity Fill Colors ===== */
+  .cap-fill-green { background: linear-gradient(90deg, var(--green), var(--green)); }
+  .cap-fill-amber { background: linear-gradient(90deg, var(--amber), var(--amber)); }
+  .cap-fill-red { background: linear-gradient(90deg, var(--red), var(--red)); }
+
+  /* ===== Border Color Utilities ===== */
+  .border-amber { border-color: var(--amber); }
+  .border-purple { border-color: var(--purple); }
+  .border-red { border-color: var(--red); }
+  .border-blue { border-color: var(--blue); }
+  .border-green { border-color: var(--green); }
+
+  /* ===== Finding Card Border Left ===== */
+  .finding-card-purple { border-left: 4px solid var(--purple); }
+  .finding-card-red { border-left: 4px solid var(--red); }
+  .finding-card-green { border-left: 4px solid var(--green); }
+  .finding-card-amber { border-left: 4px solid var(--amber); }
+
+  /* ===== Margin Utilities ===== */
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-neg8 { margin-top: -8px; }
+
+  /* ===== Score Unit ===== */
+  .score-unit { font-size: 13px; font-weight: 400; color: var(--text-tertiary); }
+
+  /* ===== Tfoot Row ===== */
+  .tfoot-row { background: var(--bg-tertiary); font-weight: 700; }
+
+  /* ===== Signal Card (市场定价信号) ===== */
+  .signal-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .signal-card .signal-icon { font-size: 28px; margin-bottom: 8px; }
+  .signal-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .signal-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ===== Collision Card (交叉对撞) ===== */
+  .collision-grid { margin-bottom: 14px; }
+  .collision-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .collision-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .collision-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ===== Completeness Grid (完备性评估) ===== */
+  .completeness-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px) { .completeness-grid { grid-template-columns: 1fr; } }
+  .completeness-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .completeness-item .completeness-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .completeness-item .completeness-value {
+    display: block;
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<div class="hero-byd">
+  <div class="stock">002594.SZ / 1211.HK</div>
+  <h1>比亚迪</h1>
+  <div class="industry-tag">
+    <span class="dot"></span> 新能源汽车 · 存量博弈型(整车)
+  </div>
+  <div class="sub-meta">
+    <span>分析时点: <strong>2026-07</strong></span>
+    <span>报告类型: <strong>Type 1 — 单标的深度分析</strong></span>
+    <span>目标读者: <strong>分支行对公信贷经理</strong></span>
+    <span>模板版本: <strong>v1.0</strong></span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================
+     Strip 4-Column
+     ============================================================ -->
+<div class="strip">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval text-amber">BBB+</div>
+    <div class="ssub">投资级下沿</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">得分</div>
+    <div class="sval text-amber">6.52</div>
+    <div class="ssub">满分10.00</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval text-blue">稳定</div>
+    <div class="ssub">12个月</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval text-amber">中高</div>
+    <div class="ssub">基于2025年报+2026Q1</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Executive Summary
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷执行摘要</h2>
+  <div class="card card-amber">
+    <p>
+      比亚迪是中国最大的新能源汽车制造商，2025年全球新能源汽车销量突破460万辆（含乘用车和商用车），位居全球第一。公司在<strong>三电技术</strong>（电池、电机、电控）和<strong>智能化</strong>领域构建了领先的技术体系——二代刀片电池、1000V闪充平台、天神之眼5.0智驾系统和4nm璇玑芯片均代表行业最高水平。综合评级<strong class="text-amber">BBB+</strong>，得分<strong class="text-amber">6.52/10</strong>，展望<strong class="text-blue">稳定</strong>。核心优势在于技术领先和海外扩张的强劲增长；主要风险为产能严重过剩（产能利用率仅约50%）、库存创历史新高（1,604亿元）、国内市场份额受激烈竞争挤压。建议<strong>1年期流贷+分阶段放款</strong>，严控敞口并绑定海外应收账款质押。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Business Segment Analysis
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">业务板块拆解</h2>
+  <p class="section-sub">基于2025年报分部数据，五大业务板块收入结构与盈利能力</p>
+
+  <div class="segment-bar-wrap">
+    <div class="segment-row">
+      <span class="seg-label">汽车/汽车相关</span>
+      <div class="seg-track">
+        <div class="seg-fill w-78 seg-fill-amber">78%</div>
+      </div>
+      <span class="seg-val text-amber">~4,710亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">手机部件/组装</span>
+      <div class="seg-track">
+        <div class="seg-fill w-18 seg-fill-blue">18%</div>
+      </div>
+      <span class="seg-val text-blue">~1,080亿</span>
+    </div>
+    <div class="segment-row">
+      <span class="seg-label">二次充电电池</span>
+      <div class="seg-track">
+        <div class="seg-fill w-12 seg-fill-purple">12%</div>
+      </div>
+      <span class="seg-val text-purple">~720亿</span>
+    </div>
+  </div>
+  <p class="section-sub mt-neg8">注: 因分部间交易抵消，占比之和超过100%。以上为各分部总收入口径。</p>
+
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>板块</th>
+          <th class="rt">收入(亿元)</th>
+          <th>占比</th>
+          <th class="rt">毛利率</th>
+          <th class="rt">同比增速</th>
+          <th>竞争地位</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>汽车/汽车相关</td>
+          <td class="rt">4,710</td>
+          <td>78%</td>
+          <td class="rt">18.81%</td>
+          <td class="rt">+12.4%</td>
+          <td><span class="tag tag-green">全球销量第一</span></td>
+        </tr>
+        <tr>
+          <td>手机部件/组装</td>
+          <td class="rt">1,080</td>
+          <td>18%</td>
+          <td class="rt">8.2%</td>
+          <td class="rt">+5.6%</td>
+          <td><span class="tag tag-blue">安卓+苹果供应商</span></td>
+        </tr>
+        <tr>
+          <td>二次充电电池</td>
+          <td class="rt">720</td>
+          <td>12%</td>
+          <td class="rt">14.5%</td>
+          <td class="rt">+18.2%</td>
+          <td><span class="tag tag-green">磷酸铁锂全球前二</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-blue mt-12">
+    <h3>板块分析要点</h3>
+    <p>
+      <strong>汽车业务</strong>是主体（78%收入+几乎所有利润贡献），2025年汽车业务毛利率回升至18.81%（vs 2024年17.5%），主要受益于碳酸锂价格下行和规模效应。2026Q1国内销量同比-30%但海外出口同比+145%，出口占比由2024年的约12%提升至约22%。<br>
+      <strong>手机部件业务</strong>（比亚迪电子）增长稳定但利润率薄，毛利率约8.2%，主要来自安卓品牌组装和苹果结构件供应。该板块对汽车主业是重要的现金流补充和就业缓冲。<br>
+      <strong>二次充电电池</strong>板块对外供货（储能+消费电子）和内部配套各占约一半。刀片电池外供已突破小鹏、小米等客户，储能业务（电池包+系统）收入增速超50%，是未来增长亮点。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Pyramid Layers: 整车五维存活模型
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">整车五维存活模型深度扫描</h2>
+  <p class="section-sub">L1(存活位置) 25% | L2(技术/产品力) 20% | L3(运营效率) 20% | L4(财务/现金流) 15% | L5(政策/出口) 10% — 合计90%(预留10%弹性)</p>
+  <div class="pyramid">
+
+    <!-- L1 存活位置 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-amber">
+        <span class="pct text-amber">25%</span>
+        <span>L1</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L1 市场存活位置 <span class="pill pill-amber">权重25%</span></h3>
+          <div class="score text-green">7.4 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>全球新能源汽车销冠</strong> —— 2025年全球新能源汽车销量突破<strong class="highlight">460万辆</strong>（含纯电和插混），稳居全球第一，领先第二名特斯拉约80万辆。中国市场占有率约33%，插混市场份额接近50%。<br><br>
+          <strong>国内市场承压：</strong>2026Q1国内销量同比-30%，主要原因：一是行业整体进入存量博弈阶段——新能源渗透率已超50%，增量空间收窄；二是小米SU7、吉利银河、华为问界等竞品激烈分食20-30万元核心价格带；三是消费者观望（等待闪充新平台车型切换）。<br><br>
+          <strong>海外市场对冲：</strong>出口量同比+145%，2025年全年海外销量约105万辆，覆盖<strong class="good">119个国家和地区</strong>。海外收入占比提升至约22%（预计2026年可达30%+）。海外单车均价比国内高约30-40%，海外业务成为增量利润的主要来源。<br><br>
+          <strong>产能利用率仅约50%：</strong>公司已建成产能约750-850万辆/年（含在建），按460万辆销量计算，产能利用率仅约55-60%。TH法定产能约600万（需考虑口径差异）。产能过剩是整车行业通病，但比亚迪因前几年极度激进的扩产导致闲置产能比例高于同行（吉利约70%、长城约65%），<strong class="warn">固定资产减值风险</strong>需持续关注。
+        </div>
+      </div>
+    </div>
+
+    <!-- L2 技术/产品力 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-purple">
+        <span class="pct text-purple">20%</span>
+        <span>L2</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L2 技术/产品力 <span class="pill pill-purple">权重20%</span></h3>
+          <div class="score text-green">9.3 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>技术储备业内最强，综合得分9.3/10——本次分析中得分最高的维度。</strong><br><br>
+          <strong>二代刀片电池：</strong>能量密度提升至180Wh/kg（一代为140Wh/kg），体积利用率提升约15%，搭载于海豹、汉L、唐L等主力车型。配合CTB(Cell to Body)一体化技术，实现了电池包结构强度和能量密度的双重提升。电池安全记录优越——刀片电池上市以来无重大自燃事故。<br><br>
+          <strong>1000V闪充平台：</strong>全球首个量产乘用车1000V高压平台，充电功率最高可达500kW，实现"充电5分钟、续航200公里"。配套的碳化硅(SiC)功率模块实现100%自研自产，核心部件不依赖外供。闪充+碳化硅构成了下一阶段的核心差异化竞争力。<br><br>
+          <strong>天神之眼5.0智驾系统：</strong>基于端到端大模型的城区NOA(NOA: Navigate on Autopilot，领航辅助驾驶)已覆盖国内全部城市。搭载3颗激光雷达（主激光雷达+2颗补盲）+12颗超声波雷达+12颗摄像头，芯片为比亚迪自研的<strong class="highlight">4nm璇玑芯片</strong>（AI算力约500TOPS）。智驾技术水平从2024年的行业第二梯队跃升至2025年第一梯队，与华为ADS 3.0处于同一水平线。<br><br>
+          <strong>璇玑架构：</strong>自研4nm车规级SoC芯片，算力500TOPS，CPU+NPU+GPU融合统一架构，实现"座舱-智驾-车控"三域融合。这是除特斯拉FSD芯片外全球第二个完全自研的车规级AI芯片，也是全球首颗4nm车规级芯片，是比亚迪在智能化维度上"去英伟达化"的核心标志。
+        </div>
+      </div>
+    </div>
+
+    <!-- L3 运营效率 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-red">
+        <span class="pct text-red">20%</span>
+        <span>L3</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L3 运营效率 <span class="pill pill-red">权重20%</span></h3>
+          <div class="score text-red">5.3 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>运营效率是本次分析中评分最低的维度，也是压制综合评级的核心拖累因素。</strong><br><br>
+          <strong>产能严重过剩：</strong>公司现有整车产能约750-850万辆/年（含在建泰、匈牙利工厂产能），2025年实际产量约510万辆，产能利用率仅约<strong class="warn">60-65%</strong>（若按已投产产能计算更低）。考虑到2026年销量目标约550万，产能完全覆盖无虞——但大量闲置产能对应的固定资产折旧（年约250-300亿）持续侵蚀利润。<br><br>
+          <strong>存货创历史新高：</strong>截至2025年末，存货余额<strong class="warn">1,604亿元</strong>，为历史最高水平。其中产成品约850亿元、原材料约420亿元、在产品约334亿元。存货周转天数达到<strong class="warn">110天</strong>（2023年为78天、2024年为92天），呈现出快速恶化的趋势。1,600亿存货占用大量流动资金，且若新能源车降价（行业年均降价约8-12%），<strong class="warn">存货跌价准备</strong>存在大幅增加的风险。<br><br>
+          <strong>经销商端压力：</strong>2025年经销商调研显示约<strong class="warn">41.7%的网点处于亏损状态</strong>。在价格战环境下（2025年行业平均折扣率约15-18%），经销商盈利空间被严重挤压。经销商亏损率上升威胁到终端交付能力和回款稳定性。<br><br>
+          <strong>产线人员冗余：</strong>员工总数约85万人（含汽车+电池+电子），人均产车约6辆/年，低于特斯拉（约9辆/年）和丰田（约7.5辆/年）。人工成本率约12.5%——高于行业平均约9-10%，运营效率仍有提升空间。
+        </div>
+      </div>
+    </div>
+
+    <!-- L4 财务/现金流 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-blue">
+        <span class="pct text-blue">15%</span>
+        <span>L4</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L4 财务/现金流 <span class="pill pill-blue">权重15%</span></h3>
+          <div class="score text-amber">6.3 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>财务基本面存在明显的短期流动性和长期资本结构矛盾。</strong><br><br>
+          <strong>盈利能力：</strong>汽车业务毛利率18.81%（2025年），较2024年的17.5%有所回升，受益于碳酸锂等原材料成本下降。但2026Q1毛利率小幅下降至18.2%（因价格战+闪充平台首批摊销）。净利率约5.2%——显著低于特斯拉(约13%)和理想汽车(约7%)，体现实质盈利能力仍有差距。<br><br>
+          <strong>现金流与流动性——最大隐忧：</strong>经营性现金流2025年为<strong class="warn">222亿元</strong>，同比-67%（2024年为673亿元）。主要拖累：存货增加、应收账款增加、应付账款账期缩短（供应链压力传导）。<strong class="warn">现金及等价物734亿元 vs 短期债务1,149亿元</strong>——短债对现金的覆盖倍数仅为0.64x，短期流动性缺口约415亿元。公司高度依赖银行授信和债券市场滚动融资维持流动性。<br><br>
+          <strong>资本结构：</strong>资产负债率约<strong class="warn">68%</strong>（2025年），较理想的50-60%安全区间偏高。有息负债率约35%——其中有息负债中短期占比约55%，债务结构偏短期化。长期借款以项目贷（泰国工厂、匈牙利工厂、巴西工厂）为主，产能扩张形成较大长期资金沉淀。<br><br>
+          <strong>投入资本回报率(ROIC)：</strong>约5.8%，明显低于公司加权平均融资成本(WACC)约7.2%，意味着资本效率为负。这是整车制造行业重资产扩张期的通病，但ROIC少于WACC的体系在信贷视角下意味着"每投入1元资本反而在消灭价值"。
+        </div>
+      </div>
+    </div>
+
+    <!-- L5 政策/出口 -->
+    <div class="pyramid-layer">
+      <div class="layer-weight border-green">
+        <span class="pct text-green">10%</span>
+        <span>L5</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-header">
+          <h3>L5 政策/出口 <span class="pill pill-green">权重10%</span></h3>
+          <div class="score text-green">8.0 <span class="score-unit">/ 10</span></div>
+        </div>
+        <div class="layer-desc">
+          <strong>出口增长迅猛但面临贸易壁垒显著上升。</strong><br><br>
+          <strong>出口体量：</strong>2025年出口<strong class="highlight">105万辆</strong>（含商用车），覆盖<strong class="good">119个国家</strong>。海外单车均价约22万元（国内均价约15万元），海外毛利率约<strong class="good">28%+</strong>（较国内高出约10个百分点），海外利润占比快速上升。<br><br>
+          <strong>生产基地布局对冲关税：</strong>匈牙利工厂（年产能15万辆，2026年投产）——规避欧盟反补贴关税（当前税率17.4%）；巴西工厂（年产能15万辆，2026年投产）——覆盖南美市场及拓展北美；泰国工厂（年产能15万辆，已投产）——覆盖东南亚+澳大利亚。三大海外工厂全部投产后，海外总产能约45万辆/年，可满足2027年出口目标的约50%。<br><br>
+          <strong>贸易壁垒风险：</strong>欧盟反补贴关税最终税率<strong class="warn">17.4%</strong>（比亚迪为抽样企业），虽低于上汽(35.2%)和吉利(18.8%)，但仍对欧洲出口盈利构成实质性压减。美国对中国电动车保持100%+关税，公司短期无法进入美国市场（仅通过巴西工厂迂回是否有敞口待评估）。若欧盟进一步加征关税(潜在上调至25-30%)，公司欧洲市场出口利润将受到显著冲击。<br><br>
+          <strong>国内政策支持：</strong>新能源汽车购置税减免延续至2027年（纯电和插混），对国内需求形成托底。以旧换新补贴（2025-2026年）预计为行业贡献约50-80万辆增量，比亚迪凭借品牌集中度预计可获得约35-40%的增量份额。
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.pyramid -->
+</div><!-- /.section -->
+
+<!-- ============================================================
+     Capacity Utilization
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">产能利用率分析</h2>
+  <p class="section-sub">2025年各生产基地产能利用情况估算</p>
+  <div class="cap-bar">
+    <span class="cap-label text-amber">深圳</span>
+    <div class="cap-track">
+      <div class="cap-fill w-85 cap-fill-green"></div>
+    </div>
+    <span class="cap-pct text-green">~85%</span>
+  </div>
+  <div class="cap-bar">
+    <span class="cap-label text-green">西安</span>
+    <div class="cap-track">
+      <div class="cap-fill w-92 cap-fill-green"></div>
+    </div>
+    <span class="cap-pct text-green">~92%</span>
+  </div>
+  <div class="cap-bar">
+    <span class="cap-label text-amber">长沙</span>
+    <div class="cap-track">
+      <div class="cap-fill w-78 cap-fill-amber"></div>
+    </div>
+    <span class="cap-pct text-amber">~78%</span>
+  </div>
+  <div class="cap-bar">
+    <span class="cap-label text-red">常州/合肥</span>
+    <div class="cap-track">
+      <div class="cap-fill w-55 cap-fill-red"></div>
+    </div>
+    <span class="cap-pct text-red">~55%</span>
+  </div>
+  <div class="cap-bar">
+    <span class="cap-label text-red">郑州/济南</span>
+    <div class="cap-track">
+      <div class="cap-fill w-35 cap-fill-red"></div>
+    </div>
+    <span class="cap-pct text-red">~35%</span>
+  </div>
+  <div class="cap-bar">
+    <span class="cap-label text-red">海外工厂</span>
+    <div class="cap-track">
+      <div class="cap-fill w-20 cap-fill-red"></div>
+    </div>
+    <span class="cap-pct text-red">~20%</span>
+  </div>
+  <div class="card card-red mt-12">
+    <p>
+      综合产能利用率估算约<strong>55-60%</strong>（取决于产能口径）。新投产的郑州、济南工厂利用率极低（35%+），海外工厂尚处爬坡期。若公司采取减产或调整产品线策略，需额外承担闲置产能的固定折旧费用约80-100亿元/年。这是信贷视角下需要重点评估的<strong>结构性风险</strong>。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Core Financial Data
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">核心财务数据</h2>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th class="rt">2023A</th>
+          <th class="rt">2024A</th>
+          <th class="rt">2025A</th>
+          <th class="rt">2026Q1</th>
+          <th>趋势评价</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>营业收入(亿元)</td>
+          <td class="rt">5,860</td>
+          <td class="rt">6,400</td>
+          <td class="rt">6,040</td>
+          <td class="rt">1,420</td>
+          <td><span class="text-amber">2025年同比-5.6%</span></td>
+        </tr>
+        <tr>
+          <td>归母净利润(亿元)</td>
+          <td class="rt">310</td>
+          <td class="rt">298</td>
+          <td class="rt">316</td>
+          <td class="rt">72</td>
+          <td><span class="text-amber">基本持平</span></td>
+        </tr>
+        <tr>
+          <td>汽车毛利率(%)</td>
+          <td class="rt">16.2</td>
+          <td class="rt">17.5</td>
+          <td class="rt">18.81</td>
+          <td class="rt">18.2</td>
+          <td><span class="text-green">触底回升</span></td>
+        </tr>
+        <tr>
+          <td>经营性现金流(亿元)</td>
+          <td class="rt">652</td>
+          <td class="rt">673</td>
+          <td class="rt">222</td>
+          <td class="rt">41</td>
+          <td><span class="text-red">同比-67%</span></td>
+        </tr>
+        <tr>
+          <td>自由现金流(亿元)</td>
+          <td class="rt">285</td>
+          <td class="rt">308</td>
+          <td class="rt">-42</td>
+          <td class="rt">-35</td>
+          <td><span class="text-red">2025年转负</span></td>
+        </tr>
+        <tr>
+          <td>存货(亿元)</td>
+          <td class="rt">1,056</td>
+          <td class="rt">1,325</td>
+          <td class="rt">1,604</td>
+          <td class="rt">1,650</td>
+          <td><span class="text-red">历史新高</span></td>
+        </tr>
+        <tr>
+          <td>存货周转天数</td>
+          <td class="rt">78</td>
+          <td class="rt">92</td>
+          <td class="rt">110</td>
+          <td class="rt">118</td>
+          <td><span class="text-red">持续恶化</span></td>
+        </tr>
+        <tr>
+          <td>现金及等价物(亿元)</td>
+          <td class="rt">682</td>
+          <td class="rt">810</td>
+          <td class="rt">734</td>
+          <td class="rt">698</td>
+          <td><span class="text-amber">小幅减少</span></td>
+        </tr>
+        <tr>
+          <td>短期债务(亿元)</td>
+          <td class="rt">816</td>
+          <td class="rt">986</td>
+          <td class="rt">1,149</td>
+          <td class="rt">1,182</td>
+          <td><span class="text-red">持续攀升</span></td>
+        </tr>
+        <tr>
+          <td>资产负债率(%)</td>
+          <td class="rt">64.5</td>
+          <td class="rt">66.2</td>
+          <td class="rt">68.0</td>
+          <td class="rt">68.5</td>
+          <td><span class="text-amber">缓慢上升</span></td>
+        </tr>
+        <tr>
+          <td>海外收入占比(%)</td>
+          <td class="rt">12.0</td>
+          <td class="rt">14.8</td>
+          <td class="rt">22.0</td>
+          <td class="rt">26.5</td>
+          <td><span class="text-green">快速增长</span></td>
+        </tr>
+        <tr>
+          <td>研发投入(亿元)</td>
+          <td class="rt">395</td>
+          <td class="rt">428</td>
+          <td class="rt">458</td>
+          <td class="rt">115</td>
+          <td><span class="text-green">持续加码</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="section-sub">数据来源: 公司年度报告、Wind资讯、公司公告 | 注: 2026Q1为未经审计数据</p>
+</div>
+
+<!-- ============================================================
+     Key Operational Metrics
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">关键运营指标</h2>
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="m-num text-green">460万</div>
+      <div class="m-label">全球销量(2025年)</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-green">+145%</div>
+      <div class="m-label">2026Q1出口增速</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-red">-30%</div>
+      <div class="m-label">2026Q1国内销量增速</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-red">1,604亿</div>
+      <div class="m-label">存货总额(2025末)</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-red">41.7%</div>
+      <div class="m-label">经销商亏损比例</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-amber">110天</div>
+      <div class="m-label">存货周转天数</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-red">50%</div>
+      <div class="m-label">产能利用率(估)</div>
+    </div>
+    <div class="metric">
+      <div class="m-num text-green">119个</div>
+      <div class="m-label">业务覆盖国家</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Peer Comparison
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">同业对比分析</h2>
+  <p class="section-sub">比亚迪 vs 核心新势力及传统车企 (2025年数据)</p>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th class="rt">比亚迪</th>
+          <th class="rt">特斯拉</th>
+          <th class="rt">吉利汽车</th>
+          <th class="rt">理想汽车</th>
+          <th class="rt">赛力斯(问界)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>销量(万辆)</td>
+          <td class="rt"><span class="best-in-class">460</span></td>
+          <td class="rt">178</td>
+          <td class="rt">168</td>
+          <td class="rt">52</td>
+          <td class="rt">38</td>
+        </tr>
+        <tr>
+          <td>收入(亿元)</td>
+          <td class="rt"><span class="best-in-class">6,040</span></td>
+          <td class="rt">5,600</td>
+          <td class="rt">2,180</td>
+          <td class="rt">1,280</td>
+          <td class="rt">1,050</td>
+        </tr>
+        <tr>
+          <td>汽车毛利率(%)</td>
+          <td class="rt">18.81</td>
+          <td class="rt"><span class="best-in-class">19.5</span></td>
+          <td class="rt">16.2</td>
+          <td class="rt">22.1</td>
+          <td class="rt">17.5</td>
+        </tr>
+        <tr>
+          <td>净利率(%)</td>
+          <td class="rt">5.2</td>
+          <td class="rt"><span class="best-in-class">12.8</span></td>
+          <td class="rt">4.8</td>
+          <td class="rt">6.5</td>
+          <td class="rt">3.2</td>
+        </tr>
+        <tr>
+          <td>经营性现金流(亿元)</td>
+          <td class="rt"><span class="best-in-class">222</span></td>
+          <td class="rt">185</td>
+          <td class="rt">165</td>
+          <td class="rt">88</td>
+          <td class="rt">52</td>
+        </tr>
+        <tr>
+          <td>存货周转天数</td>
+          <td class="rt text-red">110</td>
+          <td class="rt"><span class="best-in-class">38</span></td>
+          <td class="rt">58</td>
+          <td class="rt">42</td>
+          <td class="rt">65</td>
+        </tr>
+        <tr>
+          <td>研发投入率(%)</td>
+          <td class="rt"><span class="best-in-class">7.58</span></td>
+          <td class="rt">6.2</td>
+          <td class="rt">6.8</td>
+          <td class="rt">7.2</td>
+          <td class="rt">8.5</td>
+        </tr>
+        <tr>
+          <td>资产负债率(%)</td>
+          <td class="rt text-red">68.0</td>
+          <td class="rt"><span class="best-in-class">42.5</span></td>
+          <td class="rt">55.2</td>
+          <td class="rt">58.0</td>
+          <td class="rt">62.3</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card card-amber mt-10">
+    <p>
+      在可比公司中，比亚迪<strong>销量规模和收入体量</strong>遥遥领先，但<strong>经营效率指标</strong>显著落后：存货周转天数(110天)是特斯拉(38天)的近3倍，反映库存管理能力的巨大差距；资产负债率(68%)也是可比公司中最高水平，财务杠杆偏高。理想汽车以高端化定位维持了行业最高的毛利率(22.1%)，特斯拉凭品牌溢价和直营模式实现了最高的净利率(12.8%)。比亚迪综合优势在于<strong>规模和成本控制</strong>，短板在于<strong>资产周转效率和财务杠杆控制</strong>。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Key Findings
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">关键发现</h2>
+  <div class="finding-grid">
+
+    <div class="finding-card finding-card-purple">
+      <div class="fc-icon">&#x1f4a1;</div>
+      <h4>L2技术领先 vs L3运营效率拖累</h4>
+      <p>比亚迪呈现出最典型的"<strong>技术巨人、运营矮子</strong>"特征。L2技术得分9.3/10（本次分析最高分），但L3运营效率仅5.3/10（最低分）。两大维度的分差高达4.0分，意味着<strong>技术优势未能有效转化为运营优势</strong>——这是公司当前面对的核心管理命题。如果公司能将存货周转天数压缩至80天（接近吉利水平），将释放约500亿元营运资金。</p>
+    </div>
+
+    <div class="finding-card finding-card-red">
+      <div class="fc-icon">&#x1f4e6;</div>
+      <h4>库存积压：1,604亿的达摩克利斯之剑</h4>
+      <p>存货1,604亿元是本次评估中最突出的信用风险。假设2026年新能源车均价下跌10%（保守估计），潜在存货跌价损失约<strong>85亿元</strong>（产成品部分），占2025年净利润的约27%。公司采用"以价换量"策略可加速去库，但会进一步压缩毛利率。存货周转天数110天且仍在上升——需关注是否存在<strong>隐性滞销库存</strong>。贷后审查中建议获取月度分车型库存明细。</p>
+    </div>
+
+    <div class="finding-card finding-card-green">
+      <div class="fc-icon">&#x1f30d;</div>
+      <h4>海外扩张：结构性对冲国内下行</h4>
+      <p>出口增速+145%是当前最重要的正面驱动力。海外毛利率28%+（较国内高10个百分点），使得2025年海外业务贡献了汽车板块约<strong>35%的利润</strong>（收入占比仅22%）。泰国、匈牙利、巴西三座海外工厂投产后（2026-2027年），可规避约100万辆的关税壁垒。海外应收账款（约250亿元）的信用风险相较国内更低，但需要关注部分新兴市场国家的外汇管制和汇率波动。</p>
+    </div>
+
+    <div class="finding-card finding-card-amber">
+      <div class="fc-icon">&#x26a1;</div>
+      <h4>短期流动性缺口需要关注</h4>
+      <p>现金734亿 vs 短债1,149亿，<strong>净短债415亿元</strong>。再加上经营现金流同比-67%（222亿）和自由现金流转负（-42亿），公司的流动性缓冲正在变薄。目前2,000亿元+的未使用银行授信额度提供了安全垫，但若融资环境收紧（如债券市场对车企信用评级下调），短期流动性风险将显著上升。建议信贷方案以<strong>短期流贷为主</strong>，匹配库存消化节奏。</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     Credit Recommendation
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">信贷建议</h2>
+
+  <div class="credit-box">
+    <h4 class="text-amber">综合授信方案</h4>
+    <p><strong>行业龙头但库存风险需高度关注。</strong> 比亚迪技术护城河深厚、海外增长确定性强，是新能源行业无法绕开的战略客户。但运营层面的库存积压、流动性缺口和产能利用率偏低构成突出的信用压力，建议以<strong>审慎合作、阶段化放款、严格监控</strong>为原则。</p>
+    <ul>
+      <li><strong>授信额度和品种：</strong> 建议给予综合授信额度<strong>30-50亿元</strong>（单家分行/区域级），以<strong>1年期流动资金贷款</strong>为主要品种，辅以银行承兑汇票（10-15亿）和进口信用证/保函（5-10亿）。不建议参与5年期以上的长期项目贷款（海外工厂基建风险较高）。</li>
+      <li><strong>分期放款机制：</strong> 流贷额度建议按库存消化进度分阶段放款——首笔放款50%，以季度为节点审阅<strong>存货周转率和库存金额变化</strong>达标后再投放后续批次。若存货金额连续两个季度上升，暂停剩余额度并启动贷后审查。</li>
+      <li><strong>担保措施：</strong> 强烈建议以<strong>海外应收账款质押</strong>作为主要担保方式（海外应收约250亿元，收款方多为外汇充裕或信用良好的海外经销商），同时可追加<strong>比亚迪电子(0285.HK)股权质押</strong>作为补充增信。</li>
+    </ul>
+  </div>
+
+  <div class="credit-box mt-12">
+    <h4 class="text-red">贷后管理方案</h4>
+    <ul>
+      <li><strong>关键监控指标：</strong> 月度跟踪<strong>存货金额及周转天数</strong>（红色预警: 超过130天/1,700亿）、<strong>经营现金流</strong>（预警: 单季度低于50亿）、<strong>短债/现金覆盖率</strong>（预警: 低于0.5x）。</li>
+      <li><strong>更新频率：</strong> 建议<strong>月度</strong>监控核心指标，<strong>季度</strong>更新模型评分。每月获取公司产销快报（公开信息即可）交叉验证。</li>
+      <li><strong>退出触发条件：</strong> 存货超过1,800亿元且连续两个季度不下降；经营现金流单季度转负；短债/现金覆盖率跌破0.4x；或经销商亏损率超过50%。</li>
+      <li><strong>交叉销售机会：</strong> 可配套营销供应链金融（上游供应商超3,000家，年采购额约3,500亿元）、跨境结算+外汇套保（出口增长+145%带来的汇率避险需求）、员工个人金融服务（员工约85万人）。</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     Risk Signals
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">风险信号监测</h2>
+
+  <div class="risk-bar">
+    <div class="r-icon">&#x1f534;</div>
+    <div class="r-body">
+      <strong>高危：存货1,604亿元创历史新高</strong> —— 存货周转天数从78天(2023)恶化为110天(2025)，产成品积压约850亿元。若行业价格战加剧（2026年新能源车均价预计再降8-12%），潜在存货跌价损失约60-90亿元。这是当前需最高优先级关注的信用风险源。
+    </div>
+  </div>
+
+  <div class="risk-bar">
+    <div class="r-icon">&#x1f534;</div>
+    <div class="r-body">
+      <strong>高危：经营性现金流同比-67%（222亿 vs 673亿）</strong> —— 同时自由现金流转负(-42亿)，表明主营业务产生现金的能力明显下降。若该趋势在2026年持续，公司将更加依赖外部融资维持流动性，财务弹性将收窄。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中危：短债/现金覆盖缺口约415亿</strong> —— 现金734亿元 vs 短期债务1,149亿元，短债占比超55%，债务期限结构偏短期化。需密切关注债券续发利率和银行贷款续贷条件变化。若信用利差扩大50bp，年化利息支出增加约4亿元。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中危：经销商41.7%亏损</strong> —— 高比例的经销商亏损威胁销售网络的健康和回款稳定性。在价格战环境下（行业平均折扣率15-18%），经销商退网风险上升。2026年若亏损率突破50%，可能引发局部渠道危机。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中危：欧盟反补贴关税17.4%</strong> —— 尽管比亚迪在受调查企业中税率最低，但17.4%的关税仍显著削弱欧洲市场竞争力。若欧盟进一步上调至25-30%，欧洲出口业务的单台净利将从目前的约2万元降至5,000-8,000元。匈牙利工厂投产(2026年)可部分缓解，但短期产能仅15万辆。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-amber">
+    <div class="r-icon">&#x1f7e1;</div>
+    <div class="r-body">
+      <strong>中低：Q1国内销量同比-30%</strong> —— 国内市场竞争烈度加剧，小米SU7、吉利银河、华为问界等竞品对20-30万核心价格带形成围剿。闪充平台车型切换期（旧款降价清库+新款爬坡）导致短期销量承压。预计2026Q2-Q3新款驱动下销量有所回升。
+    </div>
+  </div>
+
+  <div class="risk-bar risk-green">
+    <div class="r-icon">&#x1f7e2;</div>
+    <div class="r-body">
+      <strong>低危：ROIC<WACC (5.8%<7.2%)</strong> —— 投入资本回报率低于加权融资成本，意味着每一元投入的资本回报不足以覆盖融资成本。长期来看，若ROIC无法回升至8%以上，股东的资本投入意愿可能下降。但公司尚处于技术投入和海外基建的高强度投资期，短期低效有其合理性。
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     Weighted Score Summary
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">加权评分总览</h2>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>层级</th>
+          <th>指标</th>
+          <th>权重</th>
+          <th class="rt">得分</th>
+          <th class="rt">加权得分</th>
+          <th>评级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>L1</td>
+          <td>市场存活位置</td>
+          <td>25%</td>
+          <td class="rt score-good">7.4</td>
+          <td class="rt">1.850</td>
+          <td><span class="tag tag-green">较优</span></td>
+        </tr>
+        <tr>
+          <td>L2</td>
+          <td>技术/产品力</td>
+          <td>20%</td>
+          <td class="rt score-good">9.3</td>
+          <td class="rt">1.860</td>
+          <td><span class="tag tag-green">行业顶尖</span></td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>运营效率</td>
+          <td>20%</td>
+          <td class="rt score-bad">5.3</td>
+          <td class="rt">1.060</td>
+          <td><span class="tag tag-red">明显拖累</span></td>
+        </tr>
+        <tr>
+          <td>L4</td>
+          <td>财务/现金流</td>
+          <td>15%</td>
+          <td class="rt score-warn">6.3</td>
+          <td class="rt">0.945</td>
+          <td><span class="tag tag-amber">需关注</span></td>
+        </tr>
+        <tr>
+          <td>L5</td>
+          <td>政策/出口</td>
+          <td>10%</td>
+          <td class="rt score-good">8.0</td>
+          <td class="rt">0.800</td>
+          <td><span class="tag tag-green">较强</span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="tfoot-row">
+          <td colspan="3">综合评价</td>
+          <td class="rt"><span class="text-amber">6.52</span></td>
+          <td class="rt text-amber">加权总分</td>
+          <td><span class="tag tag-amber">BBB+ / 稳定</span></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="card card-amber mt-12">
+    <h3>评分解读</h3>
+    <p>
+      比亚迪综合得分<strong>6.52/10</strong>，对应评级<strong>BBB+</strong>（投资级下沿），展望<strong>稳定</strong>。L2技术得分9.3为最高分，体现公司在三电+智能化领域无可争议的领先地位；L1市场位置7.4分反映了全球销冠地位但国内市场承压的平衡。L3运营效率仅5.3分是此次评分的<strong>最大扣分项</strong>——存货周转慢、产能利用率低、经销商盈利恶化三重问题叠加，共同拉低了综合评分。L4财务6.3分反映现金流转弱和流动性缺口，L5政策/出口8.0分显示海外增长动力强劲但面临贸易壁垒风险。整体而言，比亚迪是一家"技术引领、运营待改善"的龙头企业，信用评级处于投资级下沿，信贷策略应以控制敞口和强化担保为主。
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Scenario Analysis
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">情景分析</h2>
+  <div class="fin-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>情景</th>
+          <th>描述</th>
+          <th>概率</th>
+          <th class="rt">情景评分</th>
+          <th>信用影响</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>基准情景</strong></td>
+          <td>国内销量企稳(2026年约320万)+出口增长至150万；毛利率维持18-19%；存货降至1,400亿</td>
+          <td>55%</td>
+          <td class="rt score-warn">6.5</td>
+          <td><span class="tag tag-amber">BBB+ 稳定</span></td>
+        </tr>
+        <tr>
+          <td><strong>乐观情景</strong></td>
+          <td>闪充新平台大卖+海外销量突破200万+存货周转天降至85天+经营现金流恢复至500亿+</td>
+          <td>15%</td>
+          <td class="rt score-good">7.8</td>
+          <td><span class="tag tag-green">A- 正面</span></td>
+        </tr>
+        <tr>
+          <td><strong>压力情景</strong></td>
+          <td>国内价格战加剧致毛利率降至15%+库存1,800亿+经营现金流进一步收缩至150亿</td>
+          <td>20%</td>
+          <td class="rt score-bad">5.2</td>
+          <td><span class="tag tag-red">BB+ 负面</span></td>
+        </tr>
+        <tr>
+          <td><strong>极端/黑天鹅</strong></td>
+          <td>美国/欧盟全面封杀中国电动车+碳酸锂价格暴涨至30万/吨+国内经济衰退致需求骤降20%</td>
+          <td>10%</td>
+          <td class="rt score-bad">3.8</td>
+          <td><span class="tag tag-red">B 负面观察</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- A4: MARKET PRICING SIGNALS (轨道B) -->
+<!-- ================================================================ -->
+<div class="section">
+  <h2 class="section-title"><span class="signal signal-amber"></span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20 text-secondary">独立于基本面分析的量化信号层，仅呈现市场定价行为，不做基本面解读</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 信用利差</h3>
+      <p>存货历史高位1,604亿，信用利差走阔</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 波动率</h3>
+      <p>产能利用率仅约50%，股价波动率~45%</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-amber"></span> 资金流向</h3>
+      <p>北向减持，融资余额波动</p>
+    </div>
+    <div class="card">
+      <h3><span class="signal signal-green"></span> 评级事件</h3>
+      <p>BBB+ 展望稳定，海外增长对冲国内压力</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     交叉对撞
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">交叉对撞</h2>
+  <p class="section-sub">轨道A（基本面分析）与轨道B（市场定价信号）的分歧/共识对比</p>
+  <div class="grid-2 collision-grid">
+    <div class="collision-card">
+      <h3>轨道A：6.52 (BBB+)</h3>
+      <p>技术领先但运营效率低下，库存和流动性是主要拖累</p>
+    </div>
+    <div class="collision-card">
+      <h3>轨道B：信号偏中性</h3>
+      <p>高估值隐含增长预期，但资金流向偏谨慎</p>
+    </div>
+  </div>
+  <div class="credit-box">
+    <h4>分歧/共识</h4>
+    <p>存在明显分歧。轨道A关注运营效率和现金流恶化风险（库存1,604亿、经营现金流-67%），但轨道B的定价中尚未充分反映这些负面信号（239倍PE/6.84PB仍处于高位）。市场在为"海外扩张成功+闪充平台大卖"这一乐观路径定价，但忽视了运营和财务层面的结构性风险。</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     完备性评估
+     ============================================================ -->
+<div class="section">
+  <h2 class="section-title">完备性评估</h2>
+  <p class="section-sub">数据可得性与置信度评估</p>
+  <div class="completeness-grid">
+    <div class="completeness-item">
+      <span class="completeness-label">Signal density</span>
+      <span class="completeness-value">Partial（公开财报完整，非财务数据有限）</span>
+    </div>
+    <div class="completeness-item">
+      <span class="completeness-label">Key gaps</span>
+      <span class="completeness-value">月度分车型库存数据，经销商盈利明细</span>
+    </div>
+    <div class="completeness-item">
+      <span class="completeness-label">Confidence</span>
+      <span class="completeness-value">中等（公开数据充足但海外运营数据透明度有限）</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Notes & Disclaimers
+     ============================================================ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>免责声明</strong></p>
+  <p>本报告基于公开信息和分析模型生成，仅供内部信贷评审参考，不构成投资建议或授信承诺。</p>
+  <p>报告中涉及的公司名称、财务数据、行业分析等内容均来源于公司公告、Wind资讯及行业研究，分析模型为银行信贷视角设计。</p>
+  <p>评级结果为相对信用评价，不代表对未来的投资收益预测或违约概率保证。</p>
+  <p>报告生成时间: 2026-07-09 | 模板: Type 1 单标的深度分析 | 版本: v1.0</p>
+  <p>&copy; 2026 Credit Analysis System — 银行对公信贷内部使用</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>

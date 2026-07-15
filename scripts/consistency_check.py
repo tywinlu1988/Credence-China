@@ -34,7 +34,6 @@ CORE_DOCS = [
     "external-support-framework.md",
     "esg-framework.md",
     "governance-fraud-risk.md",
-    "false-positive-negative-testing.md",
     "outlook-monitoring-framework.md",
     "lgd-recovery-framework.md",
     "lgv-framework.md",

@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>压力测试报告 | 隆基绿能 · Severe场景</title>
+  <link rel="stylesheet" href="../../../dev/templates/template-base.css">
+  <!-- Type-11 specific: Hero gradient -->
+  <style>
+    .hero { background: linear-gradient(135deg, #0f172a, #991b1b); }
+  
+  /* ===== Utility Classes ===== */
+  .ml-8 { margin-left: 8px; } .ml-4 { margin-left: 4px; }
+  .mr-6 { margin-right: 6px; } .mr-8 { margin-right: 8px; }
+  .mt-20 { margin-top: 20px; } .mt-16 { margin-top: 16px; }
+  .mt-14 { margin-top: 14px; } .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; } .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-4 { margin-top: 4px; }
+  .mt-2 { margin-top: 2px; } .mt-1 { margin-top: 1px; }
+  .mb-20 { margin-bottom: 20px; } .mb-16 { margin-bottom: 16px; }
+  .mb-14 { margin-bottom: 14px; } .mb-12 { margin-bottom: 12px; }
+  .mb-10 { margin-bottom: 10px; } .mb-8 { margin-bottom: 8px; }
+  .mb-6 { margin-bottom: 6px; } .mb-4 { margin-bottom: 4px; }
+  .mb-2 { margin-bottom: 2px; }
+  .w-42 { width: 42%; } .w-41 { width: 41%; } .w-40 { width: 40%; }
+  .w-38 { width: 38%; } .w-35 { width: 35%; } .w-32 { width: 32%; }
+  .w-30 { width: 30%; } .w-28 { width: 28%; } .w-22 { width: 22%; }
+  .w-20 { width: 20%; } .w-18 { width: 18%; } .w-16 { width: 16%; }
+  .w-15 { width: 15%; } .w-14 { width: 14%; } .w-12 { width: 12%; }
+  .w-11 { width: 11%; } .w-10 { width: 10%; } .w-5 { width: 5%; }
+  .w-4 { width: 4%; }
+  .w-160 { width: 160px; } .w-140 { width: 140px; } .w-120 { width: 120px; }
+  .w-100 { width: 100px; } .w-90 { width: 90px; } .w-80 { width: 80px; }
+  .w-70 { width: 70px; } .w-60 { width: 60px; } .w-58 { width: 58px; }
+  .w-50 { width: 50px; } .w-48 { width: 48px; } .w-40px { width: 40px; }
+  .w-36 { width: 36px; } .w-32px { width: 32px; }
+  .br-6 { border-radius: 6px; } .br-4 { border-radius: 4px; }
+  .br-radius { border-radius: var(--radius); }
+  .op-5 { opacity: 0.5; } .op-3 { opacity: 0.3; } .op-6 { opacity: 0.6; }
+  .fs-10 { font-size: 10px; } .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; } .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; } .fs-15 { font-size: 15px; }
+  .fs-16 { font-size: 16px; } .fs-18 { font-size: 18px; }
+  .fs-20 { font-size: 20px; } .fs-22 { font-size: 22px; }
+  .fs-24 { font-size: 24px; } .fs-26 { font-size: 26px; }
+  .fs-28 { font-size: 28px; } .fs-32 { font-size: 32px; }
+  .fs-36 { font-size: 36px; }
+  .fw-600 { font-weight: 600; } .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-16 { line-height: 1.6; } .lh-17 { line-height: 1.7; }
+  .lh-18 { line-height: 1.8; } .lh-20 { line-height: 2.0; }
+  .lh-22 { line-height: 2.2; } .lh-23 { line-height: 2.3; }
+  .lh-32 { line-height: 3.2; }
+  .mt-neg24 { margin-top: -24px; }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+  .num-lg { font-size: 26px; font-weight: 800; }
+  .num-md { font-size: 20px; font-weight: 800; }
+  .num-sm { font-size: 16px; font-weight: 700; }
+  .text-indigo { color: #6366f1; font-weight: 600; }
+  .text-blue { color: #6366f1; font-weight: 600; }
+  .bg-tertiary { background: var(--bg-tertiary); }
+  .bg-hover { background: var(--bg-hover); }
+  .txt-primary { color: var(--text-primary); }
+  .pl-16 { padding-left: 16px; } .pl-18 { padding-left: 18px; }
+  .pl-20 { padding-left: 20px; }
+  .p-10 { padding: 10px; } .p-12 { padding: 12px; }
+  .p-14 { padding: 14px; } .p-16 { padding: 16px; }
+  .p-8 { padding: 8px; } .p-24 { padding: 24px; }
+  .m-0 { margin: 0; } .m-10-0 { margin: 10px 0; }
+  .m-12-0 { margin: 12px 0; } .m-12-0-8 { margin: 12px 0 8px; }
+  .m-14-0 { margin: 14px 0; } .m-16-0 { margin: 16px 0; }
+  .bg-red-bg { background: var(--red-bg); }
+  .bg-green-bg { background: var(--green-bg); }
+  .bg-amber-bg { background: var(--amber-bg); }
+  .bg-blue-bg { background: var(--blue-bg); }
+  .bg-purple-bg { background: var(--purple-bg); }
+  .bg-red-solid { background: var(--red); }
+  .bg-green-solid { background: var(--green); }
+  .bg-amber-solid { background: var(--amber); }
+  .bg-blue-solid { background: var(--blue); }
+  .list-none { list-style: none; padding-left: 0; }
+  .bdr-top-green { border-top: 3px solid var(--green); }
+  .bdr-top-red { border-top: 3px solid var(--red); }
+  .bdr-top-purple { border-top: 3px solid var(--purple); }
+  .bdr-top-blue { border-top: 3px solid var(--blue); }
+  .flex-center { display: flex; align-items: center; }
+  .flex-between { display: flex; justify-content: space-between; }
+  .flex-1 { flex: 1; }
+  .flex-col { display: flex; flex-direction: column; }
+  .flex-wrap { display: flex; flex-wrap: wrap; }
+  .h-8 { height: 8px; } .h-full { height: 100%; }
+  .ct { text-align: center; } .rt { text-align: right; }
+  .gap-8 { gap: 8px; } .gap-10 { gap: 10px; }
+  .gap-12 { gap: 12px; } .gap-14 { gap: 14px; }
+  .gap-16 { gap: 16px; }
+
+</style>
+</head>
+<body>
+
+<!-- ================================================================ -->
+<!-- HERO -->
+<!-- ================================================================ -->
+<div class="hero">
+  <span class="chip">压力测试报告</span>
+  <h1>隆基绿能科技股份有限公司</h1>
+  <p class="subtitle">
+    三场景压力测试 · Base / Bear / Severe · 信用韧性评估
+  </p>
+  <div class="meta">
+    <span>测试日期：2026-07-08</span>
+    <span>报告编号：STRESS-2026-Q3-011</span>
+    <span>Severe参数：收入-30% / 毛利率-15pp / 融资成本+200bp</span>
+    <span>分析师：李明远</span>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- CONTAINER -->
+<!-- ================================================================ -->
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- STRIP — 三场景核心结论 -->
+  <!-- ================================================================ -->
+  <div class="strip cols-3">
+    <div class="strip-item">
+      <div class="slabel">Base 基准</div>
+      <div class="sval score-good">AAA</div>
+      <div class="ssub">评级无调整 · 现金覆盖倍数 2.8x</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">Bear 熊市</div>
+      <div class="sval score-ok">AA+</div>
+      <div class="ssub">评级下调-1 notch · 现金覆盖倍数 1.5x</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">Severe 极端</div>
+      <div class="sval score-warn">A</div>
+      <div class="ssub">评级下调-3 notch · 触发临界监控</div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 测试场景概述 -->
+  <!-- ================================================================ -->
+  <div class="info-box info-blue">
+    <strong>压力测试目标：</strong>评估隆基绿能在不同宏观经济和行业情景下的信用
+    韧性水平。压力参数基于2025年实际经营数据（收入1,350亿元、毛利率18%、融资成本
+    3.5%），向下叠加不同程度的冲击。Severe场景参数参考2011-2013光伏双反危机
+    的历史极值校准而来。测试窗口为期12个月（2026Q3-2027Q2）。
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 1 — 三场景参数对比 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">一、三场景参数对比</h2>
+    <p class="text-secondary fs-13 mb-14">
+      以下参数基于2025年实际经营数据外推，结合行业周期判断和宏观情景假设构建。
+      Base场景假设行业维持现状平稳运行；Bear场景假设产能过剩加剧、组件价格
+      温和下跌；Severe场景假设全球贸易摩擦升级、需求骤降和信用环境急剧收紧。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>参数</th>
+          <th class="ct">Base 基准</th>
+          <th class="ct">Bear 熊市</th>
+          <th class="ct">Severe 极端</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>收入增速变动</td>
+          <td class="ct">0%（持平）</td>
+          <td class="ct">-12%</td>
+          <td class="ct"><span class="text-red">-30%</span></td>
+        </tr>
+        <tr>
+          <td>毛利率变动</td>
+          <td class="ct">-3pp（至15%）</td>
+          <td class="ct">-8pp（至10%）</td>
+          <td class="ct"><span class="text-red">-15pp（至3%）</span></td>
+        </tr>
+        <tr>
+          <td>融资成本变动</td>
+          <td class="ct">+50bp</td>
+          <td class="ct">+100bp</td>
+          <td class="ct"><span class="text-red">+200bp</span></td>
+        </tr>
+        <tr>
+          <td>存货周转天数</td>
+          <td class="ct">+10天</td>
+          <td class="ct">+30天</td>
+          <td class="ct"><span class="text-red">+60天</span></td>
+        </tr>
+        <tr>
+          <td>应收账款周转天数</td>
+          <td class="ct">+5天</td>
+          <td class="ct">+20天</td>
+          <td class="ct"><span class="text-red">+45天</span></td>
+        </tr>
+        <tr>
+          <td>资本支出缩减</td>
+          <td class="ct">0%（按预算执行）</td>
+          <td class="ct">-20%</td>
+          <td class="ct"><span class="text-red">-40%</span></td>
+        </tr>
+        <tr>
+          <td>资产减值损失占收入</td>
+          <td class="ct">1.5%</td>
+          <td class="ct">3.0%</td>
+          <td class="ct"><span class="text-red">6.0%</span></td>
+        </tr>
+        <tr>
+          <td>汇率波动假设（CNY/EUR）</td>
+          <td class="ct">7.8</td>
+          <td class="ct">8.2</td>
+          <td class="ct"><span class="text-red">8.8</span></td>
+        </tr>
+        <tr>
+          <td>贸易摩擦附加关税</td>
+          <td class="ct">维持现状</td>
+          <td class="ct">美国加征10%</td>
+          <td class="ct"><span class="text-red">欧盟加征15%+美国加征25%</span></td>
+        </tr>
+        <tr>
+          <td>发生概率</td>
+          <td class="ct"><span class="score-good">55%</span></td>
+          <td class="ct"><span class="score-ok">30%</span></td>
+          <td class="ct"><span class="score-bad">15%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-purple mt-14" >
+      <h3>参数选择依据</h3>
+      <p class="text-secondary fs-13">
+        收入降幅：Severe场景-30%参考2011-2013双反危机（最大降幅-38%），留有8%的
+        安全边际。毛利率压缩-15pp高于531新政冲击（-8pp）但低于双反危机（-22pp）。
+        融资成本+200bp参考2022年美联储激进加息周期中信用利差的扩张幅度。综合来看，
+        Severe场景参数设定在"历史最差状况的80%分位数"水平，足够压力但不过度极端。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 2 — 关键财务指标敏感性分析 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">二、关键财务指标敏感性分析</h2>
+    <p class="text-secondary fs-13 mb-14">
+      以下分析覆盖三项核心信用指标：利息覆盖倍数、现金跑道和资产负债率。
+      每个指标分别展示在三场景下的变动轨迹和触发阈值。
+    </p>
+
+    <div class="card card-blue">
+      <h3>利息覆盖倍数 (EBIT / 利息支出)</h3>
+      <p class="text-secondary fs-13 mb-10">
+        Base场景下，EBIT约68亿元（EBIT利润率约5.0%），利息支出约14亿元（融资成本约
+        4.0%），覆盖倍数 <strong>4.9x</strong>，远高于2.5x的预警线。EBIT对利息
+        支出的缓冲空间充足，经营性利润可充分覆盖债务成本。
+      </p>
+      <p class="text-secondary fs-13 mb-10">
+        Bear场景下，收入降至1,188亿元，毛利率压缩至10%，EBIT降至约38亿元。
+        融资成本升至4.5%，利息支出增至约16亿元。覆盖倍数为 <strong>2.7x</strong>，
+        尽管仍高于2.5x预警线，但安全边际明显收窄。若考虑二阶效应中资产减值
+        损失对EBIT的额外冲击，实际倍数可能进一步降至2.2x。
+      </p>
+      <p class="text-secondary fs-13">
+        Severe场景下，收入降至945亿元，毛利率仅3%，EBIT锐减至12亿元。融资成本
+        升至5.5%，利息支出因新增借款增至约19亿元。覆盖倍数骤降至
+        <strong>0.6x</strong>，跌破1.0x的技术性违约线。EBIT已无法覆盖当期
+        利息支出，需依赖外部融资或资产处置来弥补利息缺口。
+      </p>
+      <div class="flex-wrap gap-12 mt-10">
+        <span class="tag tag-green">Base: 4.9x</span>
+        <span class="tag tag-amber">Bear: 2.7x</span>
+        <span class="tag tag-red">Severe: 0.6x</span>
+        <span class="tag tag-purple">预警线: 2.5x</span>
+        <span class="tag tag-purple">违约线: 1.0x</span>
+      </div>
+    </div>
+
+    <div class="card card-amber">
+      <h3>现金跑道 (可用现金 / 月度经营性支出)</h3>
+      <p class="text-secondary fs-13 mb-10">
+        期末可用现金及等价物约198亿元（含受限资金约15亿元）。此外，公司持有银行
+        授信额度约85亿元未使用，合计可用流动性约268亿元。
+      </p>
+      <p class="text-secondary fs-13 mb-10">
+        Base场景下月度经营性支出约32亿元（含采购、工资、税费），现金跑道
+        <strong>6.2个月</strong>。流动性状况健康，无需外部再融资即可满足
+        至少半年的运营需求。
+      </p>
+      <p class="text-secondary fs-13 mb-10">
+        Bear场景下月度支出增至38亿元（收入下降但固定成本占比提高的叠加效应），
+        现金跑道缩至 <strong>5.2个月</strong>。需注意该场景中银行授信额度
+        可能部分冻结（假设缩减30%），实际可调用流动性约242亿元。
+      </p>
+      <p class="text-secondary fs-13">
+        Severe场景下运营资金进一步冻结——部分客户延迟付款、供应商收紧账期、
+        银行授信缩减50%，月度净支出增至45亿元。现金跑道骤降至
+        <strong>4.4个月</strong>，低于6个月的行业安全线。若考虑资金冻结的
+        二阶效应（应收账款回收期延长导致的额外资金占用），有效跑道可能
+        仅有3.5个月。
+      </p>
+      <div class="flex-wrap gap-12 mt-10">
+        <span class="tag tag-green">Base: 6.2月</span>
+        <span class="tag tag-amber">Bear: 5.2月</span>
+        <span class="tag tag-red">Severe: 4.4月</span>
+        <span class="tag tag-purple">安全线: 6.0月</span>
+      </div>
+    </div>
+
+    <div class="card card-red">
+      <h3>资产负债率变动</h3>
+      <p class="text-secondary fs-13 mb-10">
+        当前资产负债率62.5%，在光伏行业中处于偏低的水平（行业中位数约68%）。
+        有息负债占总负债比例约42%，以长期银行借款和公司债券为主，短期负债占比
+        仅28%，债务期限结构较好。
+      </p>
+      <p class="text-secondary fs-13 mb-10">
+        Base场景下，假定不新增重大债务，归母权益因利润积累小幅增厚，负债率微降至
+        <strong>61.8%</strong>。该水平下债务安全性较高，融资空间充足。
+      </p>
+      <p class="text-secondary fs-13 mb-10">
+        Bear场景下，因利润大幅下滑（净利润约18亿元）及营运资金需求扩大
+        （应收账款和存货占用资金约增30亿元），负债率升至 <strong>67.3%</strong>。
+        仍处于行业可控范围内。
+      </p>
+      <p class="text-secondary fs-13">
+        Severe场景下，资产减值损失（约57亿元）直接侵蚀权益，叠加新增融资
+        （约35亿元）维持运营，负债率急升至 <strong>79.1%</strong>，逼近80%
+        的行业危机线。资产负债率超过75%通常被认为是信用评级下调的催化剂指标。
+      </p>
+      <div class="flex-wrap gap-12 mt-10">
+        <span class="tag tag-green">Base: 61.8%</span>
+        <span class="tag tag-amber">Bear: 67.3%</span>
+        <span class="tag tag-red">Severe: 79.1%</span>
+        <span class="tag tag-purple">危机线: 80%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 3 — 三场景关键指标汇总 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">三、三场景关键指标汇总</h2>
+    <p class="text-secondary fs-13 mb-14">
+      以下表格汇总了三个压力场景下隆基绿能的主要信用和财务指标变化。
+      颜色标记反映各指标在场景下的风险水平（绿=安全、蓝=关注、琥珀=警戒、红=危险）。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th class="ct">当前 (2025A)</th>
+          <th class="ct">Base 基准</th>
+          <th class="ct">Bear 熊市</th>
+          <th class="ct">Severe 极端</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>营业收入（亿元）</td>
+          <td class="ct">1,350</td>
+          <td class="ct">1,350</td>
+          <td class="ct">1,188</td>
+          <td class="ct score-bad">945</td>
+        </tr>
+        <tr>
+          <td>毛利率</td>
+          <td class="ct">18.0%</td>
+          <td class="ct">15.0%</td>
+          <td class="ct">10.0%</td>
+          <td class="ct score-bad">3.0%</td>
+        </tr>
+        <tr>
+          <td>EBIT（亿元）</td>
+          <td class="ct">93</td>
+          <td class="ct">68</td>
+          <td class="ct">38</td>
+          <td class="ct score-bad">12</td>
+        </tr>
+        <tr>
+          <td>净利润（亿元）</td>
+          <td class="ct">72</td>
+          <td class="ct">45</td>
+          <td class="ct">18</td>
+          <td class="ct score-bad">-12</td>
+        </tr>
+        <tr>
+          <td>经营活动现金流（亿元）</td>
+          <td class="ct">85</td>
+          <td class="ct">52</td>
+          <td class="ct">20</td>
+          <td class="ct score-bad">-25</td>
+        </tr>
+        <tr>
+          <td>利息覆盖倍数</td>
+          <td class="ct">6.4x</td>
+          <td class="ct score-good">4.9x</td>
+          <td class="ct score-ok">2.7x</td>
+          <td class="ct score-bad">0.6x</td>
+        </tr>
+        <tr>
+          <td>现金跑道（月）</td>
+          <td class="ct">7.1</td>
+          <td class="ct score-good">6.2</td>
+          <td class="ct score-ok">5.2</td>
+          <td class="ct score-bad">4.4</td>
+        </tr>
+        <tr>
+          <td>资产负债率</td>
+          <td class="ct">62.5%</td>
+          <td class="ct score-good">61.8%</td>
+          <td class="ct score-ok">67.3%</td>
+          <td class="ct score-bad">79.1%</td>
+        </tr>
+        <tr>
+          <td>流动性比率（速动）</td>
+          <td class="ct">0.92</td>
+          <td class="ct score-good">0.88</td>
+          <td class="ct score-ok">0.72</td>
+          <td class="ct score-bad">0.51</td>
+        </tr>
+        <tr>
+          <td>有效债务/EBITDA</td>
+          <td class="ct">2.8x</td>
+          <td class="ct score-good">3.2x</td>
+          <td class="ct score-ok">5.1x</td>
+          <td class="ct score-bad">12.8x</td>
+        </tr>
+        <tr>
+          <td>总债务/总资本</td>
+          <td class="ct">42.0%</td>
+          <td class="ct score-good">41.5%</td>
+          <td class="ct score-ok">48.2%</td>
+          <td class="ct score-bad">62.5%</td>
+        </tr>
+        <tr>
+          <td>资产减值损失（亿元）</td>
+          <td class="ct">8</td>
+          <td class="ct">20</td>
+          <td class="ct">36</td>
+          <td class="ct score-bad">57</td>
+        </tr>
+        <tr>
+          <td>自由现金流（亿元）</td>
+          <td class="ct">22</td>
+          <td class="ct score-good">12</td>
+          <td class="ct score-ok">-18</td>
+          <td class="ct score-bad">-68</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box info-amber mt-14" >
+      <strong>指标分析关键发现：</strong>（1）Severe场景下所有主要信用指标均突破
+      警戒线，表明隆基在当前资本结构下无法承受如此程度的冲击而不发生技术性违约；
+      （2）Bear场景处于"灰色地带"——部分指标接近但未全线突破预警线，信用质量的
+      最终走向将取决于管理层的应急应对能力和外部融资支持的可获得性；
+      （3）Base场景下的信用安全边际充足，所有指标均在健康范围。
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 4 — 二阶效应分析 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">四、二阶效应分析</h2>
+    <p class="text-secondary fs-13 mb-14">
+      压力场景的传导不仅限于第一阶财务指标，以下二级传导效应可能进一步放大
+      信用冲击。二阶效应是"压力中的压力"，其量化需要结合行业结构特征和企业
+      自身的供应链和融资生态。
+    </p>
+
+    <div class="grid-3">
+      <div class="card card-amber">
+        <h3>
+          <span class="signal signal-amber"></span>
+          存货跌价螺旋
+        </h3>
+        <p class="text-secondary fs-13 mb-8">
+          光伏组件价格下行周期中，存货跌价风险呈自我强化趋势。Severe场景假设
+          组件价格在2026年再下跌15%，以成本法计价的存货需要计提减值约22-28亿元，
+          进一步侵蚀利润和净资本。更严重的是，存货跌价会引发债权人对抵押物
+          价值重估，可能触发追加担保或提前还款要求。
+        </p>
+        <div class="flex-wrap gap-8 mt-8">
+          <span class="tag tag-amber">潜在减值: 22-28亿</span>
+          <span class="tag tag-red">触发利润转负</span>
+          <span class="tag tag-amber">抵押物重估风险</span>
+        </div>
+        <p class="text-tertiary fs-12 mt-8">
+          隆基存货中约65%为产成品和发出商品。若组件价格每下跌1%，存货减值约
+          1.5-1.8亿元。隆基的存货周转天数为78天，价格下跌风险在短期内能否
+          通过销售来释放存在不确定性。
+        </p>
+      </div>
+
+      <div class="card card-red">
+        <h3>
+          <span class="signal signal-red"></span>
+          营运资金冻结
+        </h3>
+        <p class="text-secondary fs-13 mb-8">
+          下游客户在行业下行期延迟付款意愿增强。应收账款周转天数在Severe场景
+          下延长至125天（+45天），叠加存货周转放缓至140天，额外占用营运资金
+          约55-70亿元。部分银行可能在看到流动性指标恶化后冻结授信额度
+          （假设Severe场景下授信缩量50%）。
+        </p>
+        <div class="flex-wrap gap-8 mt-8">
+          <span class="tag tag-red">资金占用: 55-70亿</span>
+          <span class="tag tag-amber">授信冻结风险</span>
+          <span class="tag tag-amber">上下游账期挤压</span>
+        </div>
+        <p class="text-tertiary fs-12 mt-8">
+          下游客户中约有35%为中小型EPC承包商，其信用质量在经济下行时通常率先恶化。
+          建议建立客户信用分级管理体系和应收款ABS等资产盘活工具储备。
+        </p>
+      </div>
+
+      <div class="card card-red">
+        <h3>
+          <span class="signal signal-red"></span>
+          融资成本二阶上升
+        </h3>
+        <p class="text-secondary fs-13 mb-8">
+          Severe场景假设融资成本一次性+200bp。但若评级连续下调两个级别（AAA→A），
+          后续再融资成本将进一步攀升至基准+350bp以上。公司债券价格预计下跌
+          5-8元（面值100元），可能引发持有机构减仓，导致二级市场→一级市场的
+          负反馈循环。
+        </p>
+        <div class="flex-wrap gap-8 mt-8">
+          <span class="tag tag-red">再融资成本: +350bp</span>
+          <span class="tag tag-amber">负反馈循环风险</span>
+          <span class="tag tag-amber">债券价格下跌5-8元</span>
+        </div>
+        <p class="text-tertiary fs-12 mt-8">
+          隆基存量债券约105亿元，其中65%为机构持有。若债券价格大幅下跌且
+          交易商做市意愿不足，可能触发持有人的风控预警和被动减仓。
+        </p>
+      </div>
+    </div>
+
+    <div class="grid-2 mt-14" >
+      <div class="card card-amber">
+        <h3>二阶效应：供应商信用收缩</h3>
+        <p class="text-secondary fs-13">
+          行业下行时，上游硅料和辅材供应商可能收紧对隆基的信用账期（从平均45天
+          缩短至30天以内），同时要求现款现货或预付。这将额外消耗营运资金约
+          8-12亿元。隆基作为行业龙头，对供应商的话语权较强，但中小型供应商在
+          资金压力下同样会优先保障自身流动性。
+        </p>
+        <div class="mt-8">
+          <span class="tag tag-amber">资金额外占用: 8-12亿</span>
+        </div>
+      </div>
+      <div class="card card-amber">
+        <h3>二阶效应：汇率与跨境资金</h3>
+        <p class="text-secondary fs-13">
+          Severe场景假设人民币对欧元贬值至8.8（当前7.8），隆基约35%收入来自
+          海外市场，人民币贬值将产生汇兑收益（正面影响）。但跨境资金流动可能
+          受到外汇管制加强的影响——资金出境审批周期延长将影响境外子公司融资
+          和分红回流。境外负债约38亿元，假设续贷成本上升。
+        </p>
+        <div class="mt-8">
+          <span class="tag tag-green">汇兑收益: 约+3亿</span>
+          <span class="tag tag-amber">跨境资金: 回流周期延长</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box info-red mt-14" >
+      <strong>二阶效应综合评估：</strong>Severe场景下，二阶效应可使实际信用冲击
+      较一阶估算放大 <strong>1.3~1.5倍</strong>。其中营运资金冻结是最大放大因素
+      （增量资金需求55-70亿），其次是存货跌价螺旋（22-28亿）和融资成本二阶上升
+      （额外1.5-2亿利息支出）。建议在流动性管理预案中准备至少30亿元的额外备用
+      流动性额度，并预先与主要授信银行沟通应急授信安排。
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5 — 逆向压力测试 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">五、逆向压力测试</h2>
+    <p class="text-secondary fs-13 mb-14">
+      逆向压力测试旨在回答：<strong>"什么程度的恶化会触发违约？"</strong>
+      我们不预设参数，而是反向推导：哪些关键指标的恶化至什么水平将导致隆基
+      发生技术性违约或实质性违约。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>违约触发条件</th>
+          <th>临界阈值</th>
+          <th>与Base差距</th>
+          <th>发生可能性</th>
+          <th>触发后的预期信用损失</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>利息覆盖倍数 &lt; 1.0x</td>
+          <td>EBIT降至约19亿元</td>
+          <td>差距约49亿元（72%降幅）</td>
+          <td><span class="tag tag-amber">中等偏低</span></td>
+          <td>Loss Given Default 约45-55%</td>
+        </tr>
+        <tr>
+          <td>现金跑道 &lt; 3个月</td>
+          <td>可用现金降至约95亿元</td>
+          <td>差距约103亿元（52%降幅）</td>
+          <td><span class="tag tag-green">较低</span></td>
+          <td>需紧急再融资，展期风险高</td>
+        </tr>
+        <tr>
+          <td>资产负债率 &gt; 85%</td>
+          <td>权益侵蚀约75亿元</td>
+          <td>差距约45亿元（假设权益不变）</td>
+          <td><span class="tag tag-amber">中等偏低</span></td>
+          <td>债务重组或技术性违约</td>
+        </tr>
+        <tr>
+          <td>外部融资渠道关闭</td>
+          <td>银行贷款+债券市场同时收紧</td>
+          <td>极端系统性风险事件</td>
+          <td><span class="tag tag-red">较低但不可忽视</span></td>
+          <td>流动性危机 → 全面违约</td>
+        </tr>
+        <tr>
+          <td>营收降幅 &gt; 45%</td>
+          <td>收入降至约740亿元</td>
+          <td>差距约610亿元</td>
+          <td><span class="tag tag-green">极低</span></td>
+          <td>结构性问题导致的持续性亏损</td>
+        </tr>
+        <tr>
+          <td>连续2个季度经营性现金流为负</td>
+          <td>经营现金流&lt;0持续 &gt;6个月</td>
+          <td>当前正现金流，差距约2个季度恶化</td>
+          <td><span class="tag tag-amber">中等</span></td>
+          <td>经营造血能力丧失，需资产处置</td>
+        </tr>
+        <tr>
+          <td>交叉违约条款触发</td>
+          <td>任一债项违约触发所有债务交叉违约</td>
+          <td>距当前AAA主体评级约3-4 notch差距</td>
+          <td><span class="tag tag-green">较低</span></td>
+          <td>集中到期压力，EAD约200亿元</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-blue mt-14" >
+      <h3>逆向压力测试结论</h3>
+      <p class="text-secondary fs-13">
+        隆基绿能的违约触发需要多重条件同时发生：收入下降超过30% + 毛利率降至3%
+        以下 + 融资成本大幅上升。单一指标恶化不会直接触发违约。最可能的违约
+        路径：<strong>产能过剩导致组件价格持续下跌</strong> → 存货跌价吞噬利润
+        → 利息覆盖倍数跌破1.0x → 触发交叉违约条款。预计该路径至少需要持续
+        2-3个季度才会演变为实质性违约。考虑到隆基当前的流动性储备和融资能力，
+        即使是Severe场景仍保留4.4个月的现金跑道，公司有充足的时间窗口来实施
+        应急计划（压缩资本支出、处置非核心资产、寻求股权融资）。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 6 — 临界点识别与预警信号 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">六、临界点识别与预警信号</h2>
+
+    <div class="info-box info-amber mb-16" >
+      <strong>监测框架：</strong>以下临界点指标应纳入常态化信用监控看板，
+      一旦触发即启动压力情景升级评估。两级预警：一级为"关注"级别，启动深度
+      分析流程；二级为"行动"级别，召集信用委员会决策。
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>临界指标</th>
+          <th class="ct">当前值</th>
+          <th class="ct">一级预警线</th>
+          <th class="ct">二级预警线</th>
+          <th>触发行动</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>单季毛利率</td>
+          <td class="ct">17.2%</td>
+          <td class="ct">&lt; 12%</td>
+          <td class="ct">&lt; 8%</td>
+          <td>启动Bear/Seveve情境重新评估</td>
+        </tr>
+        <tr>
+          <td>利息覆盖倍数</td>
+          <td class="ct">6.4x</td>
+          <td class="ct">&lt; 3.5x</td>
+          <td class="ct">&lt; 2.0x</td>
+          <td>信用委员会召集紧急会议</td>
+        </tr>
+        <tr>
+          <td>存货周转天数</td>
+          <td class="ct">78天</td>
+          <td class="ct">&gt; 100天</td>
+          <td class="ct">&gt; 130天</td>
+          <td>启动存货跌价压力测试</td>
+        </tr>
+        <tr>
+          <td>应收账款周转天数</td>
+          <td class="ct">82天</td>
+          <td class="ct">&gt; 100天</td>
+          <td class="ct">&gt; 120天</td>
+          <td>评估客户集中度风险</td>
+        </tr>
+        <tr>
+          <td>经营现金流/总债务</td>
+          <td class="ct">0.21x</td>
+          <td class="ct">&lt; 0.12x</td>
+          <td class="ct">&lt; 0.08x</td>
+          <td>流动性风险审查</td>
+        </tr>
+        <tr>
+          <td>可用授信未用额度</td>
+          <td class="ct">85亿元</td>
+          <td class="ct">&lt; 40亿元</td>
+          <td class="ct">&lt; 20亿元</td>
+          <td>融资渠道稳定性评估</td>
+        </tr>
+        <tr>
+          <td>债券二级市场收益率</td>
+          <td class="ct">3.2%</td>
+          <td class="ct">&gt; 5.0%</td>
+          <td class="ct">&gt; 7.5%</td>
+          <td>市场情绪监测 + 投资者沟通</td>
+        </tr>
+        <tr>
+          <td>外部评级（主体）</td>
+          <td class="ct">AAA</td>
+          <td class="ct">负面展望</td>
+          <td class="ct">下调至AA+</td>
+          <td>触发投资者保护条款核查</td>
+        </tr>
+        <tr>
+          <td>境外收入占比变化</td>
+          <td class="ct">35%</td>
+          <td class="ct">下降至&lt; 28%</td>
+          <td class="ct">下降至&lt; 22%</td>
+          <td>评估贸易摩擦升级影响</td>
+        </tr>
+        <tr>
+          <td>资本支出/折旧比</td>
+          <td class="ct">1.5x</td>
+          <td class="ct">&lt; 0.8x</td>
+          <td class="ct">&lt; 0.5x</td>
+          <td>评估长期竞争力维持能力</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-red mt-14" >
+      <h3>临界点监测建议</h3>
+      <p class="text-secondary fs-13">
+        上述10项临界指标应纳入月度跟踪看板，与财务报告周期同步更新。建议重点关注
+        （1）利息覆盖倍数——最敏感的"煤矿中的金丝雀"；（2）应收账款周转天数——
+        客户信用质量的最先体现；（3）债券收益率——市场定价的先行信号。
+        任一指标准连续两个月处于一级预警区间，即应启动压力情景升级评估。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 7 — 行业历史最大回撤校准 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">七、行业历史最大回撤校准</h2>
+    <p class="text-secondary fs-13 mb-14">
+      将压力测试参数与光伏行业历史周期最大回撤数据进行校准，验证场景设定是否
+      处在历史经验边界内。通过对比历史上大型光伏企业的财务回撤数据，评估
+      Severe场景的极端程度和发生可能性。
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>周期事件</th>
+          <th class="ct">时间</th>
+          <th class="ct">最大收入降幅</th>
+          <th class="ct">最大毛利率压缩</th>
+          <th class="ct">行业违约率峰值</th>
+          <th class="ct">恢复周期</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2011-2013 双反危机</td>
+          <td class="ct">2011Q3-2013Q1</td>
+          <td class="ct">-38%</td>
+          <td class="ct">-22pp</td>
+          <td class="ct">18.2%</td>
+          <td class="ct">6个季度</td>
+        </tr>
+        <tr>
+          <td>2018 531新政</td>
+          <td class="ct">2018Q2-2018Q4</td>
+          <td class="ct">-15%</td>
+          <td class="ct">-8pp</td>
+          <td class="ct">5.6%</td>
+          <td class="ct">3个季度</td>
+        </tr>
+        <tr>
+          <td>2020 新冠冲击</td>
+          <td class="ct">2020Q1-2020Q3</td>
+          <td class="ct">-12%</td>
+          <td class="ct">-5pp</td>
+          <td class="ct">3.1%</td>
+          <td class="ct">2个季度</td>
+        </tr>
+        <tr>
+          <td>2023-2024 产能过剩周期</td>
+          <td class="ct">2023Q4-2025Q1</td>
+          <td class="ct">-22%</td>
+          <td class="ct">-12pp</td>
+          <td class="ct">8.5%</td>
+          <td class="ct">5个季度</td>
+        </tr>
+        <tr>
+          <td><strong>本次 Bear 场景</strong></td>
+          <td class="ct">—</td>
+          <td class="ct"><span class="text-amber">-12%</span></td>
+          <td class="ct"><span class="text-amber">-8pp</span></td>
+          <td class="ct"><span class="text-amber">~6%</span></td>
+          <td class="ct">3-4个季度</td>
+        </tr>
+        <tr>
+          <td><strong>本次 Severe 场景</strong></td>
+          <td class="ct">—</td>
+          <td class="ct"><span class="text-red">-30%</span></td>
+          <td class="ct"><span class="text-red">-15pp</span></td>
+          <td class="ct"><span class="text-red">~15%</span></td>
+          <td class="ct">5-7个季度</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-purple mt-14" >
+      <h3>历史校准结论</h3>
+      <p class="text-secondary fs-13 mb-8">
+        <strong>Bear场景</strong>参数（收入-12%、毛利率-8pp）与2018年531新政
+        冲击大致相当，属于历史上曾真实发生过的压力水平。
+        <span class="text-green">场景合理且相对温和</span>。
+      </p>
+      <p class="text-secondary fs-13 mb-8">
+        <strong>Severe场景</strong>参数（收入-30%、毛利率-15pp）接近2011-2013
+        双反危机的严重程度但未超越历史极值（-38%/-22pp）。
+        <span class="text-amber">场景虽极端但在历史经验范围之内</span>。
+      </p>
+      <p class="text-secondary fs-13">
+        <strong>重要提示：</strong>当前行业产能过剩程度（全球产能>需求约60%）
+        较2011年（约40%）更为严重，但隆基的市场地位（全球市占率约25%）和成本
+        优势较2011年显著增强。两者对冲后，实际信用韧性可能略优于历史基准。
+        但须警惕：此次产能过剩叠加地缘政治风险（美国IRA政策不确定性、欧盟
+        碳关税），可能是历史上从未出现过的"灰犀牛"组合。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 8 — 综合压力测试结论 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <h2 class="section-title">八、综合压力测试结论</h2>
+
+    <div class="grid-3">
+      <div class="card card-green">
+        <h3>Base 基准</h3>
+        <div class="m-12-0 ct">
+          <span class="text-green fs-36 fw-800">AAA</span>
+        </div>
+        <p class="text-secondary fs-13">
+          当前经营基本面可支撑信用质量维持稳定。不需调整评级。
+          核心关注点：毛利率能否稳定在15%以上，以及行业新增产能投产
+          节奏是否超出预期。
+        </p>
+      </div>
+      <div class="card card-amber">
+        <h3>Bear 熊市</h3>
+        <div class="m-12-0 ct">
+          <span class="text-amber fs-36 fw-800">AA+</span>
+        </div>
+        <p class="text-secondary fs-13">
+          营运资金管理将面临压力但仍有缓冲空间。建议下调1个notch。
+          须提前安排备用流动性工具（备用授信额度、应收账款保理等）。
+          预计度过压力期需要3-4个季度。
+        </p>
+      </div>
+      <div class="card card-red">
+        <h3>Severe 极端</h3>
+        <div class="m-12-0 ct">
+          <span class="text-red fs-36 fw-800">A</span>
+        </div>
+        <p class="text-secondary fs-13">
+          评级可能下调2-3个notch并触发投资者保护条款。违约概率估算
+          (PD) 约为8-12%。严重依赖外部融资支持的可获得性和管理层应急
+          应对速度。建议预先制定紧急融资预案。
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="info-box info-blue mt-14" >
+      <strong>最终结论：</strong>隆基绿能在Base和Bear场景下信用质量良好，
+      Severe场景下存在实质性风险但违约非必然。公司的核心信用优势在于：
+      （1）200+亿元的流动性储备提供了充足的缓冲时间；
+      （2）全球龙头地位确保了在行业洗牌中"剩者为王"的长期逻辑；
+      （3）不断优化的成本结构持续强化竞争壁垒。
+      主要信用脆弱点在于：（1）高资本密集度在周期底部带来的折旧和减值压力；
+      （2）较高的海外收入敞口带来的地缘政治不确定性；
+      （3）治理维度（尤其是关联交易和信息披露）可能影响市场信心。
+      建议维持主体 "AAA" 评级，展望 <span class="text-amber">稳定</span>，
+      同时建立季度压力测试滚动更新机制。
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ================================================================ -->
+<!-- FOOTER -->
+<!-- ================================================================ -->
+<div class="footer">
+  <p><strong>Credence Report System</strong> — 压力测试报告</p>
+  <p>报告编号 STRESS-2026-Q3-011 · 生成于 2026-07-08 · 仅供内部参考</p>
+  <p>本报告基于隆基绿能2025年年报、2026Q1季报及行业周期数据分析生成</p>
+  <p class="text-tertiary fs-10 mt-6">
+    压力模型版本 v1.2 · 参数基准日 2026-07-01 · 历史数据窗口 15年 · 下次更新 2026-10-01
+  </p>
+</div>
+
+</body>
+</html>

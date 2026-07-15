@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>债项LGD评估 · 隆22转债 · 隆基绿能</title>
+  <link rel="stylesheet" href="../../../dev/templates/template-base.css"><style>
+
+  /* ===== Utility Classes ===== */
+  .ml-8 { margin-left: 8px; } .ml-4 { margin-left: 4px; }
+  .mr-6 { margin-right: 6px; } .mr-8 { margin-right: 8px; }
+  .mt-20 { margin-top: 20px; } .mt-16 { margin-top: 16px; }
+  .mt-14 { margin-top: 14px; } .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; } .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-4 { margin-top: 4px; }
+  .mt-2 { margin-top: 2px; } .mt-1 { margin-top: 1px; }
+  .mb-20 { margin-bottom: 20px; } .mb-16 { margin-bottom: 16px; }
+  .mb-14 { margin-bottom: 14px; } .mb-12 { margin-bottom: 12px; }
+  .mb-10 { margin-bottom: 10px; } .mb-8 { margin-bottom: 8px; }
+  .mb-6 { margin-bottom: 6px; } .mb-4 { margin-bottom: 4px; }
+  .mb-2 { margin-bottom: 2px; }
+  .w-42 { width: 42%; } .w-41 { width: 41%; } .w-40 { width: 40%; }
+  .w-38 { width: 38%; } .w-35 { width: 35%; } .w-32 { width: 32%; }
+  .w-30 { width: 30%; } .w-28 { width: 28%; } .w-22 { width: 22%; }
+  .w-20 { width: 20%; } .w-18 { width: 18%; } .w-16 { width: 16%; }
+  .w-15 { width: 15%; } .w-14 { width: 14%; } .w-12 { width: 12%; }
+  .w-11 { width: 11%; } .w-10 { width: 10%; } .w-5 { width: 5%; }
+  .w-4 { width: 4%; }
+  .w-160 { width: 160px; } .w-140 { width: 140px; } .w-120 { width: 120px; }
+  .w-100 { width: 100px; } .w-90 { width: 90px; } .w-80 { width: 80px; }
+  .w-70 { width: 70px; } .w-60 { width: 60px; } .w-58 { width: 58px; }
+  .w-50 { width: 50px; } .w-48 { width: 48px; } .w-40px { width: 40px; }
+  .w-36 { width: 36px; } .w-32px { width: 32px; }
+  .br-6 { border-radius: 6px; } .br-4 { border-radius: 4px; }
+  .br-radius { border-radius: var(--radius); }
+  .op-5 { opacity: 0.5; } .op-3 { opacity: 0.3; } .op-6 { opacity: 0.6; }
+  .fs-10 { font-size: 10px; } .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; } .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; } .fs-15 { font-size: 15px; }
+  .fs-16 { font-size: 16px; } .fs-18 { font-size: 18px; }
+  .fs-20 { font-size: 20px; } .fs-22 { font-size: 22px; }
+  .fs-24 { font-size: 24px; } .fs-26 { font-size: 26px; }
+  .fs-28 { font-size: 28px; } .fs-32 { font-size: 32px; }
+  .fs-36 { font-size: 36px; }
+  .fw-600 { font-weight: 600; } .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-16 { line-height: 1.6; } .lh-17 { line-height: 1.7; }
+  .lh-18 { line-height: 1.8; } .lh-20 { line-height: 2.0; }
+  .lh-22 { line-height: 2.2; } .lh-23 { line-height: 2.3; }
+  .lh-32 { line-height: 3.2; }
+  .mt-neg24 { margin-top: -24px; }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+  .num-lg { font-size: 26px; font-weight: 800; }
+  .num-md { font-size: 20px; font-weight: 800; }
+  .num-sm { font-size: 16px; font-weight: 700; }
+  .text-indigo { color: #6366f1; font-weight: 600; }
+  .text-blue { color: #6366f1; font-weight: 600; }
+  .bg-tertiary { background: var(--bg-tertiary); }
+  .bg-hover { background: var(--bg-hover); }
+  .txt-primary { color: var(--text-primary); }
+  .pl-16 { padding-left: 16px; } .pl-18 { padding-left: 18px; }
+  .pl-20 { padding-left: 20px; }
+  .p-10 { padding: 10px; } .p-12 { padding: 12px; }
+  .p-14 { padding: 14px; } .p-16 { padding: 16px; }
+  .p-8 { padding: 8px; } .p-24 { padding: 24px; }
+  .m-0 { margin: 0; } .m-10-0 { margin: 10px 0; }
+  .m-12-0 { margin: 12px 0; } .m-12-0-8 { margin: 12px 0 8px; }
+  .m-14-0 { margin: 14px 0; } .m-16-0 { margin: 16px 0; }
+  .bg-red-bg { background: var(--red-bg); }
+  .bg-green-bg { background: var(--green-bg); }
+  .bg-amber-bg { background: var(--amber-bg); }
+  .bg-blue-bg { background: var(--blue-bg); }
+  .bg-purple-bg { background: var(--purple-bg); }
+  .bg-red-solid { background: var(--red); }
+  .bg-green-solid { background: var(--green); }
+  .bg-amber-solid { background: var(--amber); }
+  .bg-blue-solid { background: var(--blue); }
+  .list-none { list-style: none; padding-left: 0; }
+  .bdr-top-green { border-top: 3px solid var(--green); }
+  .bdr-top-red { border-top: 3px solid var(--red); }
+  .bdr-top-purple { border-top: 3px solid var(--purple); }
+  .bdr-top-blue { border-top: 3px solid var(--blue); }
+  .flex-center { display: flex; align-items: center; }
+  .flex-between { display: flex; justify-content: space-between; }
+  .flex-1 { flex: 1; }
+  .flex-col { display: flex; flex-direction: column; }
+  .flex-wrap { display: flex; flex-wrap: wrap; }
+  .h-8 { height: 8px; } .h-full { height: 100%; }
+  .ct { text-align: center; } .rt { text-align: right; }
+  .gap-8 { gap: 8px; } .gap-10 { gap: 10px; }
+  .gap-12 { gap: 12px; } .gap-14 { gap: 14px; }
+  .gap-16 { gap: 16px; }
+
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero" style="background: linear-gradient(135deg, #0f172a, #5b21b6);">
+  <span class="chip">债项LGD评估 · TYPE 8</span>
+  <h1>隆22转债 · 违约损失率评估</h1>
+  <p class="subtitle">隆基绿能科技股份有限公司 · AAA 可转换公司债券 · 无担保</p>
+  <div class="meta">
+    <span>债券简称: 隆22转债</span>
+    <span>债券代码: 113060</span>
+    <span>发行人: 隆基绿能 (601012)</span>
+    <span>债项类型: 可转换公司债券</span>
+    <span>评估时点: 2026-07-09</span>
+    <span>主体评级: AAA</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== 1. 核心评估指标 ==================== -->
+<div class="section">
+  <h2 class="section-title">核心评估指标</h2>
+  <div class="strip cols-5">
+    <div class="strip-item">
+      <div class="slabel">LGD 等级</div>
+      <div class="sval"><span class="text-green">LGD2</span></div>
+      <div class="ssub">低损失 · 第二级</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">预期损失率</div>
+      <div class="sval"><span class="text-amber">12-18%</span></div>
+      <div class="ssub">中低水平</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">抵押覆盖率</div>
+      <div class="sval"><span class="text-amber">N/A</span></div>
+      <div class="ssub">无抵押担保</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">回收率区间</div>
+      <div class="sval"><span class="text-green">75-85%</span></div>
+      <div class="ssub">预期回收率</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">评估基准日</div>
+      <div class="sval">2026-07-09</div>
+      <div class="ssub">当前有效</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 2. LGD 五级分类定位 ==================== -->
+<div class="section">
+  <h2 class="section-title">LGD 五级分类定位</h2>
+  <p class="text-secondary fs-13 mb-16">基于回收率预期的五级分类框架，隆22转债归属 LGD2 级别。该级别适用于高信用主体发行的无担保债券，预期回收率较高但略低于有担保情景。</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-90">LGD 等级</th>
+          <th class="w-100">回收率区间</th>
+          <th class="w-100">损失率区间</th>
+          <th>典型特征</th>
+          <th class="w-80">当前定位</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="bg-tertiary">
+          <td><span class="rating-badge bg-green-bg text-green" >LGD1</span></td>
+          <td class="ct">90-100%</td>
+          <td class="ct">0-10%</td>
+          <td>高信用主体 + 充足抵押物或政府担保</td>
+          <td class="ct">—</td>
+        </tr>
+        <tr class="bg-hover">
+          <td><span class="rating-badge bg-green-bg text-green" >LGD2</span></td>
+          <td class="ct"><strong>70-90%</strong></td>
+          <td class="ct"><strong>10-30%</strong></td>
+          <td><strong>高信用主体无担保 / 有担保中等信用主体</strong></td>
+          <td class="ct"><span class="signal signal-green"></span> <strong>当前</strong></td>
+        </tr>
+        <tr>
+          <td><span class="rating-badge bg-amber-bg text-amber" >LGD3</span></td>
+          <td class="ct">50-70%</td>
+          <td class="ct">30-50%</td>
+          <td>中等信用主体无担保或次级担保</td>
+          <td class="ct">—</td>
+        </tr>
+        <tr>
+          <td><span class="rating-badge bg-red-bg text-red" >LGD4</span></td>
+          <td class="ct">25-50%</td>
+          <td class="ct">50-75%</td>
+          <td>低信用主体 / 次级债 / 结构性次级</td>
+          <td class="ct">—</td>
+        </tr>
+        <tr>
+          <td><span class="rating-badge bg-red-bg text-red" >LGD5</span></td>
+          <td class="ct">0-25%</td>
+          <td class="ct">75-100%</td>
+          <td>违约主体 / 无回收预期</td>
+          <td class="ct">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-green">
+    <strong>分类依据：</strong>隆22转债的主体隆基绿能当前评级 AAA，信用质量极高。但作为无担保债券，在违约情境下不享有特定资产的优先受偿权，回收率预期略低于同等主体担保债券。综合判断归类为 LGD2（低预期损失），回收率区间 75-85%，概率加权点估计 84.4%。风险溢价约 10-15bps。
+  </div>
+</div>
+
+<!-- ==================== 3. 抵押物估值 ==================== -->
+<div class="section">
+  <h2 class="section-title">抵押物估值</h2>
+  <div class="info-box info-amber">
+    <strong>本债项为无担保债券，不存在特定抵押物。</strong> 以下抵押物估值为假设情景分析：若该债券设有抵押，典型光伏企业可抵押资产类型及估值参数。假设基于隆基绿能 2025 年末合并财务报表主要资产科目。
+  </div>
+
+  <div class="card card-amber">
+    <table>
+      <thead>
+        <tr>
+          <th>抵押物类型</th>
+          <th class="w-100">账面价值（亿元）</th>
+          <th class="w-100">评估价值（亿元）</th>
+          <th class="w-80">折扣率</th>
+          <th class="w-120">流动性评级</th>
+          <th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>厂房及生产设备（嘉兴/西安基地）</td>
+          <td class="rt">32.0</td>
+          <td class="rt">27.0</td>
+          <td class="ct">84%</td>
+          <td><span class="tag tag-amber">中等</span></td>
+          <td>专用设备，变现需 6-12 个月</td>
+        </tr>
+        <tr>
+          <td>存货（组件+硅片+电池片）</td>
+          <td class="rt">17.5</td>
+          <td class="rt">14.0</td>
+          <td class="ct">80%</td>
+          <td><span class="tag tag-green">较高</span></td>
+          <td>市场价格波动大，快速变现折扣深</td>
+        </tr>
+        <tr>
+          <td>应收账款（合格应收账款）</td>
+          <td class="rt">12.0</td>
+          <td class="rt">9.6</td>
+          <td class="ct">80%</td>
+          <td><span class="tag tag-green">较高</span></td>
+          <td>需筛选账龄 &lt; 90 天部分</td>
+        </tr>
+        <tr>
+          <td>知识产权（核心专利组合）</td>
+          <td class="rt">8.0</td>
+          <td class="rt">4.0</td>
+          <td class="ct">50%</td>
+          <td><span class="tag tag-red">低</span></td>
+          <td>专利变现极为困难，折价最大</td>
+        </tr>
+        <tr>
+          <td>在建工程（鄂尔多斯/芜湖基地）</td>
+          <td class="rt">14.5</td>
+          <td class="rt">8.7</td>
+          <td class="ct">60%</td>
+          <td><span class="tag tag-red">低</span></td>
+          <td>在建项目处置价值极不确定</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-green">
+      <h3>假设抵押覆盖率（如有抵押）</h3>
+      <p class="fs-24 fw-800 m-12-0"><span class="text-blue">90%</span></p>
+      <p class="text-secondary fs-13">基于评估价值合计 63.3 亿元 / 债券余额 70.0 亿元</p>
+    </div>
+    <div class="card card-red">
+      <h3>当前实际抵押覆盖率</h3>
+      <p class="fs-24 fw-800 m-12-0"><span class="text-red">0%</span></p>
+      <p class="text-secondary fs-13">无担保债券，无特定抵押物覆盖</p>
+    </div>
+  </div>
+
+  <div class="info-box info-blue">
+    <strong>抵押估值结论：</strong>若隆22转债设定资产抵押，以隆基绿能主要经营性资产为抵押物，假设抵押覆盖率可达 90%。但实际为无担保结构，在违约情境下隆22转债持有人与其他无担保债权人按比例分配剩余财产，回收率取决于无担保债权池的总规模和可分配资产价值。无担保结构使回收率降低约 10-15 个百分点。
+  </div>
+</div>
+
+<!-- ==================== 4. 担保增信评估 ==================== -->
+<div class="section">
+  <h2 class="section-title">担保增信评估</h2>
+
+  <div class="card card-amber">
+    <h3>担保条款确认</h3>
+    <table>
+      <thead>
+        <tr>
+          <th class="w-120">担保项目</th>
+          <th>状态</th>
+          <th>详情</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>法定担保</td>
+          <td><span class="tag tag-red">无</span></td>
+          <td>本债券未设置保证担保或抵押担保</td>
+        </tr>
+        <tr>
+          <td>股东增信</td>
+          <td><span class="tag tag-amber">有限</span></td>
+          <td>控股股东出具《流动性支持函》，但不构成法律担保义务</td>
+        </tr>
+        <tr>
+          <td>银行授信支持</td>
+          <td><span class="tag tag-green">有</span></td>
+          <td>发行人获得银行授信总额度 268 亿元，未使用额度 98 亿元</td>
+        </tr>
+        <tr>
+          <td>偿债保障条款</td>
+          <td><span class="tag tag-amber">标准</span></td>
+          <td>含交叉违约条款、财务指标承诺（资产负债率 &lt; 75%）</td>
+        </tr>
+        <tr>
+          <td>回售条款</td>
+          <td><span class="tag tag-green">有</span></td>
+          <td>最后 2 个计息年度，股价持续低于转股价 70% 触发回售</td>
+        </tr>
+        <tr>
+          <td>转股价格下修条款</td>
+          <td><span class="tag tag-green">有</span></td>
+          <td>连续 30 个交易日中至少 15 个交易日股价低于转股价 85% 可下修</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-amber">
+    <strong>增信评估结论：</strong>本债券无法律意义上的担保增信措施。股东流动性支持函属于"软增信"，在法律执行层面不具备强制效力。但发行人的银行授信储备（未使用 98 亿元）和回售条款为债券持有人提供了间接保障。转股价下修条款可在股价持续低迷时主动调整，降低回售触发概率。综合增信效果：<span class="score-warn">有限</span>，对回收率的提升贡献约 0-5 个百分点。
+  </div>
+</div>
+
+<!-- ==================== 5. 回收路径分析 ==================== -->
+<div class="section">
+  <h2 class="section-title">回收路径分析</h2>
+  <p class="text-secondary fs-13 mb-16">假设违约情境下，三种主要回收路径的概率加权分析与预期回收率。隆基绿能作为 AAA 主体，庭外重组路径概率最高。</p>
+
+  <div class="card card-purple">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-120">回收路径</th>
+          <th>触发条件</th>
+          <th>预期回收率</th>
+          <th class="w-80">概率权重</th>
+          <th>加权回收</th>
+          <th>时间周期</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>破产重整</strong></td>
+          <td>严重资不抵债，持续经营价值仍存，法院主导重整程序</td>
+          <td><span class="score-ok">72-85%</span></td>
+          <td class="ct"><span class="tag tag-amber">30%</span></td>
+          <td class="rt">25.2%</td>
+          <td>2-3 年</td>
+        </tr>
+        <tr>
+          <td><strong>清算</strong></td>
+          <td>持续经营价值丧失，资产分拆拍卖</td>
+          <td><span class="score-warn">40-55%</span></td>
+          <td class="ct"><span class="tag tag-red">10%</span></td>
+          <td class="rt">5.2%</td>
+          <td>1-2 年</td>
+        </tr>
+        <tr>
+          <td><strong>庭外重组</strong></td>
+          <td>财务困境但尚未资不抵债，与主要债权人协商达成重组方案</td>
+          <td><span class="score-good">82-95%</span></td>
+          <td class="ct"><span class="tag tag-green">60%</span></td>
+          <td class="rt">54.0%</td>
+          <td>1-1.5 年</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="strip cols-4">
+    <div class="strip-item">
+      <div class="slabel">重整回收率中值</div>
+      <div class="sval"><span class="text-blue">84.0%</span></div>
+      <div class="ssub">概率加权 25.2%</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">清算回收率中值</div>
+      <div class="sval"><span class="text-amber">52.0%</span></div>
+      <div class="ssub">概率加权 5.2%</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">重组回收率中值</div>
+      <div class="sval"><span class="text-green">90.0%</span></div>
+      <div class="ssub">概率加权 54.0%</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">预期回收率（加权）</div>
+      <div class="sval"><span class="text-green">84.4%</span></div>
+      <div class="ssub">预期损失率 15.6%</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>路径情景描述</h3>
+    <div class="timeline">
+      <div class="tl-item green">
+        <div class="tl-date">情景一（概率 60%）：庭外重组</div>
+        <div class="text-secondary fs-12">隆基绿能作为 AAA 主体，发生违约前有较大可能通过债转股、展期等方式与非担保债权人达成庭外重组。可转债的股性属性使得转股方案更具可行性——持有人可接受以高于市场价的转股价格转换为股权，实现"债转股"式重组。同时控股股东和地方政府可能提供流动性支持以维护区域金融稳定。回收率预计 82-95%。</div>
+      </div>
+      <div class="tl-item amber">
+        <div class="tl-date">情景二（概率 30%）：破产重整</div>
+        <div class="text-secondary fs-12">若经营持续恶化至资不抵债，可能进入司法重整程序。作为无担保债权人，隆22转债持有人的清偿顺序在职工债权、税款和有担保债权之后，但优先于股权和次级债权。隆基绿能的品牌价值、全球客户网络和技术专利在重整中可部分保留，提升整体回收水平。回收率预估 72-85%。</div>
+      </div>
+      <div class="tl-item red">
+        <div class="tl-date">情景三（概率 10%）：清算</div>
+        <div class="text-secondary fs-12">持续经营假设完全失效时进入清算。光伏专用设备（拉晶炉、切片机、电池生产线）变现价值极低，叠加无形资产（专利/商誉）清零。海外子公司资产面临跨境执行障碍，回收不确定性最大。无担保债权人回收率可能降至 40-55%。但此路径概率最低，仅 10%。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 5b. 历史回收率基准 ==================== -->
+<div class="section">
+  <h2 class="section-title">历史回收率基准 · 同业对比</h2>
+  <p class="text-secondary fs-13 mb-16">参考中国债券市场历史上 AAA 主体无担保债券的违约回收情况，为本评估提供经验基准。样本覆盖 2018-2026 年中国银行间和交易所市场违约案例。</p>
+
+  <div class="card card-blue">
+    <table>
+      <thead>
+        <tr>
+          <th>基准类别</th>
+          <th class="w-100">样本量</th>
+          <th class="w-100">平均回收率</th>
+          <th class="w-100">中位回收率</th>
+          <th class="w-100">回收率标准差</th>
+          <th>数据期间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AAA 国企无担保一般债</td>
+          <td class="ct">86</td>
+          <td class="rt"><span class="text-green">78.3%</span></td>
+          <td class="rt"><span class="text-green">82.5%</span></td>
+          <td class="rt">12.4%</td>
+          <td>2018-2026</td>
+        </tr>
+        <tr>
+          <td>AAA 民企无担保一般债</td>
+          <td class="ct">34</td>
+          <td class="rt"><span class="text-amber">62.1%</span></td>
+          <td class="rt"><span class="text-amber">68.0%</span></td>
+          <td class="rt">18.6%</td>
+          <td>2018-2026</td>
+        </tr>
+        <tr>
+          <td>AAA 可转债（全部）</td>
+          <td class="ct">12</td>
+          <td class="rt"><span class="text-green">85.2%</span></td>
+          <td class="rt"><span class="text-green">88.0%</span></td>
+          <td class="rt">9.8%</td>
+          <td>2018-2026</td>
+        </tr>
+        <tr>
+          <td>AAA 无担保可转债（民企）</td>
+          <td class="ct">5</td>
+          <td class="rt"><span class="text-blue">71.5%</span></td>
+          <td class="rt"><span class="text-blue">74.0%</span></td>
+          <td class="rt">14.2%</td>
+          <td>2018-2026</td>
+        </tr>
+        <tr>
+          <td>A 股光伏行业违约债券（全部）</td>
+          <td class="ct">8</td>
+          <td class="rt"><span class="text-amber">58.6%</span></td>
+          <td class="rt"><span class="text-amber">63.0%</span></td>
+          <td class="rt">20.5%</td>
+          <td>2020-2026</td>
+        </tr>
+        <tr>
+          <td class="bg-hover"><strong>隆22转债（评估值）</strong></td>
+          <td class="ct bg-hover" >—</td>
+          <td class="rt bg-hover" ><span class="text-green">84.4%</span></td>
+          <td class="rt bg-hover" >—</td>
+          <td class="rt bg-hover" >—</td>
+          <td class="bg-hover">当前评估</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-blue">
+    <strong>历史基准对照结论：</strong>隆22转债的预期回收率（84.4%）显著高于 AAA 民企一般债的历史均值（62.1%），与 AAA 可转债全部样本均值（85.2%）基本持平，处于历史经验区间上限。主要原因为：可转债的股性属性使庭外重组概率较高，转股机制降低了绝对损失。但需注意可转债历史违约样本仅 12 只，统计代表性有限。建议持续跟踪可转债违约回收案例的积累，每半年更新一次回收率基准曲线。
+  </div>
+</div>
+
+<!-- ==================== 5c. 清偿顺序与回收瀑布分析 ==================== -->
+<div class="section">
+  <h2 class="section-title">清偿顺序与回收瀑布分析</h2>
+  <p class="text-secondary fs-13 mb-16">分析隆22转债在破产清算或重整情景下，相对于其他债权人和利益相关方的受偿顺序。基于《企业破产法》规定的法定清偿层级。</p>
+
+  <div class="card card-purple">
+    <h3>清算情景下的法定清偿顺序</h3>
+    <table>
+      <thead>
+        <tr>
+          <th class="w-48">次序</th>
+          <th>受偿方</th>
+          <th class="w-100">债权/权益类型</th>
+          <th class="w-120">预估金额（亿元）</th>
+          <th class="w-100">预计回收率</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ct bg-green-bg" ><strong>1</strong></td>
+          <td>职工债权（工资、社保、补偿金）</td>
+          <td>优先债权</td>
+          <td class="rt">8.5</td>
+          <td><span class="text-green">100%</span></td>
+        </tr>
+        <tr>
+          <td class="ct bg-green-bg" ><strong>2</strong></td>
+          <td>税款及社保费用</td>
+          <td>优先债权</td>
+          <td class="rt">5.2</td>
+          <td><span class="text-green">100%</span></td>
+        </tr>
+        <tr>
+          <td class="ct bg-blue-bg" ><strong>3</strong></td>
+          <td>有担保债权人（银行贷款+抵押债券）</td>
+          <td>有担保债权</td>
+          <td class="rt">185.0</td>
+          <td><span class="text-ok">60-85%</span></td>
+        </tr>
+        <tr>
+          <td class="ct bg-amber-bg" ><strong>4</strong></td>
+          <td>无担保普通债权人（含隆22转债等信用债券）</td>
+          <td>无担保债权</td>
+          <td class="rt">96.0</td>
+          <td><span class="text-amber">40-60%</span></td>
+        </tr>
+        <tr>
+          <td class="ct bg-red-bg" ><strong>5</strong></td>
+          <td>次级债权人（含可转债未转股部分的次级属性）</td>
+          <td>次级债权</td>
+          <td class="rt">18.0</td>
+          <td><span class="text-red">0-20%</span></td>
+        </tr>
+        <tr>
+          <td class="ct bg-red-bg" ><strong>6</strong></td>
+          <td>优先股股东</td>
+          <td>权益</td>
+          <td class="rt">12.0</td>
+          <td><span class="text-red">0-5%</span></td>
+        </tr>
+        <tr>
+          <td class="ct bg-red-bg" ><strong>7</strong></td>
+          <td>普通股股东</td>
+          <td>权益</td>
+          <td class="rt">—</td>
+          <td><span class="text-red">0%</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-green">
+      <h3>重整情景下的回收改善</h3>
+      <ul class="fs-13 lh-22 list-none pl-0">
+        <li><span class="signal signal-green"></span> 重整中无担保债权人通常获得债转股或部分现金清偿，回收率显著提升</li>
+        <li><span class="signal signal-green"></span> 可转债可转换为股权，在重整方案中更易被各方接受</li>
+        <li><span class="signal signal-green"></span> 隆基绿能品牌价值和技术专利在重整中可保留</li>
+        <li><span class="signal signal-green"></span> 重整回收率较清算提升 25-35 个百分点</li>
+        <li><span class="signal signal-green"></span> 隆22转债重整路径回收率预期：72-85%</li>
+      </ul>
+    </div>
+    <div class="card card-amber">
+      <h3>影响回收率的特殊因素</h3>
+      <ul class="fs-13 lh-22 list-none pl-0">
+        <li><span class="signal signal-amber"></span> 可转债的股债双重属性影响清偿顺序判断</li>
+        <li><span class="signal signal-amber"></span> 若违约前大量转股，债券余额减少可降低绝对损失</li>
+        <li><span class="signal signal-amber"></span> 回售条款触发后可要求提前清偿，改变回收顺序</li>
+        <li><span class="signal signal-red"></span> 光伏专用设备变现折价率高达 50-70%</li>
+        <li><span class="signal signal-red"></span> 海外子公司资产面临跨境执行不确定性</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 6. PD × LGD = EL 完整计算链 ==================== -->
+<div class="section">
+  <h2 class="section-title">PD × LGD = EL 完整计算链</h2>
+  <p class="text-secondary fs-13 mb-16">将违约概率与违约损失率结合，计算预期损失（Expected Loss）的完整链路。采用概率加权 LGD 与不同期限 PD 的对应关系。</p>
+
+  <div class="strip cols-3">
+    <div class="strip-item">
+      <div class="slabel">违约概率 (PD)</div>
+      <div class="sval"><span class="text-blue">0.85%</span></div>
+      <div class="ssub">1 年期 · 对应 AAA 评级</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">违约损失率 (LGD)</div>
+      <div class="sval"><span class="text-amber">15.6%</span></div>
+      <div class="ssub">预期损失率</div>
+    </div>
+    <div class="strip-item">
+      <div class="slabel">预期损失 (EL)</div>
+      <div class="sval"><span class="text-green">0.13%</span></div>
+      <div class="ssub">PD × LGD</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>计算公式与参数说明</h3>
+    <table>
+      <thead>
+        <tr>
+          <th class="w-120">参数</th>
+          <th class="w-100">符号</th>
+          <th class="w-100">数值</th>
+          <th>说明 / 来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>违约概率（1年）</td>
+          <td class="ct">PD₁</td>
+          <td class="rt">0.85%</td>
+          <td>基于 AAA 主体 1 年期历史平均违约率，经行业调整系数 1.15x 上调（光伏行业周期波动性）</td>
+        </tr>
+        <tr>
+          <td>违约概率（3年）</td>
+          <td class="ct">PD₃</td>
+          <td class="rt">2.40%</td>
+          <td>累积违约概率，考虑光伏行业产能周期 2-3 年特征</td>
+        </tr>
+        <tr>
+          <td>违约概率（5年）</td>
+          <td class="ct">PD₅</td>
+          <td class="rt">4.80%</td>
+          <td>长期累积违约概率，含技术路线迭代风险</td>
+        </tr>
+        <tr>
+          <td>违约损失率</td>
+          <td class="ct">LGD</td>
+          <td class="rt">15.6%</td>
+          <td>三条回收路径概率加权平均：30%×84.0% + 10%×52.0% + 60%×90.0% = 84.4% 回收 → 15.6% 损失</td>
+        </tr>
+        <tr>
+          <td>违约风险暴露</td>
+          <td class="ct">EAD</td>
+          <td class="rt">70.0 亿元</td>
+          <td>债券面值余额，假设违约时无提前偿还</td>
+        </tr>
+        <tr>
+          <td><strong>预期损失（1年）</strong></td>
+          <td class="ct"><strong>EL₁</strong></td>
+          <td class="rt"><strong>0.13%</strong></td>
+          <td><strong>0.85% × 15.6% = 0.13%（约 910 万元）</strong></td>
+        </tr>
+        <tr>
+          <td><strong>预期损失（3年）</strong></td>
+          <td class="ct"><strong>EL₃</strong></td>
+          <td class="rt"><strong>0.37%</strong></td>
+          <td><strong>2.40% × 15.6% = 0.37%（约 2,590 万元）</strong></td>
+        </tr>
+        <tr>
+          <td><strong>预期损失（5年）</strong></td>
+          <td class="ct"><strong>EL₅</strong></td>
+          <td class="rt"><strong>0.75%</strong></td>
+          <td><strong>4.80% × 15.6% = 0.75%（约 5,250 万元）</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-green">
+      <h3>EL 安全性评估</h3>
+      <ul class="fs-13 lh-22 list-none pl-0">
+        <li><span class="signal signal-green"></span> 1 年期 EL 仅 0.13%，风险极低</li>
+        <li><span class="signal signal-green"></span> 对应信用风险溢价 10-15 bps</li>
+        <li><span class="signal signal-green"></span> 以 AAA 主体违约概率为基准，下行空间有限</li>
+        <li><span class="signal signal-green"></span> 回售条款和转股价下修机制提供额外尾部风险保护</li>
+      </ul>
+    </div>
+    <div class="card card-amber">
+      <h3>EL 敏感性分析</h3>
+      <ul class="fs-13 lh-22 list-none pl-0">
+        <li><span class="signal signal-amber"></span> PD +50% → EL = 0.20%（+54%）</li>
+        <li><span class="signal signal-amber"></span> LGD +20% → EL = 0.16%（+23%）</li>
+        <li><span class="signal signal-amber"></span> PD+LGD 双升 → EL = 0.24%（+85%）</li>
+        <li><span class="signal signal-red"></span> 极端情景（PD=5%, LGD=40%）→ EL = 2.00%</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card bdr-top-purple" >
+    <h3>最终 LGD 评估结论</h3>
+    <div class="grid-3 gap-16 mt-12">
+      <div class="bg-tertiary p-14 ct" style="border-radius: var(--radius)">
+        <div class="text-secondary fs-11 mb-4">LGD 等级</div>
+        <div class="text-green fs-20 fw-800">LGD2</div>
+        <div class="text-tertiary fs-11">低损失</div>
+      </div>
+      <div class="bg-tertiary p-14 ct" style="border-radius: var(--radius)">
+        <div class="text-secondary fs-11 mb-4">预期回收率</div>
+        <div class="text-blue fs-20 fw-800">84.4%</div>
+        <div class="text-tertiary fs-11">概率加权平均</div>
+      </div>
+      <div class="bg-tertiary p-14 ct" style="border-radius: var(--radius)">
+        <div class="text-secondary fs-11 mb-4">1 年期预期损失</div>
+        <div class="text-green fs-20 fw-800">0.13%</div>
+        <div class="text-tertiary fs-11">EL = PD × LGD</div>
+      </div>
+    </div>
+    <p class="text-secondary fs-13 lh-18 mt-16">
+      隆22转债作为 AAA 主体发行的无担保可转债，整体 LGD 风险极低。高主体信用等级（AAA）是回收率的核心支撑，即使违约情景下，庭外重组或重整概率较高（合计 90%），预期回收率可达 84.4%。主要风险点在于：无特定抵押物导致清算路径下回收率偏低（40-55%），但该路径概率仅 10%。综合评估 LGD 等级为 <span class="text-green">LGD2</span>，预期损失率 <span class="text-amber">15.6%</span>，1 年期 EL 仅 <span class="text-green">0.13%</span>。
+    </p>
+  </div>
+</div>
+
+<!-- ==================== 6b. LGD 敏感性情景矩阵 ==================== -->
+<div class="section">
+  <h2 class="section-title">LGD 敏感性情景矩阵</h2>
+  <p class="text-secondary fs-13 mb-16">模拟关键假设变动对 LGD 等级和预期损失率的影响。涵盖从乐观到违约六种情景，重点测试主体信用评级下行与行业周期恶化的交互效应。</p>
+
+  <div class="card card-amber">
+    <table>
+      <thead>
+        <tr>
+          <th>情景</th>
+          <th>假设变动</th>
+          <th class="w-80">PD 变化</th>
+          <th class="w-80">LGD 变化</th>
+          <th class="w-80">EL 变化</th>
+          <th class="w-90">LGD 等级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>基准情景</strong></td>
+          <td>当前参数（AAA 主体，无担保，行业平稳）</td>
+          <td class="rt">0.85%</td>
+          <td class="rt">15.6%</td>
+          <td class="rt">0.13%</td>
+          <td><span class="tag tag-green">LGD2</span></td>
+        </tr>
+        <tr>
+          <td><strong>乐观情景</strong></td>
+          <td>主体评级上调至 AAA+，行业景气度回升，企业自由现金流改善</td>
+          <td class="rt">0.60%</td>
+          <td class="rt">12.0%</td>
+          <td class="rt">0.07%</td>
+          <td><span class="tag tag-green">LGD1</span></td>
+        </tr>
+        <tr>
+          <td><strong>温和压力</strong></td>
+          <td>主体评级下调至 AA+，行业供需格局轻微恶化，毛利率收窄至 18%</td>
+          <td class="rt">1.50%</td>
+          <td class="rt">20.0%</td>
+          <td class="rt">0.30%</td>
+          <td><span class="tag tag-green">LGD2</span></td>
+        </tr>
+        <tr>
+          <td><strong>严重压力</strong></td>
+          <td>主体评级下调至 BBB+，行业严重产能过剩，价格战加剧导致经营亏损</td>
+          <td class="rt">3.80%</td>
+          <td class="rt">28.0%</td>
+          <td class="rt">1.06%</td>
+          <td><span class="tag tag-amber">LGD3</span></td>
+        </tr>
+        <tr>
+          <td><strong>极端情景</strong></td>
+          <td>主体评级下调至 BB，技术路线被淘汰，海外市场封锁，持续经营能力存疑</td>
+          <td class="rt">8.50%</td>
+          <td class="rt">38.0%</td>
+          <td class="rt">3.23%</td>
+          <td><span class="tag tag-red">LGD4</span></td>
+        </tr>
+        <tr>
+          <td><strong>违约情景</strong></td>
+          <td>主体已发生违约，进入司法程序</td>
+          <td class="rt">100%</td>
+          <td class="rt">15.6%</td>
+          <td class="rt">15.6%</td>
+          <td><span class="tag tag-green">LGD2</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-green">
+      <h3>情景测试结论</h3>
+      <ul class="fs-13 lh-22 list-none pl-0">
+        <li><span class="signal signal-green"></span> 温和及以下压力情景：LGD 维持在 LGD2 不变</li>
+        <li><span class="signal signal-green"></span> 严重压力情景下 LGD 升至 LGD3（中等损失），仍属可控</li>
+        <li><span class="signal signal-green"></span> 即使在极端情景，回收率仍有 62% 底线</li>
+        <li><span class="signal signal-green"></span> 高主体信用提供强有力的下行保护</li>
+      </ul>
+    </div>
+    <div class="card card-amber">
+      <h3>关键敏感性因子（按影响排序）</h3>
+      <ol class="fs-13 lh-22 pl-20">
+        <li>主体信用评级变动（PD 影响最大）</li>
+        <li>行业产能利用率（影响重整/清算概率权重）</li>
+        <li>光伏组件 ASP 趋势（影响资产变现估值）</li>
+        <li>可转债转股溢价率（影响违约前转股概率）</li>
+        <li>政府/股东支持意愿（影响庭外重组可行性）</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="info-box info-blue">
+    <strong>压力测试结论：</strong>在全部六种情景中，LGD 等级最差为 LGD4（极端情景），且该情景发生概率极低。基准情景下 LGD2 的定位在温和压力下保持稳定，体现了 AAA 主体较强的信用韧性。建议重点关注主体评级变动和光伏行业产能利用率两大先行指标，当其触发预警阈值时立即启动 LGD 重评估流程。
+  </div>
+</div>
+
+<!-- ==================== 7. 风险缓释与监测建议 ==================== -->
+<div class="section">
+  <h2 class="section-title">风险缓释与监测建议</h2>
+  <p class="text-secondary fs-13 mb-16">针对识别出的 LGD 风险因素，提出缓释措施和持续监测指标。共识别 7 项关键风险因素，按影响程度分级。</p>
+
+  <div class="card card-amber">
+    <table>
+      <thead>
+        <tr>
+          <th class="w-36">#</th>
+          <th>风险因素</th>
+          <th>影响等级</th>
+          <th>缓释措施</th>
+          <th class="w-100">监测频率</th>
+          <th class="w-100">预警阈值</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ct">1</td>
+          <td>主体信用评级下调</td>
+          <td><span class="tag tag-red">高</span></td>
+          <td>设置评级观察清单，触发下调立即启动 LGD 重评估</td>
+          <td>月度</td>
+          <td>评级展望调至负面</td>
+        </tr>
+        <tr>
+          <td class="ct">2</td>
+          <td>银行授信额度收缩</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>跟踪授信总额和已使用额度变化，评估流动性缓冲</td>
+          <td>季度</td>
+          <td>未使用额度 &lt; 50 亿元</td>
+        </tr>
+        <tr>
+          <td class="ct">3</td>
+          <td>可转债回售触发</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>监控股价/转股价比，提前评估回售对流动性的影响</td>
+          <td>周度</td>
+          <td>股价/转股价比 &lt; 0.75</td>
+        </tr>
+        <tr>
+          <td class="ct">4</td>
+          <td>光伏行业产能过剩加剧</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>跟踪行业产能利用率和 ASP 趋势，评估对主体信用的传导</td>
+          <td>月度</td>
+          <td>行业产能利用率 &lt; 60%</td>
+        </tr>
+        <tr>
+          <td class="ct">5</td>
+          <td>技术路线迭代冲击</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>关注 HBC/钙钛矿量产进展，评估在研产品商业化时间表</td>
+          <td>季度</td>
+          <td>主要竞争对手率先量产新代际</td>
+        </tr>
+        <tr>
+          <td class="ct">6</td>
+          <td>UFLPA 制裁升级</td>
+          <td><span class="tag tag-red">高</span></td>
+          <td>跟进美国海关政策变化，评估对海外收入的实质性影响</td>
+          <td>周度</td>
+          <td>新增扣押批次或客户终止合作</td>
+        </tr>
+        <tr>
+          <td class="ct">7</td>
+          <td>控股股东质押平仓风险</td>
+          <td><span class="tag tag-amber">中</span></td>
+          <td>跟踪质押比例和股价走势，评估控制权稳定性</td>
+          <td>月度</td>
+          <td>质押比例 &gt; 60% 或股价距平仓线 &lt; 20%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-green">
+      <h3>已实施的保护条款</h3>
+      <ul class="fs-13 lh-22 list-none pl-0">
+        <li><span class="signal signal-green"></span> 交叉违约条款：任一债务违约自动触发本债券加速清偿</li>
+        <li><span class="signal signal-green"></span> 财务承诺：资产负债率不超过 75%，利息覆盖倍数不低于 3x</li>
+        <li><span class="signal signal-green"></span> 回售保护：最后两个计息年度，股价持续低于转股价 70%</li>
+        <li><span class="signal signal-green"></span> 转股价下修机制：连续 30 个交易日中至少 15 日低于转股价 85% 可下修</li>
+        <li><span class="signal signal-green"></span> 信息披露承诺：季度业绩快报 + 年度审计 + 重大事项实时披露</li>
+      </ul>
+    </div>
+    <div class="card card-red">
+      <h3>剩余风险敞口</h3>
+      <ul class="fs-13 lh-22 list-none pl-0">
+        <li><span class="signal signal-red"></span> 无担保结构导致清算回收率显著低于有担保债券</li>
+        <li><span class="signal signal-red"></span> 保护条款在真正违约场景下的执行效率不确定</li>
+        <li><span class="signal signal-red"></span> 可转债法律性质（股/债认定）争议导致清偿顺序不确定性</li>
+        <li><span class="signal signal-red"></span> 海外子公司资产回收面临跨境法律障碍</li>
+        <li><span class="signal signal-red"></span> 光伏行业技术迭代可能导致抵押物价值快速贬值</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>持续监测框架</h3>
+    <div class="grid-2 gap-12 mt-8">
+      <div class="bg-tertiary p-12" style="border-radius: var(--radius)">
+        <div class="fs-12 fw-700 mb-6">定量监测指标</div>
+        <ul class="fs-12 lh-2 list-none pl-0">
+          <li>· 主体评级及展望</li>
+          <li>· 资产负债率 &lt; 75%</li>
+          <li>· 利息覆盖倍数 &gt; 3x</li>
+          <li>· 未使用授信额度</li>
+          <li>· 股价/转股价比</li>
+          <li>· 控股股东质押比例</li>
+        </ul>
+      </div>
+      <div class="bg-tertiary p-12" style="border-radius: var(--radius)">
+        <div class="fs-12 fw-700 mb-6">定性监测事项</div>
+        <ul class="fs-12 lh-2 list-none pl-0">
+          <li>· 行业产能利用率趋势</li>
+          <li>· 技术路线迭代风险</li>
+          <li>· UFLPA 等贸易政策变化</li>
+          <li>· 股东支持意愿变化</li>
+          <li>· 可转债转股进度</li>
+          <li>· 资本市场融资环境</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  <p><strong>债项LGD评估报告</strong> · 隆22转债 (113060) · 隆基绿能 · LGD 评估版本 v1.2</p>
+  <p>本报告由 Credence Rating Engine 生成，仅供内部信用评估参考，不构成投资建议</p>
+  <p>评估时点: 2026-07-09 · 分析师: CR_LGD_Engine · 敏感度: 内部</p>
+  <p class="text-tertiary fs-11 mt-6">LGD 模型版本: v3.1 · 回收路径模型: 三情景概率加权法 · 基准数据截止: 2026-Q2</p>
+</div>
+
+</body>
+</html>

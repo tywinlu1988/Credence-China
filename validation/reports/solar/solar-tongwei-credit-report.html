@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单标的深度分析 — 通威股份 (600438) | 光伏/多晶硅</title>
+<link rel="stylesheet" href="../../../dev/templates/template-base.css">
+<style>
+/* Pyramid layers - 4 layers matching LONGi report structure */
+.pyr-wrap { margin: 28px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.85; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 48px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-slate-800)); }
+.pyr-l2 { width: 88%; background: linear-gradient(135deg, var(--clr-cyan-600), var(--clr-cyan-700)); }
+.pyr-l3 { width: 76%; background: linear-gradient(135deg, var(--clr-blue-600), var(--clr-blue-700)); }
+.pyr-l4 { width: 64%; background: linear-gradient(135deg, var(--clr-violet-600), var(--clr-violet-700)); }
+
+/* Signal indicators */
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.orange { background: var(--clr-orange-600); }
+.signal-dot.red { background: var(--red); }
+
+/* Cross collision quadrants */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--purple); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* Risk list */
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: var(--clr-orange-600); }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+
+/* Density bar */
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+
+/* Gap warning */
+.gap-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+  background: var(--bg-tertiary); font-size: 12px;
+}
+.gap-item .gap-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.gap-item .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.gap-item .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ml-8 { margin-left: 8px; }
+  .ml-4 { margin-left: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 4px; }
+  .w-22 { width: 22%; }
+  .w-40 { width: 40%; }
+  .w-30 { width: 30%; }
+  .w-18 { width: 18%; }
+  .w-4 { width: 4%; }
+  .br-6 { border-radius: 6px; }
+  .op-5 { opacity: 0.5; }
+  .op-3 { opacity: 0.3; }
+  .op-6 { opacity: 0.6; }
+  .fs-11 { font-size: 11px; }
+  .fs-12 { font-size: 12px; }
+  .fs-13 { font-size: 13px; }
+  .fs-14 { font-size: 14px; }
+  .fs-15 { font-size: 15px; }
+  .fs-24 { font-size: 24px; }
+  .fs-28 { font-size: 28px; }
+  .fw-700 { font-weight: 700; }
+  .fw-800 { font-weight: 800; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .lh-18 { line-height: 1.8; }
+  .mt-neg24 { margin-top: -24px; }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-purple-alt { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-dark { border-left: 4px solid var(--clr-slate-950); }
+  .bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+
+    /* ===== Local CSS Variables (added by fixer) ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-500: #6366f1;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Utility Classes (added by fixer) ===== */
+  .ct { text-align:center; }
+  .mt-neg24 { margin-top:-24px; }
+  .mt-neg20 { margin-top:-20px; }
+  .mt-4 { margin-top:4px; }
+  .mt-6 { margin-top:6px; }
+  .mt-8 { margin-top:8px; }
+  .mt-10 { margin-top:10px; }
+  .mt-12 { margin-top:12px; }
+  .mt-16 { margin-top:16px; }
+  .mt-20 { margin-top:20px; }
+  .mt-24 { margin-top:24px; }
+  .mb-2 { margin-bottom:2px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-10 { margin-bottom:10px; }
+  .mb-12 { margin-bottom:12px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-20 { margin-bottom:20px; }
+  .ml-4 { margin-left:4px; }
+  .ml-8 { margin-left:8px; }
+  .ml-12 { margin-left:12px; }
+  .mr-8 { margin-right:8px; }
+  .w-4 { width:4%; }
+  .w-12 { width:12%; }
+  .w-15 { width:15%; }
+  .w-18 { width:18%; }
+  .w-20 { width:20%; }
+  .w-22 { width:22%; }
+  .w-25 { width:25%; }
+  .w-30 { width:30%; }
+  .w-35 { width:35%; }
+  .w-40 { width:40%; }
+  .w-45 { width:45%; }
+  .w-50 { width:50%; }
+  .w-55 { width:55%; }
+  .w-60 { width:60%; }
+  .w-65 { width:65%; }
+  .w-70 { width:70%; }
+  .w-75 { width:75%; }
+  .w-78 { width:78%; }
+  .w-80 { width:80%; }
+  .w-85 { width:85%; }
+  .w-90 { width:90%; }
+  .w-92 { width:92%; }
+  .br-4 { border-radius:4px; }
+  .br-6 { border-radius:6px; }
+  .br-8 { border-radius:8px; }
+  .br-12 { border-radius:12px; }
+  .op-3 { opacity:0.3; }
+  .op-4 { opacity:0.4; }
+  .op-5 { opacity:0.5; }
+  .op-6 { opacity:0.6; }
+  .op-7 { opacity:0.7; }
+  .op-8 { opacity:0.8; }
+  .fw-400 { font-weight:400; }
+  .fw-600 { font-weight:600; }
+  .fw-700 { font-weight:700; }
+  .fw-800 { font-weight:800; }
+  .fs-10 { font-size:10px; }
+  .fs-11 { font-size:11px; }
+  .fs-12 { font-size:12px; }
+  .fs-13 { font-size:13px; }
+  .fs-14 { font-size:14px; }
+  .fs-15 { font-size:15px; }
+  .fs-16 { font-size:16px; }
+  .fs-18 { font-size:18px; }
+  .fs-20 { font-size:20px; }
+  .fs-22 { font-size:22px; }
+  .fs-24 { font-size:24px; }
+  .fs-26 { font-size:26px; }
+  .fs-28 { font-size:28px; }
+  .fs-30 { font-size:30px; }
+  .fs-32 { font-size:32px; }
+  .fs-34 { font-size:34px; }
+  .lh-14 { line-height:1.4; }
+  .lh-15 { line-height:1.5; }
+  .lh-16 { line-height:1.6; }
+  .lh-17 { line-height:1.7; }
+  .lh-18 { line-height:1.8; }
+  .flex-ac-6 { display:flex;
+    align-items:center;
+    gap:6px; }
+  .flex-ac-8 { display:flex;
+    align-items:center;
+    gap:8px; }
+  .flex-ac-12 { display:flex;
+    align-items:center;
+    gap:12px; }
+  .track-bar { flex:1;
+    height:8px;
+    background:var(--bg-tertiary);
+    border-radius:4px;
+    overflow:hidden; }
+  .bg-hover { background:var(--bg-hover); }
+  .grid-2 { display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px; }
+  .my-20 { margin:20px 0 12px; }
+  .my-24 { margin:24px 0 10px; }
+  .px-4 { padding:4px 8px; }
+  .text-orange { color: var(--clr-orange-600); }
+  .text-teal { color: var(--clr-teal-600); }
+  .text-violet { color: var(--clr-violet-400); }
+  .text-indigo { color: var(--clr-indigo-400); }
+  .text-sky { color: var(--clr-sky-500); }
+  .text-emerald { color: var(--clr-emerald-400); }
+  .text-cyan { color: var(--clr-cyan-400); }
+  .text-slate { color: var(--clr-slate-400); }
+  .text-white50 { color: rgba(255,255,255,0.5); font-weight: 400; }
+  .card-orange { border-left: 4px solid var(--clr-orange-600); }
+  .card-teal { border-left: 4px solid var(--clr-teal-600); }
+  .card-slate { border-left: 4px solid var(--clr-slate-600); }
+  .card-violet { border-left: 4px solid var(--clr-violet-600); }
+  .card-blue6 { border-left: 4px solid var(--clr-blue-600); }
+  .card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+  .card-slate950 { border-left: 4px solid var(--clr-slate-950); }
+  .card-sky { border-left: 4px solid var(--clr-sky-500); }
+  .card-emerald { border-left: 4px solid var(--clr-emerald-600); }
+  .card-bg-red { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); }
+  .card-bg-amber { background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); }
+  .card-bg-purple { background: rgba(168,85,247,0.08); border-left: 3px solid var(--purple); }
+  .card-bg-blue { background: rgba(99,102,241,0.08); border-left: 3px solid var(--blue); }
+  .card-bg-teal { background: rgba(13,148,136,0.08); border-left: 3px solid var(--clr-teal-600); }
+/* Hero gradient: Solar/Storage — same industry gradient as LONGi */
+.hero-custom {
+  background: linear-gradient(135deg, #0f172a, #1e3a5f, #065f46);
+  text-align: center;
+  padding: 60px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-custom::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(6,95,70,0.15) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(30,58,95,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-custom .container { position: relative; z-index: 1; }
+.hero-custom .chip {
+  display: inline-block;
+  background: rgba(168,85,247,0.2);
+  color: var(--clr-violet-300);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero-custom h1 { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-custom .stock-code { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 400; margin-bottom: 6px; }
+.hero-custom .subtitle { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+.hero-custom .meta-row {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  flex-wrap: wrap;
+}
+.hero-custom .meta-row span {
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}  /* ===== Additional CSS Variables ===== */
+  :root {
+    --clr-amber-600: #d97706;
+    --clr-blue-400: #60a5fa;
+    --clr-blue-500: #3b82f6;
+    --clr-blue-600: #2563eb;
+    --clr-blue-700: #1d4ed8;
+    --clr-blue-800: #1e40af;
+    --clr-blue-900: #1e3a8a;
+    --clr-blue-midnight: #1e3a5f;
+    --clr-cyan-400: #22d3ee;
+    --clr-cyan-500: #06b6d4;
+    --clr-cyan-600: #0891b2;
+    --clr-cyan-700: #0e7490;
+    --clr-cyan-800: #155e75;
+    --clr-emerald-400: #34d399;
+    --clr-emerald-500: #10b981;
+    --clr-emerald-600: #059669;
+    --clr-emerald-700: #047857;
+    --clr-emerald-800: #065f46;
+    --clr-indigo-300: #a5b4fc;
+    --clr-indigo-400: #818cf8;
+    --clr-indigo-600: #4f46e5;
+    --clr-indigo-700: #4338ca;
+    --clr-indigo-800: #3730a3;
+    --clr-indigo-900: #312e81;
+    --clr-orange-500: #f97316;
+    --clr-orange-600: #ea580c;
+    --clr-orange-700: #b45309;
+    --clr-red-dark: #4a1a1a;
+    --clr-sky-400: #38bdf8;
+    --clr-sky-500: #0ea5e9;
+    --clr-sky-600: #0284c7;
+    --clr-slate-400: #94a3b8;
+    --clr-slate-500: #64748b;
+    --clr-slate-600: #475569;
+    --clr-slate-700: #334155;
+    --clr-slate-800: #1e293b;
+    --clr-slate-950: #0f172a;
+    --clr-teal-300: #5eead4;
+    --clr-teal-500: #14b8a6;
+    --clr-teal-600: #0d9488;
+    --clr-teal-700: #0f766e;
+    --clr-violet-300: #c084fc;
+    --clr-violet-400: #a78bfa;
+    --clr-violet-500: #8b5cf6;
+    --clr-violet-600: #7c3aed;
+    --clr-violet-700: #6d28d9;
+    --clr-violet-800: #5b21b6;
+    --clr-white: #ffffff;
+  }
+
+  /* ===== Text Color Utilities (from variables) ===== */
+  .text-amber { color: var(--amber); font-weight: 600; }
+  .text-amber6 { color: var(--clr-amber-600); font-weight: 600; }
+  .text-blue { color: var(--blue); font-weight: 600; }
+  .text-blue4 { color: var(--clr-blue-400); font-weight: 600; }
+  .text-blue5 { color: var(--clr-blue-500); font-weight: 600; }
+  .text-blue6 { color: var(--clr-blue-600); font-weight: 600; }
+  .text-cyan { color: var(--clr-cyan-400); font-weight: 600; }
+  .text-cyan5 { color: var(--clr-cyan-500); font-weight: 600; }
+  .text-cyan6 { color: var(--clr-cyan-600); font-weight: 600; }
+  .text-emerald { color: var(--clr-emerald-400); font-weight: 600; }
+  .text-emerald5 { color: var(--clr-emerald-500); font-weight: 600; }
+  .text-emerald6 { color: var(--clr-emerald-600); font-weight: 600; }
+  .text-green { color: var(--green); font-weight: 600; }
+  .text-indigo { color: var(--clr-indigo-400); font-weight: 600; }
+  .text-indigo3 { color: var(--clr-indigo-300); font-weight: 600; }
+  .text-indigo5 { color: var(--clr-indigo-500); font-weight: 600; }
+  .text-indigo6 { color: var(--clr-indigo-600); font-weight: 600; }
+  .text-orange { color: var(--clr-orange-600); font-weight: 600; }
+  .text-purple { color: var(--purple); font-weight: 600; }
+  .text-red { color: var(--clr-red); font-weight: 600; }
+  .text-sky { color: var(--clr-sky-500); font-weight: 600; }
+  .text-slate { color: var(--clr-slate-400); font-weight: 600; }
+  .text-slate5 { color: var(--clr-slate-500); font-weight: 600; }
+  .text-slate6 { color: var(--clr-slate-600); font-weight: 600; }
+  .text-teal { color: var(--clr-teal-600); font-weight: 600; }
+  .text-teal3 { color: var(--clr-teal-300); font-weight: 600; }
+  .text-teal5 { color: var(--clr-teal-500); font-weight: 600; }
+  .text-violet { color: var(--clr-violet-400); font-weight: 600; }
+  .text-violet5 { color: var(--clr-violet-500); font-weight: 600; }
+  .text-violet6 { color: var(--clr-violet-600); font-weight: 600; }
+
+  /* ===== Additional Utility Classes ===== */
+  .badge-indigo {
+    background: rgba(99,102,241,0.15);
+    color: var(--clr-indigo-400);
+  }
+  .bar-fill-green {
+    height: 100%;
+    background: var(--green);
+  }
+  .bg-amber-15 {
+    background: rgba(245,158,11,0.15);
+  }
+  .border-blue6 {
+    border-color: var(--clr-blue-600);
+  }
+  .border-cyan {
+    border-color: var(--clr-cyan-600);
+  }
+  .border-slate {
+    border-color: var(--clr-slate-600);
+  }
+  .card-amber {
+    border-left:4px solid var(--amber);
+  }
+  .card-bg-teal {
+    background: rgba(13,148,136,0.08);
+    border-left: 3px solid var(--clr-teal-600);
+  }
+  .card-violet5 {
+    border-left: 4px solid var(--clr-violet-500);
+  }
+  .flex-ac-6 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mt-14 {
+    margin-top: 14px;
+  }
+  .text-amber6 {
+    color: var(--clr-amber-600); font-weight: 600;
+  }
+  .text-blue4 {
+    color: var(--clr-blue-400); font-weight: 600;
+  }
+  .text-blue5 {
+    color: var(--clr-blue-500); font-weight: 600;
+  }
+  .text-blue6 {
+    color: var(--clr-blue-600); font-weight: 600;
+  }
+  .text-cyan {
+    color: var(--clr-cyan-400); font-weight: 600;
+  }
+  .text-cyan5 {
+    color: var(--clr-cyan-500); font-weight: 600;
+  }
+  .text-cyan6 {
+    color: var(--clr-cyan-600); font-weight: 600;
+  }
+  .text-emerald {
+    color: var(--clr-emerald-400); font-weight: 600;
+  }
+  .text-emerald5 {
+    color: var(--clr-emerald-500); font-weight: 600;
+  }
+  .text-emerald6 {
+    color: var(--clr-emerald-600); font-weight: 600;
+  }
+  .text-indigo {
+    color: var(--clr-indigo-400); font-weight: 600;
+  }
+  .text-indigo3 {
+    color: var(--clr-indigo-300); font-weight: 600;
+  }
+  .text-indigo5 {
+    color: var(--clr-indigo-500); font-weight: 600;
+  }
+  .text-indigo6 {
+    color: var(--clr-indigo-600); font-weight: 600;
+  }
+  .text-orange {
+    color: var(--clr-orange-600); font-weight: 600;
+  }
+  .text-sky {
+    color: var(--clr-sky-500); font-weight: 600;
+  }
+  .text-slate {
+    color: var(--clr-slate-400); font-weight: 600;
+  }
+  .text-slate5 {
+    color: var(--clr-slate-500); font-weight: 600;
+  }
+  .text-slate6 {
+    color: var(--clr-slate-600); font-weight: 600;
+  }
+  .text-teal {
+    color: var(--clr-teal-600); font-weight: 600;
+  }
+  .text-teal3 {
+    color: var(--clr-teal-300); font-weight: 600;
+  }
+  .text-teal5 {
+    color: var(--clr-teal-500); font-weight: 600;
+  }
+  .text-violet {
+    color: var(--clr-violet-400); font-weight: 600;
+  }
+  .text-violet5 {
+    color: var(--clr-violet-500); font-weight: 600;
+  }
+  .text-violet6 {
+    color: var(--clr-violet-600); font-weight: 600;
+  }
+  .track-bar2 {
+    flex: 1; height: 8px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+  }
+  .w-16 {
+    width: 16%;
+  }
+
+
+  /* ===== Extra Utility Classes ===== */
+  .badge-violet { background: rgba(168,85,247,0.15); color: var(--clr-violet-300); }
+  .bg-amber { background: var(--amber); }
+  .bg-green { background: var(--green); }
+  .bg-orange { background: var(--clr-orange-600); }
+  .border-blue6 { border-color: var(--clr-blue-600); }
+  .border-cyan { border-color: var(--clr-cyan-600); }
+  .border-violet { border-color: var(--clr-violet-600); }
+  .card-amber-outline { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+  .card-indigo6 { border-left: 4px solid var(--clr-indigo-600); }
+  .card-slate5 { border-left: 4px solid var(--clr-slate-500); }
+  .flex-1 { flex: 1; }
+  .flex-gap-20 { display: flex; gap: 20px; }
+  .grad-bar-amber-dark { background: linear-gradient(90deg, var(--amber), var(--clr-amber-600)); }
+  .grad-bar-blue-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-700)); }
+  .grad-bar-green-dark { background: linear-gradient(90deg, var(--green), var(--clr-green-600)); }
+  .grad-bar-indigo-dark { background: linear-gradient(90deg, var(--blue), var(--clr-indigo-600)); }
+  .grad-bar-purple-dark { background: linear-gradient(90deg, var(--purple), var(--clr-violet-600)); }
+  .h-100 { height: 100%; }
+  .hero-meta-dim { font-weight: 400; color: rgba(255,255,255,0.4); }
+  .mb-14 { margin-bottom: 14px; }
+  .mt-14 { margin-top: 14px; }
+  .my-12 { margin: 12px 0; }
+  .my-20 { margin: 20px 0; }
+  .shadow-inset-blue { box-shadow: inset 0 0 0 3px var(--blue); }
+  .w-10 { width: 10%; }
+  .w-16 { width: 16%; }
+  .w-28 { width: 28%; }
+  .w-36 { width: 36%; }
+  .w-38 { width: 38%; }
+  .w-6 { width: 6%; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HERO SECTION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="hero-custom">
+  <div class="container">
+    <div class="chip">单标的深度分析 · Type 1</div>
+    <h1>通威股份 <span class="fw-400" style="color:rgba(255,255,255,0.5)">|</span> Tongwei Co.</h1>
+    <div class="stock-code">600438.SH</div>
+    <p class="subtitle">光伏/多晶硅 · 周期型 — 全球高纯晶硅产能第一(85万吨+)，但硅料价格从30万/吨暴跌至4-5万/吨，2025年巨亏96亿的AAA评级巨头</p>
+    <div class="meta-row">
+      <span>分析时点：2026年7月</span>
+      <span>数据截止：2026-07-08</span>
+      <span>数据来源：公开数据</span>
+      <span>目标读者：对公信贷经理</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- STRIP: 4 Key Metrics -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="strip" class="mt-neg24">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval" class="text-amber">BBB-</div>
+    <div class="ssub">中期信用质量</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval" class="text-blue">6.00</div>
+    <div class="ssub">/ 10 四层加权</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval" class="text-orange">负面</div>
+    <div class="ssub">硅料亏损加深</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval" class="text-purple">中高</div>
+    <div class="ssub">多源可交叉验证</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: PYRAMID SCAN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01</span> 金字塔逐层扫描 · 四层分析框架</h2>
+  <p class="fs-13 mb-20" class="text-secondary">权重分配与隆基一致体现光伏行业政策驱动型特征。通威作为全球最大硅料厂商，供应链评分高于同行，但技术路线(TOPCon)和财务表现(巨亏)拉低总分</p>
+
+  <!-- Layer 1 -->
+  <div class="card" class="card-slate">
+    <h3>L1 产业政策与宏观环境 <span class="tag tag-blue" class="ml-8">权重 35%</span> <span class="tag tag-amber" class="ml-4">6.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">政策变量</th><th>影响分析</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>136号电价市场化</strong></td>
+          <td><span class="text-amber">影响偏中性</span> — 对组件端有出清利好，但对多晶硅环节传导间接。硅料需求取决于下游组件出货量，136号文加速出清对龙头硅料企业中期有利，但短期价格压力不减</td>
+        </tr>
+        <tr>
+          <td><strong>光伏产业链去库存</strong></td>
+          <td><span class="text-amber">价格持续承压</span> — 全行业去库存周期中，硅料作为最上游环节承受最大价格压力。硅料价格从30万/吨跌至4-5万/吨，已击穿全行业现金成本，85万吨产能面临减值风险</td>
+        </tr>
+        <tr>
+          <td><strong>出口管制与贸易壁垒</strong></td>
+          <td><span class="text-amber">影响可控</span> — 通威境外收入占比低于组件龙头，硅料出口受UFLPA影响但可通过供应链溯源解决。海外硅料产能布局尚在早期</td>
+        </tr>
+        <tr>
+          <td><strong>新能源消纳政策</strong></td>
+          <td><span class="text-green">长期利好</span> — 绿电直连和储能配套政策推动光伏装机增长，长期支撑硅料需求。但短期产能过剩问题无法通过需求端消化</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>政策环境整体中性偏正面，但通威作为上游硅料企业受政策传导较慢。136号文加速行业出清对隆基等组件龙头利好更直接，对通威的间接利好需要更长时间兑现。<span class="text-amber">维持6.0/10</span>
+    </div>
+  </div>
+
+  <!-- Layer 2 -->
+  <div class="card" class="card-cyan">
+    <h3>L2 技术路线与竞争位势 <span class="tag tag-blue" class="ml-8">权重 30%</span> <span class="tag tag-amber" class="ml-4">5.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>硅料技术壁垒</strong></td>
+          <td><span class="text-green">全球第一梯队</span> — 改良西门子法+颗粒硅技术并行。85万吨+产能全球第一，单位现金成本行业领先。N型料占比持续提升满足TOPCon需求</td>
+        </tr>
+        <tr>
+          <td><strong>电池技术路线</strong></td>
+          <td><span class="text-amber">TOPCon为主</span> — 通威电池片以TOPCon技术路线为主，与隆基BC路线不同。TOPCon技术普及率高、进入门槛相对较低，竞争更为激烈。通威无BC专利壁垒，但TOPCon量产效率25.5%属行业前列</td>
+        </tr>
+        <tr>
+          <td><strong>一体化程度</strong></td>
+          <td><span class="text-green">硅料→电池→组件全覆盖</span> — 通威已完成从硅料到组件的垂直一体化布局。但组件端起步较晚，品牌影响力和渠道建设弱于隆基、晶科等传统组件龙头</td>
+        </tr>
+        <tr>
+          <td><strong>产能利用率</strong></td>
+          <td><span class="text-amber">硅料产能利用率约70-75%</span> — 在价格暴跌背景下，通威主动降低开工率以控制亏损。85万吨名义产能中，实际有效产出约60-65万吨/年</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>通威在硅料环节壁垒坚固（全球成本最低+规模最大），但电池/组件环节无差异化优势。与隆基相比缺少类似BC专利的技术护城河。<span class="text-amber">下调0.5分（从6.0→5.5）</span>因TOPCon溢价持续收窄
+    </div>
+  </div>
+
+  <!-- Layer 3 -->
+  <div class="card" class="card-blue-alt">
+    <h3>L3 供应链与运营韧性 <span class="tag tag-blue" class="ml-8">权重 20%</span> <span class="tag tag-green" class="ml-4">7.5/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>硅料产能规模</strong></td>
+          <td><span class="text-green">85万吨+（全球第一）</span> — 远超协鑫（~40万吨）、新特（~30万吨）、大全（~20万吨）。成本曲线最左端，即使价格在4-5万/吨区间仍有现金成本优势</td>
+        </tr>
+        <tr>
+          <td><strong>纵向一体化</strong></td>
+          <td><span class="text-green">硅料自供率100%</span> — 通威是全球唯一实现"硅料→电池→组件"全链闭环且硅料完全自给的企业。在硅料价格暴跌时，自供硅料成为电池/组件业务的成本优势</td>
+        </tr>
+        <tr>
+          <td><strong>客户结构</strong></td>
+          <td><span class="text-green">下游长协覆盖率高</span> — 与隆基(86.24万吨)、晶科、天合等签订长期硅料供应协议。长协锁量为产能消化提供底线保障，但价格条款在下跌周期中面临重谈压力</td>
+        </tr>
+        <tr>
+          <td><strong>存货减值风险</strong></td>
+          <td><span class="text-amber">2025年存货跌价损失约40亿</span> — 硅料库存减值是最主要的运营风险。硅料价格每下跌1万元/吨，对库存价值的影响约15-20亿。需持续监控硅料库存周转天数</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>供应链是通威最强的维度。全球最大的硅料产能+完全自供+长协锁量为三大支柱。存货跌价是最大风险点，但整体运营韧性在光伏行业中排名第一。<span class="text-green">维持7.5/10</span>
+    </div>
+  </div>
+
+  <!-- Layer 4 -->
+  <div class="card" class="card-purple-alt">
+    <h3>L4 财务质量与偿债能力 <span class="tag tag-blue" class="ml-8">权重 15%</span> <span class="tag tag-amber" class="ml-4">5.0/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">指标</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>归母净利润</strong></td>
+          <td><span class="text-red">2025年-96.11亿元（首亏）</span> — 硅料价格雪崩的直接后果。2026Q1亏损扩大至-21.5亿，全年亏损预计80-100亿</td>
+        </tr>
+        <tr>
+          <td><strong>资产负债率</strong></td>
+          <td><span class="text-green">57.38%（2026Q1）</span> — 光伏龙头中最低。但过去五年从40%持续攀升至57%，趋势值得关注</td>
+        </tr>
+        <tr>
+          <td><strong>现金储备</strong></td>
+          <td><span class="text-amber">约280亿元</span> — 低于隆基的526亿，但在行业底部仍可提供2-3年的现金缓冲。若年亏损维持100亿水平，安全垫偏紧</td>
+        </tr>
+        <tr>
+          <td><strong>经营现金流</strong></td>
+          <td><span class="text-green">2025年+44.89亿（转正）</span> — 2025下半年亏损加深但仍有正向经营现金流，说明折旧摊销等非现金项目提供了缓冲。2026Q1季节性转负至-18.5亿</td>
+        </tr>
+        <tr>
+          <td><strong>信用评级</strong></td>
+          <td><span class="text-amber">AAA/稳定（联合资信，2026年6月维持）</span> — 沪深两市AAA评级中利润最低的企业之一。AAA/稳定的组合与-96亿亏损形成鲜明反差，是本次分析的核心关注点</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12" class="text-secondary">
+      <strong>评分逻辑：</strong>财务质量是通威最大的矛盾点。一方面AAA评级+57.38%负债率+280亿现金看似稳健，另一方面-96亿亏损+存货减值40亿+亏损加深触目惊心。<span class="text-amber">维持5.0/10</span>——AAA评级滞后性是关键风险，一旦下调将引发连锁反应
+    </div>
+  </div>
+
+  <!-- Pyramid visual -->
+  <div class="pyr-wrap">
+    <div class="pyr-layer pyr-l1">
+      <span class="pyr-name">L1 产业政策 (35%)</span>
+      <span class="pyr-score">6.0/10 — 136号文中性偏利好，硅料环节传导较慢</span>
+      <span class="pyr-val" class="text-green">6.0</span>
+    </div>
+    <div class="pyr-layer pyr-l2">
+      <span class="pyr-name">L2 技术路线 (30%)</span>
+      <span class="pyr-score">5.5/10 — TOPCon为主无BC壁垒，硅料成本优势全球第一</span>
+      <span class="pyr-val" class="text-amber">5.5</span>
+    </div>
+    <div class="pyr-layer pyr-l3">
+      <span class="pyr-name">L3 供应链 (20%)</span>
+      <span class="pyr-score">7.5/10 — 硅料产能全球第一85万吨+，全链自供，长协保障</span>
+      <span class="pyr-val" class="text-green">7.5</span>
+    </div>
+    <div class="pyr-layer pyr-l4">
+      <span class="pyr-name">L4 财务 (15%)</span>
+      <span class="pyr-score">5.0/10 — 首亏96亿+现金280亿+AAA评级，多空信号对撞</span>
+      <span class="pyr-val" class="text-amber">5.0</span>
+    </div>
+  </div>
+
+  <!-- Weighted total -->
+  <div class="info-box info-blue" class="mt-16">
+    <strong>综合加权得分：<span class="fs-28 fw-800 text-blue">6.00</span> / 10</strong><br>
+    6.0×0.35 + 5.5×0.30 + 7.5×0.20 + 5.0×0.15 = 2.100 + 1.650 + 1.500 + 0.750 = <strong>6.000</strong><br>
+    <span class="text-amber">BBB-</span> 评级对应：中等偏下的信用质量。供应链优势显著但巨额亏损和AAA评级滞后构成核心风险。
+  </div>
+
+  <!-- Layer comparison summary table -->
+  <h3 class="fs-14" class="my-24">金字塔权重与评分总览</h3>
+  <table>
+    <thead><tr><th>层级</th><th>权重</th><th class="ct">得分</th><th class="ct">加权得分</th><th>核心依据</th></tr></thead>
+    <tbody>
+      <tr><td>L1 产业政策</td><td class="ct">35%</td><td class="ct"><span class="text-amber">6.0</span></td><td class="ct"><span class="text-amber">2.100</span></td><td>136号文中性偏利好，硅料价格传导需时间</td></tr>
+      <tr><td>L2 技术路线</td><td class="ct">30%</td><td class="ct"><span class="text-amber">5.5</span></td><td class="ct"><span class="text-amber">1.650</span></td><td>TOPCon无BC专利壁垒，硅料成本全球最低</td></tr>
+      <tr><td>L3 供应链</td><td class="ct">20%</td><td class="ct"><span class="text-green">7.5</span></td><td class="ct"><span class="text-green">1.500</span></td><td>85万吨产能全球第一+长协保障+全链自供</td></tr>
+      <tr><td>L4 财务</td><td class="ct">15%</td><td class="ct"><span class="text-amber">5.0</span></td><td class="ct"><span class="text-amber">0.750</span></td><td>首亏96亿+现金280亿+AAA评级滞后是关键矛盾</td></tr>
+      <tr class="fw-700" class="bg-hover"><td><strong>综合</strong></td><td class="ct"><strong>100%</strong></td><td class="ct"><strong>—</strong></td><td class="ct"><span class="text-blue" class="fs-18">6.000</span></td><td><strong>BBB- / 中期展望负面</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PEER COMPARISON INSERT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">01b</span> 行业对比 · 光伏龙头基本面横向比较</h2>
+  <p class="fs-13 mb-16" class="text-secondary">在同一框架下对主要竞争对手进行快速评分对比，提供行业参照系。评分基于公开数据和逻辑推演，精度低于通威深度分析</p>
+
+  <table>
+    <thead><tr><th>企业</th><th class="ct">L1<br>产业政策(35%)</th><th class="ct">L2<br>技术路线(30%)</th><th class="ct">L3<br>供应链(20%)</th><th class="ct">L4<br>财务(15%)</th><th class="ct">综合评分</th><th class="ct">等价评级</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>隆基绿能</strong></td>
+        <td class="ct"><span class="text-green">6.5</span></td>
+        <td class="ct"><span class="text-green">8.0</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><strong><span class="text-green">7.00</span></strong></td>
+        <td class="ct"><span class="tag tag-green">BBB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>通威股份</strong></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-green">7.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><strong><span class="text-amber">6.00</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BBB-</span></td>
+      </tr>
+      <tr>
+        <td><strong>晶科能源</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-green">7.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><strong><span class="text-amber">5.68</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>天合光能</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><strong><span class="text-amber">5.48</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB+</span></td>
+      </tr>
+      <tr>
+        <td><strong>晶澳科技</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-amber">6.0</span></td>
+        <td class="ct"><span class="text-amber">4.5</span></td>
+        <td class="ct"><strong><span class="text-amber">5.33</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">BB</span></td>
+      </tr>
+      <tr>
+        <td><strong>协鑫科技</strong></td>
+        <td class="ct"><span class="text-amber">5.5</span></td>
+        <td class="ct"><span class="text-amber">4.0</span></td>
+        <td class="ct"><span class="text-amber">5.0</span></td>
+        <td class="ct"><span class="text-red">2.0</span></td>
+        <td class="ct"><strong><span class="text-red">4.43</span></strong></td>
+        <td class="ct"><span class="tag tag-red">BB-</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box info-amber" class="mt-12">
+    <strong>通威在行业中的位置：</strong><br>
+    - 综合评分6.00在光伏龙头中排名第二，仅次于隆基（7.00）。领先晶科（5.68）约0.32分<br>
+    - L3供应链（7.5）是通威最强项——全球最大硅料产能+全链自供是独特护城河<br>
+    - L2技术路线（5.5）是通威弱项——TOPCon技术门槛低，竞争激烈，无BC型差异优势<br>
+    - L4财务（5.0）与隆基持平——巨亏是全行业现象，但通威现金储备（280亿）低于隆基（526亿）<br>
+    <strong>结论：通威在光伏龙头中信用质量排名第二，供应链优势独一无二，但财务表现和技术差异化弱于隆基。核心风险在于AAA评级与实际亏损的背离。</strong>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: MARKET PRICING SIGNALS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">02</span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20" class="text-secondary">独立于基本面分析的量化信号层，仅呈现市场定价行为，不做基本面解读</p>
+
+  <div class="grid-2">
+    <div class="card" class="card-orange">
+      <h3>信用利差 <span class="tag tag-red" class="ml-8">异常</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>通威短融利差</strong></td><td><span class="text-red">2026年1月反弹13bp至2.15%</span> — 从2025年12月低点1.88%快速上行</td></tr>
+        <tr><td><strong>22通威01企业债</strong></td><td>收益率从2.35%升至3.18%（2026H1）</td></tr>
+        <tr><td><strong>信用利差走势</strong></td><td><span class="text-amber">行业AAA利差整体走阔</span> — 光伏行业AAA债券利差从2025年底的0.65%升至1.12%</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">短融利差反弹13bp幅度显著，反映市场对光伏AAA主体信用质量重新定价。通威作为AAA亏损企业是市场关注的焦点。行业AAA利差同步走阔，说明这不是通威个体问题，而是板块性重定价。</div>
+    </div>
+
+    <div class="card" class="card-orange">
+      <h3>股票价格 <span class="tag tag-red" class="ml-8">异常</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>收盘价</strong></td><td><span class="text-red">19.82元</span>（2026-07-08）</td></tr>
+        <tr><td><strong>52周区间</strong></td><td><span class="text-red">18.55 - 38.42元</span></td></tr>
+        <tr><td><strong>距52周低点</strong></td><td><span class="text-amber">仅6.8%</span> — 接近年内新低</td></tr>
+        <tr><td><strong>市值</strong></td><td><span class="text-red">约890亿元</span>，较历史高点蒸发超2000亿</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">股价持续承压，硅料价格底部未确认前难有趋势性反弹。股价与硅料价格高度联动（Pearson r~0.85），市场将通威视为"纯硅料"标的估值。</div>
+    </div>
+
+    <div class="card" class="card-amber">
+      <h3>资金流向 <span class="tag tag-amber" class="ml-8">关注</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>北向持股变动</strong></td><td><span class="text-amber">持股比例从4.2%降至3.3%（-21%）</span></td></tr>
+        <tr><td><strong>融资余额</strong></td><td>约38亿元 — 占流通市值约4.3%</td></tr>
+        <tr><td><strong>换手率</strong></td><td>近10日日均2.1%，高于板块均值1.5%</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">北向减持21%为持续系统性减仓，节奏与隆基类似。高换手率反映多空分歧加大，部分资金在博弈硅料价格阶段性反弹。</div>
+    </div>
+
+    <div class="card" class="card-amber">
+      <h3>信用评级 <span class="tag tag-amber" class="ml-8">关注</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>主体评级</strong></td><td><span class="text-amber">AAA / 稳定</span>（联合资信，2026年6月）</td></tr>
+        <tr><td><strong>评级逻辑</strong></td><td>评级机构认为亏损是周期性的，通威的全球龙头地位和低成本优势可支撑度过行业低谷</td></tr>
+        <tr><td><strong>隐含评级</strong></td><td><span class="text-amber">市场隐含评级约A-至BBB+区间</span> — AAA与实际基本面之间存在显著落差</td></tr>
+      </table>
+      <div class="mt-8 fs-12" class="text-secondary">AAA评级与-96亿亏损的背离是通威最大的矛盾点。联合资信维持AAA/稳定传递"周期性亏损非信用质变"的判断，但市场隐含评级已先行下调。历史上AAA评级企业在持续亏损2年后下调概率大幅上升（参考华晨、永煤等案例）。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: CROSS COLLISION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">03</span> 交叉对撞 · 轨道A vs 轨道B</h2>
+
+  <div class="grid-2" class="mb-16">
+    <div class="info-box info-blue">
+      <strong>轨道A：基本面分析</strong><br><br>
+      <span class="fs-24 fw-800 text-blue">BBB- (6.00)</span><br><br>
+      <strong>支撑因素：</strong><br>
+      - 全球最大硅料产能85万吨+，成本曲线最左端<br>
+      - 全链自供（硅料→电池→组件）<br>
+      - 长协锁定下游客户，客户关系稳固<br>
+      - 资产负债率57.38%光伏龙头中最低<br><br>
+      <strong>风险因素：</strong><br>
+      - 2025年首亏-96.11亿，2026Q1亏损扩大<br>
+      - 存货减值压力持续（2025年减值约40亿）<br>
+      - 现金280亿低于隆基，安全垫偏紧
+    </div>
+    <div class="info-box" class="card-bg-amber">
+      <strong>轨道B：市场定价信号</strong><br><br>
+      <span class="fs-24 fw-800 text-orange">AAA滞后 市场先行定价</span><br><br>
+      <strong>关键信号：</strong><br>
+      - 短融利差反弹13bp至2.15%<br>
+      - 市场隐含评级A-至BBB+（远低于AAA）<br>
+      - 北向减持21%<br>
+      - 行业AAA利差整体走阔<br><br>
+      <strong>关键缺失：</strong><br>
+      - 联合资信维持AAA/稳定，未做调整
+    </div>
+  </div>
+
+  <h3 class="fs-15 mb-12">分歧定位：通威落在哪个象限？</h3>
+
+  <div class="quad-grid">
+    <div class="quad-item" class="op-5">
+      <h4>共识看好</h4>
+      <div class="q-desc">基本面好 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">信号最确定</div>
+    </div>
+    <div class="quad-item active">
+      <h4 class="text-purple">分歧：AAA评级在掩盖什么？ ← 通威当前位置</h4>
+      <div class="q-desc">基本面中等(BBB-) + 市场信号(AAA滞后/利差上行)</div>
+      <div class="fs-11" class="mt-4" class="text-secondary">最有价值的信号——评级滞后性与市场先行定价之间产生裂痕，裂痕就是风险所在</div>
+    </div>
+    <div class="quad-item" class="op-4">
+      <h4>分歧：市场在忽视什么？</h4>
+      <div class="q-desc">基本面差 + 市场冷静</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">危险信号</div>
+    </div>
+    <div class="quad-item" class="op-3">
+      <h4>共识看空</h4>
+      <div class="q-desc">基本面差 + 市场危机</div>
+      <div class="fs-11" class="mt-4" class="text-tertiary">信号最确定</div>
+    </div>
+  </div>
+
+  <div class="info-box" class="mt-16" class="card-bg-purple">
+    <strong>裂痕的本质：评级机构与市场定价的时间差</strong><br><br>
+    基本面（轨道A）回答的是：<strong>"通威能不能熬过这个周期？"</strong> → 大概率能。全球最低成本的硅料产能+57.38%的低负债率+280亿现金，通威有资源撑到行业反转。<br>
+    市场（轨道B）回答的是：<strong>"在当前AAA评级上，价格是否合理？"</strong> → 不合理。利差反弹和隐含评级下调说明市场已在为"AAA下调"定价。<br><br>
+    核心问题不在于通威会不会倒闭（几乎不会），而在于<strong>AAA评级能维持多久？下调后触发什么连锁反应？</strong>历史数据表明，AAA主体在持续亏损2年后评级下调概率超过40%（标普中国样本）。<br><br>
+    <strong>对信贷决策的含义：</strong>通威的信用风险不在于违约，而在于评级下调带来的抵押品估值变化和再融资成本上升。放款必须考虑"AAA下调情景"下的风险缓释安排。
+  </div>
+
+  <h3 class="fs-14" class="my-20">对撞产生的关键追问</h3>
+  <table>
+    <tr><td class="w-4"><strong>1</strong></td><td>AAA评级下调的可能性有多大？触发条件是什么？<br><span class="fs-12" class="text-secondary">历史先例：华晨集团AAA→违约耗时18个月，永煤AAA→违约耗时14个月。通威与华晨/永煤的不同在于其业务仍在运营且有正向经营现金流</span></td></tr>
+    <tr><td><strong>2</strong></td><td>硅料价格底部在哪里？4-5万/吨是否已见底？<br><span class="fs-12" class="text-secondary">通威现金成本约3.5-4万/吨，全行业约5-6万/吨。当前价格已在行业平均现金成本以下，但去库存未完前仍有下行压力</span></td></tr>
+    <tr><td><strong>3</strong></td><td>280亿现金在持续亏损下能撑多久？<br><span class="fs-12" class="text-secondary">按2026年预计亏损80-100亿+减值损失30-50亿，年现金消耗约130-150亿。280亿约可撑2年，显著短于隆基的6年</span></td></tr>
+    <tr><td><strong>4</strong></td><td>通威与隆基的信贷风险有什么本质区别？<br><span class="fs-12" class="text-secondary">通威强在供应链（硅料全球第一）、弱在技术和财务；隆基强在技术（BC专利）和现金（526亿）。通威的抗周期能力弱于隆基</span></td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: RISK SIGNAL CHECKLIST -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">04</span> 风险信号清单 · 按紧急度排列</h2>
+  <p class="fs-13 mb-16" class="text-secondary">从信贷经理视角出发，按风险紧急度从高到低排列，重点关注6-12个月内可能触发信用事件的信号</p>
+
+  <div class="risk-list">
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #1</div>
+      <div>
+        <strong>AAA评级下调风险 — 最核心的矛盾</strong><br>
+        <span class="text-secondary">通威是沪深两市亏损最严重的AAA评级企业之一。如果2026年全年亏损超过100亿，评级机构将难以继续以"周期性亏损"为由维持AAA。下调至AA+或AA将直接触发持有AAA债券的机构投资者强制卖出，引发融资成本飙升和再融资压力。</span>
+      </div>
+    </div>
+    <div class="risk-item critical">
+      <div class="risk-num"><span class="signal-red"></span>紧急 #2</div>
+      <div>
+        <strong>硅料库存减值持续扩大</strong><br>
+        <span class="text-secondary">2025年存货跌价损失约40亿。硅料价格处于4-5万/吨的现金成本区间，若2026年下半年继续下探至3.5万/吨，存货减值损失可能扩大至50-60亿。库存跌价直接侵蚀净资产和资本充足率。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #3</div>
+      <div>
+        <strong>现金储备消耗加速</strong><br>
+        <span class="text-secondary">280亿现金看起来充裕，但按年消耗130-150亿计算，安全垫仅约2年。若行业亏损持续到2028年（隆基基准情景假设），通威的现金将在2028年前后耗尽。需密切监控季度现金变化趋势。</span>
+      </div>
+    </div>
+    <div class="risk-item high">
+      <div class="risk-num"><span class="signal-amber"></span>紧急 #4</div>
+      <div>
+        <strong>长协价格重谈压力</strong><br>
+        <span class="text-secondary">通威与隆基(86.24万吨)、晶科、天合等签订的长协锁量不锁价。在硅料价格暴跌背景下，下游客户要求重新定价的压力持续加大。长协执行率下降将导致通威失去最核心的营收保障。</span>
+      </div>
+    </div>
+    <div class="risk-item medium">
+      <div class="risk-num"><span class="signal-green"></span>紧急 #5</div>
+      <div>
+        <strong>下游客户垂直一体化减少外采需求</strong><br>
+        <span class="text-secondary">隆基等下游客户加速自建硅料产能或签订多元化供应协议，长期可能减少对通威的依赖度。通威需要持续巩固客户关系并确保长协执行率。</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5: CREDIT RECOMMENDATION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">05</span> 信贷建议 · 对公信贷经理视角</h2>
+
+  <div class="card card-amber">
+    <h3>谨慎支持（条件性）</h3>
+    <p class="fs-13 mb-12" class="lh-18">
+      通威股份是光伏行业中最具供应链优势的企业。BBB-评级对应中等偏下信用质量，但全球最大硅料产能+最低成本结构提供了穿越周期的核心能力。核心风险在于AAA评级滞后与实际亏损的巨大背离。信贷建议的核心原则是：<strong>支持但充分定价+严格约束。</strong>
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-blue">
+      <h3>建议的信贷结构</h3>
+      <table>
+        <tr><td class="w-30"><strong>贷款期限</strong></td><td><span class="text-amber">建议6个月至1年期</span> — 短期流动资金贷款为主。当前不宜提供3年以上长期贷款，待行业供需拐点确认后再考虑展期</td></tr>
+        <tr><td><strong>贷款额度</strong></td><td>单笔不超过15亿元（隆基为20亿），总敞口控制在30亿以内。通威的现金安全垫（280亿）弱于隆基（526亿），需更保守</td></tr>
+        <tr><td><strong>担保措施</strong></td><td><span class="text-amber">强烈建议固定资产抵押</span> — 通威拥有大量硅料生产设备和厂房，可作为核心抵押物。同时建议应收账款质押</td></tr>
+        <tr><td><strong>利率定价</strong></td><td>LPR+200~250bp（高于隆基的150-200bp，反映AAA下调风险和较弱的现金缓冲）</td></tr>
+      </table>
+    </div>
+    <div class="card card-red">
+      <h3>必须设定的约束条款</h3>
+      <table>
+        <tr><td class="w-30"><strong>评级触发条款</strong></td><td><span class="text-red">必设，核心条款</span> — AAA评级下调至AA+或以下即触发加速到期审议或追加担保。这是防范"AAA滞后"风险的关键</td></tr>
+        <tr><td><strong>财务约束</strong></td><td>资产负债率≤65%，存货跌价损失季度披露义务。任一季度存货减值超过15亿即触发预警机制</td></tr>
+        <tr><td><strong>现金安全垫</strong></td><td>货币资金≥200亿的持续承诺，低于200亿触发额外担保追加</td></tr>
+        <tr><td><strong>交叉违约</strong></td><td>任何一笔债券/借款违约即触发加速到期</td></tr>
+        <tr><td><strong>长协执行率</strong></td><td>前五大长协客户执行率≥80%，低于此触发管理层说明义务</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="info-box info-amber" class="mt-16">
+    <strong>不建议的操作：</strong><br>
+    1. 纯信用贷款——通威当前的核心矛盾是AAA评级可能下调，纯信用贷款风险敞口过大<br>
+    2. 3年以上长期贷款——除非锁定固定资产抵押+硬性约束条款+覆盖评级下调风险的利率溢价<br>
+    3. 过度集中授信——单家银行对通威的敞口不应超过30亿元（建议15-20亿），与其他光伏企业合计敞口不超过总贷款组合的10%
+  </div>
+
+  <!-- Cash flow stress test -->
+  <div class="card" class="mt-16">
+    <h3>现金流压力测试 · 情景模拟</h3>
+    <p class="fs-12 mb-12" class="text-secondary">基于当前280亿现金储备和硅料行业前景，模拟不同情景下通威现金安全垫持久性</p>
+    <table>
+      <thead><tr><th>情景</th><th class="ct">假设条件</th><th class="ct">年现金消耗</th><th class="ct">安全垫可撑时间</th><th class="ct">触发风险预警时点</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>基准情景（概率45%）</strong></td>
+          <td class="ct">2026年硅料均价4.5万/吨，2027年回升至6.5万/吨。经营现金流转正，Capex缩减至60亿/年</td>
+          <td class="ct"><span class="text-amber">~80亿/年</span></td>
+          <td class="ct"><span class="text-green">~3-4年</span></td>
+          <td class="ct">2029年后需关注</td>
+        </tr>
+        <tr>
+          <td><strong>悲观情景（概率35%）</strong></td>
+          <td class="ct">行业亏损延续至2028年，硅料价格3.5-4.5万/吨，存货减值持续40-50亿/年，Capex无法大幅缩减</td>
+          <td class="ct"><span class="text-red">~130亿/年</span></td>
+          <td class="ct"><span class="text-amber">~2年</span></td>
+          <td class="ct">2027年末现金降至200亿以下</td>
+        </tr>
+        <tr>
+          <td><strong>极端情景（概率20%）</strong></td>
+          <td class="ct">硅料价格跌破3万/吨+大规模资产减值+长协违约潮。年亏损超150亿+减值80亿</td>
+          <td class="ct"><span class="text-red">~200亿/年</span></td>
+          <td class="ct"><span class="text-red">~1.5年</span></td>
+          <td class="ct">2027年中现金降至200亿以下触发紧急预警</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fs-12 mt-8" class="text-secondary">
+      <strong>评估：</strong>通威的现金安全垫显著弱于隆基（280亿 vs 526亿，年消耗更大）。在悲观情景下仅能支撑2年，<strong>短期信贷（1年以内）相对安全，但中长期风险不容忽视</strong>。极端情景下安全垫不足18个月，需要通过担保措施和评级触发条款对冲。
+    </div>
+  </div>
+
+  <div class="info-box info-amber" class="mt-12">
+    <strong>核心逻辑总结：</strong>通威的核心矛盾不是"会不会倒"，而是"AAA评级还能撑多久"。<br>
+    BBB-基本面 + 280亿现金 + 57.38%负债率 = 大概率能活下来。<br>
+    首亏96亿 + 硅料价格底部未确认 + AAA明显滞后 = 评级下调是大概率事件。<br>
+    结论：<strong>短期（6-12个月）有条件支持，但必须获得充分的定价补偿和评级风险对冲。</strong>与隆基相比，通威的风险溢价应高出50-80bp。
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6: COMPLETENESS REPORT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-purple" class="br-6">06</span> 完备性报告 · 信号密度与数据缺口</h2>
+
+  <h3 class="fs-14 mb-8">信号密集度评估</h3>
+  <p class="fs-12 mb-8" class="text-secondary">基础信号密度：L1(6项) + L2(7项) + L3(8项) + L4(8项) + 市场(8项) = 37项有效信号</p>
+
+  <div class="grid-3" class="mb-20">
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L1 产业政策</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">6/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L2 技术路线</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L3 供应链</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">L4 财务</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">8/10 高密度</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">市场信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7/10 充分</div>
+    </div>
+    <div>
+      <div class="fs-11 mb-4" class="text-secondary">综合信号</div>
+      <div class="density-bar">
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-green"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg filled-amber"></div>
+        <div class="seg empty"></div>
+      </div>
+      <div class="fs-11" class="text-secondary">7.5/10 总体高密度</div>
+    </div>
+  </div>
+
+  <h3 class="fs-14 mb-8">关键缺口与改进建议</h3>
+  <p class="fs-12 mb-12" class="text-secondary">以下数据在现有公开数据源中不可获取或置信度不足，建议信贷经理通过银行内部系统或企业尽调补充</p>
+
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>联合资信AAA评级维持的具体依据和压力测试情景</strong> — 需要了解评级机构对通威2026-2027年的财务预测假设，判断评级维持的时间窗口。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag urgent">紧急</span>
+    <span><strong>各家银行对通威的授信总额及已用额度</strong> — 评估通威实际对外负债和再融资空间的關鍵數據。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>硅料库存周转天数及成本构成细项</strong> — 精确评估存货跌价风险的量化基础。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>通威与下游客户的年度长协定价机制</strong> — 了解价格调整机制有助于判断营收稳定性和长协执行率风险。</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">常规</span>
+    <span><strong>海外硅料产能布局的详细规划与资本开支计划</strong> — 评估通威在贸易壁垒背景下的全球化战略可行性和资金需求。</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="footer">
+  <p><strong>单标的深度分析 · 通威股份 (600438.SH)</strong></p>
+  <p>分析框架：Type 1 单标的四层金字塔 × 双轨交叉验证</p>
+  <p>数据截止 2026-07-08 · 全部基于公开数据 · 仅供信贷决策参考</p>
+  <p class="mt-6 fs-11" class="text-tertiary">生成时间 2026-07-09 · Credence Credit Analysis System</p>
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>

@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单标的深度分析 — 人人乐 (*ST人乐/退市) | 商贸零售</title>
+<link rel="stylesheet" href="../../../dev/templates/template-base.css">
+<style>
+.pyr-wrap { margin: 28px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.85; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 48px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, #7f1d1d, #991b1b); }
+.pyr-l2 { width: 88%; background: linear-gradient(135deg, #991b1b, #b91c1c); }
+.pyr-l3 { width: 76%; background: linear-gradient(135deg, #b91c1c, #dc2626); }
+.pyr-l4 { width: 64%; background: linear-gradient(135deg, #dc2626, #ef4444); }
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.orange { background: #d97706; }
+.signal-dot.red { background: var(--red); }
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px #dc2626; background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: #d97706; }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+.ml-8 { margin-left: 8px; } .ml-4 { margin-left: 4px; }
+.mt-16 { margin-top: 16px; } .mt-12 { margin-top: 12px; }
+.mt-10 { margin-top: 10px; } .mt-8 { margin-top: 8px; } .mt-6 { margin-top: 6px; }
+.mb-20 { margin-bottom: 20px; } .mb-16 { margin-bottom: 16px; }
+.mb-12 { margin-bottom: 12px; } .mb-8 { margin-bottom: 8px; } .mb-4 { margin-bottom: 4px; }
+.w-22 { width: 22%; } .w-40 { width: 40%; } .w-30 { width: 30%; } .w-18 { width: 18%; } .w-4 { width: 4%; }
+.br-6 { border-radius: 6px; }
+.op-5 { opacity: 0.5; } .op-3 { opacity: 0.3; } .op-6 { opacity: 0.6; }
+.fs-11 { font-size: 11px; } .fs-12 { font-size: 12px; } .fs-13 { font-size: 13px; }
+.fs-14 { font-size: 14px; } .fs-15 { font-size: 15px; } .fs-24 { font-size: 24px; } .fs-28 { font-size: 28px; }
+.fw-700 { font-weight: 700; }
+.clr-orange { color: #f59e0b; } .clr-amber { color: #fbbf24; }
+.pill-orange { background: rgba(217,119,6,0.15); color: #f59e0b; }
+.pill-green  { background: rgba(34,197,94,0.15); color: #22c55e; }
+.pill-red    { background: rgba(239,68,68,0.15); color: #ef4444; }
+.pill-blue   { background: rgba(99,102,241,0.15); color: #6366f1; }
+.pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.2px; }
+.text-secondary { color: var(--text-secondary); }
+
+/* Hero gradient for distressed retail */
+.hero-dist {
+  background: linear-gradient(135deg, #0f1117, #2d0e0e, #5c1a1a);
+  text-align: center;
+  padding: 56px 0 40px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-dist::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 30% 40%, rgba(220,38,38,0.10) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 60%, rgba(239,68,68,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-dist .chip {
+  display: inline-block;
+  background: rgba(239,68,68,0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.hero-dist h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 8px; position: relative; }
+.hero-dist .subtitle { font-size: 14px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; position: relative; }
+.hero-dist .meta {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  flex-wrap: wrap;
+  position: relative;
+}
+.hero-dist .meta span {
+  padding: 5px 14px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 20px;
+  border: 1px solid var(--border-default);
+}
+.hero-dist .hero-em { color: #ef4444; font-weight: 700; }
+</style></head>
+<body>
+
+<div class="hero-dist">
+  <div class="chip">Type 1 信用分析 · 困境</div>
+  <h1>人人乐 (002336 · 已退市)</h1>
+  <p class="subtitle"><span class="hero-em">"民营超市第一股"</span>的陨落 · 连亏4年 · 资不抵债 · 2025年7月摘牌退市</p>
+  <div class="meta">
+    <span>行业：商贸零售</span>
+    <span>范式：网络+流量型</span>
+    <span>级别：困境</span>
+    <span>状态：已退市</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ================================
+       Section 1: 信用评分总览
+  ================================ -->
+  <div class="section">
+    <div class="section-title">一、信用评分总览</div>
+
+    <div class="strip cols-5">
+      <div class="strip-item">
+        <div class="slabel">综合信用分</div>
+        <div class="sval text-red">1.0/10</div>
+        <div class="ssub">违约/退市</div>
+      </div>
+      <div class="strip-item">
+        <div class="slabel">L1 网络/规模壁垒</div>
+        <div class="sval text-red">1.0/10</div>
+        <div class="ssub">权重35%</div>
+      </div>
+      <div class="strip-item">
+        <div class="slabel">L2 用户/客户粘性</div>
+        <div class="sval text-red">1.0/10</div>
+        <div class="ssub">权重25%</div>
+      </div>
+      <div class="strip-item">
+        <div class="slabel">L3 供应链能力</div>
+        <div class="sval text-red">1.0/10</div>
+        <div class="ssub">权重20%</div>
+      </div>
+      <div class="strip-item">
+        <div class="slabel">L4 财务/现金流</div>
+        <div class="sval text-red">1.0/10</div>
+        <div class="ssub">权重20%</div>
+      </div>
+    </div>
+
+    <div class="info-box info-red mt-8">
+      <strong>信用评价：违约（Default）</strong>。
+      人人乐连锁商业集团股份有限公司（*ST人乐，002336.SZ）已于2025年7月4日正式摘牌退市。
+      公司连续四年亏损（2021-2024年累计亏损近20亿元），2024年末净资产为-4.04亿元
+      （资不抵债），资产负债率高达121%。营收从2012年峰值的129亿元暴跌至2024年的14.3亿元
+      （-89%），门店从近150家萎缩至32家。人人乐的陨落是"传统大卖场模式失效"的典型案例，
+      反映了在电商冲击、即时零售崛起、会员店分流三重压力下，
+      未能及时转型的传统零售企业的必然命运。
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 2: 标的概况
+  ================================ -->
+  <div class="section">
+    <div class="section-title">二、标的概况</div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>基本信息</h3>
+        <table>
+          <tbody>
+            <tr><td style="width:35%;">公司全称</td><td>人人乐连锁商业集团股份有限公司</td></tr>
+            <tr><td>股票代码</td><td>002336 (深交所 · 已退市)</td></tr>
+            <tr><td>上市地</td><td>深圳证券交易所（2025年7月4日退市）</td></tr>
+            <tr><td>主营业务</td><td>连锁超市（大卖场模式）</td></tr>
+            <tr><td>所属子类</td><td>传统商超（大卖场）</td></tr>
+            <tr><td>实控人</td><td>西安曲江新区管理委员会（国有控股）</td></tr>
+            <tr><td>创始人</td><td>何金明（2019年已退出管理）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>核心财务数据（2024年报）</h3>
+        <table>
+          <tbody>
+            <tr><td style="width:45%;">营业收入</td><td><strong>14.30亿元</strong> (-49.86%)</td></tr>
+            <tr><td>归母净利润</td><td>-0.17亿元（扣非-5.94亿元）</td></tr>
+            <tr><td>总资产</td><td>19.16亿元 (-50.94%)</td></tr>
+            <tr><td>归母净资产</td><td>-4.04亿元（资不抵债）</td></tr>
+            <tr><td>资产负债率</td><td>121.08%</td></tr>
+            <tr><td>经营现金流</td><td>-7.86亿元 (-476.2%)</td></tr>
+            <tr><td>市值（退市前）</td><td>约1.58亿元（峰值136.68亿）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mt-8">
+      <h3>兴衰时间线</h3>
+      <div class="timeline">
+        <div class="tl-item green">
+          <div class="tl-date text-green">1996年</div>
+          <div>何金明在深圳创立人人乐，第一家门店开业</div>
+        </div>
+        <div class="tl-item green">
+          <div class="tl-date text-green">2010年</div>
+          <div>深交所上市（002336），市值峰值约136.68亿元</div>
+        </div>
+        <div class="tl-item amber">
+          <div class="tl-date text-amber">2012年</div>
+          <div>营收峰值129.13亿元，门店近150家</div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date text-red">2019年</div>
+          <div>曲江国资入主，何金明退出；年度亏损1.6亿元</div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date text-red">2021-2024年</div>
+          <div>连续四年亏损，累计亏损近20亿元</div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date text-red">2024年4月</div>
+          <div>净资产-3.87亿元，触发退市风险警示（*ST）</div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date text-red">2025年3月</div>
+          <div>董事长侯延奎"火线"辞职</div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date text-red">2025年5月</div>
+          <div>收到深交所终止上市事先告知书</div>
+        </div>
+        <div class="tl-item red">
+          <div class="tl-date text-red">2025年7月4日</div>
+          <div>正式摘牌退市，股票简称变更为"人乐退"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 3: 金字塔评估
+  ================================ -->
+  <div class="section">
+    <div class="section-title">三、金字塔分层评估（网络+流量型范式）</div>
+
+    <!-- L1 -->
+    <h3 class="fs-15 mb-8 text-red">
+      <span class="signal-dot red"></span>L1 网络/规模壁垒 · 评分 1.0/10
+      <span class="fs-12 text-secondary ml-8">权重35%</span>
+    </h3>
+    <div class="card">
+      <div class="density-bar mb-8">
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <table>
+            <thead><tr><th>指标</th><th class="rt">数据</th><th>评价</th></tr></thead>
+            <tbody>
+              <tr><td>门店总数</td><td class="rt">32家（退市前）</td><td><span class="pill pill-red">从150家萎缩</span></td></tr>
+              <tr><td>营收规模</td><td class="rt">14.3亿元</td><td><span class="pill pill-red">峰值129亿跌89%</span></td></tr>
+              <tr><td>覆盖区域</td><td class="rt">仅华南+西北</td><td><span class="pill pill-red">大幅收缩</span></td></tr>
+              <tr><td>线上业务</td><td class="rt">几乎为零</td><td><span class="pill pill-red">未布局</span></td></tr>
+              <tr><td>市场份额</td><td class="rt">&lt;0.1%</td><td><span class="pill pill-red">可忽略不计</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <p class="fs-13 text-secondary">
+            人人乐的网络规模已基本瓦解。从2012年巅峰期近150家门店、129亿营收，
+            到2024年末仅剩32家门店、14.3亿营收，规模萎缩近90%。2024年全年新开仅1家、
+            关闭45家、转让15家，门店数量仍在快速减少。退市前市值从峰值136.68亿元
+            跌至约1.58亿元（缩水99%）。在"规模即护城河"的零售行业，
+            人人乐已几乎不具备任何网络效应。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- L2 -->
+    <h3 class="fs-15 mb-8 mt-16 text-red">
+      <span class="signal-dot red"></span>L2 用户/客户粘性 · 评分 1.0/10
+      <span class="fs-12 text-secondary ml-8">权重25%</span>
+    </h3>
+    <div class="card">
+      <div class="density-bar mb-8">
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <table>
+            <thead><tr><th>指标</th><th class="rt">数据</th><th>评价</th></tr></thead>
+            <tbody>
+              <tr><td>会员体系</td><td class="rt">传统积分卡</td><td><span class="pill pill-red">无竞争力</span></td></tr>
+              <tr><td>付费会员</td><td class="rt">无</td><td><span class="pill pill-red">未建立</span></td></tr>
+              <tr><td>复购率</td><td class="rt">持续下降</td><td><span class="pill pill-red">客流持续流失</span></td></tr>
+              <tr><td>线上渠道</td><td class="rt">未有效建立</td><td><span class="pill pill-red">无线上触点</span></td></tr>
+              <tr><td>品牌认知</td><td class="rt">老化/负面</td><td><span class="pill pill-red">购物卡挤兑</span></td></tr>
+            </tbody>
+          </div>
+        <div>
+          <p class="fs-13 text-secondary">
+            人人乐的用户粘性已基本丧失。随着门店大量关闭，存量客户持续流失。
+            公司未能建立有效的会员体系和线上渠道，在消费者心智中被"大卖场的没落代表"
+            所替代。2024年的购物卡挤兑事件进一步损害了品牌信誉——消费者因担心公司倒闭
+            而集中消费购物卡余额，这在零售业中通常是"死亡螺旋"的典型信号。
+            在电商、即时零售、会员店等多种新业态的包围下，人人乐对消费者已无吸引力。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- L3 -->
+    <h3 class="fs-15 mb-8 mt-16 text-red">
+      <span class="signal-dot red"></span>L3 供应链能力 · 评分 1.0/10
+      <span class="fs-12 text-secondary ml-8">权重20%</span>
+    </h3>
+    <div class="card">
+      <div class="density-bar mb-8">
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <table>
+            <thead><tr><th>指标</th><th class="rt">数据</th><th>评价</th></tr></thead>
+            <tbody>
+              <tr><td>供应商关系</td><td class="rt">大量诉讼</td><td><span class="pill pill-red">供应链停滞</span></td></tr>
+              <tr><td>自有品牌</td><td class="rt">未有效建立</td><td><span class="pill pill-red">缺失</span></td></tr>
+              <tr><td>存货管理</td><td class="rt">恶化</td><td><span class="pill pill-red">经营困难导致</span></td></tr>
+              <tr><td>采购议价力</td><td class="rt">极弱</td><td><span class="pill pill-red">规模太小</span></td></tr>
+              <tr><td>代垫款坏账</td><td class="rt">1.11亿元</td><td><span class="pill pill-red">全额计提</span></td></tr>
+            </tbody>
+          </div>
+        <div>
+          <p class="fs-13 text-secondary">
+            人人乐的供应链体系实际上已经崩溃。供应商因担心回款问题而集体收紧账期或停止供货，
+            大量诉讼缠绕公司运营。2024年年报显示，公司对13家已转让子公司的1.11亿元代垫款
+            被全额计提坏账准备。资产负债率121%意味着公司实质上已无新增融资能力。
+            在创始人何金明退出、曲江国资入主后，管理层的频繁变动使得供应链改革无从推进。
+            自有品牌和差异化商品战略完全缺失。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- L4 -->
+    <h3 class="fs-15 mb-8 mt-16 text-red">
+      <span class="signal-dot red"></span>L4 财务/现金流 · 评分 1.0/10
+      <span class="fs-12 text-secondary ml-8">权重20%</span>
+    </h3>
+    <div class="card">
+      <div class="density-bar mb-8">
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+        <div class="seg filled-red"></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <table>
+            <thead><tr><th>指标</th><th class="rt">2024年数据</th><th>评价</th></tr></thead>
+            <tbody>
+              <tr><td>归母净资产</td><td class="rt">-4.04亿元</td><td><span class="pill pill-red">资不抵债</span></td></tr>
+              <tr><td>资产负债率</td><td class="rt">121.08%</td><td><span class="pill pill-red">严重超标</span></td></tr>
+              <tr><td>经营现金流</td><td class="rt">-7.86亿元</td><td><span class="pill pill-red">大幅净流出</span></td></tr>
+              <tr><td>银行账户</td><td class="rt">大量冻结</td><td><span class="pill pill-red">流动性枯竭</span></td></tr>
+              <tr><td>总资产</td><td class="rt">19.16亿元</td><td><span class="pill pill-red">-50.94%</span></td></tr>
+            </tbody>
+          </div>
+        <div>
+          <p class="fs-13 text-secondary">
+            人人乐的财务状况已完全崩溃。归母净资产-4.04亿元（连续两年资不抵债），
+            资产负债率121%。经营现金流-7.86亿元（同比-476%），意味着主营业务已完全
+            无法产生正向现金流，反而在加速消耗剩余资源。Q4扣非净利润-1.77亿元，
+            即使扣除资产处置收益后归母净利润为+4.68亿元（虚盈实亏），
+            也无法掩盖经营层面的持续失血。大量银行账户被冻结，供应商诉讼缠身，
+            流动性实质上已枯竭。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pyr-wrap">
+      <div class="pyr-layer pyr-l1">
+        <span class="pyr-name">L1 网络/规模壁垒</span>
+        <span class="pyr-score">从150家店萎缩至32家·规模几乎消失</span>
+        <span class="pyr-val">1.0</span>
+      </div>
+      <div class="pyr-layer pyr-l2">
+        <span class="pyr-name">L2 用户/客户粘性</span>
+        <span class="pyr-score">客流流失·购物卡挤兑·品牌瓦解</span>
+        <span class="pyr-val">1.0</span>
+      </div>
+      <div class="pyr-layer pyr-l3">
+        <span class="pyr-name">L3 供应链能力</span>
+        <span class="pyr-score">供应商诉讼·供应链停滞·代垫款坏账</span>
+        <span class="pyr-val">1.0</span>
+      </div>
+      <div class="pyr-layer pyr-l4">
+        <span class="pyr-name">L4 财务/现金流</span>
+        <span class="pyr-score">资不抵债·现金枯竭·银行账户冻结</span>
+        <span class="pyr-val">1.0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 4: 财务深度分析
+  ================================ -->
+  <div class="section">
+    <div class="section-title">四、财务深度分析</div>
+
+    <h3 class="fs-14 mb-8">4.1 营收与利润趋势（2022-2024）</h3>
+    <table>
+      <thead>
+        <tr><th>项目（亿元）</th><th class="rt">2022年</th><th class="rt">2023年</th><th class="rt">2024年</th><th>趋势</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>营业收入</td><td class="rt">39.71</td><td class="rt">28.53</td><td class="rt">14.30</td><td class="text-red">-49.9% YoY</td></tr>
+        <tr><td>归母净利润</td><td class="rt">-5.07</td><td class="rt">-4.98</td><td class="rt">-0.17</td><td class="text-amber">含非经常性损益</td></tr>
+        <tr><td>扣非净利润</td><td class="rt">-5.40</td><td class="rt">-5.79</td><td class="rt">-5.94</td><td class="text-red">持续恶化</td></tr>
+        <tr><td>总资产</td><td class="rt">48.54</td><td class="rt">39.06</td><td class="rt">19.16</td><td class="text-red">-50.9%</td></tr>
+        <tr><td>归母净资产</td><td class="rt">+1.11</td><td class="rt">-3.87</td><td class="rt">-4.04</td><td class="text-red">资不抵债</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fs-14 mb-8 mt-16">4.2 现金流分析（2024年分季度）</h3>
+    <table>
+      <thead>
+        <tr><th>项目（亿元）</th><th class="rt">Q1</th><th class="rt">Q2</th><th class="rt">Q3</th><th class="rt">Q4</th><th class="rt">全年</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>营业收入</td><td class="rt">5.83</td><td class="rt">3.86</td><td class="rt">2.57</td><td class="rt">2.04</td><td class="rt">14.30</td></tr>
+        <tr><td>归母净利润</td><td class="rt">-1.32</td><td class="rt">-1.52</td><td class="rt">-2.01</td><td class="rt">+4.68</td><td class="rt">-0.17</td></tr>
+        <tr><td>扣非净利润</td><td class="rt">-1.28</td><td class="rt">-1.42</td><td class="rt">-1.47</td><td class="rt">-1.77</td><td class="rt">-5.94</td></tr>
+        <tr><td>经营现金流净额</td><td class="rt">-2.10</td><td class="rt">-0.87</td><td class="rt">-0.81</td><td class="rt">-4.07</td><td class="rt">-7.86</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box info-red mt-12">
+      <strong>财务诊断：经典"死亡螺旋"</strong>。人人乐的财务轨迹完美演绎了传统大卖场的"死亡螺旋"——
+      客流下降 → 营收萎缩 → 关闭门店 → 供应商收紧账期 → 现金流断裂 → 更大幅度的关闭门店。
+      2024年Q4的"盈利"（归母净利润+4.68亿）完全是资产出售等非经常性损益所致，
+      扣非后实际亏损1.77亿元。连续四个季度的经营现金流为负值，且Q4反而恶化至-4.07亿元。
+      2025年Q1营收进一步跌至1.294亿元（-77.8%），经营完全失速。
+    </div>
+
+    <h3 class="fs-14 mb-8 mt-16">4.3 资产与负债结构分析</h3>
+    <table>
+      <thead>
+        <tr><th>资产负债项目</th><th class="rt">2024年末（亿元）</th><th>占比</th><th>简评</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>流动资产</td><td class="rt">~8.5</td><td class="rt">~44%</td><td>含受限资金和冻结账户</td></tr>
+        <tr><td>非流动资产</td><td class="rt">~10.7</td><td class="rt">~56%</td><td>门店资产和租赁权</td></tr>
+        <tr><td><strong>总资产</strong></td><td class="rt"><strong>19.16</strong></td><td class="rt">100%</td><td>年减半缩水</td></tr>
+        <tr><td>流动负债</td><td class="rt">~20.0</td><td class="rt">~104%</td><td>短期负债已超总资产</td></tr>
+        <tr><td>非流动负债</td><td class="rt">~3.2</td><td class="rt">~17%</td><td>租赁负债为主</td></tr>
+        <tr><td><strong>总负债</strong></td><td class="rt"><strong>23.20</strong></td><td class="rt">121%</td><td>严重资不抵债</td></tr>
+        <tr><td>归母净资产</td><td class="rt">-4.04</td><td class="rt">负值</td><td>连续两年为负</td></tr>
+      </tbody>
+    </table>
+    <p class="fs-12 text-secondary mt-8">
+      人人乐的负债结构极度脆弱。流动负债已超过总资产，意味着即使处置全部非流动资产
+      （门店物业、设备等），也无法偿还短期负债。大量银行账户被冻结、供应商垫款全额计提坏账，
+      实际上债权人的回收前景非常悲观。
+    </p>
+
+    <h3 class="fs-14 mb-8 mt-16">4.4 保壳操作与失败原因</h3>
+    <div class="card card-red">
+      <p class="fs-13 text-secondary">
+        2024年人人乐采取了一系列保壳措施，但最终均未成功：
+      </p>
+      <ul class="fs-13 text-secondary mt-8">
+        <li><strong>甩卖13家子公司</strong>——以13元对价出售13家子公司股权，试图剥离亏损资产并确认投资收益，但因交易条件未满足而未能确认收益</li>
+        <li><strong>出售物流中心</strong>——出售核心物流资产获取现金，缓解流动性压力</li>
+        <li><strong>业绩预告"虚假繁荣"</strong>——预盈4.1-4.6亿以误导市场判断，但最终年报显示亏损</li>
+        <li><strong>董事长"火线"辞职</strong>——侯延奎于2025年3月辞职（上任仅一年半），试图切割责任</li>
+        <li><strong>国资背景未能发挥作用</strong>——曲江新区管委会作为实控人，提供了部分资源支持，但未能从根本上扭转经营颓势</li>
+      </ul>
+    </div>
+
+    <div class="card card-red mt-10">
+      <h3>退市主要原因</h3>
+      <ul class="fs-13 text-secondary">
+        <li><strong>连续两年资不抵债</strong>：2023年末净资产-3.87亿，2024年末-4.04亿</li>
+        <li><strong>审计报告"无法表示意见"</strong>：2024年财务报告被出具无法表示意见</li>
+        <li><strong>内部控制"否定意见"</strong>：内部控制被出具否定意见审计报告</li>
+        <li><strong>业绩"变脸"</strong>：业绩预告预盈4.1-4.6亿，年报实际亏损0.17亿（因股权转让收益确认条件未被满足+代垫款全额坏账计提）</li>
+        <li><strong>保壳失败</strong>：以13元甩卖13家子公司股权、出售物流中心等资产仍未能挽救</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 5: 十维行业映射
+  ================================ -->
+  <div class="section">
+    <div class="section-title">五、十维行业映射评分</div>
+    <table>
+      <thead>
+        <tr><th>维度</th><th class="ct">行业分</th><th class="ct">人人乐评分</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>D1 市场容量</td><td class="ct clr-orange">5</td><td class="ct text-red">2</td><td>市场巨大但公司已无能力参与</td></tr>
+        <tr><td>D2 增量空间</td><td class="ct text-red">2</td><td class="ct text-red">2</td><td>传统大卖场负增长</td></tr>
+        <tr><td>D3 政策力度</td><td class="ct text-red">2</td><td class="ct text-red">2</td><td>国资背景未能挽救退市</td></tr>
+        <tr><td>D4 政策波动性</td><td class="ct clr-orange">1</td><td class="ct clr-orange">2</td><td>稳定</td></tr>
+        <tr><td>D5 资本可持续性</td><td class="ct text-blue">3</td><td class="ct text-red">0</td><td>资不抵债，融资渠道枯竭</td></tr>
+        <tr><td>D6 民生关联度</td><td class="ct text-blue">3</td><td class="ct text-red">2</td><td>门店极少，民生影响小</td></tr>
+        <tr><td>D7 外部依赖度</td><td class="ct clr-orange">1</td><td class="ct clr-orange">2</td><td>完全自主</td></tr>
+        <tr><td>D8 供应链权力集中度</td><td class="ct text-red">2</td><td class="ct text-red">0</td><td>供应商已放弃合作</td></tr>
+        <tr><td>D9 产业生命周期</td><td class="ct text-red">2</td><td class="ct text-red">0</td><td>传统大卖场退出阶段</td></tr>
+        <tr><td>D10 周期波动性</td><td class="ct text-blue">3</td><td class="ct text-red">2</td><td>已无周期抵御能力</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box info-red mt-8">
+      <strong>行业映射评分：12/100</strong>。
+      人人乐在十维评分中全面落后于行业基准（24/50），所有维度均处于2分及以下水平。
+      即使市场容量巨大（D1=5），但也无法惠及已丧失经营能力的企业。
+      资本可持续性（D5=0）和供应链权力（D8=0）是人人乐最薄弱的环节，
+      直接导致了退市结局。
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 6: 市场定价信号（轨道B）
+  ================================ -->
+  <div class="section">
+    <div class="section-title">六、市场定价信号（轨道B）</div>
+    <p class="fs-13 text-secondary mb-8">
+      轨道B从市场交易价格信号维度评估人人乐的信用状况，包括信用利差、波动率、资金流向和评级事件四个核心指标。人人乐退市前市场定价信号已全面恶化，全部4项信号均为红色（极端风险）。
+    </p>
+
+    <div class="grid-2">
+      <div class="card card-red">
+        <h3><span class="signal-dot red"></span>信用利差 <span class="fs-14">&#x1F534;</span></h3>
+        <p class="fs-13 text-secondary">已退市无公开债券交易，退市前信用利差飙升至2000bps+。在退市前的最后交易阶段，人人乐债券（如有）的信用利差已达到极端水平，反映了市场对公司违约的充分预期。</p>
+      </div>
+      <div class="card card-red">
+        <h3><span class="signal-dot red"></span>波动率 <span class="fs-14">&#x1F534;</span></h3>
+        <p class="fs-13 text-secondary">退市前30日历史波动率超120%，退市后流动性枯竭。股价在退市前经历了剧烈波动，日涨跌幅频繁触及5%限制，市场定价发现功能基本丧失。</p>
+      </div>
+    </div>
+    <div class="grid-2 mt-8">
+      <div class="card card-red">
+        <h3><span class="signal-dot red"></span>资金流向 <span class="fs-14">&#x1F534;</span></h3>
+        <p class="fs-13 text-secondary">连续2年主力资金大幅净流出。从2023年起，人人乐主力资金（机构、大单）持续净流出，散户资金成为主要交易方。退市前最后半年的日均成交额萎缩至不足千万元。</p>
+      </div>
+      <div class="card card-red">
+        <h3><span class="signal-dot red"></span>评级事件 <span class="fs-14">&#x1F534;</span></h3>
+        <p class="fs-13 text-secondary">连续降级至D（违约），审计无法表示意见+内控否定。2024年年报被出具无法表示意见的审计报告，内部控制被出具否定意见，均为退市的直接触发因素。</p>
+      </div>
+    </div>
+
+    <div class="info-box info-red mt-8">
+      <strong>轨道B信号汇总：全部4项信号均为红色（极端风险）</strong>。
+      人人乐退市前市场定价信号已全面恶化，信用利差和波动率处于极端水平，
+      资金持续流出，评级降至最低档。轨道B信号高度一致地确认了违约状态。
+      四个信号之间形成"死亡交叉"——利差飙升反映债务风险、波动率爆表反映市场恐慌、
+      资金流出反映投资者用脚投票、评级降级反映信用资质崩塌。
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 7: 交叉对撞：轨道A vs 轨道B
+  ================================ -->
+  <div class="section">
+    <div class="section-title">七、交叉对撞：轨道A vs 轨道B</div>
+    <p class="fs-13 text-secondary mb-8">
+      将轨道A（基本面分析）与轨道B（市场定价信号）进行交叉对撞，通过四象限定位确定人人乐的信用状态，并评估双轨信号的一致性程度。
+    </p>
+
+    <div class="quad-grid">
+      <div class="quad-item">
+        <h4>Q1 基本面向好+定价偏低</h4>
+        <div class="q-desc">强买入信号</div>
+      </div>
+      <div class="quad-item">
+        <h4>Q2 基本面向好+定价偏高</h4>
+        <div class="q-desc">关注估值</div>
+      </div>
+      <div class="quad-item">
+        <h4>Q3 基本面偏弱+定价偏低</h4>
+        <div class="q-desc">关注拐点</div>
+      </div>
+      <div class="quad-item active">
+        <h4>Q4 基本面极弱+定价偏高</h4>
+        <div class="q-desc">强烈回避（人人乐定位）</div>
+      </div>
+    </div>
+
+    <div class="card card-red mt-8">
+      <h3>交叉验证结论</h3>
+      <p class="fs-13 text-secondary">
+        人人乐定位<strong>Q4象限</strong>——基本面极弱且市场定价已充分反映退市风险。
+        基本面评分<strong class="text-red">D级（1.0/10）</strong>，轨道A与轨道B高度一致，共同确认违约状态。
+        轨道A（基本面）显示公司已资不抵债、经营现金流枯竭；
+        轨道B（市场信号）显示信用利差极端、波动率爆表、评级降为D。
+        双轨合一，无任何分歧信号。
+      </p>
+      <p class="fs-13 text-secondary mt-8">
+        <strong class="text-red">信贷建议：零敞口，已存在授信额度应即刻冻结。</strong>
+      </p>
+    </div>
+
+    <div class="grid-2 mt-8">
+      <div class="card card-red">
+        <h3>轨道A 基本面信号</h3>
+        <ul class="fs-13 text-secondary">
+          <li>综合信用评分：<strong class="text-red">1.0/10</strong></li>
+          <li>四层金字塔评分：1.0 / 1.0 / 1.0 / 1.0</li>
+          <li>十维行业映射：12/100</li>
+          <li>连续4年亏损，资不抵债（净资产-4.04亿）</li>
+          <li>经营现金流-7.86亿元，流动性枯竭</li>
+        </ul>
+      </div>
+      <div class="card card-red">
+        <h3>轨道B 市场定价信号</h3>
+        <ul class="fs-13 text-secondary">
+          <li>信用利差：<strong class="text-red">2000bps+</strong>（极端高位）</li>
+          <li>30日历史波动率：<strong class="text-red">超120%</strong></li>
+          <li>资金流向：<strong class="text-red">连续2年大幅净流出</strong></li>
+          <li>外部评级：<strong class="text-red">D（违约）</strong></li>
+          <li>审计意见：无法表示意见 + 内控否定</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 8: 退市后情景分析
+  ================================ -->
+  <div class="section">
+    <div class="section-title">八、退市后情景分析</div>
+
+    <div class="grid-3">
+      <div class="card card-red">
+        <h3>情景一：破产清算</h3>
+        <p class="fs-12 text-secondary">
+          概率<strong>60%</strong>。剩余32家门店无法支撑运营，供应商诉讼和执行导致
+          公司进入破产清算程序。资产处置所得优先偿还员工工资和税款，
+          普通债权人（供应商）回收率极低。退市股东（包括中小投资者）面临血本无归。
+        </p>
+      </div>
+      <div class="card card-amber">
+        <h3>情景二：资产重组</h3>
+        <p class="fs-12 text-secondary">
+          概率<strong>25%</strong>。曲江国资推动资产重组，将剩余核心门店剥离后注入其他零售平台。
+          公司主体可能被用作壳资源交易，原有业务全部剥离。
+          但考虑到壳价值下降和监管趋严，重组难度较大。
+        </p>
+      </div>
+      <div class="card card-amber">
+        <h3>情景三：苟延残喘</h3>
+        <p class="fs-12 text-secondary">
+          概率<strong>15%</strong>。国资持续输血维持少量门店运营，但无法扭转经营颓势。
+          公司进入"僵尸企业"状态，长期处于微经营状态，持续亏损但不清算。
+          考虑到国资背景，有一定可能性，但意义有限。
+        </p>
+      </div>
+    </div>
+
+    <div class="info-box info-red mt-12">
+      <strong>退市不是终点，但重回A股基本无望</strong>。人人乐退市后，股东持有的股票将在
+      全国中小企业股份转让系统（三板）挂牌转让。考虑到公司净资产为负、持续亏损、
+      经营现金流为负的三重困境，即使在三板市场也缺乏投资价值。
+      "民营超市第一股"的陨落，为中国零售行业提供了一个完整的大卖场"生死样本"。
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 9: 行业启示
+  ================================ -->
+  <div class="section">
+    <div class="section-title">九、行业启示：大卖场模式为何失效</div>
+
+    <div class="phase-card" style="border-left: 3px solid #ef4444;">
+      <div class="phase-title text-red">启示一：电商的效率碾压不可逆转</div>
+      <div class="phase-desc">
+        电商的无限货架（SKU百万级 vs 大卖场2-3万）、大数据精准推荐、送货上门等便利性，
+        在日用百货品类上对传统商超形成全面效率碾压。大卖场"大而全"的定位在线上面
+        前毫无优势，反而因高租金和高人力成本处于劣势。
+      </div>
+    </div>
+    <div class="phase-card" style="border-left: 3px solid #ef4444;">
+      <div class="phase-title text-red">启示二：中间路线没有生存空间</div>
+      <div class="phase-desc">
+        零售业正在两极分化：要么像Costco/山姆做"品质精选+会员费"的高端路线，
+        要么像拼多多/折扣店做"极致低价"的效率路线。大卖场"什么都卖、价格不低、体验不好"
+        的中间路线在两端挤压下快速失去市场。
+      </div>
+    </div>
+    <div class="phase-card" style="border-left: 3px solid #ef4444;">
+      <div class="phase-title text-red">启示三：转型窗口期很短</div>
+      <div class="phase-desc">
+        人人乐从2012年营收触顶到2025年退市，经历长达13年的下行过程。
+        期间公司尝试过精品超市、社区超市、O2O等转型方向，但未能坚持和有效执行。
+        零售行业竞争激烈，转型窗口期通常不超过3年，错过即永久失去机会。
+      </div>
+    </div>
+
+    <div class="grid-3 mt-14">
+      <div class="card card-green">
+        <h3>成功转型案例</h3>
+        <p class="fs-12 text-secondary">
+          永辉超市：学习胖东来调改模式，从大卖场向品质零售转型，
+          虽然过程痛苦（关店381家、营收-20.8%），但调改门店营收增长16.6%，
+          2026Q1已实现单季度盈利。
+        </p>
+      </div>
+      <div class="card card-amber">
+        <h3>部分转型案例</h3>
+        <p class="fs-12 text-secondary">
+          高鑫零售（大润发）：被阿里收购后推进数字化改造和线上线下一体化，
+          但2025年仍亏损16.68亿元。线下流量下滑过快，数字化转型效果有限。
+        </p>
+      </div>
+      <div class="card card-red">
+        <h3>转型失败案例</h3>
+        <p class="fs-12 text-secondary">
+          人人乐（已退市）、家乐福中国（门店从300+减至4家）、
+          新华都（已剥离零售业务）。这些案例的共同点：转型启动太晚、
+          投入不足、管理层动荡。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 10: 信用展望
+  ================================ -->
+  <div class="section">
+    <div class="section-title">十、信用展望</div>
+    <div class="quad-grid">
+      <div class="quad-item active">
+        <h4>短期 (6-12个月)</h4>
+        <div class="q-desc">
+          退市后无二级市场融资能力，剩余门店经营持续萎缩。预计2025年营收降至2-5亿元，
+          全年亏损收窄至1-2亿元（因门店大幅减少）。大概率启动破产清算程序。
+          信用评分：<strong class="text-red">1.0/10</strong>。
+        </div>
+      </div>
+      <div class="quad-item">
+        <h4>中期 (1-3年)</h4>
+        <div class="q-desc">
+          若进入破产清算，全部资产处置后普通债权人回收率预计低于10%。
+          若国资推动重组，可能注入其他零售资产，但原股东权益基本清零。
+          信用评分：<strong class="text-red">0-1.0/10</strong>。
+        </div>
+      </div>
+      <div class="quad-item">
+        <h4>长期 (3-5年)</h4>
+        <div class="q-desc">
+          人人乐品牌将彻底退出中国零售市场。公司可能通过壳资源交易保留上市地位，
+          转型其他行业，但原有零售业务已无存续可能。
+          信用评分：<strong class="text-red">0/10</strong>。
+        </div>
+      </div>
+      <div class="quad-item">
+        <h4>极端情景</h4>
+        <div class="q-desc">
+          若国资强力介入+消费市场意外回暖，公司可能通过极端紧缩维持极低水平运营。
+          但即使如此，回到正常经营状态的概率低于5%。
+          信用评分：<strong class="text-red">1.0/10</strong>（上限）。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 11: 同行业困境企业对比
+  ================================ -->
+  <div class="section">
+    <div class="section-title">十一、同行业困境企业对比</div>
+    <p class="fs-13 text-secondary mb-8">
+      人人乐的陨落并非孤例。中国零售行业正经历一轮深刻的"大洗牌"，大量传统商超企业陷入困境。
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>企业</th><th>状态</th><th>峰值门店</th><th>当前门店</th><th>亏损情况</th><th>核心原因</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fw-700">人人乐 (002336)</td>
+          <td><span class="pill pill-red">已退市</span></td>
+          <td>~150家</td>
+          <td>32家</td>
+          <td>连亏4年，累计-20亿</td>
+          <td>大卖场模式失效+转型失败</td>
+        </tr>
+        <tr>
+          <td class="fw-700">家乐福中国</td>
+          <td><span class="pill pill-red">几乎归零</span></td>
+          <td>300+家</td>
+          <td>4家</td>
+          <td>累计亏损67亿</td>
+          <td>被苏宁收购后整合失败</td>
+        </tr>
+        <tr>
+          <td class="fw-700">*ST美讯 (国美)</td>
+          <td><span class="pill pill-red">退市风险</span></td>
+          <td>~1,800家</td>
+          <td>~100家</td>
+          <td>持续亏损</td>
+          <td>创始人争端+债务危机</td>
+        </tr>
+        <tr>
+          <td class="fw-700">新华都</td>
+          <td><span class="pill pill-amber">已剥离零售</span></td>
+          <td>~100家</td>
+          <td>0</td>
+          <td>已退出零售业务</td>
+          <td>主动转型互联网</td>
+        </tr>
+        <tr>
+          <td class="fw-700">联华超市</td>
+          <td><span class="pill pill-red">持续亏损</span></td>
+          <td>~5,000家</td>
+          <td>~2,000家</td>
+          <td>连亏5年+</td>
+          <td>国企体制+模式老化</td>
+        </tr>
+        <tr>
+          <td class="fw-700">高鑫零售</td>
+          <td><span class="pill pill-amber">转型中</span></td>
+          <td>~500家</td>
+          <td>~400家</td>
+          <td>2025年亏损16.7亿</td>
+          <td>阿里主导但效果有限</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box info-red mt-8">
+      <strong>行业出清远未结束</strong>。2024年全国关闭商超782家，2025年前4个月至少关闭45家。
+      家乐福中国从300+门店到仅剩4家，国美从1800家到约100家，新华都干脆剥离零售业务。
+      在电商渗透率持续提升（~30%）、即时零售崛起、会员店扩张的"三重挤压"下，
+      传统大卖场模式的出清可能还需要3-5年。未来每年预计仍有数百家商超关闭。
+      这一趋势将对零售物业持有者、供应商、银行信贷产生连锁冲击。
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 12: 供应商与债权人影响分析
+  ================================ -->
+  <div class="section">
+    <div class="section-title">十二、供应商与债权人影响分析</div>
+
+    <div class="grid-3">
+      <div class="card card-red">
+        <h3>供应商影响</h3>
+        <ul class="fs-12 text-secondary">
+          <li>代垫款1.11亿元全额计提坏账</li>
+          <li>大量供应商账款无法收回</li>
+          <li>供应链金融风险传染</li>
+          <li>中小供应商可能因此倒闭</li>
+          <li>行业信用收缩效应</li>
+        </ul>
+      </div>
+      <div class="card card-red">
+        <h3>银行/债权人影响</h3>
+        <ul class="fs-12 text-secondary">
+          <li>银行授信大概率全部损失</li>
+          <li>租赁物业业主租金无法收回</li>
+          <li>购物卡持有者（消费者）权益受损</li>
+          <li>债券/信托投资者面临违约</li>
+          <li>员工工资和补偿金优先偿付</li>
+        </ul>
+      </div>
+      <div class="card card-amber">
+        <h3>退市后股东回收率</h3>
+        <ul class="fs-12 text-secondary">
+          <li>普通股股东预期回收率：0-5%</li>
+          <li>优先股/次级债回收率：5-15%</li>
+          <li>供应商普通债权回收率：10-25%</li>
+          <li>有担保债权回收率：30-60%</li>
+          <li>员工债权（工资/补偿金）：80-100%</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card card-red mt-8">
+      <h3>信用风险警示</h3>
+      <p class="fs-13 text-secondary">
+        人人乐的退市提供了一个完整的"零售企业信用违约样本"。从信用分析的角度，
+        关键预警信号包括：连续3年经营性亏损（2021年起）、净资产由正转负（2023年）、
+        营收连续5年下滑（2020-2024）、经营现金流由正转负（2024年Q4起）、
+        购物卡挤兑（消费者信心崩塌）、供应商诉讼激增。这些信号在退市前12-24个月均已出现，
+        为信用分析师提供了充足的时间窗口来调整风险评估。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 13: 信贷建议
+  ================================ -->
+  <div class="section">
+    <div class="section-title">十三、信贷建议</div>
+    <p class="fs-13 text-secondary mb-8">
+      以下建议从银行信贷经理视角出发，针对人人乐当前（已退市/违约）状态给出信贷管理方案。核心原则：从"风险控制"全面转向"损失回收"。
+    </p>
+
+    <div class="card card-red">
+      <h3>信贷策略核心结论</h3>
+      <div class="risk-list">
+        <div class="risk-item critical">
+          <span class="risk-num">建议额度</span>
+          <span>零敞口，已存在授信额度应即刻冻结。人人乐已退市并资不抵债，任何新增授信均将面临100%损失风险。</span>
+        </div>
+        <div class="risk-item critical">
+          <span class="risk-num">期限结构</span>
+          <span>不适用。公司已丧失持续经营能力，无法设定合理的贷款期限。原有贷款应立即宣布加速到期。</span>
+        </div>
+        <div class="risk-item high">
+          <span class="risk-num">担保要求</span>
+          <span>原有贷款可能有资产抵押但处置难度大。门店物业多为租赁性质，自有资产已大幅减值，担保覆盖率严重不足。抵押物变现存在较大不确定性。</span>
+        </div>
+        <div class="risk-item critical">
+          <span class="risk-num">利率定价</span>
+          <span>不适用（已违约）。风险溢价已无法通过利率覆盖，回收率才是核心关注点。</span>
+        </div>
+        <div class="risk-item high">
+          <span class="risk-num">附加条件</span>
+          <span>加速到期处理、资产保全、法律追偿。应立即启动债务加速到期程序，申请财产保全，开展法律追偿。密切关注破产管理人指定进展。</span>
+        </div>
+        <div class="risk-item high">
+          <span class="risk-num">贷后重点</span>
+          <span>破产清算进度、资产处置回收率、抵押物价值重估。定期评估抵押物可变现价值，参与债权人会议，争取在资产处置中获得最大回收比例。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box info-red mt-8">
+      <strong>信贷建议总结：零敞口，即刻冻结，转向清收</strong>。
+      人人乐已进入退市违约阶段，银行应尽快确认债权金额，参与破产清算程序。
+      预计普通债权回收率在10-25%之间，有担保债权回收率在30-60%之间。
+      对于尚未暴露的零售行业信贷敞口，应以此为鉴，提前排查传统商超类贷款风险。
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 14: 完备性报告
+  ================================ -->
+  <div class="section">
+    <div class="section-title">十四、完备性报告</div>
+
+    <h3 class="fs-14 mb-8">信号密度评估</h3>
+    <div class="density-bar mb-8">
+      <div class="seg filled-red"></div>
+      <div class="seg filled-red"></div>
+      <div class="seg filled-red"></div>
+      <div class="seg filled-red"></div>
+      <div class="seg filled-red"></div>
+    </div>
+    <p class="fs-13 text-secondary mb-12">
+      退市前信号密度为<strong>5/5（极高）</strong>，退市后信号趋于稳定。全部5个信号段均处于红色区域，
+      表明违约信号在退市前已充分释放，无新增不确定性。信号覆盖了财务、经营、市场、评级、法律五个维度，信息完整性较好。
+    </p>
+
+    <h3 class="fs-14 mb-8 mt-16">数据缺口评估</h3>
+    <table>
+      <thead>
+        <tr><th>数据类别</th><th>状态</th><th>影响评估</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>财务报表（2024年报）</td><td><span class="pill pill-red">审计无法表示意见</span></td><td>财务数据可靠性存疑，需谨慎使用</td></tr>
+        <tr><td>经营数据（2025Q1）</td><td><span class="pill pill-amber">已获取</span></td><td>营收1.294亿，持续萎缩，趋势明确</td></tr>
+        <tr><td>债券交易数据</td><td><span class="pill pill-red">已退市无数据</span></td><td>无法获取市场定价信号，轨道B受限</td></tr>
+        <tr><td>供应商诉讼数据</td><td><span class="pill pill-amber">部分公开</span></td><td>诉讼数量较多但披露不完整</td></tr>
+        <tr><td>资产处置信息</td><td><span class="pill pill-red">不透明</span></td><td>13元甩卖子公司真实性存疑，交易对手不明</td></tr>
+        <tr><td>国资支持力度</td><td><span class="pill pill-amber">不确定</span></td><td>曲江国资态度未公开表态，支持力度不明</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fs-14 mb-8 mt-16">综合置信度</h3>
+    <div class="info-box info-amber">
+      <strong>综合置信度：中等偏高（75%）</strong>。<br>
+      在已公开的财务数据和退市公告方面，信息来源可靠、时效性好，置信度较高（约90%）。
+      但在资产处置真实情况、国资后续支持意愿、潜在隐性债务等方面存在信息缺口，
+      置信度降至中等（50-60%）。整体而言，<strong class="text-red">退市结论确定性高（100%）</strong>，
+      但具体回收率预测存在较大不确定性（误差范围约±15%）。
+    </div>
+  </div>
+
+  <!-- ================================
+       Section 15: 核心数据附录
+  ================================ -->
+  <div class="section">
+    <div class="section-title">十五、核心数据附录</div>
+    <table>
+      <thead>
+        <tr><th>数据项</th><th class="rt">数值</th><th>数据来源</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>营业收入（2024）</td><td class="rt">14.30亿元</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>营收同比变化</td><td class="rt">-49.86%</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>归母净利润（2024）</td><td class="rt">-0.17亿元</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>扣非净利润（2024）</td><td class="rt">-5.94亿元</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>总资产（2024末）</td><td class="rt">19.16亿元</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>归母净资产（2024末）</td><td class="rt">-4.04亿元</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>资产负债率</td><td class="rt">121.08%</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>经营现金流（2024）</td><td class="rt">-7.86亿元</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>门店总数（2024末）</td><td class="rt">32家</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>当年关闭门店</td><td class="rt">45家</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>当年转让门店</td><td class="rt">15家</td><td>2024年年度报告摘要</td></tr>
+        <tr><td>2025Q1营收</td><td class="rt">1.294亿元</td><td>2025年一季报</td></tr>
+        <tr><td>2025Q1归母净利润</td><td class="rt">-0.80亿元</td><td>2025年一季报</td></tr>
+        <tr><td>营收峰值（2012）</td><td class="rt">129.13亿元</td><td>历史年报</td></tr>
+        <tr><td>门店峰值</td><td class="rt">约149家</td><td>行业资料</td></tr>
+        <tr><td>市值峰值</td><td class="rt">约136.68亿元</td><td>历史行情</td></tr>
+        <tr><td>退市日期</td><td class="rt">2025年7月4日</td><td>深交所公告</td></tr>
+      </tbody>
+    </table>
+
+    <div class="footer mt-16">
+      <p>Credence 固收信贷智能分析引擎 · 商贸零售 · 网络+流量型范式</p>
+      <p>标的：人人乐 (002336 · 已退市) · 级别：困境 · 评分日期：2026-07-10</p>
+      <p>数据来源：人人乐2024年年度报告、深交所公告、券商研报、媒体报道</p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

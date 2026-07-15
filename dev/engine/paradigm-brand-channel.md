@@ -433,4 +433,4 @@
 - [双轨分析方法论](dual-track-methodology.md) — 轨道A+轨道B评分逻辑、交叉对撞、评级映射
 - [马赛克引擎](mosaic-engine.md) — 信号提取、拼图、完备性评估
 - [行业分类与分析框架](industry-framework.md) — 四种行业类型判定与权重映射
-- [食品饮料行业方法论](../reports/food-beverage/food-beverage-methodology.html) — 食品饮料行业的具体信用分析方法
+- [食品饮料行业方法论](../../validation/reports/food-beverage/food-beverage-methodology.html) — 食品饮料行业的具体信用分析方法

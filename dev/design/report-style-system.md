@@ -347,7 +347,7 @@ dev/
 
 - `template-base.css` 被各模板引用（`<link rel="stylesheet">`，同目录相对路径 `template-base.css`）
 - 每个 `.html` 模板仅包含：特定于此类型的Hero渐变+Strip列数调整+特定内容结构
-- 实例报告位于 `dev/reports/<子目录>/`，通过 `../../templates/template-base.css` 引用样式
+- 实例报告位于 `validation/reports/<子目录>/`，通过 `../../../dev/templates/template-base.css` 引用样式
 - 语义色变量和字体变量继承自 `template-base.css`
 
 ---

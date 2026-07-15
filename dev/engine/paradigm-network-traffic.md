@@ -425,4 +425,4 @@ N-Score和S-Score分别对应L1和L2的核心量化输入，与L3资产质量评
 - [双轨分析方法论](dual-track-methodology.md) — 轨道A+轨道B评分逻辑、交叉对撞、评级映射
 - [马赛克引擎](mosaic-engine.md) — 信号提取、拼图、完备性评估
 - [行业分类与分析框架](industry-framework.md) — 四种行业类型判定与权重映射
-- [交通运输行业方法论](../reports/transportation/transportation-methodology.html) — 交通运输行业的具体信用分析方法
+- [交通运输行业方法论](../../validation/reports/transportation/transportation-methodology.html) — 交通运输行业的具体信用分析方法

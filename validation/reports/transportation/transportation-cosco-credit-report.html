@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单标的深度分析 — 中远海控 (601919) | 交通运输 · 标杆</title>
+<link rel="stylesheet" href="../../../dev/templates/template-base.css">
+<style>
+.pyr-wrap { margin: 28px 0; }
+.pyr-layer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600;
+  margin-bottom: 3px; transition: transform 0.2s;
+}
+.pyr-layer:hover { transform: translateX(4px); }
+.pyr-layer .pyr-name { flex: 1; }
+.pyr-layer .pyr-score { font-size: 12px; opacity: 0.85; font-weight: 400; white-space: nowrap; }
+.pyr-layer .pyr-val { font-size: 18px; font-weight: 800; margin-left: 16px; min-width: 48px; text-align: right; }
+.pyr-l1 { width: 100%; background: linear-gradient(135deg, var(--clr-slate-950), var(--clr-indigo-800)); }
+.pyr-l2 { width: 88%; background: linear-gradient(135deg, var(--clr-indigo-600), var(--clr-indigo-700)); }
+.pyr-l3 { width: 76%; background: linear-gradient(135deg, var(--clr-blue-600), var(--clr-blue-700)); }
+.pyr-l4 { width: 64%; background: linear-gradient(135deg, var(--clr-teal-600), var(--clr-teal-700)); }
+.signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.signal-dot.green { background: var(--green); }
+.signal-dot.amber { background: var(--amber); }
+.signal-dot.orange { background: var(--clr-orange-600); }
+.signal-dot.red { background: var(--red); }
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.quad-item { background: var(--bg-secondary); padding: 22px 20px; text-align: center; }
+.quad-item h4 { font-size: 14px; margin-bottom: 6px; }
+.quad-item.active { box-shadow: inset 0 0 0 3px var(--blue); background: var(--bg-hover); }
+.quad-item .q-desc { font-size: 12px; color: var(--text-secondary); }
+.risk-list { margin: 16px 0; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--bg-tertiary); border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.risk-item.critical { border-left-color: var(--red); }
+.risk-item.high { border-left-color: var(--clr-orange-600); }
+.risk-item.medium { border-left-color: var(--amber); }
+.risk-item .risk-num { font-weight: 800; font-size: 11px; min-width: 52px; }
+.density-bar {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0;
+}
+.density-bar .seg {
+  height: 14px; border-radius: 3px; flex: 1;
+}
+.density-bar .seg.filled-green { background: var(--green); }
+.density-bar .seg.filled-amber { background: var(--amber); }
+.density-bar .seg.filled-red { background: var(--red); }
+.density-bar .seg.empty { background: var(--bg-tertiary); }
+.gap-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 4px; margin-bottom: 4px;
+  background: var(--bg-tertiary); font-size: 12px;
+}
+.gap-item .gap-tag {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;
+}
+.gap-item .gap-tag.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.gap-item .gap-tag.normal { background: rgba(245,158,11,0.15); color: var(--amber); }
+.ml-8 { margin-left: 8px; }
+.ml-4 { margin-left: 4px; }
+.mt-16 { margin-top: 16px; }
+.mt-12 { margin-top: 12px; }
+.mt-10 { margin-top: 10px; }
+.mt-8 { margin-top: 8px; }
+.mt-6 { margin-top: 6px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-4 { margin-bottom: 4px; }
+.w-22 { width: 22%; }
+.w-40 { width: 40%; }
+.w-30 { width: 30%; }
+.w-18 { width: 18%; }
+.w-4 { width: 4%; }
+.br-6 { border-radius: 6px; }
+.op-5 { opacity: 0.5; }
+.op-3 { opacity: 0.3; }
+.op-6 { opacity: 0.6; }
+.fs-11 { font-size: 11px; }
+.fs-12 { font-size: 12px; }
+.fs-13 { font-size: 13px; }
+.fs-14 { font-size: 14px; }
+.fs-15 { font-size: 15px; }
+.fs-24 { font-size: 24px; }
+.fs-28 { font-size: 28px; }
+.fw-700 { font-weight: 700; }
+.fw-800 { font-weight: 800; }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.lh-18 { line-height: 1.8; }
+.mt-neg24 { margin-top: -24px; }
+.card-slate { border-left: 4px solid var(--clr-slate-600); }
+.card-indigo { border-left: 4px solid var(--clr-indigo-600); }
+.card-blue-alt { border-left: 4px solid var(--clr-blue-600); }
+.card-cyan { border-left: 4px solid var(--clr-cyan-600); }
+.card-orange { border-left: 4px solid var(--clr-orange-600); }
+.card-dark { border-left: 4px solid var(--clr-slate-950); }
+.bg-hover-fw700 { background: var(--bg-hover); font-weight: 700; }
+:root {
+  --clr-amber-600: #d97706;
+  --clr-blue-400: #60a5fa;
+  --clr-blue-500: #3b82f6;
+  --clr-blue-600: #2563eb;
+  --clr-blue-700: #1d4ed8;
+  --clr-blue-900: #1e3a8a;
+  --clr-blue-midnight: #1e3a5f;
+  --clr-cyan-400: #22d3ee;
+  --clr-cyan-600: #0891b2;
+  --clr-cyan-700: #0e7490;
+  --clr-cyan-800: #155e75;
+  --clr-emerald-400: #34d399;
+  --clr-emerald-600: #059669;
+  --clr-emerald-700: #047857;
+  --clr-emerald-800: #065f46;
+  --clr-indigo-300: #a5b4fc;
+  --clr-indigo-400: #818cf8;
+  --clr-indigo-600: #4f46e5;
+  --clr-indigo-700: #4338ca;
+  --clr-indigo-800: #3730a3;
+  --clr-orange-600: #ea580c;
+  --clr-orange-700: #b45309;
+  --clr-purple-600: #7c3aed;
+  --clr-purple-700: #6d28d9;
+  --clr-purple-800: #5b21b6;
+  --clr-sky-500: #0ea5e9;
+  --clr-sky-600: #0284c7;
+  --clr-slate-400: #94a3b8;
+  --clr-slate-500: #64748b;
+  --clr-slate-600: #475569;
+  --clr-slate-700: #334155;
+  --clr-slate-800: #1e293b;
+  --clr-slate-950: #0f172a;
+  --clr-teal-300: #5eead4;
+  --clr-teal-500: #14b8a6;
+  --clr-teal-600: #0d9488;
+  --clr-teal-700: #0f766e;
+  --clr-violet-300: #c084fc;
+  --clr-violet-400: #a78bfa;
+  --clr-violet-500: #8b5cf6;
+  --clr-violet-600: #7c3aed;
+  --clr-violet-700: #6d28d9;
+  --clr-white: #ffffff;
+}
+.ct { text-align:center; }
+.fs-18 { font-size: 18px; }
+.fw-600 { font-weight: 600; }
+.ml-12 { margin-left: 12px; }
+.mr-8 { margin-right: 8px; }
+.my-24 { margin:24px 0 10px; }
+.my-20 { margin:20px 0 12px; }
+.bg-hover { background:var(--bg-hover); }
+.text-indigo { color:#6366f1; font-weight:600; }
+.flex-ac-8 { display:flex; align-items:center; gap:8px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+/* Hero custom for COSCO */
+.hero-cosco {
+  background: linear-gradient(135deg, #0f172a, #1a1e3a, #1e3a5f);
+  text-align: center;
+  padding: 60px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-cosco::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(30,58,95,0.2) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(99,102,241,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-cosco .container { position: relative; z-index: 1; }
+.hero-cosco .chip {
+  display: inline-block;
+  background: rgba(99,102,241,0.2);
+  color: var(--clr-indigo-400);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero-cosco h1 { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-cosco .stock-code { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 400; margin-bottom: 6px; }
+.hero-cosco .subtitle { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+.hero-cosco .meta-row {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  flex-wrap: wrap;
+}
+.hero-cosco .meta-row span {
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="hero-cosco">
+  <div class="container">
+    <div class="chip">单标的深度分析 · Type 1</div>
+    <h1>中远海控 <span class="fw-400" style="color:rgba(255,255,255,0.5)">|</span> COSCO SHIPPING Holdings</h1>
+    <div class="stock-code">601919.SH / 1919.HK</div>
+    <p class="subtitle">交通运输 · 集装箱航运 — 全球第四大班轮公司，运力规模领先，财务质量稳健，行业标杆</p>
+    <div class="meta-row">
+      <span>分析时点：2026年7月</span>
+      <span>数据截止：2025年报（2026-03-19）</span>
+      <span>数据来源：公开数据</span>
+      <span>目标读者：对公信贷经理</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- STRIP -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="strip mt-neg24">
+  <div class="strip-item">
+    <div class="slabel">综合评级</div>
+    <div class="sval text-green">A+</div>
+    <div class="ssub">高信用质量</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">综合得分</div>
+    <div class="sval text-blue">7.90</div>
+    <div class="ssub">/ 10 四层加权</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">展望</div>
+    <div class="sval text-amber">稳定偏负</div>
+    <div class="ssub">运价下行周期压力</div>
+  </div>
+  <div class="strip-item">
+    <div class="slabel">数据置信度</div>
+    <div class="sval text-purple">高</div>
+    <div class="ssub">多源可交叉验证</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: PYRAMID SCAN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">01</span> 金字塔逐层扫描 · 网络+流量型四层分析框架</h2>
+  <p class="fs-13 mb-20 text-secondary">权重分配按"网络+流量型"范式——网络/规模壁垒权重最高(35%)，客户粘性次之(25%)，资产质量与财务质量各占20%。</p>
+
+  <!-- Layer 1 -->
+  <div class="card card-slate">
+    <h3>L1 网络/规模壁垒 <span class="tag tag-blue ml-8">权重 35%</span> <span class="tag tag-green ml-4">9/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>运力规模排名</strong></td>
+          <td><span class="text-green">全球第四</span> — 自营集装箱船队590艘，总运力约360万TEU，稳居全球班轮公司第一梯队。自有+光租船舶占比75%，为行业最高水平之一。2025年接收12艘16,000TEU型新船。</td>
+        </tr>
+        <tr>
+          <td><strong>单位成本优势</strong></td>
+          <td><span class="text-amber">行业中位偏优</span> — 2025年单箱成本受燃油和运营成本上涨影响有所抬升，但凭借规模优势仍处于行业中等偏优水平。毛利率20.05%（同比-9.5pct），主要受运价下行影响而非成本失控。</td>
+        </tr>
+        <tr>
+          <td><strong>网络密度</strong></td>
+          <td><span class="text-green">全球航线覆盖</span> — 覆盖全球主要贸易航线，美洲线/欧洲线/亚洲区内/内贸全线布局。码头业务覆盖40个港口387个泊位，年处理能力1.33亿TEU，2025年实际吞吐量1.53亿TEU。</td>
+        </tr>
+        <tr>
+          <td><strong>产能利用率</strong></td>
+          <td><span class="text-green">装载率维持高位</span> — 2025年货运量2,743.45万TEU（+5.76%），装载率维持行业较高水平。供应链收入448.88亿元（+9.64%），延伸服务提升资产使用效率。</td>
+        </tr>
+        <tr>
+          <td><strong>船队结构</strong></td>
+          <td><span class="text-green">大型化+绿色化</span> — 自有+光租75%保障运力稳定性。运营+在建绿色船舶42艘，近78万TEU。2025年交付3艘绿色甲醇船舶，新订造14艘18,500TEU型甲醇双燃料船。手持订单54艘、超82万TEU。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12 text-secondary">
+      <strong>评分逻辑：</strong>9/10——全球第四大运力规模+590艘船队+75%自有率+40个码头，规模壁垒极强。扣1分因为红海危机等外生事件暴露了航线单一化风险（欧洲线占比偏高）。<span class="text-green">维持9/10不变</span>
+    </div>
+  </div>
+
+  <!-- Layer 2 -->
+  <div class="card card-cyan">
+    <h3>L2 客户/货源粘性 <span class="tag tag-blue ml-8">权重 25%</span> <span class="tag tag-blue ml-4">7/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>长协/合同占比</strong></td>
+          <td><span class="text-amber">约50-60%（估算）</span> — 公司未在年报中单独披露长协占比具体数值。行业通行做法是每年一季度重新谈判长协合同。2026年美伊冲突背景下，券商报告提及长协合同将重新协商燃油附加费。长协占比适中，有一定保护但不及马士基等欧洲同行。</td>
+        </tr>
+        <tr>
+          <td><strong>客户集中度</strong></td>
+          <td><span class="text-green">分散</span> — 作为全球性班轮公司，客户涵盖各行业大型进出口企业，前五大客户收入占比不高。客户结构多元化（制造业/零售/能源等），单一大客户依赖风险低。</td>
+        </tr>
+        <tr>
+          <td><strong>货源稳定性</strong></td>
+          <td><span class="text-amber">受外贸周期影响</span> — 中国出口导向型货源结构决定运量直接受全球贸易景气度影响。2025年货运量+5.76%但运价大幅回落，量增价跌。美洲线收入-16%、欧洲线-15%，地缘政治因素增加不确定性。</td>
+        </tr>
+        <tr>
+          <td><strong>合约平均期限</strong></td>
+          <td><span class="text-amber">6-12个月</span> — 长协通常为一年期合同，每年4月新财年重新谈判。合约期限偏短，运价保护力度有限。但长期客户合作关系牢固，转换成本较高。</td>
+        </tr>
+        <tr>
+          <td><strong>供应链延伸粘性</strong></td>
+          <td><span class="text-green">提升中</span> — 供应链收入448.88亿元（+9.64%），占集运收入比例约21%。端到端服务增加客户粘性和转换成本，是提升L2评级的正向趋势。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12 text-secondary">
+      <strong>评分逻辑：</strong>7/10——客户分散度好、供应链延伸增强粘性，但长协占比较低、合约期限短（6-12个月），运价保护不足。与马士基（长协占比70%+）相比有明显差距。扣分主要在长协保护力度不够。<span class="text-amber">维持7/10</span>
+    </div>
+  </div>
+
+  <!-- Layer 3 -->
+  <div class="card card-blue-alt">
+    <h3>L3 资产质量 <span class="tag tag-blue ml-8">权重 20%</span> <span class="tag tag-blue ml-4">7/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">维度</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>船队成新率</strong></td>
+          <td><span class="text-green">较高水平</span> — 2025年新交付12艘16,000TEU型船，手持订单54艘超82万TEU，船队平均船龄估计在7-10年，处于行业较新水平。自有+光租75%的船队结构保证了对资产更新的控制权。</td>
+        </tr>
+        <tr>
+          <td><strong>Capex/折旧比</strong></td>
+          <td><span class="text-amber">扩张期</span> — 2025年宣布订造12艘18,000TEU型+6艘3,000TEU型船，总价约187.68亿元。手持订单54艘将使未来3-5年Capex维持高位。Capex/折旧比估计在1.5x以上。</td>
+        </tr>
+        <tr>
+          <td><strong>技术迭代风险</strong></td>
+          <td><span class="text-amber">中等</span> — IMO环保新规加速传统燃料船舶淘汰。公司绿色船舶42艘（运营+在建），占运力约22%。但仍有大量传统燃料船舶面临IMO新规下合规压力。甲醇/LNG双燃料选择存在技术路线不确定性。</td>
+        </tr>
+        <tr>
+          <td><strong>资产专用性</strong></td>
+          <td><span class="text-amber">极高</span> — 集装箱船舶专用性极强，不可转作他用。二手船舶市场流动性尚可（正常年份），但危机时期资产处置价值大幅缩水。码头资产专用性同样极高但有长期特许经营权保护。</td>
+        </tr>
+        <tr>
+          <td><strong>码头资产价值</strong></td>
+          <td><span class="text-green">优质</span> — 全球40个港口387个泊位，年吞吐量1.53亿TEU。码头业务收入120.41亿元（+11.39%），毛利率25.91%。港口资产具有长期特许经营权和区域垄断特性，是资产组合中的减震器。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12 text-secondary">
+      <strong>评分逻辑：</strong>7/10——船队成新率不错，但未来3-5年有大量Capex支出（54艘手持订单），且绿色技术路线选择存在不确定性。码头资产是加分项，对冲了航运资产的高专用性风险。<span class="text-amber">维持7/10</span>
+    </div>
+  </div>
+
+  <!-- Layer 4 -->
+  <div class="card card-teal">
+    <h3>L4 财务质量 <span class="tag tag-blue ml-8">权重 20%</span> <span class="tag tag-green ml-4">8/10</span></h3>
+    <table>
+      <thead><tr><th class="w-22">指标</th><th>数据与判断</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>营业收入</strong></td>
+          <td><span class="text-amber">2,195.04亿元</span> — 同比-6.14%，主要受运价下行影响（CCFI同比-23%、SCFI同比-37%）。但货运量+5.76%显示量增价跌特征。</td>
+        </tr>
+        <tr>
+          <td><strong>归母净利润</strong></td>
+          <td><span class="text-amber">308.68亿元</span> — 同比-37.13%。运价下行+成本刚性上涨（营业成本+6.5%）导致利润大幅压缩。但绝对值仍处历史高位。</td>
+        </tr>
+        <tr>
+          <td><strong>经营现金流</strong></td>
+          <td><span class="text-green">455.46亿元</span> — 同比-34.29%但仍充裕。经营现金流/有息负债约0.35x，处于行业健康水平。</td>
+        </tr>
+        <tr>
+          <td><strong>资产负债率</strong></td>
+          <td><span class="text-green">41.42%</span> — 同比-1.28pct，财务结构持续优化。总资产4,837.58亿元，归母净资产2,322.65亿元。</td>
+        </tr>
+        <tr>
+          <td><strong>现金储备</strong></td>
+          <td><span class="text-green">1,508.82亿元</span> — 期末现金及现金等价物超1500亿元，现金/短期债务覆盖充裕。在运价下行周期中有充足安全垫。</td>
+        </tr>
+        <tr>
+          <td><strong>分红</strong></td>
+          <td><span class="text-green">154亿元</span> — 全年分红约154亿元，分红率约50%。A股对应股息率约7.6%。高分红反映管理层对现金流的信心，但需关注运价下行对分红可持续性的影响。</td>
+        </tr>
+        <tr>
+          <td><strong>有息负债/EBITDA</strong></td>
+          <td><span class="text-green">约2.0x</span> — 处于健康区间。EBIT 450.13亿元，利息覆盖倍数高。债务结构以长期为主，短期偿债压力可控。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-10 fs-12 text-secondary">
+      <strong>评分逻辑：</strong>8/10——负债率41.42%合理、经营现金流455亿充裕、现金1508亿安全垫充足。扣2分因为运价下行周期中利润和现金流缩减速度快（-37%净利润/-34%经营现金流），对运价的敏感性较高。若运价再降30%，利润可能趋近于零。运价敏感性指标需持续监控。<span class="text-green">维持8/10</span>
+    </div>
+  </div>
+
+  <!-- Pyramid visual -->
+  <div class="pyr-wrap">
+    <div class="pyr-layer pyr-l1">
+      <span class="pyr-name">L1 网络/规模壁垒 (35%)</span>
+      <span class="pyr-score">9/10 — 全球第四+590艘船+360万TEU+40码头</span>
+      <span class="pyr-val text-green">9</span>
+    </div>
+    <div class="pyr-layer pyr-l2">
+      <span class="pyr-name">L2 客户/货源粘性 (25%)</span>
+      <span class="pyr-score">7/10 — 客户分散+长协50-60%+供应链延伸</span>
+      <span class="pyr-val text-blue">7</span>
+    </div>
+    <div class="pyr-layer pyr-l3">
+      <span class="pyr-name">L3 资产质量 (20%)</span>
+      <span class="pyr-score">7/10 — 船队较新+绿色转型+码头资产优质</span>
+      <span class="pyr-val text-blue">7</span>
+    </div>
+    <div class="pyr-layer pyr-l4">
+      <span class="pyr-name">L4 财务质量 (20%)</span>
+      <span class="pyr-score">8/10 — 负债率41%+现金1508亿+现金流455亿</span>
+      <span class="pyr-val text-green">8</span>
+    </div>
+  </div>
+
+  <!-- Weighted total -->
+  <div class="info-box info-blue mt-16">
+    <strong>综合加权得分：<span class="fs-28 fw-800 text-green">7.90</span> / 10</strong><br>
+    9×0.35 + 7×0.25 + 7×0.20 + 8×0.20 = 3.15 + 1.75 + 1.40 + 1.60 = <strong>7.90</strong><br>
+    <span class="text-green">A+</span> 评级对应：高信用质量。规模壁垒极强（9分），财务质量稳健（8分），但客户粘性（7分）和资产质量（7分）因行业周期性和技术转型存在不确定性。
+  </div>
+
+  <!-- Layer comparison summary table -->
+  <h3 class="fs-14 my-24">金字塔权重与评分总览</h3>
+  <table>
+    <thead><tr><th>层级</th><th>权重</th><th class="ct">得分</th><th class="ct">加权得分</th><th>核心依据</th></tr></thead>
+    <tbody>
+      <tr><td>L1 网络/规模壁垒</td><td class="ct">35%</td><td class="ct"><span class="text-green">9</span></td><td class="ct"><span class="text-green">3.15</span></td><td>全球第四+590艘/360万TEU+75%自有率+全球网络</td></tr>
+      <tr><td>L2 客户/货源粘性</td><td class="ct">25%</td><td class="ct"><span class="text-blue">7</span></td><td class="ct"><span class="text-blue">1.75</span></td><td>客户分散但长协50-60%偏弱，供应链延伸正增强粘性</td></tr>
+      <tr><td>L3 资产质量</td><td class="ct">20%</td><td class="ct"><span class="text-blue">7</span></td><td class="ct"><span class="text-blue">1.40</span></td><td>船队较新+码头优质+但绿色转型Capex压力大</td></tr>
+      <tr><td>L4 财务质量</td><td class="ct">20%</td><td class="ct"><span class="text-green">8</span></td><td class="ct"><span class="text-green">1.60</span></td><td>负债率41%+现金1508亿+现金流455亿</td></tr>
+      <tr class="fw-700 bg-hover"><td><strong>综合</strong></td><td class="ct"><strong>100%</strong></td><td class="ct"><strong>—</strong></td><td class="ct"><span class="text-green fs-18">7.90</span></td><td><strong>A+ / 展望稳定偏负</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PEER COMPARISON -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">01b</span> 行业对比 · 集装箱航运与港口横向比较</h2>
+  <p class="fs-13 mb-16 text-secondary">在同一"网络+流量型"框架下对主要航运和港口企业进行快速评分对比。评分基于公开数据和逻辑推演。</p>
+
+  <table>
+    <thead><tr><th>企业</th><th class="ct">L1<br>网络(35%)</th><th class="ct">L2<br>粘性(25%)</th><th class="ct">L3<br>资产(20%)</th><th class="ct">L4<br>财务(20%)</th><th class="ct">综合评分</th><th class="ct">等价评级</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>上港集团</strong></td>
+        <td class="ct"><span class="text-green">9</span></td>
+        <td class="ct"><span class="text-green">9</span></td>
+        <td class="ct"><span class="text-green">8</span></td>
+        <td class="ct"><span class="text-green">8</span></td>
+        <td class="ct"><strong><span class="text-green">8.55</span></strong></td>
+        <td class="ct"><span class="tag tag-green">AA-</span></td>
+      </tr>
+      <tr>
+        <td><strong>中远海控</strong></td>
+        <td class="ct"><span class="text-green">9</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><span class="text-green">8</span></td>
+        <td class="ct"><strong><span class="text-green">7.90</span></strong></td>
+        <td class="ct"><span class="tag tag-green">A+</span></td>
+      </tr>
+      <tr>
+        <td><strong>宁波港</strong></td>
+        <td class="ct"><span class="text-green">8</span></td>
+        <td class="ct"><span class="text-green">8</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><strong><span class="text-blue">7.65</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">A</span></td>
+      </tr>
+      <tr>
+        <td><strong>中远海发</strong></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><strong><span class="text-blue">7.00</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">A-</span></td>
+      </tr>
+      <tr>
+        <td><strong>中谷物流</strong></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><span class="text-blue">6</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><span class="text-blue">7</span></td>
+        <td class="ct"><strong><span class="text-blue">6.80</span></strong></td>
+        <td class="ct"><span class="tag tag-amber">A-</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box info-blue mt-12">
+    <strong>中远海控在航运港口行业中的位置：</strong><br>
+    - 综合评分7.90为航运企业最高，仅次于上港集团（8.55，港口区域垄断<br>特性带来额外加分）<br>
+    - L1网络/规模壁垒（9分）与上港并列行业最高——全球第四大运力规模不可复制<br>
+    - L4财务质量（8分）稳健，1500亿现金储备为运价下行周期提供坚实缓冲<br>
+    <strong>结论：中远海控是A股航运板块信用质量最高的企业之一。A+评级反映其规模壁垒和财务韧性的双重优势。</strong>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: MARKET PRICING SIGNALS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">02</span> 市场定价信号 · 轨道B</h2>
+  <p class="fs-13 mb-20 text-secondary">独立于基本面分析的量化信号层，仅呈现市场定价行为，不做基本面解读</p>
+
+  <div class="grid-2">
+    <div class="card card-green">
+      <h3>估值水平 <span class="tag tag-amber ml-8">周期低位</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>PE(TTM)</strong></td><td>约7-8倍（基于309亿净利润）</td></tr>
+        <tr><td><strong>PB</strong></td><td>约1.0-1.1倍</td></tr>
+        <tr><td><strong>股息率</strong></td><td>约7.6%（含中期+末期分红）</td></tr>
+        <tr><td><strong>市值</strong></td><td>约2,300亿人民币</td></tr>
+      </table>
+      <div class="mt-8 fs-12 text-secondary">PE 7-8倍对应市场对运价下行的悲观预期。PB约1.0倍接近净资产，反映市场对航运周期的谨慎态度。股息率7.6%极高但需评估可持续性——运价继续下行将压缩利润和分红空间。</div>
+    </div>
+
+    <div class="card card-amber">
+      <h3>运价信号 <span class="tag tag-amber ml-8">下行</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>CCFI 2025均值</strong></td><td>同比-23%</td></tr>
+        <tr><td><strong>SCFI 2025均值</strong></td><td>同比-37%</td></tr>
+        <tr><td><strong>2026年预测</strong></td><td>地缘冲突支撑运价但高不确定性</td></tr>
+        <tr><td><strong>燃油成本</strong></td><td>受美伊冲突影响上涨</td></tr>
+      </table>
+      <div class="mt-8 fs-12 text-secondary">运价是航运景气度的最直接信号。2025年CCFI/SCFI大幅回落，领先财务指标1-2个季度。2026年地缘冲突（红海/霍尔木兹）对运价有支撑但不确定性极高。运价信号为轨道B中的负面因素。</div>
+    </div>
+
+    <div class="card card-green">
+      <h3>债券/信用市场 <span class="tag tag-green ml-8">稳定</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>存续债券</strong></td><td>有存续债券，信用利差正常</td></tr>
+        <tr><td><strong>信用评级</strong></td><td>国内主流评级AAA</td></tr>
+        <tr><td><strong>银行授信</strong></td><td>充裕且大部分未使用</td></tr>
+      </table>
+      <div class="mt-8 fs-12 text-secondary">中远海控作为央企控股的航运龙头，债券市场认可度高。国内信用评级AAA。银行授信充裕。信用市场信号稳定，未出现融资紧张信号。</div>
+    </div>
+
+    <div class="card card-green">
+      <h3>ESG与治理 <span class="tag tag-green ml-8">良好</span></h3>
+      <table>
+        <tr><td class="w-40"><strong>控股股东</strong></td><td>中国远洋海运集团（央企）</td></tr>
+        <tr><td><strong>绿色转型</strong></td><td>42艘绿色船舶+187亿新造船投资</td></tr>
+        <tr><td><strong>治理稳定性</strong></td><td>央企治理体系，管理层稳定</td></tr>
+      </table>
+      <div class="mt-8 fs-12 text-secondary">央企控股属性提供隐性信用支持。绿色转型投入积极（42艘绿色船舶）。治理结构稳定，央企背景在融资便利性和股东支持方面有明显优势。ESG风险主要来自碳排放和环保监管。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: CROSS COLLISION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">03</span> 交叉对撞 · 轨道A vs 轨道B</h2>
+
+  <div class="grid-2 mb-16">
+    <div class="info-box info-blue">
+      <strong>轨道A：基本面分析</strong><br><br>
+      <span class="fs-24 fw-800 text-green">A+ (7.90)</span><br><br>
+      <strong>支撑因素：</strong><br>
+      - 全球第四大运力规模，590艘船+360万TEU<br>
+      - 41.42%负债率，1508亿现金，财务安全垫充足<br>
+      - 码头业务提供稳定的资产收益（120亿收入+25.91%毛利率）<br>
+      - 央企控股提供隐性信用支持<br><br>
+      <strong>风险因素：</strong><br>
+      - 长协占比50-60%偏弱，运价保护不足<br>
+      - 绿色转型Capex压力大（54艘手持订单）<br>
+      - 运价下行对利润影响显著（-37% YoY）<br>
+      - 地缘政治风险（红海/中美贸易战）
+    </div>
+
+    <div class="info-box info-amber">
+      <strong>轨道B：市场定价信号</strong><br><br>
+      <span class="fs-24 fw-800 text-amber">负面偏中性</span><br><br>
+      <strong>信号分析：</strong><br>
+      - PE 7-8倍反映市场对运价下行的悲观预期<br>
+      - PB约1.0倍接近净资产无溢价<br>
+      - CCFI/SCFI同比大幅下滑（-23%/-37%）<br>
+      - 股息率7.6%极高，但可持续性存疑<br>
+      - 信用利差正常，未出现融资紧张<br><br>
+      <strong>市场隐含预期：</strong><br>
+      市场已充分定价运价下行风险。PB≈1x说明市场认为当前盈利能力不可持续。但信用市场未出现紧张——债券利差正常、银行授信充裕。
+    </div>
+  </div>
+
+  <h3 class="fs-14 my-20">对撞结论</h3>
+  <div class="card card-indigo">
+    <table>
+      <thead><tr><th style="width: 160px;">对撞维度</th><th>分析结论</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>方向一致性</strong></td>
+          <td><span class="text-amber">轨道A正面偏中性 vs 轨道B负面偏中性 — 存在分歧</span><br>基本面评分7.90/A+反映企业的强规模壁垒和稳健财务，但市场定价已反映运价下行悲观预期。分歧来源：基本面分析的"存量优势"vs市场定价的"增量悲观"。</td>
+        </tr>
+        <tr>
+          <td><strong>关键追问1：规模壁垒是否真实？</strong></td>
+          <td><span class="text-green">是。</span> 全球第四+590艘船+75%自有率不可复制。即使运价下行，规模优势使中远海控的单位成本低于行业中位水平，在周期低谷有更强的生存能力。</td>
+        </tr>
+        <tr>
+          <td><strong>关键追问2：长协是否足够保护？</strong></td>
+          <td><span class="text-amber">部分保护。</span> 长协50-60%提供一定收入确定性，但低于马士基（70%+）。运价大幅下行时长协保护力度有限。需要关注2026年长协谈判结果。</td>
+        </tr>
+        <tr>
+          <td><strong>关键追问3：现金流能否覆盖Capex？</strong></td>
+          <td><span class="text-green">能。</span> 经营现金流455亿远高于每年约150-200亿的Capex需求。1508亿现金储备提供额外安全垫。即使运价再降30%，现金流仍能覆盖维持性Capex。</td>
+        </tr>
+        <tr>
+          <td><strong>关键追问4：运价敏感性如何？</strong></td>
+          <td><span class="text-amber">较高。</span> 每10%运价变动影响净利润约60-80亿元（弹性约2-3x）。运价下行是当前最大的财务风险。但1508亿现金储备可吸收2-3年的运价低谷影响。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: RISK REGISTER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">04</span> 风险登记簿</h2>
+  <p class="fs-13 mb-20 text-secondary">系统性识别当前面临的关键风险，按严重程度排序。</p>
+
+  <div class="risk-list">
+    <div class="risk-item critical">
+      <span class="risk-num tag tag-red">致命</span>
+      <div><strong>运价持续下行</strong> — 2025年CCFI均值-23%/SCFI-37%，2026年运价走势存在高度不确定性。若全球经济衰退导致运价进一步下降30%，净利润可能趋近于零。运价下行是当前最大的信用风险。</div>
+    </div>
+    <div class="risk-item high">
+      <span class="risk-num tag tag-amber">高</span>
+      <div><strong>地缘政治风险</strong> — 红海危机/美伊冲突/中美贸易战均直接影响航线布局和运价。红海绕行好望角增加成本10-15%，霍尔木兹海峡通行受阻影响燃油成本。地缘风险是一把双刃剑（短期推高运价但长期破坏贸易结构）。</div>
+    </div>
+    <div class="risk-item high">
+      <span class="risk-num tag tag-amber">高</span>
+      <div><strong>绿色转型Capex压力</strong> — 54艘手持订单+187.68亿元新造船投资，未来3-5年资本开支持续高位。IMO环保新规使传统燃料船舶面临加速淘汰风险，绿色燃料技术路线（甲醇vsLNGvs氨）存在选择不确定性。</div>
+    </div>
+    <div class="risk-item medium">
+      <span class="risk-num tag tag-amber">中</span>
+      <div><strong>长协占比偏低</strong> — 长协占比约50-60%，低于马士基等欧洲同行（70%+）。运价下行周期中现货市场拖累整体收入。2026年长协谈判结果（价与量）需重点关注。</div>
+    </div>
+    <div class="risk-item medium">
+      <span class="risk-num tag tag-amber">中</span>
+      <div><strong>资产专用性与过剩风险</strong> — 全球集装箱船运力增速（2024-2026年新船集中交付）超过需求增速，运力过剩风险上升。船舶资产专用性使退出成本极高，二手船价在运价低谷时大幅缩水。</div>
+    </div>
+    <div class="risk-item medium">
+      <span class="risk-num tag tag-amber">中</span>
+      <div><strong>分红可持续性</strong> — 2025年分红率50%，金额154亿元。若运价继续下行导致净利润进一步缩减，分红金额将相应下调。市场对高股息率（7.6%）的预期可能存在落差风险。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5: VETO CHECK -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">05</span> 一票否决检查</h2>
+  <p class="fs-13 mb-20 text-secondary">逐一检查六项一票否决条件是否触发。</p>
+
+  <table>
+    <thead><tr><th style="width: 36px;">#</th><th>否决条件</th><th style="width: 80px;">状态</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="ct">V1</td>
+        <td>核心基础设施被关停超过30天</td>
+        <td><span class="tag tag-green">未触发</span></td>
+        <td>港口/船队运营正常，无关停风险</td>
+      </tr>
+      <tr>
+        <td class="ct">V2</td>
+        <td>核心运量同比降幅 > 30%</td>
+        <td><span class="tag tag-green">未触发</span></td>
+        <td>2025年货运量同比+5.76%，量增但价跌</td>
+      </tr>
+      <tr>
+        <td class="ct">V3</td>
+        <td>核心牌照被吊销</td>
+        <td><span class="tag tag-green">未触发</span></td>
+        <td>航线经营许可等牌照正常持有</td>
+      </tr>
+      <tr>
+        <td class="ct">V4</td>
+        <td>现金流枯竭</td>
+        <td><span class="tag tag-green">未触发</span></td>
+        <td>经营现金流455亿+现金1508亿+负债率41%</td>
+      </tr>
+      <tr>
+        <td class="ct">V5</td>
+        <td>审计否定/无法表示意见</td>
+        <td><span class="tag tag-green">未触发</span></td>
+        <td>2025年年报为标准无保留意见</td>
+      </tr>
+      <tr>
+        <td class="ct">V6</td>
+        <td>实控人严重失信</td>
+        <td><span class="tag tag-green">未触发</span></td>
+        <td>央企控股，治理规范</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="info-box info-green mt-12">
+    <strong>结论：</strong>六项一票否决条件均未触发。中远海控目前无任何一票否决风险。
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6: KEY FINANCIAL DATA -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">06</span> 核心财务数据一览</h2>
+  <p class="fs-13 mb-20 text-secondary">基于2025年年度报告（2026-03-19发布）。</p>
+
+  <div class="card card-slate">
+    <table>
+      <thead><tr><th>财务指标</th><th class="ct">2025年</th><th class="ct">2024年</th><th class="ct">同比变化</th></tr></thead>
+      <tbody>
+        <tr><td>营业收入（亿元）</td><td class="ct"><strong>2,195.04</strong></td><td class="ct">2,338.59</td><td class="ct"><span class="text-red">-6.14%</span></td></tr>
+        <tr><td>归母净利润（亿元）</td><td class="ct"><strong>308.68</strong></td><td class="ct">491.00</td><td class="ct"><span class="text-red">-37.13%</span></td></tr>
+        <tr><td>EBIT（亿元）</td><td class="ct"><strong>450.13</strong></td><td class="ct">—</td><td class="ct">—</td></tr>
+        <tr><td>经营现金流（亿元）</td><td class="ct"><strong>455.46</strong></td><td class="ct">693.19</td><td class="ct"><span class="text-red">-34.29%</span></td></tr>
+        <tr><td>基本每股收益（元）</td><td class="ct"><strong>1.99</strong></td><td class="ct">3.08</td><td class="ct"><span class="text-red">-35.39%</span></td></tr>
+        <tr><td>资产负债率</td><td class="ct"><strong>41.42%</strong></td><td class="ct">42.70%</td><td class="ct"><span class="text-green">-1.28pct</span></td></tr>
+        <tr><td>总资产（亿元）</td><td class="ct"><strong>4,837.58</strong></td><td class="ct">4,974.72</td><td class="ct"><span class="text-amber">-2.76%</span></td></tr>
+        <tr><td>归母净资产（亿元）</td><td class="ct"><strong>2,322.65</strong></td><td class="ct">2,346.68</td><td class="ct"><span class="text-amber">-1.02%</span></td></tr>
+        <tr><td>现金及等价物（亿元）</td><td class="ct"><strong>1,508.82</strong></td><td class="ct">—</td><td class="ct">—</td></tr>
+        <tr><td>全年分红（亿元）</td><td class="ct"><strong>154.12</strong></td><td class="ct">—</td><td class="ct">—</td></tr>
+        <tr><td>毛利率（集运）</td><td class="ct"><strong>19.44%</strong></td><td class="ct">29.23%</td><td class="ct"><span class="text-red">-9.79pct</span></td></tr>
+        <tr><td>货运量（万TEU）</td><td class="ct"><strong>2,743.45</strong></td><td class="ct">2,593.90</td><td class="ct"><span class="text-green">+5.76%</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box info-blue mt-12">
+    <strong>财务健康度评估：</strong>中远海控受益于2021-2024年的航运超级周期，积累了充裕的现金储备（1508亿元）和较低的负债率（41.42%）。2025年运价回归正常化导致利润和现金流下降，但绝对值仍处历史高位。当前财务质量在航运行业中处于最优水平。核心关注点：运价继续下行对利润和现金流的侵蚀速度。
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 7: 信贷建议 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">07</span> 信贷建议</h2>
+  <p class="fs-13 mb-20 text-secondary">基于金字塔综合评分的授信决策参考</p>
+
+  <div class="info-box info-green">
+    <strong>综合评估：优质标的 · 建议积极支持</strong><br><br>
+    <strong>评级：</strong>A+ / 展望稳定偏负 &nbsp;|&nbsp; <strong>综合评分：</strong>7.90/10<br><br>
+    <strong>信贷建议：</strong>中远海控作为全球第四大班轮公司，规模壁垒极强（L1 9/10），财务质量稳健（L4 8/10），1508亿现金储备提供充足安全垫。建议以中长期项目贷款为主，支持其绿色船舶更新和码头建设。
+  </div>
+
+  <div class="card card-slate">
+    <table>
+      <thead><tr><th style="width: 120px;">决策维度</th><th>具体建议</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>授信额度</strong></td>
+          <td>建议综合授信额度不超过净资产的15%（约348亿元）。可采用银团贷款方式分散风险。</td>
+        </tr>
+        <tr>
+          <td><strong>贷款期限</strong></td>
+          <td>建议中长期为主（3-5年），匹配船舶资产使用寿命和绿色转型投资回收期。短期流贷控制在总额度30%以内。</td>
+        </tr>
+        <tr>
+          <td><strong>担保方式</strong></td>
+          <td>建议以船舶抵押为主（自有+光租船舶75%，抵押物充足），辅以运费应收账款质押。央企控股背景可适当放宽信用贷款比例。</td>
+        </tr>
+        <tr>
+          <td><strong>贷后重点</strong></td>
+          <td>每季度跟踪：① CCFI/SCFI运价指数走势 ② 长协合同续约价格和数量 ③ 绿色转型Capex执行进度 ④ 资产负债率和经营现金流变化</td>
+        </tr>
+        <tr>
+          <td><strong>退出触发条件</strong></td>
+          <td>以下信号出现任意一项即启动退出评估：① 运价指数连续2个季度同比降幅超30% ② 资产负债率突破55% ③ 经营现金流连续2个季度为负 ④ 长协占比降至40%以下</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SECTION 8: 数据完备性评估 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title"><span class="tag tag-blue br-6">08</span> 数据完备性评估</h2>
+  <p class="fs-13 mb-20 text-secondary">数据来源与质量评分 — 信号密度与关键缺口分析</p>
+
+  <h3 class="fs-14 mb-12">信号密度</h3>
+  <p class="fs-12 text-secondary mb-8">数据覆盖全面性评估（5个关键维度）</p>
+  <div class="density-bar">
+    <div class="seg filled-green"></div>
+    <div class="seg filled-green"></div>
+    <div class="seg filled-green"></div>
+    <div class="seg filled-green"></div>
+    <div class="seg filled-amber"></div>
+  </div>
+  <div class="fs-12 text-secondary mb-16">覆盖度：80% — 财务/运营数据完善，ESG/供应链数据有提升空间</div>
+
+  <h3 class="fs-14 mb-12">关键数据缺口</h3>
+  <div class="gap-item">
+    <span class="gap-tag urgent">高优先级</span>
+    <span>长协合同占比未在年报中单独披露——行业通行做法是披露"长协收入占比"，中远海控未披露该数据，影响L2客户粘性评估的精准度</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">中优先级</span>
+    <span>分航线营收/成本数据未拆分——美洲线/欧洲线/亚洲线等主要航线的收入和成本结构未披露，无法精确评估航线组合风险</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">中优先级</span>
+    <span>码头业务分部利润未拆分到具体港口——40个港口387个泊位的盈利贡献差异大，合并披露掩盖了资产质量的结构性差异</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">中优先级</span>
+    <span>燃油成本对冲策略披露不充分——燃油成本占营业成本约25-30%，但公司未披露燃油对冲比例和衍生品使用情况</span>
+  </div>
+  <div class="gap-item">
+    <span class="gap-tag normal">中优先级</span>
+    <span>船舶运营碳排放细项数据不足——仅披露绿色船舶数量，缺乏Scope 1/2/3的完整碳排放数据，IMO新规合规压力难以量化</span>
+  </div>
+
+  <h3 class="fs-14 mb-12 mt-16">综合置信度</h3>
+  <div class="card card-slate">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="fs-28 fw-800 text-green">高</div>
+      <div class="fs-13 text-secondary">多源可交叉验证 · 年报+券商研报+行业数据三位一体。财务数据置信度极高（标准无保留审计），运营数据置信度中高（年报披露充分但缺少航线拆分），ESG/供应链数据置信度中等（披露不足）。综合来看，基本面评分可信度较高，但轨道B市场信号分析受限于航线拆分数据和长协数据缺失。</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.container -->
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="footer">
+  <p><strong>单标的深度分析</strong> · 中远海控 (601919) · 交通运输 · 网络+流量型</p>
+  <p>本报告由 Credence Rating Engine 基于"网络+流量型"范式生成</p>
+  <p>分析时点: 2026-07-10 · 数据截止: 2025年报 · 敏感度: 内部</p>
+</div>
+
+</body>
+</html>
