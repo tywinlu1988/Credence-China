@@ -1,6 +1,6 @@
 ---
 name: fixed-income-credit-analysis
-description: Use when analyzing industries or companies for credit decisions in Chinese fixed income markets, building industry-specific analysis frameworks for bank lending or bond investment, evaluating corporate credit quality through a systematic dual-track methodology, constructing multi-dimensional investment dashboards from fragmented public data, or retroactively validating analytical frameworks against historical default events, evaluating cross-industry contagion and portfolio concentration risk through the v0.7.0-alpha system-intelligence layer
+description: Use when analyzing industries or companies for credit decisions in Chinese fixed income markets, building industry analysis frameworks for lending or bond investment, evaluating credit quality via dual-track methodology, constructing investment dashboards from public data, validating frameworks against historical defaults, or assessing cross-industry contagion, portfolio concentration, and systemic risk via the system-intelligence layer. Route vague needs to the credit-analysis-router skill.
 ---
 
 ## Invocation Protocol

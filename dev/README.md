@@ -17,6 +17,7 @@
 ## 目录结构
 
 ```
+../AGENTS.md                                       ← 跨 CLI 通用入口（仓库根级 · 任何 agent CLI 从这里开始）
 dev/
 ├── README.md                                        ← 你在这里
 ├── engine/                                          → 算法与方法论（25份现行文档）
@@ -119,6 +120,7 @@ dev/
 | 组合集中度评估 | `engine/concentration-framework.md` |
 | 系统性风险指数 | `engine/systemic-warning-framework.md` |
 | 报告设计样式体系 | `design/report-style-system.md` |
+| 任意 agent CLI 的通用入口（Claude Code/Codex/Cursor/Gemini/OpenCode） | `../AGENTS.md` |
 | AI Agent使用这套方法论 | `.claude/skills/fixed-income-credit-analysis/SKILL.md` |
 | 版本管理策略与发布流程 | `../docs/VERSION-MANAGEMENT.md` |
 
