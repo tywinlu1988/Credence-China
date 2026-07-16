@@ -28,12 +28,12 @@ node_modules/
 *.tmp
 *.log
 
-# ---- 本地过程/工具状态：留在本地磁盘，不入 GitHub ----
-.claude/
-.pytest_cache/
-.superpowers/
-tryout/
-clone-guide.txt
+# ---- 本地过程/工具状态：留在本地磁盘，不入 GitHub（锚定根目录，不误伤嵌套同名目录） ----
+/.claude/
+/.pytest_cache/
+/.superpowers/
+/tryout/
+/clone-guide.txt
 docs/superpowers/
 
 # ---- validation/：仅 docs/ + 2 份行业方法论参照入库；其余测试报告留在本地磁盘 ----
