@@ -15,6 +15,8 @@ SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis
 SKILL_REFERENCES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "references"
 SKILL_TEMPLATES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "templates"
 ROUTER_SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "credit-analysis-router" / "SKILL.md"
+SKILLS_DIR = ROOT / "dev" / ".claude" / "skills"
+AGENTS_MD = ROOT / "AGENTS.md"
 
 # Make `src` importable when this script is run directly (python scripts/consistency_check.py),
 # where sys.path[0] is the scripts/ dir rather than the repo root.
@@ -333,6 +335,34 @@ def check_path_sheets() -> list[str]:
     return errors
 
 
+def check_agents_entry() -> list[str]:
+    """Orphan-skill guard for the cross-CLI universal entry (v0.7.6).
+
+    The repo-root AGENTS.md is the universal entry any agent CLI reads to discover
+    the skills. It must exist, and every skill present on disk under
+    dev/.claude/skills/ must be referenced in it -- otherwise that skill would be
+    undiscoverable to the CLIs that do not auto-discover dev/.claude/skills (an
+    orphan). This keeps AGENTS.md in sync with the on-disk skill set.
+    """
+    if not AGENTS_MD.exists():
+        return ["AGENTS_ENTRY: root AGENTS.md is missing"]
+    if not SKILLS_DIR.exists():
+        return []
+    text = AGENTS_MD.read_text(encoding="utf-8")
+    errors = []
+    for skill_dir in sorted(SKILLS_DIR.iterdir()):
+        if not skill_dir.is_dir() or not (skill_dir / "SKILL.md").exists():
+            continue
+        # Anchor to the discovery-index path reference, not a bare substring --
+        # otherwise a passing mention of the skill name elsewhere (e.g. the
+        # 4-stage pipeline table) would mask its absence from the Skill Index.
+        if f"skills/{skill_dir.name}/SKILL.md" not in text:
+            errors.append(
+                f"AGENTS_ENTRY: on-disk skill '{skill_dir.name}' is not referenced in AGENTS.md"
+            )
+    return errors
+
+
 def _parse_contagion_industries(path: Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
     start = text.find("### 1.2 范式映射表")
@@ -396,6 +426,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_audit_versions())
     errors.extend(check_skill_template_drift())
     errors.extend(check_path_sheets())
+    errors.extend(check_agents_entry())
     return errors
 
 

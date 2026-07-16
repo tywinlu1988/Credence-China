@@ -1,6 +1,6 @@
 ---
 name: credit-analysis-router
-description: Intake router for vague or compound Chinese fixed-income credit-analysis requests such as '帮我看看这家公司', '这个组合有没有问题', '该做哪种分析', '该从哪儿入手'. Use when the need is ambiguous, spans multiple roles (lending/investment/underwriting/trading/risk/financing), or the user asks which analysis to run. Runs a progressive four-question protocol (role/object/depth/data) and emits a structured work-path sheet routing to the work-path registry. If the user already names a concrete methodology task or engine path, go directly to the fixed-income-credit-analysis skill instead.
+description: Intake router for vague or compound Chinese fixed-income credit-analysis requests such as '帮我看看这家公司', '这个组合有没有问题', '该做哪种分析', '该从哪儿入手'. Use when the need is ambiguous, spans multiple roles (lending/investment/underwriting/trading/risk/financing), or the user asks which analysis to run or where to start. If the user already names a concrete methodology task or engine path, use the fixed-income-credit-analysis skill instead.
 ---
 
 ## Purpose
