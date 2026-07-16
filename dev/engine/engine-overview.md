@@ -29,6 +29,7 @@
 | **concentration-framework.md** | 五维集中度分析 · 阈值体系 · 评级调整映射 · 压力测试 | 需要评估组合集中度风险 |
 | **systemic-warning-framework.md** | SRI信号聚合 · 四级温度计 · 历史回测 · 即时计算 | 需要系统性风险读数 |
 | **work-path-registry.md** | 工作路径注册表 · 角色×方向×深度×报告的路径定义 | 需要确认走哪条路径时查阅 |
+| **pipeline-contract.md** | 四段链 I/O 契约 · 四份产物 schema · 链式边（机器可读） | 需要确认阶段间传递什么产物时查阅 |
 | **audits/financial-analysis-audit.md** | 财务层10项标准差距审查 | 审查记录 |
 | **audits/quantitative-audit.md** | 定量模块统计严谨性审查 | 审查记录 |
 | **audits/rating-agency-benchmark-audit.md** | 评级机构方法论对标 | 审查记录 |
@@ -193,6 +194,7 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | 0.4.0 | 2026-07-08 | 评级粒度从6档扩展至12档（+/-子级）、EL预期损失整合层、中国市场PD参考校准 |
 | 0.5.4-alpha | 2026-07-10 | 一致性审计修复：术语统一、阈值对齐、版本号标准化、交叉引用补全 |
 | **0.7.0-alpha** | **2026-07-10** | **系统智能层发布：+传染矩阵、集中度框架、系统性预警框架。引擎架构升级至四层。13行业覆盖。M4组合风控完整实现。** |
+| 0.7.7-alpha | 2026-07-16 | 四段链契约落地：新增 pipeline-contract.md（四份产物 schema + 链式边机器可读），report/qa 两阶段 skill 接入四段链 |
 
 ---
 

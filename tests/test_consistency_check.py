@@ -151,13 +151,13 @@ def test_check_skill_references_flags_stale_version(tmp_path, monkeypatch):
     (fake_engine / "industry-framework.md").write_text(
         "**版本**: v0.7.0-alpha\n", encoding="utf-8"
     )
-    fake_refs = tmp_path / "references"
-    fake_refs.mkdir()
+    fake_refs = tmp_path / "skills" / "some-skill" / "references"
+    fake_refs.mkdir(parents=True)
     (fake_refs / "industry-pyramids.md").write_text(
         "**版本**: v0.6.9-alpha\n", encoding="utf-8"
     )
     monkeypatch.setattr(cc, "ENGINE_DIR", fake_engine)
-    monkeypatch.setattr(cc, "SKILL_REFERENCES_DIR", fake_refs)
+    monkeypatch.setattr(cc, "SKILLS_DIR", tmp_path / "skills")
     errors = cc.check_skill_references()
     assert any("industry-pyramids.md" in e and "v0.6.9-alpha" in e for e in errors)
 
@@ -169,13 +169,13 @@ def test_check_skill_references_flags_missing_version(tmp_path, monkeypatch):
     (fake_engine / "mosaic-engine.md").write_text(
         "**版本**: v0.7.0-alpha\n", encoding="utf-8"
     )
-    fake_refs = tmp_path / "references"
-    fake_refs.mkdir()
+    fake_refs = tmp_path / "skills" / "some-skill" / "references"
+    fake_refs.mkdir(parents=True)
     (fake_refs / "mosaic-engine-architecture.md").write_text(
         "# Mosaic engine\n", encoding="utf-8"
     )
     monkeypatch.setattr(cc, "ENGINE_DIR", fake_engine)
-    monkeypatch.setattr(cc, "SKILL_REFERENCES_DIR", fake_refs)
+    monkeypatch.setattr(cc, "SKILLS_DIR", tmp_path / "skills")
     errors = cc.check_skill_references()
     assert any("mosaic-engine-architecture.md" in e and "missing version header" in e for e in errors)
 

@@ -94,6 +94,12 @@ Full specification: `references/system-intelligence.md` and `dev/engine/systemic
 8. Data gaps are not defects — they are risk signals. Every analysis includes a completeness report.
 9. The framework identifies structural unsustainability but cannot predict default timing or specific triggers.
 
+## Chaining（链式交接）
+
+- **上游**：`credit-analysis-router` —— 消费其《工作路径单》（见 Invocation Protocol）。
+- **产出**：分析完成后输出《分析产物》（Analysis Artifact，schema 见 `dev/engine/pipeline-contract.md` §2.2），`path_id` 承自路径单。
+- **下游（REQUIRED NEXT SUB-SKILL）**：`credit-report-builder` —— 把《分析产物》移交该 skill 装配为交付报告；本 skill 不做报告装配。
+
 ## References
 
 详情已下沉至 `references/`（单一事实源仍为 `dev/engine/` 各引擎文档）：

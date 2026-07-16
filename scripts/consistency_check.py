@@ -12,7 +12,6 @@ ROOT = Path(__file__).resolve().parent.parent
 ENGINE_DIR = ROOT / "dev" / "engine"
 TEMPLATES_DIR = ROOT / "dev" / "templates"
 SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "SKILL.md"
-SKILL_REFERENCES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "references"
 SKILL_TEMPLATES_DIR = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "templates"
 ROUTER_SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "credit-analysis-router" / "SKILL.md"
 SKILLS_DIR = ROOT / "dev" / ".claude" / "skills"
@@ -48,6 +47,7 @@ CORE_DOCS = [
     "outlook-monitoring-framework.md",
     "lgd-recovery-framework.md",
     "lgfv-framework.md",
+    "pipeline-contract.md",
 ]
 
 SRI_PCT_PATTERN = re.compile(r"SRI\s*[:：]\s*\d{2}\s*/\s*100", re.IGNORECASE)
@@ -127,6 +127,9 @@ REFERENCE_TO_ENGINE_MAP = {
     "industry-scoring.md": "industry-framework.md",
     "system-intelligence.md": "systemic-warning-framework.md",
     "stakeholder-paths.md": "multi-stakeholder.md",
+    "work-paths.md": "work-path-registry.md",
+    "report-mapping.md": "output-layered-framework.md",
+    "qa-checklist.md": "output-layered-framework.md",
 }
 VERSION_HEADER_RE = re.compile(r"\*\*(?:版本|对应引擎版本)\*\*\s*[:：]?\s*([^\s|]+)")
 YAML_BLOCK_RE = re.compile(r"```yaml\s*\n(.*?)```", re.DOTALL)
@@ -260,12 +263,23 @@ def check_sri_track_b_consistency() -> list[str]:
     return []
 
 
+def _skill_reference_files() -> list[Path]:
+    """Every ``references/*.md`` across all on-disk skills (discovery by convention).
+
+    Generalized in v0.7.7 from a single hardcoded skill dir to every skill under
+    ``dev/.claude/skills/``, so new stage skills (credit-report-builder,
+    credit-qa-verifier) get the same version-header-vs-engine check with no
+    per-skill checker edits.
+    """
+    if not SKILLS_DIR.exists():
+        return []
+    return sorted(SKILLS_DIR.glob("*/references/*.md"))
+
+
 def check_skill_references() -> list[str]:
-    """Compare Skill reference files with their engine counterparts by version header."""
+    """Compare every skill's reference files with their engine counterparts by version header."""
     errors = []
-    if not SKILL_REFERENCES_DIR.exists():
-        return errors
-    for ref_path in SKILL_REFERENCES_DIR.glob("*.md"):
+    for ref_path in _skill_reference_files():
         engine_name = REFERENCE_TO_ENGINE_MAP.get(ref_path.name, ref_path.name)
         engine_path = ENGINE_DIR / engine_name
         if not engine_path.exists():
@@ -332,6 +346,60 @@ def check_path_sheets() -> list[str]:
             continue  # the blank path-sheet template, not a concrete sheet
         for err in validate_path_sheet(data, registry_paths):
             errors.append(f"PATH_SHEET: {err}")
+    return errors
+
+
+def _skill_markdown_files() -> list[Path]:
+    """Each on-disk skill's SKILL.md plus its references/*.md (for the join-key scan)."""
+    if not SKILLS_DIR.exists():
+        return []
+    files: list[Path] = []
+    for skill_dir in sorted(SKILLS_DIR.iterdir()):
+        if not skill_dir.is_dir():
+            continue
+        skill_md = skill_dir / "SKILL.md"
+        if skill_md.exists():
+            files.append(skill_md)
+        refs = skill_dir / "references"
+        if refs.exists():
+            files.extend(sorted(refs.glob("*.md")))
+    return files
+
+
+def check_artifact_path_ids() -> list[str]:
+    """Join-key referential integrity for the four-stage chain artifacts (v0.7.7).
+
+    Every yaml block in any skill's SKILL.md or references/*.md that carries a
+    non-empty ``path_id`` must resolve to a registered work path. This covers the
+    concrete Delivery Note / QA Verdict examples emitted by the report and qa
+    skills (and the router's own concrete path-sheet examples). Blank schema
+    templates (empty ``path_id``) are skipped.
+
+    We assert ONLY that the ``path_id`` resolves -- we do NOT run full path-sheet
+    field validation here, because chain artifacts (Delivery Note, QA Verdict)
+    legitimately omit the role/object/depth fields a real path sheet requires;
+    running validate_path_sheet on them would false-positive. Full path-sheet
+    validation stays in check_path_sheets (router Path Sheet Output section only).
+    """
+    registry_path = ENGINE_DIR / "work-path-registry.md"
+    if not SKILLS_DIR.exists() or not registry_path.exists():
+        return []
+    registry_paths = load_registry_paths(registry_path)
+    errors = []
+    for md in _skill_markdown_files():
+        text = md.read_text(encoding="utf-8")
+        for block in YAML_BLOCK_RE.findall(text):
+            data = yaml.safe_load(block)
+            if not isinstance(data, dict):
+                continue
+            pid = str(data.get("path_id") or "").strip()
+            if not pid:
+                continue  # blank schema template, not a concrete artifact
+            if pid not in registry_paths:
+                errors.append(
+                    f"ARTIFACT_PATH_ID: {md.relative_to(SKILLS_DIR)} references "
+                    f"unknown path_id {pid!r}"
+                )
     return errors
 
 
@@ -426,6 +494,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_audit_versions())
     errors.extend(check_skill_template_drift())
     errors.extend(check_path_sheets())
+    errors.extend(check_artifact_path_ids())
     errors.extend(check_agents_entry())
     return errors
 

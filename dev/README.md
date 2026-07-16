@@ -64,7 +64,11 @@ dev/
 │   ├── product-overview.md                         产品愿景 · 魔法体验 · 用户画像
 │   └── commercial-model.md                         商业化模型 · 买方模拟 · GTM策略
 │
-└── .claude/skills/fixed-income-credit-analysis/     → AI技能包（模板统一引用 dev/templates/）
+└── .claude/skills/                                → AI技能包（四段链；模板统一引用 dev/templates/）
+    ├── credit-analysis-router/                    ① intake：四问路由，产出《工作路径单》
+    ├── fixed-income-credit-analysis/              ② analysis：按路径单执行分析，产出《分析产物》
+    ├── credit-report-builder/                     ③ report：装配交付报告，产出《交付单》
+    └── credit-qa-verifier/                        ④ qa：交付前终态质检，产出《质检裁决》
 ```
 
 > 能力验证证据（72 份测试报告等）存档于仓库根级 `../validation/`，为测试输出而非项目组成部分，永不进入版本快照。
@@ -121,7 +125,8 @@ dev/
 | 系统性风险指数 | `engine/systemic-warning-framework.md` |
 | 报告设计样式体系 | `design/report-style-system.md` |
 | 任意 agent CLI 的通用入口（Claude Code/Codex/Cursor/Gemini/OpenCode） | `../AGENTS.md` |
-| AI Agent使用这套方法论 | `.claude/skills/fixed-income-credit-analysis/SKILL.md` |
+| 四段链产物契约（工作路径单/分析产物/交付单/质检裁决） | `engine/pipeline-contract.md` |
+| AI Agent使用这套方法论（四段链：路由/分析/报告/质检） | `.claude/skills/` |
 | 版本管理策略与发布流程 | `../docs/VERSION-MANAGEMENT.md` |
 
 ---

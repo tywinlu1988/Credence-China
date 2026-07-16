@@ -90,6 +90,10 @@ notes: "信息不足时降级为 L1 决策快照并附数据缺口清单"
 - **planned 路径如实告知**：推荐到 🔴 planned 路径（如 WP-M2-01、WP-M5-01）时，必须明示"该路径待开发"，并给出可替代的 active 路径，不得伪造能力。
 - **路由即移交**：路径单产出后，切换到 `fixed-income-credit-analysis` skill，按 `engine_reading_order` 顺序阅读引擎文档并执行，质量门按 `quality_gates` 校验。（自 v0.7.4 起执行 skill 已按路径单驱动阅读；无路径单时回退到核心集 `engine-overview.md` + `dual-track-methodology.md` + 请求点名的专题文档。）
 
+## Chaining（链式交接）
+
+- **下游（REQUIRED NEXT SUB-SKILL）**：`fixed-income-credit-analysis` —— 《工作路径单》产出后即移交该 skill 执行分析；四段链产物契约见 `dev/engine/pipeline-contract.md`。
+
 ## References
 
 - `references/work-paths.md` — 工作路径路由视图（精简表，标注状态与一句话触发特征）
