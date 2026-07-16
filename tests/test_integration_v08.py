@@ -8,7 +8,7 @@ release, not any single component:
 - T11.2: the 2 wired paths (WP-M4-01 concentration, WP-M4-03 SRI) execute code at the
   analysis stage; the other 6 active paths produce a complete LLM-orchestrated plan.
 - T11.3: the end-to-end walkthrough record exists and literally names all 8 path ids.
-- T11.4: version promotion is consistent (EXPECTED_VERSION == v0.8.0-release and every
+- T11.4: version promotion is consistent (EXPECTED_VERSION == v0.8.0-alpha and every
   CORE_DOCS doc + skill declares it), mirroring consistency_check.check_versions.
 - T11.5: the v0.8.0 snapshot exists with the mirrored dev/ + src/ + AGENTS.md layout.
 
@@ -38,8 +38,8 @@ REGISTRY = ROOT / "dev" / "engine" / "work-path-registry.md"
 ENGINE_DIR = ROOT / "dev" / "engine"
 SKILLS_DIR = ROOT / "dev" / ".claude" / "skills"
 WALKTHROUGH = ROOT / "validation" / "docs" / "v0.8.0-end-to-end-walkthroughs.md"
-SNAPSHOT = ROOT / "version" / "v0.8.0-release"
-SNAPSHOT_ZIP = ROOT / "version" / "v0.8.0-release.zip"
+SNAPSHOT = ROOT / "version" / "v0.8.0-alpha"
+SNAPSHOT_ZIP = ROOT / "version" / "v0.8.0-alpha.zip"
 CONSISTENCY_CHECK = ROOT / "scripts" / "consistency_check.py"
 
 ACTIVE_PATHS = [
@@ -215,7 +215,7 @@ def test_t11_3_walkthrough_covers_all_eight_paths():
 # --------------------------------------------------------------------------
 
 def test_t11_4_version_promotion_consistent(cc):
-    assert cc.EXPECTED_VERSION == "v0.8.0-release"
+    assert cc.EXPECTED_VERSION == "v0.8.0-alpha"
     # check_versions must report no errors: all CORE_DOCS + the executor skill declare it
     assert cc.check_versions() == [], "check_versions reported errors after promotion"
     # every CORE_DOCS doc header declares the promoted version (mirror check_versions logic)
@@ -244,7 +244,7 @@ def test_t11_5_snapshot_integrity():
     assert (SNAPSHOT / "AGENTS.md").is_file(), "snapshot missing AGENTS.md"
     # the snapshot carries the coded engines and the promoted entry version
     assert (SNAPSHOT / "src" / "pipeline.py").is_file()
-    assert "v0.8.0-release" in (SNAPSHOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert "v0.8.0-alpha" in (SNAPSHOT / "AGENTS.md").read_text(encoding="utf-8")
     # no excluded artifacts leaked into the snapshot
     leaked = [
         p for p in SNAPSHOT.rglob("*")
