@@ -8,9 +8,10 @@ release, not any single component:
 - T11.2: the 2 wired paths (WP-M4-01 concentration, WP-M4-03 SRI) execute code at the
   analysis stage; the other 6 active paths produce a complete LLM-orchestrated plan.
 - T11.3: the end-to-end walkthrough record exists and literally names all 8 path ids.
-- T11.4: version promotion is consistent (EXPECTED_VERSION == v0.8.0-alpha and every
+- T11.4: version promotion is consistent (EXPECTED_VERSION == v0.8.0-release and every
   CORE_DOCS doc + skill declares it), mirroring consistency_check.check_versions.
-- T11.5: the v0.8.0 snapshot exists with the mirrored dev/ + src/ + AGENTS.md layout.
+- T11.5: the v0.8.0 snapshot exists as the installable agent package (skills @
+  .claude/skills, flattened engine/, generated entry/install docs) with no dead links.
 
 Single-source rule: the tests assert structure/versions only. They never restate engine
 thresholds/weights -- the only numbers here are the *fixture inputs* and the *real engine
@@ -38,9 +39,10 @@ REGISTRY = ROOT / "dev" / "engine" / "work-path-registry.md"
 ENGINE_DIR = ROOT / "dev" / "engine"
 SKILLS_DIR = ROOT / "dev" / ".claude" / "skills"
 WALKTHROUGH = ROOT / "validation" / "docs" / "v0.8.0-end-to-end-walkthroughs.md"
-SNAPSHOT = ROOT / "version" / "v0.8.0-alpha"
-SNAPSHOT_ZIP = ROOT / "version" / "v0.8.0-alpha.zip"
+SNAPSHOT = ROOT / "version" / "v0.8.0-release"
+SNAPSHOT_ZIP = ROOT / "version" / "v0.8.0-release.zip"
 CONSISTENCY_CHECK = ROOT / "scripts" / "consistency_check.py"
+BUILD_DIST = ROOT / "scripts" / "build_dist.py"
 
 ACTIVE_PATHS = [
     "WP-M0-01", "WP-M1-01", "WP-M4-01", "WP-M4-02",
@@ -72,6 +74,19 @@ def _load_consistency_check():
 @pytest.fixture(scope="module")
 def cc():
     return _load_consistency_check()
+
+
+def _load_build_dist():
+    """importlib-load scripts/build_dist.py (it is not a package module)."""
+    spec = importlib.util.spec_from_file_location("build_dist", BUILD_DIST)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+@pytest.fixture(scope="module")
+def bd():
+    return _load_build_dist()
 
 
 @pytest.fixture(scope="module")
@@ -215,7 +230,7 @@ def test_t11_3_walkthrough_covers_all_eight_paths():
 # --------------------------------------------------------------------------
 
 def test_t11_4_version_promotion_consistent(cc):
-    assert cc.EXPECTED_VERSION == "v0.8.0-alpha"
+    assert cc.EXPECTED_VERSION == "v0.8.0-release"
     # check_versions must report no errors: all CORE_DOCS + the executor skill declare it
     assert cc.check_versions() == [], "check_versions reported errors after promotion"
     # every CORE_DOCS doc header declares the promoted version (mirror check_versions logic)
@@ -234,23 +249,51 @@ def test_t11_4_version_promotion_consistent(cc):
 
 
 # --------------------------------------------------------------------------
-# T11.5 — snapshot integrity: mirrored dev/ + src/ + AGENTS.md
+# T11.5 — snapshot integrity: installable agent package (no dead links)
 # --------------------------------------------------------------------------
 
-def test_t11_5_snapshot_integrity():
+def test_t11_5_snapshot_integrity(cc, bd):
     assert SNAPSHOT.is_dir(), f"snapshot missing: {SNAPSHOT}"
-    assert (SNAPSHOT / "dev").is_dir(), "snapshot missing dev/"
-    assert (SNAPSHOT / "src").is_dir(), "snapshot missing src/"
-    assert (SNAPSHOT / "AGENTS.md").is_file(), "snapshot missing AGENTS.md"
-    # the snapshot carries the coded engines and the promoted entry version
-    assert (SNAPSHOT / "src" / "pipeline.py").is_file()
-    assert "v0.8.0-alpha" in (SNAPSHOT / "AGENTS.md").read_text(encoding="utf-8")
-    # no excluded artifacts leaked into the snapshot
+
+    # generated entry/install docs (single universal package, per-tool entries)
+    for entry in ("AGENTS.md", "CLAUDE.md", "GEMINI.md", "INSTALL.md", "README.md"):
+        assert (SNAPSHOT / entry).is_file(), f"snapshot missing entry {entry}"
+    assert (SNAPSHOT / ".claude-plugin" / "plugin.json").is_file(), "missing plugin.json"
+    assert (SNAPSHOT / "adapters" / "codex.md").is_file(), "missing adapters/codex.md"
+
+    # skills归位 .claude/skills/（Claude Code 原生 + Cursor/Gemini/OpenCode 兼容读）
+    for skill in FOUR_SKILLS:
+        assert (SNAPSHOT / ".claude" / "skills" / skill / "SKILL.md").is_file(), skill
+
+    # engine 平铺：28 份 CORE_DOCS + 报告模板 + 可执行编排器
+    for doc in cc.CORE_DOCS:
+        assert (SNAPSHOT / "engine" / doc).is_file(), f"snapshot missing engine/{doc}"
+    assert (SNAPSHOT / "templates").is_dir(), "snapshot missing templates/"
+    assert (SNAPSHOT / "src" / "pipeline.py").is_file(), "snapshot missing src/pipeline.py"
+
+    # the snapshot carries the promoted entry version
+    assert cc.EXPECTED_VERSION in (SNAPSHOT / "AGENTS.md").read_text(encoding="utf-8")
+
+    # no excluded artifacts leaked (settings.local.json / audits / design / product /
+    # data / validation / dev 源 / 字节码缓存)
     leaked = [
         p for p in SNAPSHOT.rglob("*")
-        if (p.is_dir() and p.name in (".git", "__pycache__"))
-        or (p.is_file() and p.suffix == ".pyc")
+        if (p.is_dir() and p.name in (
+            ".git", "__pycache__", "audits", "design", "product", "data", "validation"))
+        or (p.is_file() and (p.suffix == ".pyc" or p.name == "settings.local.json"))
     ]
     assert not leaked, f"excluded artifacts in snapshot: {leaked}"
+
+    # 无死链接：无绝对路径、无残留 dev/ 路径 token（用户核心诉求——别的用户根目录不一致）
+    dead = []
+    for f in SNAPSHOT.rglob("*"):
+        if f.is_file() and f.suffix in bd.TEXT_EXTS:
+            text = f.read_text(encoding="utf-8")
+            if bd.ABS_PATH_RE.search(text):
+                dead.append(f"{f.relative_to(SNAPSHOT)}: absolute path")
+            if bd.DEV_TOKEN_RE.search(text):
+                dead.append(f"{f.relative_to(SNAPSHOT)}: dev/ token")
+    assert not dead, f"dead links in snapshot: {dead[:20]}"
+
     # distribution zip generated alongside the dir
     assert SNAPSHOT_ZIP.is_file(), f"snapshot zip missing: {SNAPSHOT_ZIP}"

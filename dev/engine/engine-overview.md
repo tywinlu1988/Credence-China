@@ -1,6 +1,6 @@
 # 固定收益信用分析引擎 — 架构总览
 
-**版本**: v0.8.0-alpha | **日期**: 2026-07-10
+**版本**: v0.8.0-release | **日期**: 2026-07-10
 
 ---
 
@@ -199,7 +199,8 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | 0.7.7-alpha | 2026-07-16 | 四段链契约落地：新增 pipeline-contract.md（四份产物 schema + 链式边机器可读），report/qa 两阶段 skill 接入四段链 |
 | 0.7.8-alpha | 2026-07-16 | 可执行编排器 + 接编码引擎：新增 src/pipeline.py（从 pipeline-contract.md 读阶段定义、复用 path_sheet.py），接线 WP-M4-03(SRI)/WP-M4-01(集中度) 两个编码引擎，新增代码↔文档阈值对账桥与链式边端点校验 |
 | 0.7.9-alpha | 2026-07-16 | 维度物件化：新增 dimension-registry.md（6范式+LGFV 与 M0-M5 角色物件化为可寻址 yaml，单源指针层不复制阈值）；接通孤儿范式文档（industry-framework §3 引用 paradigm-brand-channel/paradigm-network-traffic 独立规格）；consistency_check CORE_DOCS 补齐 5 份在盘文档 + dimension-registry，补上版本检查缺口。推迟项：work-path-registry `paradigm_selection` 引维度 ID 的反向指针未实施（源为"六范式+LGFV"集体粒度，详见 dimension-registry §三 推迟项注） |
-| **0.8.0-alpha** | **2026-07-16** | **集成发布（最终）：v0.7.6–v0.7.9 阶梯能力整合为正式 release——跨 CLI 通用入口（AGENTS.md + Codex 适配）、四段链契约（pipeline-contract.md + credit-report-builder/credit-qa-verifier 两阶段 skill）、可执行编排器（src/pipeline.py 接 WP-M4-01 集中度/WP-M4-03 SRI 两编码引擎）、维度注册表（dimension-registry.md）。8 条 active 路径端到端走查归档 validation/docs/（append-only 证据）。全部核心文档版本头统一晋升 v0.8.0-alpha，快照边界扩为 dev/ + AGENTS.md + src/。全量一致性检查与 143 项测试通过。** |
+| 0.8.0-alpha | 2026-07-16 | 集成预发布：v0.7.6–v0.7.9 阶梯能力整合——跨 CLI 通用入口（AGENTS.md + Codex 适配）、四段链契约（pipeline-contract.md + report/qa 两阶段 skill）、可执行编排器（src/pipeline.py 接 WP-M4-01 集中度/WP-M4-03 SRI）、维度注册表（dimension-registry.md）。8 条 active 路径端到端走查归档 validation/docs/。快照 dev/ + AGENTS.md + src/。143 项测试通过 |
+| **0.8.0-release** | **2026-07-16** | **可安装 agent 包发布：新增 `scripts/build_dist.py` 把 dev 工作区（源）确定性组装为 `dist/credence/` 可安装包——skills 归位 `.claude/skills/`（Claude Code 原生 + Cursor/Gemini/OpenCode 兼容读）、engine 平铺、AGENTS.md/CLAUDE.md/GEMINI.md 三入口、按工具 INSTALL.md、.claude-plugin 清单；src/path_sheet.py 加 engine_dir/templates_dir 布局自适应。清除死链接与根目录假设（settings.local.json 绝对路径、audits/design/product/data 剔除、16 处 audits/validation 溯源指针模式化清除）。快照重定义为可安装包。150 项测试通过** |
 
 ---
 
@@ -211,24 +212,24 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 
 | 版本体系 | 适用范围 | 示例 | 说明 |
 |---|---|---|---|
-| **引擎版本** | 核心方法论文档 | v0.8.0-alpha | 反映引擎方法论的整体迭代阶段，所有核心方法论文档统一标注此版本 |
-| **审查报告版本** | 审计/自评/终审文档 | v1.0, v1.1 | 独立的审查报告版本体系，在文件头标注"对应引擎版本: v0.8.0-alpha" |
+| **引擎版本** | 核心方法论文档 | v0.8.0-release | 反映引擎方法论的整体迭代阶段，所有核心方法论文档统一标注此版本 |
+| **审查报告版本** | 审计/自评/终审文档 | v1.0, v1.1 | 独立的审查报告版本体系，在文件头标注"对应引擎版本: v0.8.0-release" |
 
 ### 7.2 核心方法论文档版本对应关系
 
 | 文档 | 当前版本 | 说明 |
 |---|---|---|
-| engine-overview.md | v0.8.0-alpha | 引擎架构总览 |
-| dual-track-methodology.md | v0.8.0-alpha | 双轨分析方法论 |
-| industry-framework.md | v0.8.0-alpha | 行业分类与分析框架 |
-| qualitative-analysis.md | v0.8.0-alpha | 定性分析方法论 |
-| quantitative-analysis.md | v0.8.0-alpha | 定量分析方法论 |
-| mosaic-engine.md | v0.8.0-alpha | 马赛克引擎 |
-| output-layered-framework.md | v0.8.0-alpha | 分层输出框架 |
-| contagion-theory.md | v0.8.0-alpha | 传染理论基础（系统智能层） |
-| contagion-matrix.md | v0.8.0-alpha | 13行业传染矩阵 |
-| concentration-framework.md | v0.8.0-alpha | 五维集中度分析框架 |
-| systemic-warning-framework.md | v0.8.0-alpha | 系统性预警框架 |
+| engine-overview.md | v0.8.0-release | 引擎架构总览 |
+| dual-track-methodology.md | v0.8.0-release | 双轨分析方法论 |
+| industry-framework.md | v0.8.0-release | 行业分类与分析框架 |
+| qualitative-analysis.md | v0.8.0-release | 定性分析方法论 |
+| quantitative-analysis.md | v0.8.0-release | 定量分析方法论 |
+| mosaic-engine.md | v0.8.0-release | 马赛克引擎 |
+| output-layered-framework.md | v0.8.0-release | 分层输出框架 |
+| contagion-theory.md | v0.8.0-release | 传染理论基础（系统智能层） |
+| contagion-matrix.md | v0.8.0-release | 13行业传染矩阵 |
+| concentration-framework.md | v0.8.0-release | 五维集中度分析框架 |
+| systemic-warning-framework.md | v0.8.0-release | 系统性预警框架 |
 
 **职责边界说明：** 原有M4组合风控框架（multi-stakeholder.md §5）承担单发行人/单组合的风控职能（集中度限额/压力测试/评级调整）。系统智能层（contagion-matrix.md/concentration-framework.md/systemic-warning-framework.md）在M4基础上增加跨发行人/跨组合的系统性风险分析——传染矩阵覆盖全市场行业对传导、集中度框架覆盖五维组合集中度、预警框架提供全市场SRI读数。两者分工明确：原有M4做单发行人风控·系统智能层做跨发行人系统性风险。
 
