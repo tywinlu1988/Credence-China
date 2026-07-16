@@ -27,3 +27,25 @@ node_modules/
 # Temp
 *.tmp
 *.log
+
+# ---- 本地过程/工具状态：留在本地磁盘，不入 GitHub（锚定根目录，不误伤嵌套同名目录） ----
+/.claude/
+/.pytest_cache/
+/.superpowers/
+/tryout/
+/clone-guide.txt
+docs/superpowers/
+
+# ---- validation/：仅 docs/ + 2 份行业方法论参照入库；其余测试报告留在本地磁盘 ----
+validation/reports/*
+!validation/reports/food-beverage/
+!validation/reports/transportation/
+validation/reports/food-beverage/*
+validation/reports/transportation/*
+!validation/reports/food-beverage/food-beverage-methodology.html
+!validation/reports/transportation/transportation-methodology.html
+
+# ---- version/：仅当前可安装包 version/v0.8.0-release/ 入库 ----
+# 历史快照保留在本地磁盘与 git 标签；分发 zip 走 GitHub Releases（*.zip 已忽略）
+version/*
+!version/v0.8.0-release/

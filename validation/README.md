@@ -24,7 +24,9 @@
 
 ## 目录索引
 
-### `reports/` — 行业/案例验证报告（72 份，15 子目录）
+### `reports/` — 行业/案例验证报告（72 份，15 子目录；仅 2 份方法论参照公开）
+
+> **GitHub 公开范围**：本目录为测试输出。主仓库仅公开 2 份**行业方法论参照**——`food-beverage/food-beverage-methodology.html`、`transportation/transportation-methodology.html`（被 `dev/engine/` 范式文档在"相关内容"中引用）；其余 70 份实测报告保留在维护者本地（测试输出，非交付物），不入 GitHub，亦不进入任何版本快照。
 
 按"13 行业 + 系统智能层 + 验证专项"组织：
 
