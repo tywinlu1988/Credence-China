@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "credence-engine"
-version = "0.7.0-alpha"
+version = "0.8.0"
 description = "Fixed income credit analysis engine prototypes"
 requires-python = ">=3.11"
 dependencies = []
