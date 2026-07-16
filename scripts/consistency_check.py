@@ -23,7 +23,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from src.path_sheet import load_registry_paths, validate_path_sheet  # noqa: E402
 
-EXPECTED_VERSION = "v0.8.0-release"
+EXPECTED_VERSION = "v0.8.0-alpha"
 
 CORE_DOCS = [
     "engine-overview.md",
