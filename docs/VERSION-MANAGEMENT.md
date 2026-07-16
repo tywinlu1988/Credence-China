@@ -6,8 +6,8 @@
 ## 目录结构约定
 
 - `dev/` —— 当前活跃开发工作区。所有正在迭代的方法论文档、报告、模板和 Skill 都放在这里。
-- `version/<version>/` —— 该版本的只读归档快照。一旦快照创建，仅允许通过补丁分支修正明显错误，不允许继续功能迭代。
-- `version/<version>.zip` —— 该版本归档的压缩包，用于对外分发。
+- `version/<version>/` —— 该版本的只读归档快照。**GitHub 清理后：主仓库 git 仅跟踪当前一个 release 快照（现为 `version/v0.8.0-release/`）；历史快照已从 git 跟踪中移除，仍保留在维护者本地磁盘与 git 标签/历史中，随时可找回。** 一旦快照创建，仅允许通过补丁分支修正明显错误，不允许继续功能迭代。
+- `version/<version>.zip` —— 该版本归档的压缩包，**作为 GitHub Releases 附件对外分发**（不提交进仓库；`*.zip` 已 gitignore）。
 - `validation/` —— 引擎能力验证产物（测试输出与证据存档），**不属于项目本体**，永不进入 `version/` 快照。
 
 **快照边界**：自 **v0.8.0-release** 起，`version/<version>/` = **`scripts/build_dist.py` 产出的可安装 agent 包**（= `dist/credence/` 的内容）：skills 归位 `.claude/skills/`、`engine/` 平铺、`templates/`、`src/`、`adapters/`，加生成的 `AGENTS.md`/`CLAUDE.md`/`GEMINI.md`/`INSTALL.md`/`README.md`/`.claude-plugin/plugin.json`。该包已清除死链接与根目录假设（剔除 `settings.local.json` 绝对路径、`engine/audits/`、`design/`、`product/`、`data/`、`validation/`，并模式化清除 16 处 audits/validation 溯源指针）。**例外**：`v0.8.0-alpha` 为旧的镜像三根布局（`dev/` + `AGENTS.md` + `src/`），系集成预发布、未做可安装化。`validation/` 验证产物永不入快照；`version/`（历史快照）、`scripts/`、`tests/`、`docs/` 及任何 `.git`/`__pycache__`/`*.pyc` 亦不入快照。
@@ -48,8 +48,9 @@
 1. 在 `dev/` 完成所有变更并通过回归门（`scripts/consistency_check.py` 与 `pytest` 全绿）。
 2. 运行 `python scripts/build_dist.py`：把 `dev/` 源确定性组装为 `dist/credence/` 可安装包（复制 + 引用重写 + 溯源指针清除 + 入口/安装文档生成），并通过其内置校验（零绝对路径、零 dev/ token、全链接可解析）。
 3. 把 `dist/credence/` 的内容复制为 `version/<version>/`（**v0.8.0-release 起**；`dist/` 本身是 gitignored 构建产物，提交的快照在 `version/`）。
-4. 生成 `version/<version>.zip`（顶层为 `version/<version>/` 单根目录，跨平台）。
-5. 更新 `dev/README.md` 与 `dev/engine/engine-overview.md` 的版本历史。
+4. 生成 `version/<version>.zip`（顶层为 `version/<version>/` 单根目录，跨平台），作为 **GitHub Releases 附件**上传分发（**不提交进仓库**；`*.zip` 已 gitignore）。
+5. **git 跟踪约定**：主仓库仅跟踪**当前一个 release** 的 `version/<version>/` 目录。发新版时 `git rm -r --cached` 旧 release 目录、`git add` 新 release 目录，并把 `.gitignore` 里 `version/*` 的 `!version/<旧>/` 反例行改为 `!version/<新>/`。历史快照保留在本地磁盘与 git 标签。
+6. 更新 `dev/README.md` 与 `dev/engine/engine-overview.md` 的版本历史。
 
 > **v0.8.0-alpha 例外**：该快照为旧的镜像三根布局——手动把 `dev/`、`src/` 整拷贝 + 根级 `AGENTS.md` 复制到 `version/v0.8.0-alpha/`，未经 `build_dist.py` 可安装化。自 v0.8.0-release 起统一走上述 build_dist 流程。
 
