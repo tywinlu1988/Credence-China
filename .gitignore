@@ -7,6 +7,9 @@ desktop.ini
 *.zip
 archive/
 
+# Build artifacts (dist/credence 由 scripts/build_dist.py 生成；提交的快照在 version/)
+dist/
+
 # IDE
 .vscode/
 .idea/

@@ -26,6 +26,25 @@ ROOT = Path(__file__).resolve().parent.parent
 YAML_BLOCK_RE = re.compile(r"```yaml\s*\n(.*?)```", re.DOTALL)
 
 
+def engine_dir(root=None) -> Path:
+    """定位引擎方法论文档目录，自适应两种布局。
+
+    dist 安装包为平铺布局（``<root>/engine``）；dev 仓库为嵌套布局
+    （``<root>/dev/engine``）。``root`` 默认仓库/包根（``__file__`` 上两级）。
+    供最终用户在 dist 中定位契约/注册表，以及 dist 完整性测试断言复用。
+    """
+    base = Path(root) if root is not None else ROOT
+    flat = base / "engine"
+    return flat if flat.is_dir() else base / "dev" / "engine"
+
+
+def templates_dir(root=None) -> Path:
+    """定位报告模板目录，自适应平铺（``<root>/templates``）与嵌套（``<root>/dev/templates``）。"""
+    base = Path(root) if root is not None else ROOT
+    flat = base / "templates"
+    return flat if flat.is_dir() else base / "dev" / "templates"
+
+
 class Role(str, Enum):
     """Q1 角色：客户身份（M0-M5）或跨角色的元/专项路径。"""
 

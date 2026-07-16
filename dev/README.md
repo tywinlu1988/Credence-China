@@ -1,7 +1,7 @@
 # 固收信贷智能分析引擎
 
 **项目代号**: Credence
-**版本**: v0.8.0-alpha
+**版本**: v0.8.0-release
 **状态**: 方法论文档阶段 · 产品设计完成 · 13行业覆盖 · 系统智能层上线 · 文档结构重整完成
 
 ---
@@ -147,7 +147,8 @@ dev/
 | **v0.7.1-alpha** | **2026-07-15** | **开发栈结构重整：模板单源化 `templates/`（Type 1-15 + template-base.css）、engine 26份现行+15份归档 `engine/audits/`、72份报告按15个子目录归类、design/data 归位、README 与磁盘现实严格对齐。** |
 | v0.7.1-alpha（快照重建） | 2026-07-15 | 验证产物分离：72 份测试报告与测试执行记录迁出至根级 validation/（非项目本体，永不入快照）；README/SKILL 移除验证结果表格与案例清单；engine 现行文档 25 份；v0.7.1 快照按新边界重建 |
 | **v0.7.1-release** | **2026-07-15** | **正式发布：开发栈结构重整（模板单源 templates/、engine 25份现行+audits/、design/data 归位）+ 验证产物分离（validation/ 永不入快照）。全量一致性检查与 63 项测试通过。** |
-| **v0.8.0-alpha** | **2026-07-16** | **集成发布：跨 CLI 通用入口（AGENTS.md + Codex 适配）· 四段链契约（pipeline-contract.md + report/qa 两阶段 skill）· 可执行编排器（src/pipeline.py 接 WP-M4-01/WP-M4-03 两编码引擎）· 维度注册表（dimension-registry.md）。8 条 active 路径端到端走查归档 validation/docs/（append-only 证据）。快照边界扩为 dev/ + AGENTS.md + src/。全量一致性检查与 143 项测试通过。** |
+| **v0.8.0-alpha** | **2026-07-16** | **集成预发布：跨 CLI 通用入口（AGENTS.md + Codex 适配）· 四段链契约（pipeline-contract.md + report/qa 两阶段 skill）· 可执行编排器（src/pipeline.py 接 WP-M4-01/WP-M4-03 两编码引擎）· 维度注册表（dimension-registry.md）。8 条 active 路径端到端走查归档 validation/docs/。快照 dev/ + AGENTS.md + src/。143 项测试通过。** |
+| **v0.8.0-release** | **2026-07-16** | **可安装 agent 包发布：`scripts/build_dist.py` 把 dev/ 源确定性组装为 `dist/credence/` 可安装包——skills 归位 `.claude/skills/`（Claude Code 原生 + Cursor/Gemini/OpenCode 兼容）、engine 平铺、AGENTS.md/CLAUDE.md/GEMINI.md 三入口、按工具 INSTALL.md、.claude-plugin 清单；清除死链接（settings.local.json 绝对路径、audits/design/product/data 及 16 处溯源指针）。快照重定义为可安装包。150 项测试通过。** |
 
 > **注**：v0.6.x系列为模块级预发布版本（contagion-matrix.md、concentration-framework.md、systemic-warning-framework.md 等独立发布），功能统一纳入 v0.7.0-alpha。
 
