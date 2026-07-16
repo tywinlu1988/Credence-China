@@ -47,6 +47,12 @@ CORE_DOCS = [
     "outlook-monitoring-framework.md",
     "lgd-recovery-framework.md",
     "lgfv-framework.md",
+    "multi-stakeholder.md",
+    "financial-deep-dive.md",
+    "paradigm-brand-channel.md",
+    "paradigm-network-traffic.md",
+    "work-path-registry.md",
+    "dimension-registry.md",
     "pipeline-contract.md",
 ]
 

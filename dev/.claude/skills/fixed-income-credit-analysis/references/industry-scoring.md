@@ -39,6 +39,8 @@ Each layer scores 0-10. Each layer has one-shot veto conditions (see `dev/engine
 
 See `dev/engine/industry-framework.md`, `dev/engine/paradigm-brand-channel.md`, and `dev/engine/paradigm-network-traffic.md` for detailed specs.
 
+六个范式 + LGFV 特殊类别与 M0–M5 角色的**可寻址维度索引**见 `dev/engine/dimension-registry.md`（每个维度的 id、定义指针、适用行业与消费路径）；本文件不复制其定义或阈值。
+
 ## Ten-Dimension Industry Scoring (D1-D10)
 
 | # | Dimension | Definition |
