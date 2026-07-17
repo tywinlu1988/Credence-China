@@ -1,7 +1,7 @@
 # AGENTS.md — Credence 跨 CLI 通用入口
 
 **项目**：Credence（固收信贷智能分析引擎）
-**引擎版本**：v0.8.3-release
+**引擎版本**：v0.8.4-release
 **一句话**：方法论优先（methodology-first）的信用分析引擎；可移植单元是 `SKILL.md`。
 
 > 任何 agent CLI 都从这里开始：先读你的 instructions file，再读当前任务对应的那份 `SKILL.md`。

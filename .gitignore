@@ -45,7 +45,7 @@ validation/reports/transportation/*
 !validation/reports/food-beverage/food-beverage-methodology.html
 !validation/reports/transportation/transportation-methodology.html
 
-# ---- version/：仅当前可安装包 version/v0.8.3-release/ 入库 ----
+# ---- version/：仅当前可安装包 version/v0.8.4-release/ 入库 ----
 # 历史快照保留在本地磁盘与 git 标签；分发 zip 走 GitHub Releases（*.zip 已忽略）
 version/*
-!version/v0.8.3-release/
+!version/v0.8.4-release/
