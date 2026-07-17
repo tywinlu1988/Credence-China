@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Credence 可安装 agent 包的确定性组装器（v0.8.0-release）。
+"""Credence 可安装 agent 包的确定性组装器（版本戳派生自 engine-overview.md 头，见 _version()）。
 
 把 `dev/` 工作区（源）组装为 `dist/credence/`（产物）——一个自包含、可移植、
 可按行业惯例安装到 Claude Code / Codex / Cursor / Gemini / OpenCode 的 agent 包。
 `dev/` 布局保持不变（checker 与测试继续验证它）；本脚本只**复制+重写+清除**，
-产出即 `version/v0.8.0-release/` 与 zip 的内容。这是标准的 source-vs-artifact 模型。
+产出即 `version/<v>-release/` 与 zip 的内容。这是标准的 source-vs-artifact 模型。
 
 ## 布局契约（dist 测试 test_dist_package.py 与本脚本共同遵守的唯一参照）
 

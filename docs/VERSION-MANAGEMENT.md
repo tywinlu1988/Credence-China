@@ -34,6 +34,7 @@
 
 在创建新的 `version/<version>/` 快照前，必须完成以下检查：
 
+- [ ] `python scripts/promote.py vX.Y.Z-<stage>`（dry-run 预览）→ `--apply` 落盘，且打印的"规则未覆盖剩余"经人工核对全部为历史引用；两个版本历史表（engine-overview §六、dev/README.md）已人工补新行。
 - [ ] 所有核心方法论文档的 `**版本**:` 头统一为当前引擎版本。
 - [ ] Claude Skill 包 (`dev/.claude/skills/fixed-income-credit-analysis/`) 已同步并升级到当前引擎版本。
 - [ ] Skill 包已随构建归位到 `version/<version>/.claude/skills/`（v0.8.0-release 起为包根 `.claude/skills/`，由 `scripts/build_dist.py` 生成）。
@@ -49,7 +50,7 @@
 2. 运行 `python scripts/build_dist.py`：把 `dev/` 源确定性组装为 `dist/credence/` 可安装包（复制 + 引用重写 + 溯源指针清除 + 入口/安装文档生成），并通过其内置校验（零绝对路径、零 dev/ token、全链接可解析）。
 3. 把 `dist/credence/` 的内容复制为 `version/<version>/`（**v0.8.0-release 起**；`dist/` 本身是 gitignored 构建产物，提交的快照在 `version/`）。
 4. 生成 `version/<version>.zip`（顶层为 `version/<version>/` 单根目录，跨平台），作为 **GitHub Releases 附件**上传分发（**不提交进仓库**；`*.zip` 已 gitignore）。
-5. **git 跟踪约定**：主仓库仅跟踪**当前一个 release** 的 `version/<version>/` 目录。发新版时 `git rm -r --cached` 旧 release 目录、`git add` 新 release 目录，并把 `.gitignore` 里 `version/*` 的 `!version/<旧>/` 反例行改为 `!version/<新>/`。历史快照保留在本地磁盘与 git 提交历史。**git 标签约定**：远程仅保留当前 release 标签（现为 `v0.8.0-release`）；历史标签（远程与本地）已一并移除，以保持 Releases/tags 页整洁——历史版本状态不受影响，全部可从 master 提交历史按 SHA 找回。
+5. **git 跟踪约定**：主仓库仅跟踪**当前一个 release** 的 `version/<version>/` 目录。发新版时 `git rm -r` 旧 release 目录（**不带 `--cached`**——避免与 merge 叠加误删工作区文件的陷阱）、`git add` 新 release 目录，并把 `.gitignore` 里 `version/*` 的 `!version/<旧>/` 反例行改为 `!version/<新>/`。历史快照保留在本地磁盘与 git 提交历史。**git 标签约定**：远程仅保留当前 release 标签（现为 `v0.8.0-release`）；历史标签（远程与本地）已一并移除，以保持 Releases/tags 页整洁——历史版本状态不受影响，全部可从 master 提交历史按 SHA 找回。
 6. 更新 `dev/README.md` 与 `dev/engine/engine-overview.md` 的版本历史。
 
 > **v0.8.0-alpha 例外**：该快照为旧的镜像三根布局——手动把 `dev/`、`src/` 整拷贝 + 根级 `AGENTS.md` 复制到 `version/v0.8.0-alpha/`，未经 `build_dist.py` 可安装化。自 v0.8.0-release 起统一走上述 build_dist 流程。
