@@ -191,10 +191,14 @@ def test_detect_old_version_from_checker(tmp_path):
 def test_real_tree_dry_run_reports_changes_and_stays_clean():
     pm = _load_promote()
     old = pm.detect_old_version(ROOT)
+
+    def _status():
+        return subprocess.run(
+            ["git", "status", "--porcelain"], cwd=ROOT,
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+        ).stdout
+
+    before = _status()
     changes = pm.apply_rules(ROOT, old, "v9.9.9-release", apply=False)
     assert len(changes) > 30, f"真树改动数异常: {len(changes)}"
-    assert pm.detect_old_version(ROOT) == old, "dry-run 改写了真树"
-    dirty = subprocess.run(
-        ["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True
-    ).stdout
-    assert "consistency_check.py" not in dirty, "dry-run 改写了 consistency_check.py"
+    assert _status() == before, "dry-run 改变了工作区"

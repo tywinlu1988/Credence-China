@@ -5,7 +5,7 @@ description: Intake router for vague or compound Chinese fixed-income credit-ana
 
 ## Purpose
 
-**对应引擎版本**: v0.8.0-release
+**对应引擎版本**: v0.8.1-release
 
 路由层，不做分析。职责仅三步：理解模糊/复合型需求 → 在 `work-path-registry` 中匹配工作路径 → 输出结构化《工作路径单》。本 skill 不复制任何引擎阈值/权重/评级映射；规则正文以引擎文档为单一事实源。路由完成后移交 `fixed-income-credit-analysis` skill，按路径单的 `engine_reading_order` 执行。
 

@@ -15,7 +15,7 @@ When this Skill is invoked:
 6. If a required threshold, weight, or mapping is missing from the engine documents, output `引擎未定义` and do not invent a value.
 7. Do not invoke Mode B or generate external-data values unless the user has explicitly provided a CSV upload, API endpoint, or MCP server. Treat Mode B fields as data gaps until then.
 
-# Fixed Income Credit Analysis Engine v0.8.0-release
+# Fixed Income Credit Analysis Engine v0.8.1-release
 
 ## Overview
 

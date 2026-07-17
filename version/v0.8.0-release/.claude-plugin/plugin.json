@@ -1,6 +1,0 @@
-{
-  "name": "credence",
-  "version": "0.8.0-release",
-  "description": "固收信贷智能分析引擎（Credence）：行业多层金字塔 + 双轨交叉验证 + 马赛克引擎 + 系统智能层。四段链技能：intake 路由 / analysis 分析 / report 报告 / qa 质检。",
-  "skills": ".claude/skills/"
-}
