@@ -59,6 +59,16 @@ def builder():
     return _load_builder()
 
 
+def test_validate_flags_crlf_in_dist(builder, tmp_path):
+    """P0: dist 产物混入 CRLF 时 validate 必须响亮报错（防 _write_text 回归）。"""
+    out = tmp_path / "credence"
+    builder.build(out_dir=out)
+    target = out / "engine" / "engine-overview.md"
+    target.write_bytes(target.read_bytes().replace(b"\n", b"\r\n"))
+    errors = builder.validate(out_dir=out)
+    assert any("CRLF:" in e and "engine-overview.md" in e for e in errors)
+
+
 @pytest.fixture(scope="module")
 def dist(builder, tmp_path_factory):
     out = tmp_path_factory.mktemp("dist") / "credence"

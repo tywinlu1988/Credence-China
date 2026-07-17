@@ -1,0 +1,12 @@
+# 仓库级换行符策略：所有文本文件入库与检出均为 LF（覆盖各机器的 core.autocrlf 配置）
+* text=auto eol=lf
+
+# 二进制保险（当前仓库无二进制，防未来误加后被 text=auto 误转换）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary
+*.pdf binary
+*.woff binary
+*.woff2 binary

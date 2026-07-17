@@ -39,6 +39,7 @@ dist/credence/
 链接在 dist 内可解析；(iv) 4 个 SKILL.md 且 frontmatter 恰为 name+description；
 (v) 28 份 CORE_DOCS 全部在 engine/ 下；(vi) src 能在 dist 布局定位 engine/templates；
 (vii) 无任何被剔除的产物。
+(viii) 文本文件无 CRLF（LF 强制，见根 .gitattributes）。
 """
 
 import argparse
@@ -369,6 +370,9 @@ def validate(out_dir=None) -> list:
             errors.append(f"EXCLUDED_PRESENT: {rel}")
         if "audits" in f.parts or f.parts[0] in ("design", "product", "data", "validation"):
             errors.append(f"EXCLUDED_DIR_PRESENT: {rel}")
+        data = f.read_bytes()
+        if b"\0" not in data and b"\r\n" in data:
+            errors.append(f"CRLF: {rel}")
         if f.suffix in TEXT_EXTS:
             text = f.read_text(encoding="utf-8")
             for m in ABS_PATH_RE.finditer(text):
