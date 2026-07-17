@@ -1,6 +1,6 @@
 # 固定收益信用分析引擎 — 架构总览
 
-**版本**: v0.8.2-release | **日期**: 2026-07-10
+**版本**: v0.8.3-release | **日期**: 2026-07-10
 
 ---
 
@@ -31,7 +31,7 @@
 | **work-path-registry.md** | 工作路径注册表 · 角色×方向×深度×报告的路径定义 | 需要确认走哪条路径时查阅 |
 | **dimension-registry.md** | 维度注册表 · 6范式+LGFV 与 M0-M5 角色的可寻址索引（单源指针层） | 需要按维度路由/检索时查阅 |
 | **pipeline-contract.md** | 四段链 I/O 契约 · 四份产物 schema · 链式边（机器可读） | 需要确认阶段间传递什么产物时查阅 |
-| [pipeline.py](../../src/pipeline.py) | 四段链可执行编排器（v0.7.8）：解析阶段计划、接 WP-M4-01/WP-M4-03 两个编码引擎 | 需要以代码驱动四段链、对接已编码引擎时查阅 |
+| [pipeline.py](../../src/pipeline.py) | 四段链可执行编排器（v0.7.8）：解析阶段计划、接 WP-M4-01/-02/-03 三个编码引擎 | 需要以代码驱动四段链、对接已编码引擎时查阅 |
 | **audits/financial-analysis-audit.md** | 财务层10项标准差距审查 | 审查记录 |
 | **audits/quantitative-audit.md** | 定量模块统计严谨性审查 | 审查记录 |
 | **audits/rating-agency-benchmark-audit.md** | 评级机构方法论对标 | 审查记录 |
@@ -203,6 +203,7 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | **0.8.0-release** | **2026-07-16** | **可安装 agent 包发布：新增 `scripts/build_dist.py` 把 dev 工作区（源）确定性组装为 `dist/credence/` 可安装包——skills 归位 `.claude/skills/`（Claude Code 原生 + Cursor/Gemini/OpenCode 兼容读）、engine 平铺、AGENTS.md/CLAUDE.md/GEMINI.md 三入口、按工具 INSTALL.md、.claude-plugin 清单；src/path_sheet.py 加 engine_dir/templates_dir 布局自适应。清除死链接与根目录假设（settings.local.json 绝对路径、audits/design/product/data 剔除、16 处 audits/validation 溯源指针模式化清除）。快照重定义为可安装包。150 项测试通过** |
 | **0.8.1-release** | **2026-07-17** | **门禁加固与晋升机制：.gitattributes 强制 LF + 换行符断言（CRLF 可复现性缺口封堵）；lgd §12.1 评级表对齐 18 档规范（RATING_MAP 警告清零）；pyproject/package.json 版本一致性硬校验；GitHub Actions CI（pytest + consistency_check）；promote.py 晋升脚本（版本声明单源化）+ T11.4/T11.5 测试版本无关化。162 项测试通过** |
 | **0.8.2-release** | **2026-07-17** | **WP-M4-02 传染矩阵接入编码引擎：contagion_engine 可执行实现（矩阵运行时解析保持单一事实源；超级传染者/脆弱行业/传染力系数派生；组合暴露 + 高传染链路 + §6.2 压力跳升）；contagion-matrix §3.1/§3.3 清单与 §5.5/§5.6/§2.3.1 派生值对齐矩阵数据（编码引擎先行发现）。178 项测试通过** |
+| **0.8.3-release** | **2026-07-17** | **可靠度迭代：一致性普查落地（§3.2 清单重写 18 有向/9 唯一对、数据中心权重归并说明、版本对照表补全 28 行）+ 门扩展（registry templates/quality_gates 引用校验、迁移矩阵结构校验、§3.2 漂移门）。184 项测试通过** |
 
 ---
 
@@ -214,41 +215,41 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 
 | 版本体系 | 适用范围 | 示例 | 说明 |
 |---|---|---|---|
-| **引擎版本** | 核心方法论文档 | v0.8.2-release | 反映引擎方法论的整体迭代阶段，所有核心方法论文档统一标注此版本 |
+| **引擎版本** | 核心方法论文档 | v0.8.3-release | 反映引擎方法论的整体迭代阶段，所有核心方法论文档统一标注此版本 |
 | **审查报告版本** | 审计/自评/终审文档 | v1.0, v1.1 | 独立的审查报告版本体系，在文件头标注"对应引擎版本: v0.8.0-release" |
 
 ### 7.2 核心方法论文档版本对应关系
 
 | 文档 | 当前版本 | 说明 |
 |---|---|---|
-| engine-overview.md | v0.8.2-release | 引擎架构总览 |
-| dual-track-methodology.md | v0.8.2-release | 双轨分析方法论 |
-| industry-framework.md | v0.8.2-release | 行业分类与分析框架 |
-| qualitative-analysis.md | v0.8.2-release | 定性分析方法论 |
-| quantitative-analysis.md | v0.8.2-release | 定量分析方法论 |
-| mosaic-engine.md | v0.8.2-release | 马赛克引擎 |
-| output-layered-framework.md | v0.8.2-release | 分层输出框架 |
-| contagion-theory.md | v0.8.2-release | 传染理论基础（系统智能层） |
-| contagion-matrix.md | v0.8.2-release | 13行业传染矩阵 |
-| concentration-framework.md | v0.8.2-release | 五维集中度分析框架 |
-| systemic-warning-framework.md | v0.8.2-release | 系统性预警框架 |
-| validation-methodology.md | v0.8.2-release | 黑天鹅回溯验证方法论 |
-| financial-bond-framework.md | v0.8.2-release | 金融债分析框架 |
-| holding-company-framework.md | v0.8.2-release | 控股公司信用分析框架 |
-| non-credit-risk-overlay.md | v0.8.2-release | 非信用风险叠加层 |
-| external-support-framework.md | v0.8.2-release | 外部支持评估框架 |
-| esg-framework.md | v0.8.2-release | ESG 与治理风险框架 |
-| governance-fraud-risk.md | v0.8.2-release | 治理/欺诈风险框架 |
-| outlook-monitoring-framework.md | v0.8.2-release | 展望与持续监控框架 |
-| lgd-recovery-framework.md | v0.8.2-release | LGD 与回收率分析框架 |
-| lgfv-framework.md | v0.8.2-release | 城投债分析框架 |
-| multi-stakeholder.md | v0.8.2-release | 多利益相关者框架 |
-| financial-deep-dive.md | v0.8.2-release | 财务深度分析框架 |
-| paradigm-brand-channel.md | v0.8.2-release | 品牌+渠道范式规格 |
-| paradigm-network-traffic.md | v0.8.2-release | 网络+流量范式规格 |
-| work-path-registry.md | v0.8.2-release | 工作路径注册表 |
-| dimension-registry.md | v0.8.2-release | 维度注册表 |
-| pipeline-contract.md | v0.8.2-release | 四段链产物契约 |
+| engine-overview.md | v0.8.3-release | 引擎架构总览 |
+| dual-track-methodology.md | v0.8.3-release | 双轨分析方法论 |
+| industry-framework.md | v0.8.3-release | 行业分类与分析框架 |
+| qualitative-analysis.md | v0.8.3-release | 定性分析方法论 |
+| quantitative-analysis.md | v0.8.3-release | 定量分析方法论 |
+| mosaic-engine.md | v0.8.3-release | 马赛克引擎 |
+| output-layered-framework.md | v0.8.3-release | 分层输出框架 |
+| contagion-theory.md | v0.8.3-release | 传染理论基础（系统智能层） |
+| contagion-matrix.md | v0.8.3-release | 13行业传染矩阵 |
+| concentration-framework.md | v0.8.3-release | 五维集中度分析框架 |
+| systemic-warning-framework.md | v0.8.3-release | 系统性预警框架 |
+| validation-methodology.md | v0.8.3-release | 黑天鹅回溯验证方法论 |
+| financial-bond-framework.md | v0.8.3-release | 金融债分析框架 |
+| holding-company-framework.md | v0.8.3-release | 控股公司信用分析框架 |
+| non-credit-risk-overlay.md | v0.8.3-release | 非信用风险叠加层 |
+| external-support-framework.md | v0.8.3-release | 外部支持评估框架 |
+| esg-framework.md | v0.8.3-release | ESG 与治理风险框架 |
+| governance-fraud-risk.md | v0.8.3-release | 治理/欺诈风险框架 |
+| outlook-monitoring-framework.md | v0.8.3-release | 展望与持续监控框架 |
+| lgd-recovery-framework.md | v0.8.3-release | LGD 与回收率分析框架 |
+| lgfv-framework.md | v0.8.3-release | 城投债分析框架 |
+| multi-stakeholder.md | v0.8.3-release | 多利益相关者框架 |
+| financial-deep-dive.md | v0.8.3-release | 财务深度分析框架 |
+| paradigm-brand-channel.md | v0.8.3-release | 品牌+渠道范式规格 |
+| paradigm-network-traffic.md | v0.8.3-release | 网络+流量范式规格 |
+| work-path-registry.md | v0.8.3-release | 工作路径注册表 |
+| dimension-registry.md | v0.8.3-release | 维度注册表 |
+| pipeline-contract.md | v0.8.3-release | 四段链产物契约 |
 
 **职责边界说明：** 原有M4组合风控框架（multi-stakeholder.md §5）承担单发行人/单组合的风控职能（集中度限额/压力测试/评级调整）。系统智能层（contagion-matrix.md/concentration-framework.md/systemic-warning-framework.md）在M4基础上增加跨发行人/跨组合的系统性风险分析——传染矩阵覆盖全市场行业对传导、集中度框架覆盖五维组合集中度、预警框架提供全市场SRI读数。两者分工明确：原有M4做单发行人风控·系统智能层做跨发行人系统性风险。
 

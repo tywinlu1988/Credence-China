@@ -1,7 +1,7 @@
 # 固收信贷智能分析引擎
 
 **项目代号**: Credence
-**版本**: v0.8.2-release
+**版本**: v0.8.3-release
 **状态**: 方法论文档阶段 · 产品设计完成 · 13行业覆盖 · 系统智能层上线 · 文档结构重整完成
 
 ---
@@ -128,7 +128,7 @@ dev/
 | 任意 agent CLI 的通用入口（Claude Code/Codex/Cursor/Gemini/OpenCode） | `../AGENTS.md` |
 | 四段链产物契约（工作路径单/分析产物/交付单/质检裁决） | `engine/pipeline-contract.md` |
 | 维度注册表（6范式+LGFV 与 M0-M5 角色的可寻址索引，单源指针层） | `engine/dimension-registry.md` |
-| 可执行编排器（v0.7.8：以代码驱动四段链，接 WP-M4-01/WP-M4-03 两个编码引擎） | `../src/pipeline.py` |
+| 可执行编排器（v0.7.8：以代码驱动四段链，接 WP-M4-01/-02/-03 三个编码引擎） | `../src/pipeline.py` |
 | AI Agent使用这套方法论（四段链：路由/分析/报告/质检） | `.claude/skills/` |
 | 版本管理策略与发布流程 | `../docs/VERSION-MANAGEMENT.md` |
 
@@ -151,6 +151,7 @@ dev/
 | **v0.8.0-release** | **2026-07-16** | **可安装 agent 包发布：`scripts/build_dist.py` 把 dev/ 源确定性组装为 `dist/credence/` 可安装包——skills 归位 `.claude/skills/`（Claude Code 原生 + Cursor/Gemini/OpenCode 兼容）、engine 平铺、AGENTS.md/CLAUDE.md/GEMINI.md 三入口、按工具 INSTALL.md、.claude-plugin 清单；清除死链接（settings.local.json 绝对路径、audits/design/product/data 及 16 处溯源指针）。快照重定义为可安装包。150 项测试通过。** |
 | **v0.8.1-release** | **2026-07-17** | **门禁加固与晋升机制：.gitattributes 强制 LF + 换行符断言；lgd §12.1 评级表对齐 18 档；pyproject/package.json 版本硬校验；GitHub Actions CI；promote.py 晋升脚本（声明单源化）+ 测试版本无关化。162 项测试通过。** |
 | **v0.8.2-release** | **2026-07-17** | **WP-M4-02 传染矩阵接入编码引擎（contagion_engine：运行时解析、派生系数、组合暴露、压力跳升）；contagion-matrix 清单与派生值矛盾修复。178 项测试通过。** |
+| **v0.8.3-release** | **2026-07-17** | **可靠度迭代：一致性普查落地（§3.2 重写、数据中心归并、对照表补全）+ 门扩展（registry 引用校验、迁移矩阵校验、§3.2 漂移门）。184 项测试通过。** |
 
 > **注**：v0.6.x系列为模块级预发布版本（contagion-matrix.md、concentration-framework.md、systemic-warning-framework.md 等独立发布），功能统一纳入 v0.7.0-alpha。
 
