@@ -1,10 +1,10 @@
 """Tests for the v0.7.8 executable orchestrator (src/pipeline.py).
 
 T9.1-T9.7 cover the thin orchestrator: stage-plan construction from the contract doc,
-end-to-end execution of the two wired coded engines (WP-M4-03 SRI, WP-M4-01 concentration),
-graceful LLM-orchestrated skipping for unwired paths, planned-path 待开发 notices,
-contract-sourced stage names, and invalid-sheet rejection. Deliverable 3 (chaining-edge
-endpoint referential integrity) is also covered here.
+end-to-end execution of the wired coded engines (WP-M4-01 concentration, WP-M4-02 contagion,
+WP-M4-03 SRI, WP-X-05 outlook), graceful LLM-orchestrated skipping for unwired paths,
+planned-path 待开发 notices, contract-sourced stage names, and invalid-sheet rejection.
+Deliverable 3 (chaining-edge endpoint referential integrity) is also covered here.
 """
 
 from pathlib import Path
@@ -75,6 +75,16 @@ def _sheet(path_id, **overrides) -> dict:
                 "dev/engine/contagion-theory.md",
             ],
             "quality_gates": ["传染矩阵 (dev/engine/contagion-matrix.md §二)"],
+            "notes": "",
+        },
+        "WP-X-05": {
+            "role": "meta",
+            "object": "single-issuer",
+            "depth": "专项",
+            "mode": "A",
+            "path_id": "WP-X-05",
+            "engine_reading_order": ["dev/engine/outlook-monitoring-framework.md"],
+            "quality_gates": ["评级展望 (dev/engine/outlook-monitoring-framework.md §二)"],
             "notes": "",
         },
         "WP-M0-01": {
@@ -294,3 +304,28 @@ def test_t9_8_contagion_wired_and_runs(contract, registry_paths):
     # 显式跳升生效：半导体→光伏 在压力矩阵中为 5
     jump = [l for l in out["links"] if l["source"] == "半导体/集成电路" and l["target"] == "光伏/储能"]
     assert jump and jump[0]["intensity"] == 5
+
+
+# --------------------------------------------------------------------------
+# T9.9 — WP-X-05 wired: outlook engine executes at analysis stage
+# --------------------------------------------------------------------------
+
+def test_t9_9_outlook_wired_and_runs(contract, registry_paths):
+    assert "WP-X-05" in EXECUTABLE_ENGINES
+    plan = load_stage_plan(_sheet("WP-X-05"), registry_paths, contract)
+    assert plan[1].executable is True
+    manifest = run_executable_stages(plan, {
+        "signals": [
+            {"layer": "L1", "direction": "negative"},
+            {"layer": "外部支持", "direction": "negative"},
+        ],
+        "rating": "AA",
+        "paradigm": "政策驱动型",
+        "watchlist_triggers": [{"side": "negative", "event": "被监管立案调查"}],
+    })
+    analysis = next(s for s in manifest["stages"] if s["name"] == "analysis")
+    assert analysis["mode"] == "code"
+    out = analysis["outputs"]
+    assert set(out) == {"outlook", "confidence", "net_score", "watchlist", "migration"}
+    assert out["outlook"] == "负面" and out["watchlist"]["side"] == "负面观察"
+    assert out["migration"]["下调"] == "15-20%"

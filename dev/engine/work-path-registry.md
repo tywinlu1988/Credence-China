@@ -42,7 +42,7 @@
 | WP-X-02 | 多身份并行评估 | 元（对比） | M0/M1/M4 并行+交叉矩阵 | L2 | Type 4 | ✅ active |
 | WP-X-03 | 行业分析框架建设 | 元（建设） | 新行业金字塔+D1-D10 | 专项 | Type 7 | ✅ active |
 | WP-X-04 | ESG/治理风险扫描 | 专项 | esg + governance-fraud | 专项 | Type 10 | 🟡 partial |
-| WP-X-05 | 展望与持续监控 | 专项 | outlook-monitoring+迁移矩阵 | 专项 | 🔴 无模板 | 🟡 partial |
+| WP-X-05 | 展望与持续监控 | 专项 | outlook-monitoring+迁移矩阵 | 专项 | Type 18 | ✅ active |
 
 > 状态分布：✅ active 8 条 · 🟡 partial 6 条 · 🔴 planned 2 条。待开发缺口见 [附录](#附录待开发缺口清单)。
 
@@ -445,14 +445,14 @@ quality_gates:
   - "逃废债 (dev/engine/governance-fraud-risk.md §四)"
 ```
 
-### WP-X-05 展望与持续监控（🟡 partial）
+### WP-X-05 展望与持续监控（✅ active）
 
-专项路径：在评级之上给出 12-24 个月评级展望、维护 90 天观察名单、触发持续监控（含评级迁移矩阵）。outlook-monitoring-framework 完整实现，但**无独立模板**（待开发），且尚未串成显式专项路径，见 [附录](#附录待开发缺口清单)。
+专项路径：在评级之上给出 12-24 个月评级展望、维护 90 天观察名单、触发持续监控（含评级迁移矩阵）。outlook-monitoring-framework + Type 18 模板 + outlook_engine 编码引擎完整实现（v0.8.4 激活）。
 
 ```yaml
 id: WP-X-05
 name: 展望与持续监控
-status: partial
+status: active
 role: meta
 trigger:
   user_intent: [评级展望, 持续监控, 观察名单, 迁移矩阵, 评级行动]
@@ -515,6 +515,6 @@ quality_gates:
 | 3 | M3 交易框架补全 | engine | WP-M3-01 | 交易盯市专用引擎（当前仅 L0 规范+温度计，partial） |
 | 4 | Type 16 承销报告模板 | 模板 | WP-M2-01 | 承销可行性结论+定价区间报告 |
 | 5 | Type 17 融资顾问模板 | 模板 | WP-M5-01 | 融资渠道对比+时机建议报告 |
-| 6 | 展望监控模板 | 模板 | WP-X-05 | 评级展望+观察名单报告（引擎已在，仅缺模板） |
+| 6 | 展望监控模板 | 模板 | WP-X-05 | ✅ 已交付（v0.8.4，template-type18.html） |
 
 > 演进追踪：每次版本发布应更新本表状态分布（🔴→🟡→✅），并在 engine-overview.md §六 版本历史中登记。

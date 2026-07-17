@@ -9,9 +9,9 @@
 - **阶段定义不硬编码**：四个阶段的名称、承载 skill、产物标签均从
   `dev/engine/pipeline-contract.md` 的阶段总览表解析而来（见 load_contract）。链式边
   （chaining_edges）同样从该契约的 yaml 块读取，供端点引用完整性校验复用。
-- **不新编码任何引擎**：引擎文档是规范源，`src/sri_calculator.py`、`src/concentration_scorer.py`
-  与 `src/contagion_engine.py` 是其**可执行实现**。编排器只在路径已接线时调用它们
-  （EXECUTABLE_ENGINES），不复制任何阈值/权重/档位语义。
+- **不新编码任何引擎**：引擎文档是规范源，`src/sri_calculator.py`、`src/concentration_scorer.py`、
+  `src/contagion_engine.py` 与 `src/outlook_engine.py` 是其**可执行实现**。编排器只在路径
+  已接线时调用它们（EXECUTABLE_ENGINES），不复制任何阈值/权重/档位语义。
 - **复用 path_sheet.py**：路径单校验、registry 解析、planned 判定与"待开发"提示一律
   复用 `src/path_sheet.py`，不重复实现。
 """
@@ -28,6 +28,11 @@ from src.contagion_engine import (
     high_intensity_links,
     load_matrix,
     portfolio_exposure,
+)
+from src.outlook_engine import (
+    migration_range,
+    outlook_assessment,
+    watchlist_check,
 )
 from src.path_sheet import (
     YAML_BLOCK_RE,
@@ -259,10 +264,25 @@ def _run_contagion(inputs: dict) -> dict:
     }
 
 
+def _run_outlook(inputs: dict) -> dict:
+    """WP-X-05 → outlook-monitoring-framework 的可执行实现（展望+名单+迁移矩阵）。"""
+    assessment = outlook_assessment(inputs["signals"])
+    watchlist = watchlist_check(inputs.get("watchlist_triggers") or [])
+    migration = migration_range(inputs["rating"], inputs.get("paradigm"))
+    return {
+        "outlook": assessment["outlook"],
+        "confidence": assessment["confidence"],
+        "net_score": assessment["net_score"],
+        "watchlist": watchlist,
+        "migration": migration,
+    }
+
+
 # 已接线（wired）编码引擎登记表：path_id → 运行该路径编码引擎的可调用对象。
-# 保持显式且极小——本系列接入 WP-M4-01(集中度)、WP-M4-02(传染矩阵)、WP-M4-03(SRI)。
+# 保持显式且极小——本系列接入 WP-M4-01(集中度)、WP-M4-02(传染矩阵)、WP-M4-03(SRI)、WP-X-05(展望监控)。
 EXECUTABLE_ENGINES = {
     "WP-M4-03": _run_sri,
     "WP-M4-01": _run_concentration,
     "WP-M4-02": _run_contagion,
+    "WP-X-05": _run_outlook,
 }

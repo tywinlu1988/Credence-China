@@ -3,11 +3,11 @@
 These tests assert the *integration* of the v0.7.6-v0.7.9 staircase into a coherent
 release, not any single component:
 
-- T11.1: every one of the 8 active work paths yields a valid 4-stage plan (S1..S4,
+- T11.1: every one of the 9 active work paths yields a valid 4-stage plan (S1..S4,
   non-empty names/skills) via the thin orchestrator.
-- T11.2: the 3 wired paths (WP-M4-01 concentration, WP-M4-02 contagion, WP-M4-03 SRI)
-  execute code at the analysis stage; the other 5 active paths produce a complete
-  LLM-orchestrated plan.
+- T11.2: the 4 wired paths (WP-M4-01 concentration, WP-M4-02 contagion, WP-M4-03 SRI,
+  WP-X-05 outlook) execute code at the analysis stage; the other 5 active paths
+  produce a complete LLM-orchestrated plan.
 - T11.3: the end-to-end walkthrough record exists and literally names all 8 path ids.
 - T11.4: version promotion is consistent (EXPECTED_VERSION well-formed and aligned with
   pyproject/package.json; every CORE_DOCS doc + skill declares it), mirroring
@@ -65,9 +65,9 @@ BUILD_DIST = ROOT / "scripts" / "build_dist.py"
 
 ACTIVE_PATHS = [
     "WP-M0-01", "WP-M1-01", "WP-M4-01", "WP-M4-02",
-    "WP-M4-03", "WP-X-01", "WP-X-02", "WP-X-03",
+    "WP-M4-03", "WP-X-01", "WP-X-02", "WP-X-03", "WP-X-05",
 ]
-WIRED_PATHS = ["WP-M4-01", "WP-M4-02", "WP-M4-03"]
+WIRED_PATHS = ["WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-X-05"]
 UNWIRED_ACTIVE = [p for p in ACTIVE_PATHS if p not in WIRED_PATHS]
 
 FOUR_SKILLS = (
@@ -177,11 +177,25 @@ def _contagion_inputs():
     }
 
 
+def _outlook_inputs():
+    return {
+        "signals": [
+            {"layer": "L1", "direction": "negative", "signal": "行业准入收紧"},
+            {"layer": "外部支持", "direction": "negative", "signal": "支持方评级下调"},
+            {"layer": "L4", "direction": "positive", "signal": "经营现金流转正"},
+        ],
+        "rating": "AA",
+        "paradigm": "政策驱动型",
+        "watchlist_triggers": [{"side": "negative", "event": "被监管立案调查"}],
+    }
+
+
 def _wired_inputs(path_id):
     return {
         "WP-M4-01": _concentration_inputs,
         "WP-M4-02": _contagion_inputs,
         "WP-M4-03": _sri_inputs,
+        "WP-X-05": _outlook_inputs,
     }[path_id]()
 
 
@@ -218,6 +232,7 @@ EXPECTED_OUTPUT_KEYS = {
     "WP-M4-03": {"sri", "thermometer"},
     "WP-M4-01": {"score", "adjustment", "levels", "bb_cap_triggered"},
     "WP-M4-02": {"exposure", "links", "factors_applied"},
+    "WP-X-05": {"outlook", "confidence", "net_score", "watchlist", "migration"},
 }
 
 
