@@ -300,3 +300,39 @@ def test_check_skill_template_drift_absent_is_clean(tmp_path, monkeypatch):
     cc = _import_checker()
     monkeypatch.setattr(cc, "SKILL_TEMPLATES_DIR", tmp_path / "templates")
     assert cc.check_skill_template_drift() == []
+
+
+def _expected_semver(cc):
+    """从 checker 的 EXPECTED_VERSION 派生 X.Y.Z，测试随晋升自动适配。"""
+    return cc.VERSION_RELEASE_RE.match(cc.EXPECTED_VERSION).group(1)
+
+
+def test_check_version_alignment_passes_on_real_tree():
+    cc = _import_checker()
+    assert cc.check_version_alignment() == []
+
+
+def test_check_version_alignment_flags_pyproject_mismatch(tmp_path, monkeypatch):
+    cc = _import_checker()
+    want = _expected_semver(cc)
+    (tmp_path / "pyproject.toml").write_text('version = "0.0.0"\n', encoding="utf-8")
+    (tmp_path / "package.json").write_text(
+        '{"version": "%s"}\n' % want, encoding="utf-8"
+    )
+    monkeypatch.setattr(cc, "ROOT", tmp_path)
+    errors = cc.check_version_alignment()
+    assert any("pyproject.toml" in e for e in errors)
+    assert not any("package.json" in e for e in errors)
+
+
+def test_check_version_alignment_flags_package_json_mismatch(tmp_path, monkeypatch):
+    cc = _import_checker()
+    want = _expected_semver(cc)
+    (tmp_path / "pyproject.toml").write_text(
+        'version = "%s"\n' % want, encoding="utf-8"
+    )
+    (tmp_path / "package.json").write_text('{"version": "0.0.0"}\n', encoding="utf-8")
+    monkeypatch.setattr(cc, "ROOT", tmp_path)
+    errors = cc.check_version_alignment()
+    assert any("package.json" in e for e in errors)
+    assert not any("pyproject.toml" in e for e in errors)

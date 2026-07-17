@@ -2,6 +2,7 @@
 """Regression checker for the fixed-income credit analysis engine."""
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -24,6 +25,7 @@ if str(ROOT) not in sys.path:
 from src.path_sheet import load_registry_paths, validate_path_sheet  # noqa: E402
 
 EXPECTED_VERSION = "v0.8.0-release"
+VERSION_RELEASE_RE = re.compile(r"^v(\d+\.\d+\.\d+)-release$")
 
 CORE_DOCS = [
     "engine-overview.md",
@@ -167,6 +169,32 @@ def check_versions() -> list[str]:
         skill_text = SKILL_FILE.read_text(encoding="utf-8")
         if EXPECTED_VERSION not in skill_text:
             errors.append(f"VERSION: SKILL.md does not contain {EXPECTED_VERSION}")
+    return errors
+
+
+def check_version_alignment() -> list[str]:
+    """pyproject.toml / package.json 的 version 必须与 EXPECTED_VERSION 派生值一致。"""
+    m = VERSION_RELEASE_RE.match(EXPECTED_VERSION)
+    if not m:
+        return [
+            f"VERSION_ALIGN: EXPECTED_VERSION {EXPECTED_VERSION!r} 不是 vX.Y.Z-release 形式"
+        ]
+    want = m.group(1)
+    errors = []
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    pm = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.MULTILINE)
+    if pm is None or pm.group(1) != want:
+        got = pm.group(1) if pm else None
+        errors.append(
+            f"VERSION_ALIGN: pyproject.toml version={got!r}，应为 {want!r}"
+            f"（派生自 EXPECTED_VERSION={EXPECTED_VERSION}）"
+        )
+    pkg = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
+    if pkg.get("version") != want:
+        errors.append(
+            f"VERSION_ALIGN: package.json version={pkg.get('version')!r}，应为 {want!r}"
+            f"（派生自 EXPECTED_VERSION={EXPECTED_VERSION}）"
+        )
     return errors
 
 
@@ -502,6 +530,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_path_sheets())
     errors.extend(check_artifact_path_ids())
     errors.extend(check_agents_entry())
+    errors.extend(check_version_alignment())
     return errors
 
 
