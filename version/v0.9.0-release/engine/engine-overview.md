@@ -30,7 +30,7 @@
 | **work-path-registry.md** | 工作路径注册表 · 角色×方向×深度×报告的路径定义 | 需要确认走哪条路径时查阅 |
 | **dimension-registry.md** | 维度注册表 · 6范式+LGFV 与 M0-M5 角色的可寻址索引（单源指针层） | 需要按维度路由/检索时查阅 |
 | **pipeline-contract.md** | 四段链 I/O 契约 · 四份产物 schema · 链式边（机器可读） | 需要确认阶段间传递什么产物时查阅 |
-| [pipeline.py](../src/pipeline.py) | 四段链可执行编排器（v0.7.8）：解析阶段计划、接 WP-M4-01/-02/-03 三个编码引擎 | 需要以代码驱动四段链、对接已编码引擎时查阅 |
+| [pipeline.py](../src/pipeline.py) | 四段链可执行编排器（v0.7.8）：解析阶段计划、接 WP-M0-01/WP-M4-01/-02/-03/WP-X-05 五个编码引擎 | 需要以代码驱动四段链、对接已编码引擎时查阅 |
 
 ---
 
@@ -244,6 +244,8 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | work-path-registry.md | v0.9.0-release | 工作路径注册表 |
 | dimension-registry.md | v0.9.0-release | 维度注册表 |
 | pipeline-contract.md | v0.9.0-release | 四段链产物契约 |
+| m2-underwriting-framework.md | v0.9.0-release | M2 承销可行性评估框架 |
+| m5-financing-advisor-framework.md | v0.9.0-release | M5 融资顾问框架 |
 
 **职责边界说明：** 原有M4组合风控框架（multi-stakeholder.md §5）承担单发行人/单组合的风控职能（集中度限额/压力测试/评级调整）。系统智能层（contagion-matrix.md/concentration-framework.md/systemic-warning-framework.md）在M4基础上增加跨发行人/跨组合的系统性风险分析——传染矩阵覆盖全市场行业对传导、集中度框架覆盖五维组合集中度、预警框架提供全市场SRI读数。两者分工明确：原有M4做单发行人风控·系统智能层做跨发行人系统性风险。
 

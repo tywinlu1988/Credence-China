@@ -83,16 +83,10 @@ EXEMPT: dict[str, dict[int, str]] = {
         47: "LGD4 等级定义区间（同上）",
         48: "LGD5 等级定义区间（同上）",
     },
-    "template-type14.html": {
-        1301: "敏感性测试情景参数（结构性常量，非主体数据）",
-        1309: "敏感性测试情景参数（同上）",
-        1317: "敏感性测试情景参数（同上）",
-        1343: "敏感性测试情景参数（同上）",
-        1351: "敏感性测试情景参数（同上）",
-    },
+    "template-type14.html": {},
     "template-type15.html": {
-        669: "温度计标尺 UI（结构性刻度组件）",
-        670: "温度计标尺 UI（同上）",
+        740: "温度计标尺 UI（结构性刻度组件）",
+        741: "温度计标尺 UI（同上）",
     },
 }
 
@@ -100,13 +94,15 @@ EXEMPT: dict[str, dict[int, str]] = {
 EXEMPT_PATTERNS: dict[str, list[tuple[str, str]]] = {
     "template-type14.html": [
         (r"threshold-(label|marker)", "集中度标尺 UI（结构性刻度组件）"),
+        (r"(敞口|行业)[+-]\d+%", "敏感性测试情景参数（结构性常量，非主体数据）"),
     ],
 }
 
 
 def _numeric_violations(f: Path) -> list[str]:
     text = f.read_text(encoding="utf-8")
-    text = STYLE_BLOCK_RE.sub("", text)  # CSS 不计
+    # CSS 不计，但以等量换行替换保持行号不变（EXEMPT 行号与违规报告均按真实文件行号）
+    text = STYLE_BLOCK_RE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
     bad = []
     last_heading = ""
     patterns = EXEMPT_PATTERNS.get(f.name, [])
@@ -118,12 +114,11 @@ def _numeric_violations(f: Path) -> list[str]:
         m = HEADING_RE.search(ln)
         if m:
             last_heading = m.group(1)
-        if "{" in ln:  # 占位符行
-            continue
         if METHODOLOGY_CONTEXT_RE.search(ln) or METHODOLOGY_CONTEXT_RE.search(last_heading):
             continue
-        if NUMERIC_DATA_RE.search(ln) or STOCK_CODE_RE.search(ln):
-            bad.append(f"{f.name}:{i} 数值残留 {ln.strip()[:60]}")
+        stripped = re.sub(r"\{[^}]*\}", "", ln)  # 剥除占位符后扫描残余（防"行内有占位符即放行"漏检）
+        if NUMERIC_DATA_RE.search(stripped) or STOCK_CODE_RE.search(stripped):
+            bad.append(f"{f.name}:{i} 数值残留 {stripped.strip()[:60]}")
     return bad
 
 
