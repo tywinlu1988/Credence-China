@@ -1,6 +1,6 @@
 {
   "name": "credence",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "固收信贷智能分析引擎（Credence）— 方法论优先的 agent 技能包。`npx github:tywinlu1988/Credence-China` 把当前 release 包落成为可直接打开的项目。",
   "license": "SEE LICENSE IN LICENSE",
   "bin": {

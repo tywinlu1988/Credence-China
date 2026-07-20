@@ -1,6 +1,6 @@
 # Codex 深度适配 — Credence
 
-**引擎版本**：v0.8.5-release · **入口**：仓库根级 `AGENTS.md`
+**引擎版本**：v0.8.6-release · **入口**：仓库根级 `AGENTS.md`
 
 Codex 原生读取仓库根级的 `AGENTS.md`，但**不会自动发现** `dev/.claude/skills/`。因此 Codex 的接入姿势是：先读 `AGENTS.md` 定位当前任务对应的 skill，再**手动读那份 `SKILL.md` 正文**，然后按正文执行。阈值、权重、评级映射的单一事实源仍是 `dev/engine/*.md`，本文件不复制任何数值。
 
