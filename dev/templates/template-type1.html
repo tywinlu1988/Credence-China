@@ -4,14 +4,18 @@
   Sections: Hero → Verdict → Key Numbers → Pyramid → Deepest Layer → Market Blindness → Timeline → Self-Assessment
   Colors: Red #ef4444 (risk), Amber #f59e0b (watch), Green #22c55e (calm), Purple #a855f7 (meta)
   Font: System stack with PingFang SC for Chinese
-  Replace all {{PLACEHOLDERS}} with actual data.
+  Replace all {占位符} with actual data.
 -->
+<!-- @template: dev/templates/template-type1.html -->
+<!-- @engine-version: v0.8.6-release -->
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{REPORT_TITLE}}</title>
+<title>{报告标题}</title>
+<link rel="stylesheet" href="template-base.css">
 <style>:root{--bg:#0f1117;--card:#1a1d28;--card2:#212433;--text:#e2e4ea;--text2:#9398a9;--border:#2a2e3c;--green:#22c55e;--green-bg:rgba(34,197,94,.08);--red:#ef4444;--red-bg:rgba(239,68,68,.08);--amber:#f59e0b;--amber-bg:rgba(245,158,11,.08);--blue:#6366f1;--blue-bg:rgba(99,102,241,.08);--purple:#a855f7;--purple-bg:rgba(168,85,247,.08)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
@@ -96,6 +100,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
   REPLACE ALL {{ }} PLACEHOLDERS WITH ACTUAL DATA.
 -->
 </div>
-<div class="footer"><p><strong>{{FOOTER_TITLE}}</strong></p><p style="margin-top:4px">{{FOOTER_META}}</p></div>
+<div class="footer"><p>报告编号 T1-{报告编号} · 版本 v0.8.6-release · 生成于 {生成日期} · 仅供内部风险评估使用</p><p>基于 Credence 引擎 v0.8.6-release · 所有分析均为内部推演，不构成投资建议</p></div>
 </body>
 </html>
