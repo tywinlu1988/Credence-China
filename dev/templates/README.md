@@ -1,6 +1,6 @@
 # Credence 报告模板导航
 
-> 本目录是报告模板的**单一事实源**（`template-base.css` + Type 1–15、18，共 16 份模板 + 1 份共享样式）。
+> 本目录是报告模板的**单一事实源**（`template-base.css` + Type 1–18，共 18 份模板 + 1 份共享样式）。
 > 路径 → 模板映射以 `dev/engine/work-path-registry.md` 的 `templates` 字段为唯一权威；本页只做导航与契约说明，不复制模板内容。
 
 ## 模板总表
@@ -22,9 +22,9 @@
 | 13 | 跨行业传染分析 | WP-M4-02 跨行业传染分析 | [template-type13.html](template-type13.html) |
 | 14 | 组合集中度评估 | WP-M4-01 组合集中度评估 | [template-type14.html](template-type14.html) |
 | 15 | 系统性风险警报 | WP-M4-03 系统性风险读数 | [template-type15.html](template-type15.html) |
+| 16 | 承销可行性报告 | WP-M2-01 承销可行性评估 | [template-type16.html](template-type16.html) |
+| 17 | 融资顾问报告 | WP-M5-01 企业融资顾问 | [template-type17.html](template-type17.html) |
 | 18 | 展望与持续监控 | WP-X-05 展望与持续监控 | [template-type18.html](template-type18.html) |
-
-> Type 16/17 依注册表缺口清单预留给承销/融资顾问（v0.9.0 目标）。
 
 ## 模板契约（自制/填充前必读）
 

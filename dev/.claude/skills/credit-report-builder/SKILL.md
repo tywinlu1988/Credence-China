@@ -1,6 +1,6 @@
 ---
 name: credit-report-builder
-description: Use when turning a completed Chinese fixed-income credit analysis into a deliverable report — selecting the correct report template (Type 1–15), mapping findings to the L0/L1/L2 output tiers, rendering a multi-stakeholder dashboard, or assembling a layered credit report from an analysis artifact. Triggers on '生成报告', '出一份授信审批报告', '做成仪表盘', 'L0信号卡', or when a work-path sheet's templates must be produced. Requires an upstream analysis artifact; does not perform analysis itself.
+description: Use when turning a completed Chinese fixed-income credit analysis into a deliverable report — selecting the correct report template (Type 1–18), mapping findings to the L0/L1/L2 output tiers, rendering a multi-stakeholder dashboard, or assembling a layered credit report from an analysis artifact. Triggers on '生成报告', '出一份授信审批报告', '做成仪表盘', 'L0信号卡', or when a work-path sheet's templates must be produced. Requires an upstream analysis artifact; does not perform analysis itself.
 ---
 
 ## Purpose
@@ -22,10 +22,16 @@ description: Use when turning a completed Chinese fixed-income credit analysis i
 ## Assembly Protocol（装配协议）
 
 1. **读 join key**：从路径单与分析产物取 `path_id`，校验它指向注册表中的已注册路径；不一致即停止并上报。
-2. **选模板**：按 `path_id` 在 registry 的 `templates` 字段取模板清单（Type 1–15 或允许的标记值 `planned` / `L0-spec:`）。标记值含义以 registry §schema 为准；命中 `planned` 须如实告知"模板待开发"，不得伪造渲染产物。
+2. **选模板**：按 `path_id` 在 registry 的 `templates` 字段取模板清单（Type 1–18 或允许的标记值 `planned` / `L0-spec:`）。标记值含义以 registry §schema 为准；命中 `planned` 须如实告知"模板待开发"，不得伪造渲染产物。
 3. **映射分层**：把分析产物映射到 L0 信号卡 / L1 快照 / L2 深度报告三层。三层的定义、消费时间与信息密度以 `dev/engine/output-layered-framework.md` §二（三层总览）/§三（L0 信号卡）/§五（L2 深度报告）为单一事实源，本 skill 不重新定义。
 4. **渲染**：用 `dev/templates/` 的模板装配报告；完备性灯号口径见 output-layered-framework §8.4。
 5. **产交付单**：按下述 schema 输出《交付单》。
+
+## 装配纪律
+
+1. **逐节溯源**：每个 section 的内容必须可溯源至上游分析产物；任何数据点不得凭模板示例或印象生成。
+2. **示例区整节替换**：模板中的示例/演示内容（含数值、公司名、结论）必须整节替换，禁止部分保留。
+3. **交付前残留自查**：搜索 `{` 残留占位符与已知实例名（`tests/test_template_contract.py` 的 INSTANCE_NAMES），任一命中即回炉。
 
 ## Delivery Note Output（《交付单》）
 

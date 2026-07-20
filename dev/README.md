@@ -20,7 +20,7 @@
 ../AGENTS.md                                       ← 跨 CLI 通用入口（仓库根级 · 任何 agent CLI 从这里开始）
 dev/
 ├── README.md                                        ← 你在这里
-├── engine/                                          → 算法与方法论（28份现行文档）
+├── engine/                                          → 算法与方法论（30份现行文档）
 │   ├── engine-overview.md                          架构总览 · 文档导航
 │   ├── industry-framework.md                       行业分类（十维评分·13行业金字塔）
 │   ├── qualitative-analysis.md                     定性分析（信源·政策·马赛克·叙事）
@@ -51,7 +51,7 @@ dev/
 │
 ├── templates/                                       → 报告模板单一事实源（16文件）
 │   ├── template-base.css                           共享样式基底
-│   └── template-type1..15.html                     Type 1 - Type 15 报告模板
+│   └── template-type1..18.html                     Type 1 - Type 18 报告模板
 │
 ├── design/                                          → 报告设计体系
 │   ├── report-style-system.md                      报告样式系统
@@ -107,7 +107,7 @@ dev/
 
 | 想了解... | 去看... |
 |---|---|
-| 报告模板（Type 1-15 + 共享样式） | `templates/` |
+| 报告模板（Type 1-18 + 共享样式） | `templates/` |
 | 系统智能层总览 | `engine/systemic-warning-framework.md` + `engine/contagion-matrix.md` + `engine/concentration-framework.md` |
 | 产品愿景和魔法体验 | `product/product-overview.md` |
 | 怎么卖、卖给谁 | `product/commercial-model.md` |
@@ -128,7 +128,7 @@ dev/
 | 任意 agent CLI 的通用入口（Claude Code/Codex/Cursor/Gemini/OpenCode） | `../AGENTS.md` |
 | 四段链产物契约（工作路径单/分析产物/交付单/质检裁决） | `engine/pipeline-contract.md` |
 | 维度注册表（6范式+LGFV 与 M0-M5 角色的可寻址索引，单源指针层） | `engine/dimension-registry.md` |
-| 可执行编排器（v0.7.8：以代码驱动四段链，接 WP-M4-01/-02/-03 三个编码引擎） | `../src/pipeline.py` |
+| 可执行编排器（v0.7.8：以代码驱动四段链，接 WP-M0-01/WP-M4-01/-02/-03/WP-X-05 五个编码引擎） | `../src/pipeline.py` |
 | AI Agent使用这套方法论（四段链：路由/分析/报告/质检） | `.claude/skills/` |
 | 版本管理策略与发布流程 | `../docs/VERSION-MANAGEMENT.md` |
 

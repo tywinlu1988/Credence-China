@@ -8,7 +8,7 @@ release, not any single component:
 - T11.2: the 5 wired paths (WP-M0-01 composite, WP-M4-01 concentration, WP-M4-02
   contagion, WP-M4-03 SRI, WP-X-05 outlook) execute code at the analysis stage; the
   other 6 active paths produce a complete LLM-orchestrated plan.
-- T11.3: the end-to-end walkthrough record exists and literally names all 8 path ids.
+- T11.3: the end-to-end walkthrough record exists and literally names all active path ids.
 - T11.4: version promotion is consistent (EXPECTED_VERSION well-formed and aligned with
   pyproject/package.json; every CORE_DOCS doc + skill declares it), mirroring
   consistency_check.check_versions / check_version_alignment.
@@ -275,7 +275,7 @@ def test_t11_2_wired_execute_code_others_llm_orchestrated(contract, registry_pat
 
 
 # --------------------------------------------------------------------------
-# T11.3 — walkthrough record exists and literally names all 8 path ids
+# T11.3 — walkthrough record exists and literally names all active path ids
 # --------------------------------------------------------------------------
 
 def test_t11_3_walkthrough_covers_all_eight_paths():
