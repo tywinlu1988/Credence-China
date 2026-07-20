@@ -49,7 +49,6 @@ def _violations(f: Path) -> list[str]:
     return bad
 
 
-@pytest.mark.xfail(strict=True, reason="type2/3/4 实例内容待 v0.9.0 Task 5 参数化重写（去案例化既定路线）")
 def test_no_unmarked_instance_data():
     violations = []
     for f in TEMPLATE_FILES:
