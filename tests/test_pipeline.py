@@ -97,6 +97,16 @@ def _sheet(path_id, **overrides) -> dict:
             "quality_gates": ["一票否决 (dev/engine/industry-framework.md §五)"],
             "notes": "",
         },
+        "WP-M1-01": {
+            "role": "M1",
+            "object": "single-issuer",
+            "depth": "L2",
+            "mode": "A",
+            "path_id": "WP-M1-01",
+            "engine_reading_order": ["dev/engine/multi-stakeholder.md"],
+            "quality_gates": ["四维 (dev/engine/multi-stakeholder.md §二)"],
+            "notes": "",
+        },
         "WP-M2-01": {
             "role": "M2",
             "object": "single-issuer",
@@ -196,12 +206,12 @@ def test_t9_3_concentration_wired(contract, registry_paths):
 
 
 # --------------------------------------------------------------------------
-# T9.4 — unwired path (WP-M0-01): analysis not executable, graceful skip
+# T9.4 — unwired path (WP-M1-01): analysis not executable, graceful skip
 # --------------------------------------------------------------------------
 
 def test_t9_4_unwired_path_skips_gracefully(contract, registry_paths):
-    assert "WP-M0-01" not in EXECUTABLE_ENGINES
-    plan = load_stage_plan(_sheet("WP-M0-01"), registry_paths, contract)
+    assert "WP-M1-01" not in EXECUTABLE_ENGINES
+    plan = load_stage_plan(_sheet("WP-M1-01"), registry_paths, contract)
     assert plan[1].executable is False
     manifest = run_executable_stages(plan, {})
     analysis = next(s for s in manifest["stages"] if s["name"] == "analysis")
@@ -329,3 +339,31 @@ def test_t9_9_outlook_wired_and_runs(contract, registry_paths):
     assert set(out) == {"outlook", "confidence", "net_score", "watchlist", "migration"}
     assert out["outlook"] == "负面" and out["watchlist"]["side"] == "负面观察"
     assert out["migration"]["下调"] == "15-20%"
+
+
+# --------------------------------------------------------------------------
+# T9.10 — WP-M0-01 wired: composite scorer executes at analysis stage
+# --------------------------------------------------------------------------
+
+def test_t9_10_composite_wired_and_runs(contract, registry_paths):
+    assert "WP-M0-01" in EXECUTABLE_ENGINES
+    plan = load_stage_plan(_sheet("WP-M0-01"), registry_paths, contract)
+    assert plan[1].executable is True
+    manifest = run_executable_stages(plan, {
+        "d_scores": {"D1": 4, "D2": 4, "D3": 5, "D4": 4, "D5": 3,
+                     "D6": 3, "D7": 2, "D8": 2, "D9": 3, "D10": 3},
+        "layer_scores": {"L1": 8, "L2": 7, "L3": 6, "L4": 7},
+        "industry": "光伏/储能",
+    })
+    analysis = next(s for s in manifest["stages"] if s["name"] == "analysis")
+    assert analysis["mode"] == "code"
+    out = analysis["outputs"]
+    assert set(out) == {"paradigm", "composite", "rating", "veto_capped", "conflict", "out_of_scope"}
+    assert out["paradigm"] == "政策驱动型" and out["rating"] == "A"
+    # 特殊结构诚实降级：半导体 → out_of_scope
+    manifest2 = run_executable_stages(plan, {
+        "d_scores": {"D1": 4}, "layer_scores": {"L1": 8, "L2": 7, "L3": 6, "L4": 7},
+        "industry": "半导体/集成电路",
+    })
+    out2 = next(s for s in manifest2["stages"] if s["name"] == "analysis")["outputs"]
+    assert out2["out_of_scope"] and out2["composite"] is None
