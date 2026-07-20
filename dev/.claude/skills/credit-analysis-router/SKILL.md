@@ -1,6 +1,6 @@
 ---
 name: credit-analysis-router
-description: Intake router for vague or compound Chinese fixed-income credit-analysis requests such as '帮我看看这家公司', '这个组合有没有问题', '该做哪种分析', '该从哪儿入手'. Use when the need is ambiguous, spans multiple roles (lending/investment/underwriting/trading/risk/financing), or the user asks which analysis to run or where to start. If the user already names a concrete methodology task or engine path, use the fixed-income-credit-analysis skill instead.
+description: Intake router for vague or compound Chinese fixed-income credit-analysis requests such as '帮我看看这家公司', '这个组合有没有问题', '该做哪种分析', '该从哪儿入手'. Use when the need is ambiguous, spans multiple roles (lending/investment/underwriting/trading/risk/financing), or the user asks which analysis to run or where to start. 含意图确认步骤（Step 5），确认后才移交执行。If the user already names a concrete methodology task or engine path, use the fixed-income-credit-analysis skill instead.
 ---
 
 ## Purpose
@@ -22,6 +22,20 @@ description: Intake router for vague or compound Chinese fixed-income credit-ana
 - 信息不足 → 从 L0/L1 起步，不直接跳到 L2。
 - 对象不明 → 先按单发行人处理。
 - 角色不明 → 给出 2 条候选路径请用户选择，不擅自定路径。
+
+**Step 5 意图确认（必经）**：四问收敛后、移交执行前，必须输出以下确认卡并**等待用户确认**；未获确认（或用户明确说"按此执行/继续"）不得移交。
+
+```
+【意图确认】
+- 角色/视角：<M0-M5/meta>（若为推断，标注"请确认"）
+- 分析对象：<单发行人/组合/行业/全市场>
+- 深度与产出：<path_id + 报告形态>（如 WP-M0-01 → L2 深度报告）
+- 数据模式：Mode A（仅公开数据）/ Mode B（用户提供数据源）
+- 不确定点：<列出推测与缺口；无则写"无">
+确认无误请说"继续"；需调整请直接指出。
+```
+
+用户确认后才产出《工作路径单》并移交；用户纠正后按纠正内容重新收敛并再次确认。
 
 ## Routing Table
 
@@ -88,6 +102,7 @@ notes: "信息不足时降级为 L1 决策快照并附数据缺口清单"
 - **不复制引擎内容**：本 skill 只引用路径 ID 与文档名/章节，不复制任何阈值、权重、评级映射。规则正文一律以 `engine_reading_order` 指向的引擎文档为准。
 - **Mode B 护栏**：用户未显式提供数据源（CSV/API/MCP）时，`mode` 不得置为 B；所有 Mode B 字段视为数据缺口，不得编造外部数据值。
 - **planned 路径如实告知**：推荐到 🔴 planned 路径（如 WP-M2-01、WP-M5-01）时，必须明示"该路径待开发"，并给出可替代的 active 路径，不得伪造能力。
+- **不脑补**：意图要素缺失时给候选不给结论（如"角色不明"→ 给 2 条候选路径请选，不擅自定）；用户表述与注册表全部路径都不匹配时，如实说明并给出最接近的 1-2 个选项，禁止强行套路径。未经 Step 5 确认直接执行属违规。
 - **路由即移交**：路径单产出后，切换到 `fixed-income-credit-analysis` skill，按 `engine_reading_order` 顺序阅读引擎文档并执行，质量门按 `quality_gates` 校验。（自 v0.7.4 起执行 skill 已按路径单驱动阅读；无路径单时回退到核心集 `engine-overview.md` + `dual-track-methodology.md` + 请求点名的专题文档。）
 
 ## Chaining（链式交接）
