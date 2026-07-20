@@ -5,7 +5,7 @@
 >
 > **A methodology-first credit analysis engine for China's fixed-income market** — a vertical **domain-methodology skill pack** delivered as **Agent Skills** (`SKILL.md`), installable into Claude Code / Codex / Cursor / Gemini / OpenCode.
 
-**版本 Version** `v0.8.6-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
+**版本 Version** `v0.9.0-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
 
 [中文](#中文) · [English](#english)
 
@@ -13,7 +13,7 @@
 
 ## 中文
 
-**13 行业 · 16 工作路径 · 5 编码引擎 · 28 引擎文档 · 17 报告模板**
+**13 行业 · 16 工作路径 · 5 编码引擎 · 30 引擎文档 · 18 报告模板**
 
 ### 能力亮点
 
@@ -60,7 +60,7 @@ npx github:tywinlu1988/Credence-China
 git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
-可安装的发行包在 `version/v0.8.6-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
+可安装的发行包在 `version/v0.9.0-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
 
 ### 快速上手
 
@@ -93,7 +93,7 @@ dev/          方法论与技能的开发源（engine/ 28 份 · .claude/skills/
 src/          可执行编排器 + 2 个编码引擎（pipeline.py · sri_calculator.py · concentration_scorer.py）
 scripts/      build_dist.py（dev/ → 发行包组装器）· consistency_check.py（一致性校验）
 tests/        回归测试（150 项）
-version/      当前可安装发行包 version/v0.8.6-release/（历史快照见 git 标签）
+version/      当前可安装发行包 version/v0.9.0-release/（历史快照见 git 标签）
 validation/   能力验证证据（验证方法论 + 8 条端到端走查 + 2 份行业方法论参照）
 docs/         版本管理策略 · Codex 深度适配
 AGENTS.md     跨 CLI 通用入口（任何 agent CLI 从这里开始）
@@ -127,7 +127,7 @@ Credence packages the methodology of a seasoned China fixed-income credit analys
 
 **Core principle**: traditional financial analysis fails systematically in policy-driven, tech-barrier, and asset-lease industries; the heaviest credit factors rarely appear on the balance sheet; external ratings lag real credit deterioration by 17+ months on average.
 
-**13 industries · 16 work paths · 5 coded engines · 28 engine docs · 17 report templates**
+**13 industries · 16 work paths · 5 coded engines · 30 engine docs · 18 report templates**
 
 ### Highlights
 
@@ -185,7 +185,7 @@ Download the latest `vX.Y.Z-release.zip` from [Releases](https://github.com/tywi
 git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
-The installable package is at `version/v0.8.6-release/` (browse/copy and use; see `INSTALL.md` inside for per-tool setup); methodology source lives in `dev/`.
+The installable package is at `version/v0.9.0-release/` (browse/copy and use; see `INSTALL.md` inside for per-tool setup); methodology source lives in `dev/`.
 
 ### Repository map
 
@@ -194,7 +194,7 @@ dev/          methodology & skill source (engine/ 28 docs · .claude/skills/ 4-s
 src/          executable orchestrator + 2 coded engines (pipeline.py · sri_calculator.py · concentration_scorer.py)
 scripts/      build_dist.py (dev/ → release-package assembler) · consistency_check.py
 tests/        regression tests (150)
-version/      current installable package version/v0.8.6-release/ (history via git tags)
+version/      current installable package version/v0.9.0-release/ (history via git tags)
 validation/   capability evidence (validation methodology + 8 end-to-end walkthroughs + 2 industry references)
 docs/         versioning strategy · Codex deep-dive adapter
 AGENTS.md     cross-CLI universal entry (start here from any agent CLI)

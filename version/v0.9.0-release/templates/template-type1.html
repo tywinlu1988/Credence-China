@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!-- @template: templates/template-type1.html -->
+<!-- @engine-version: v0.9.0-release -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="L2 深度信用报告模板 Type 1 · 执行摘要·评级总览·金字塔分层·双轨对撞·一票否决·数据完备性·监控建议">
+<title>{报告标题}</title>
+<link rel="stylesheet" href="template-base.css">
+<style>
+.hero { background: linear-gradient(135deg, #0f172a, #1e293b, #334155); }
+.hero .chip { background: rgba(99,102,241,0.22); color: #c7d2fe; border-color: rgba(99,102,241,0.4); }
+.verdict { text-align:center; padding:28px 24px; border-radius:10px; margin:24px 0; }
+.verdict .v-big { font-size:36px; font-weight:800; margin-bottom:6px; }
+.verdict.pass { border:1px solid rgba(34,197,94,.3); background:var(--green-bg); }
+.verdict.pass .v-big { color:var(--green); }
+.verdict.watch { border:1px solid rgba(245,158,11,.3); background:var(--amber-bg); }
+.verdict.watch .v-big { color:var(--amber); }
+.verdict.fail { border:1px solid rgba(239,68,68,.3); background:var(--red-bg); }
+.verdict.fail .v-big { color:var(--red); }
+.strip { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border-default); border-radius:10px; overflow:hidden; margin:0 0 24px; }
+.strip-item { background:var(--bg-secondary); padding:18px 16px; text-align:center; }
+.strip-item .label { font-size:11px; color:var(--text-tertiary); letter-spacing:.5px; margin-bottom:4px; }
+.strip-item .val { font-size:24px; font-weight:800; }
+.strip-item .sub { font-size:11px; color:var(--text-tertiary); }
+.pyramid { display:flex; flex-direction:column; align-items:center; gap:4px; margin:24px 0; }
+.pyr-layer { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-radius:6px; color:#fff; font-size:13px; font-weight:600; }
+.pyr-layer .pyr-score { font-size:12px; opacity:.85; font-weight:400; }
+.pyr-l4 { width:46%; background:linear-gradient(135deg,#64748b,#475569); }
+.pyr-l3 { width:60%; background:linear-gradient(135deg,#7c3aed,#6d28d9); }
+.pyr-l2 { width:74%; background:linear-gradient(135deg,#2563eb,#1d4ed8); }
+.pyr-l1 { width:88%; background:linear-gradient(135deg,#0f172a,#1e293b); }
+.duo-table td, .duo-table th { text-align:left; vertical-align:top; padding:8px 10px; }
+.sig-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+.sig-green { background:var(--green); } .sig-amber { background:var(--amber); }
+.sig-red { background:var(--red); } .sig-orange { background:#ea580c; }
+.ref-list li { margin: 4px 0; font-size: 13px; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="chip">Type 1 · L2 深度信用报告</div>
+  <h1>{主体名称} · 深度信用报告</h1>
+  <div class="hero-sub">当前评级 {当前评级} · 展望 {展望} · {报告日期}</div>
+</header>
+
+<nav class="toc-nav">
+  <a href="#s0">§0 执行摘要</a>
+  <a href="#s1">§1 评级总览</a>
+  <a href="#s2">§2 金字塔分层</a>
+  <a href="#s3">§3 双轨对撞</a>
+  <a href="#s4">§4 关键风险</a>
+  <a href="#s5">§5 市场盲区</a>
+  <a href="#s6">§6 数据完备性</a>
+  <a href="#s7">§7 时间线监控</a>
+  <a href="#s8">§8 方法论引用</a>
+</nav>
+
+<section id="s0">
+  <div class="summary-card">
+    <div class="s-title">执行摘要</div>
+    <div class="s-body">{一句话结论}</div>
+  </div>
+  <div class="verdict {评级档位样式}">
+    <div class="v-big">{当前评级}</div>
+    <div>展望 {展望} · 置信度 {置信度} · 数据完备性 {完备性}</div>
+  </div>
+</section>
+
+<section id="s1">
+  <h2>一、评级总览</h2>
+  <div class="strip">
+    <div class="strip-item"><div class="label">综合评级</div><div class="val">{当前评级}</div><div class="sub">{评级说明}</div></div>
+    <div class="strip-item"><div class="label">展望</div><div class="val">{展望}</div><div class="sub">{展望置信度}</div></div>
+    <div class="strip-item"><div class="label">复合评分</div><div class="val">{复合分}</div><div class="sub">{行业范式}</div></div>
+    <div class="strip-item"><div class="label">数据完备性</div><div class="val">{完备性}</div><div class="sub">{完备性说明}</div></div>
+  </div>
+  <p>{范式判定与加权理由}</p>
+</section>
+
+<section id="s2">
+  <h2>二、金字塔分层评分</h2>
+  <div class="pyramid">
+    <div class="pyr-layer pyr-l1"><span>L1 {L1层名}</span><span class="pyr-score">{L1得分}/10 · {L1关键发现}</span></div>
+    <div class="pyr-layer pyr-l2"><span>L2 {L2层名}</span><span class="pyr-score">{L2得分}/10 · {L2关键发现}</span></div>
+    <div class="pyr-layer pyr-l3"><span>L3 {L3层名}</span><span class="pyr-score">{L3得分}/10 · {L3关键发现}</span></div>
+    <div class="pyr-layer pyr-l4"><span>L4 {L4层名}</span><span class="pyr-score">{L4得分}/10 · {L4关键发现}</span></div>
+  </div>
+  <table class="duo-table">
+    <tr><th>层</th><th>得分</th><th>关键证据</th><th>数据来源</th></tr>
+    <tr><td>L1 {L1层名}</td><td>{L1得分}</td><td>{L1关键证据}</td><td>{L1数据来源}</td></tr>
+    <tr><td>L2 {L2层名}</td><td>{L2得分}</td><td>{L2关键证据}</td><td>{L2数据来源}</td></tr>
+    <tr><td>L3 {L3层名}</td><td>{L3得分}</td><td>{L3关键证据}</td><td>{L3数据来源}</td></tr>
+    <tr><td>L4 {L4层名}</td><td>{L4得分}</td><td>{L4关键证据}</td><td>{L4数据来源}</td></tr>
+  </table>
+</section>
+
+<section id="s3">
+  <h2>三、双轨交叉对撞</h2>
+  <table class="duo-table">
+    <tr><th>维度</th><th>轨道A（基本面）</th><th>轨道B（市场信号）</th><th>对撞结论</th></tr>
+    <tr><td>方向</td><td>{轨道A方向}</td><td>{轨道B方向}</td><td>{方向对撞}</td></tr>
+    <tr><td>强度</td><td>{轨道A强度}</td><td>{轨道B强度}</td><td>{强度对撞}</td></tr>
+  </table>
+  <div class="alert green"><strong>共识：</strong>{共识要点}</div>
+  <div class="alert amber"><strong>分歧：</strong>{分歧要点}——分歧即最有价值的洞察，需持续跟踪</div>
+</section>
+
+<section id="s4">
+  <h2>四、关键风险与一票否决</h2>
+  <div class="alert red">
+    <strong>一票否决状态：{否决状态}</strong><br>
+    {否决条件说明}
+  </div>
+  <table class="duo-table">
+    <tr><th>红旗信号</th><th>严重程度</th><th>证据</th><th>来源</th></tr>
+    <tr><td><span class="sig-dot sig-red"></span>{红旗1}</td><td>{严重度1}</td><td>{证据1}</td><td>{来源1}</td></tr>
+    <tr><td><span class="sig-dot sig-orange"></span>{红旗2}</td><td>{严重度2}</td><td>{证据2}</td><td>{来源2}</td></tr>
+    <tr><td><span class="sig-dot sig-amber"></span>{红旗3}</td><td>{严重度3}</td><td>{证据3}</td><td>{来源3}</td></tr>
+  </table>
+</section>
+
+<section id="s5">
+  <h2>五、市场盲区与分歧点</h2>
+  <div class="alert amber"><strong>市场叙事 vs 引擎判断：</strong>{市场叙事与引擎判断差异}</div>
+  <ul>
+    <li>{盲区点1}</li>
+    <li>{盲区点2}</li>
+    <li>{盲区点3}</li>
+  </ul>
+</section>
+
+<section id="s6">
+  <h2>六、数据完备性</h2>
+  <div class="strip">
+    <div class="strip-item"><div class="label">综合完备性</div><div class="val">{完备性}</div><div class="sub">{完备性等级}</div></div>
+  </div>
+  <table class="duo-table">
+    <tr><th>数据缺口</th><th>影响维度</th><th>影响程度</th><th>替代方案</th></tr>
+    <tr><td>{缺口1}</td><td>{影响维度1}</td><td>{影响程度1}</td><td>{替代方案1}</td></tr>
+    <tr><td>{缺口2}</td><td>{影响维度2}</td><td>{影响程度2}</td><td>{替代方案2}</td></tr>
+    <tr><td>{缺口3}</td><td>{影响维度3}</td><td>{影响程度3}</td><td>{替代方案3}</td></tr>
+  </table>
+  <p class="alert amber"><strong>提示：</strong>数据缺口本身即风险信号——缺口越大，评级置信度越低，结论使用时需相应谨慎。</p>
+</section>
+
+<section id="s7">
+  <h2>七、时间线与监控建议</h2>
+  <div class="timeline">
+    <div class="t-item"><span class="t-date">{时点1}</span>{事件1}</div>
+    <div class="t-item"><span class="t-date">{时点2}</span>{事件2}</div>
+    <div class="t-item"><span class="t-date">{时点3}</span>{事件3}</div>
+  </div>
+  <p>{监控建议：触发式复核条件与建议监控频率}</p>
+</section>
+
+<section id="s8">
+  <h2>八、方法论引用与术语</h2>
+  <ul class="ref-list">
+    <li>行业框架：<code>{引用行业框架文档}</code></li>
+    <li>方法论：<code>{引用双轨方法论文档}</code></li>
+    <li>信号完备性：<code>{引用马赛克引擎文档}</code></li>
+    <li>展望监控：<code>{引用展望监控文档}</code></li>
+  </ul>
+  <dl class="glossary">
+    <dt>评级（Rating）</dt><dd>18 档信用等级（AAA→D），由复合评分映射而得。</dd>
+    <dt>展望（Outlook）</dt><dd>12-24 个月评级变动方向的概率性判断（正面/稳定/负面/发展中）。</dd>
+    <dt>一票否决</dt><dd>生存性风险条件，触发后综合评级上限锁定为 CCC。</dd>
+    <dt>数据完备性</dt><dd>分析所依赖数据的覆盖程度；缺口本身即风险信号。</dd>
+  </dl>
+</section>
+
+<footer>
+  <p>报告编号 T1-{报告编号} · 版本 v0.9.0-release · 生成于 {生成日期} · 仅供内部风险评估使用</p>
+  <p>基于 Credence 引擎 v0.9.0-release · 所有分析均为内部推演，不构成投资建议</p>
+</footer>
+</body>
+</html>
