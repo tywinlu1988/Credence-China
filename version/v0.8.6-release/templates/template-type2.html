@@ -1,1004 +1,128 @@
 <!DOCTYPE html>
+<!-- @template: templates/template-type2.html -->
+<!-- @engine-version: v0.8.6-release -->
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="双标的前瞻对比报告 · 隆基绿能 vs 一道新能 · 光伏行业信用分析">
-<title>双标的前瞻对比 · 隆基绿能 vs 一道新能</title>
+<meta name="description" content="双标的前瞻对比报告模板 Type 2 · 双栏对比·分层对比·共识分歧·区分度结论">
+<title>双标的前瞻对比 · {标的A} vs {标的B}</title>
 <link rel="stylesheet" href="template-base.css">
 <style>
-  .hero { background: linear-gradient(135deg, #0f172a, #1e3a5f, #065f46); }
-  .strip.cols-8 { grid-template-columns: repeat(8, 1fr); }
-  .split-table { width: 100%; }
-  .contrib-bar { height: 8px; border-radius: 4px; background: var(--bg-tertiary); overflow: hidden; margin-top: 4px; }
-  .contrib-fill { height: 100%; border-radius: 4px; }
-  .callout { background: var(--bg-tertiary); border-left: 3px solid var(--purple); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
-  @media (max-width: 768px) { .strip.cols-8 { grid-template-columns: repeat(2, 1fr); } }
+.hero { background: linear-gradient(135deg, #0f172a, #1e3a5f, #2563eb); }
+.hero .chip { background: rgba(37,99,235,0.22); color: #bfdbfe; border-color: rgba(37,99,235,0.4); }
+.vs-badge { display:inline-flex; align-items:center; gap:18px; font-size:24px; font-weight:800; }
+.vs-badge .vs { font-size:16px; color:var(--text-tertiary); border:1px solid var(--border-strong); border-radius:50%; padding:6px 10px; }
+.cmp-table th.cola, .cmp-table td.cola { border-left: 2px solid var(--blue); }
+.cmp-table th.colb, .cmp-table td.colb { border-left: 2px solid var(--purple); }
+.cmp-table th, .cmp-table td { padding: 8px 12px; vertical-align: top; text-align: left; }
+.duo-col { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.duo-card { background: var(--bg-secondary); border-radius: var(--radius); padding: 16px 20px; border: 1px solid var(--border-default); }
+.duo-card.a { border-top: 3px solid var(--blue); }
+.duo-card.b { border-top: 3px solid var(--purple); }
+.duo-card h4 { font-size: 14px; margin-bottom: 8px; }
+.winner { color: var(--green); font-weight: 800; }
 </style>
 </head>
 <body>
+<header class="hero">
+  <div class="chip">Type 2 · 双标的前瞻对比</div>
+  <h1><span class="vs-badge">{标的A}<span class="vs">VS</span>{标的B}</span></h1>
+  <div class="hero-sub">{行业/场景} · {报告日期}</div>
+</header>
 
-<!-- ====== SECTION 1: 宏观与行业环境 ====== -->
-  <div class="section">
-    <h2 class="section-title">一、宏观与行业环境</h2>
+<nav class="toc-nav">
+  <a href="#s0">§0 结论</a>
+  <a href="#s1">§1 总览对比</a>
+  <a href="#s2">§2 分层对比</a>
+  <a href="#s3">§3 共识分歧</a>
+  <a href="#s4">§4 区分度结论</a>
+  <a href="#s5">§5 数据完备性</a>
+  <a href="#s6">§6 方法论引用</a>
+</nav>
 
-    <div class="card card-blue">
-      <h3>行业共性风险全景</h3>
-      <p style="margin-bottom:12px;color:var(--text-secondary);line-height:1.7;">2024-2026年光伏行业进入深度洗牌期，产能过剩加剧、组件价格跌破现金成本线、海外贸易壁垒持续升级。行业特征表现为"总量过剩、结构分化、洗牌加速"。本对比分析在此宏观背景下展开，框架需评估两家公司在同一行业冲击下的差异化韧性。</p>
-      <div class="metric-grid" style="grid-template-columns:repeat(4, 1fr);">
-        <div class="metric">
-          <div class="m-num" style="font-size:22px;color:var(--red);">-43%</div>
-          <div class="m-label">组件价格跌幅(24-26)</div>
-        </div>
-        <div class="metric">
-          <div class="m-num" style="font-size:22px;color:var(--amber);">650GW</div>
-          <div class="m-label">全球产能 vs 500GW需求</div>
-        </div>
-        <div class="metric">
-          <div class="m-num" style="font-size:22px;color:var(--red);">12家</div>
-          <div class="m-label">尾部企业已出清(24-26)</div>
-        </div>
-        <div class="metric">
-          <div class="m-num" style="font-size:22px;color:var(--amber);">35%</div>
-          <div class="m-label">行业平均产能闲置率</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px;">
-      <h3>行业景气度核心指标</h3>
-      <table>
-        <thead><tr><th>指标</th><th>单位</th><th>2023</th><th>2024</th><th>2025</th><th>2026H1</th><th>趋势</th></tr></thead>
-        <tbody>
-          <tr><td>多晶硅价格</td><td>$/kg</td><td>18</td><td>12</td><td>8</td><td>6</td><td class="text-red">持续下跌</td></tr>
-          <tr><td>组件均价</td><td>$/W</td><td>0.18</td><td>0.12</td><td>0.09</td><td>0.07</td><td class="text-red">逼近成本</td></tr>
-          <tr><td>全球装机量</td><td>GW</td><td>380</td><td>420</td><td>480</td><td>260(H1)</td><td class="text-green">稳步增长</td></tr>
-          <tr><td>行业平均毛利率</td><td>%</td><td>22</td><td>15</td><td>8</td><td>3</td><td class="text-red">急剧压缩</td></tr>
-          <tr><td>龙头企业平均ROE</td><td>%</td><td>18</td><td>10</td><td>4</td><td>1.5</td><td class="text-red">显著下降</td></tr>
-          <tr><td>尾部企业亏损面</td><td>%</td><td>30</td><td>55</td><td>72</td><td>85</td><td class="text-red">持续扩大</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="callout">
-      <strong>行业研判：</strong>光伏行业正处于典型的"洗牌出清"阶段，价格战加速产能淘汰。在此背景下，头部企业凭借技术、规模和资金优势有望穿越周期，而尾部企业面临流动性枯竭和被淘汰的风险。框架对L2（行业地位）和L3（财务实力）的评估权重应相应调增。
-    </div>
+<section id="s0">
+  <div class="summary-card">
+    <div class="s-title">执行摘要</div>
+    <div class="s-body">首选标的：<span class="winner">{首选标的}</span>——{一句话理由}</div>
   </div>
+</section>
 
-  <!-- ====== SECTION 2: 金字塔逐层对比 ====== -->
-  <div class="section">
-    <h2 class="section-title">二、金字塔逐层对比分析</h2>
-    <p style="color:var(--text-secondary);margin-bottom:16px;">基于五层金字塔框架的逐层差异分析。<span class="text-green">绿色</span>标注为隆基优势项，<span class="text-red">红色</span>标注为一道劣势项。每层级给出独立评分和权重贡献度。</p>
+<section id="s1">
+  <h2>一、总览对比</h2>
+  <table class="cmp-table">
+    <tr><th>维度</th><th class="cola">{标的A}</th><th class="colb">{标的B}</th><th>优势方</th></tr>
+    <tr><td>综合评级</td><td class="cola">{A评级}</td><td class="colb">{B评级}</td><td>{评级优势方}</td></tr>
+    <tr><td>展望</td><td class="cola">{A展望}</td><td class="colb">{B展望}</td><td>{展望优势方}</td></tr>
+    <tr><td>行业范式</td><td class="cola">{A范式}</td><td class="colb">{B范式}</td><td>—</td></tr>
+    <tr><td>复合评分</td><td class="cola">{A复合分}</td><td class="colb">{B复合分}</td><td>{评分优势方}</td></tr>
+    <tr><td>数据完备性</td><td class="cola">{A完备性}</td><td class="colb">{B完备性}</td><td>{完备性优势方}</td></tr>
+  </table>
+</section>
 
-    <!-- Level 1 -->
-    <div class="card card-blue" style="margin-bottom:16px;">
-      <h3>L1 · 宏观与区域环境 <span class="tag tag-blue" style="margin-left:8px;">权重 10%</span> <span class="tag tag-blue">隆基: 6.0</span> <span class="tag tag-amber">一道: 4.0</span></h3>
-      <table class="split-table">
-        <thead><tr><th style="width:18%;">评估维度</th><th style="width:41%;">隆基绿能 (Benchmark)</th><th style="width:41%;">一道新能 (Distressed)</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>区域经济环境</td>
-            <td>总部陕西西安，地方GDP全国第22位，政策支持力度中等。地处内陆，面向中亚市场有区位优势，但出口运输成本高于沿海 <span class="tag tag-amber">区域中性</span></td>
-            <td>总部浙江，长三角经济圈核心，产业链配套完善，出口便利。区域经济活力强，融资环境相对宽松 <span class="tag tag-green">区域优势</span></td>
-          </tr>
-          <tr>
-            <td>产业政策导向</td>
-            <td>受益于国家级"光伏领跑者"政策倾斜，大型基地项目优先采购龙头产品。海外产能布局（马来西亚、越南）灵活应对关税风险 <span class="tag tag-green">政策受益</span></td>
-            <td>中小企业政策红利有限，缺乏海外设厂资金和能力。国内市场竞争中面临龙头企业的定价打压 <span class="tag tag-red">政策边缘</span></td>
-          </tr>
-          <tr>
-            <td>汇率与贸易环境</td>
-            <td>海外营收占比60%+，天然形成汇率对冲。美国反倾销/反补贴影响已通过海外产能布局部分规避 <span class="tag tag-green">对冲有效</span></td>
-            <td>海外营收占比不足15%，汇率敞口有限但缺乏主动管理。贸易壁垒升级下出口受阻，被迫依赖国内市场竞争 <span class="tag tag-red">壁垒冲击</span></td>
-          </tr>
-          <tr>
-            <td>融资环境</td>
-            <td>上证50成分股，融资渠道多元。2025年成功发行50亿绿色可转债，融资成本3.2% <span class="tag tag-green">融资优势</span></td>
-            <td>IPO审核中，尚无股权融资通道，银行授信额度38亿已使用35亿，融资成本6.8% <span class="tag tag-red">融资受限</span></td>
-          </tr>
-        </tbody>
+<section id="s2">
+  <h2>二、分层对比（金字塔）</h2>
+  <div class="duo-col">
+    <div class="duo-card a">
+      <h4>{标的A}</h4>
+      <table class="cmp-table">
+        <tr><th>层</th><th>得分</th><th>关键发现</th></tr>
+        <tr><td>L1 {层名}</td><td>{A_L1得分}</td><td>{A_L1关键发现}</td></tr>
+        <tr><td>L2 {层名}</td><td>{A_L2得分}</td><td>{A_L2关键发现}</td></tr>
+        <tr><td>L3 {层名}</td><td>{A_L3得分}</td><td>{A_L3关键发现}</td></tr>
+        <tr><td>L4 {层名}</td><td>{A_L4得分}</td><td>{A_L4关键发现}</td></tr>
       </table>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-tertiary);">L1层级分差 +2.0，贡献总差异的3.6%。区域经济和政策环境对隆基略有利，但非核心分水岭。</div>
-
-      <div style="margin-top:14px;padding:12px;background:var(--bg-tertiary);border-radius:6px;">
-        <h4 style="font-size:13px;color:var(--text-primary);margin-bottom:8px;">同业宏观环境评分参照</h4>
-        <table style="font-size:12px;">
-          <thead><tr><th>企业</th><th>区域经济</th><th>产业政策</th><th>贸易环境</th><th>融资环境</th><th>L1总分</th></tr></thead>
-          <tbody>
-            <tr><td>隆基绿能</td><td class="text-amber">5.5</td><td class="text-green">8.0</td><td class="text-green">7.5</td><td class="text-green">8.0</td><td class="text-amber">7.2</td></tr>
-            <tr><td>通威股份</td><td class="text-green">7.5</td><td class="text-amber">6.5</td><td class="text-amber">6.0</td><td class="text-amber">6.5</td><td>6.6</td></tr>
-            <tr><td>晶科能源</td><td class="text-green">7.0</td><td class="text-amber">6.0</td><td class="text-green">7.5</td><td>5.5</td><td>6.5</td></tr>
-            <tr><td>一道新能</td><td class="text-green">7.5</td><td class="text-red">3.5</td><td class="text-red">2.5</td><td class="text-red">2.5</td><td class="text-red">4.0</td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:11px;color:var(--text-tertiary);margin-top:6px;">L1层级各企业差距相对有限，一道新能在长三角的区域反被其业务劣势所抵消。区域经济评分并非信用分化的主因。</p>
-      </div>
     </div>
-
-    <!-- Level 2 -->
-    <div class="card card-blue" style="margin-bottom:16px;">
-      <h3>L2 · 行业与经营环境 <span class="tag tag-blue" style="margin-left:8px;">权重 20%</span> <span class="tag tag-green">隆基: 8.0</span> <span class="tag tag-red">一道: 2.0</span></h3>
-      <table class="split-table">
-        <thead><tr><th>评估维度</th><th>隆基绿能 (Benchmark)</th><th>一道新能 (Distressed)</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>行业地位与市占率</td>
-            <td>全球组件出货量第一（2025年市占率18%），连续5年排名前三。品牌溢价显著，大型电站招标中享有优先议价权 <span class="tag tag-green">龙头地位</span></td>
-            <td>出货排名15+，市占率不足2%，行业定价权缺失。在头部企业降价竞争中被持续挤压，订单获取困难 <span class="tag tag-red">尾部边缘</span></td>
-          </tr>
-          <tr>
-            <td>技术路线与研发</td>
-            <td>BC电池技术全球领先，量产效率26.5%，研发投入占营收8.2%。HPBC二代技术预计2027年量产，效率目标27.2% <span class="tag tag-green">技术引领</span></td>
-            <td>TOPCon为主要技术路线，与行业主流无差异化。研发投入占营收2.5%，缺乏下一代技术储备 <span class="tag tag-red">技术跟随</span></td>
-          </tr>
-          <tr>
-            <td>供应链垂直整合</td>
-            <td>硅片-电池-组件垂直一体化率超过90%，单瓦成本较行业平均低15-20%。硅片自供率100%保障供应安全 <span class="tag tag-green">一体化优势</span></td>
-            <td>硅片外采为主，仅电池-组件环节整合。单瓦成本较隆基高25%以上，硅片价格波动时利润被侵蚀 <span class="tag tag-red">成本劣势</span></td>
-          </tr>
-          <tr>
-            <td>客户与市场多元化</td>
-            <td>前5大客户占比25%，覆盖全球60+国家和地区。分布式和集中式市场均衡发展 <span class="tag tag-green">多元均衡</span></td>
-            <td>前5大客户占比65%，集中于国内3-5家大型电站开发商。客户集中度高，议价能力弱 <span class="tag tag-amber">客户集中</span></td>
-          </tr>
-          <tr>
-            <td>产能利用率</td>
-            <td>整体产能利用率78%，其中高效BC产能利用率95%，旧产能已有序退出 <span class="tag tag-green">产能高效</span></td>
-            <td>产能利用率仅43%，受订单不足和资金限制，多条产线处于半停工状态 <span class="tag tag-red">产能闲置</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-tertiary);">L2层级分差 +6.0，贡献总差异的21.8%。行业地位的分化是两者信用质量差异的第二大来源。</div>
-
-      <div style="margin-top:14px;padding:12px;background:var(--bg-tertiary);border-radius:6px;">
-        <h4 style="font-size:13px;color:var(--text-primary);margin-bottom:8px;">同业行业地位评分参照</h4>
-        <table style="font-size:12px;">
-          <thead><tr><th>企业</th><th>市占率</th><th>技术路线</th><th>整合度</th><th>客户多元</th><th>产能利用率</th><th>L2总分</th></tr></thead>
-          <tbody>
-            <tr><td>隆基绿能</td><td class="text-green">9.0</td><td class="text-green">9.0</td><td class="text-green">8.5</td><td class="text-green">8.0</td><td class="text-green">7.5</td><td class="text-green">8.4</td></tr>
-            <tr><td>通威股份</td><td class="text-amber">6.5</td><td class="text-amber">6.0</td><td class="text-green">8.0</td><td class="text-amber">6.5</td><td class="text-green">8.0</td><td class="text-amber">7.0</td></tr>
-            <tr><td>晶科能源</td><td class="text-amber">6.0</td><td>5.0</td><td class="text-amber">6.5</td><td class="text-amber">7.0</td><td class="text-amber">6.5</td><td>6.2</td></tr>
-            <tr><td>一道新能</td><td class="text-red">1.0</td><td class="text-red">2.5</td><td class="text-red">2.0</td><td class="text-red">2.0</td><td class="text-red">1.5</td><td class="text-red">1.8</td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:11px;color:var(--text-tertiary);margin-top:6px;">隆基在行业经营维度全面领先，通威凭借硅料龙头地位位居第二梯队。一道新能市占率及产能利用率均为行业末位。</p>
-      </div>
-    </div>
-
-    <!-- Level 3 -->
-    <div class="card card-blue" style="margin-bottom:16px;">
-      <h3>L3 · 财务实力 <span class="tag tag-blue" style="margin-left:8px;">权重 35%</span> <span class="tag tag-green">隆基: 7.8</span> <span class="tag tag-red">一道: 1.2</span></h3>
-      <table class="split-table">
-        <thead><tr><th>评估维度</th><th>隆基绿能 (Benchmark)</th><th>一道新能 (Distressed)</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>总资产规模</td>
-            <td>1,580亿元，行业第二大资产规模。固定资产以高效BC产线为主，资产质量优质 <span class="tag tag-green">规模优势</span></td>
-            <td>120亿元，资产规模仅为隆基的7.6%。固定资产主要为TOPCon产线，面临技术迭代折旧压力 <span class="tag tag-red">规模不足</span></td>
-          </tr>
-          <tr>
-            <td>资本结构与负债率</td>
-            <td>资产负债率58%，有息负债率32%。债务结构以长期债务为主，短债占比35% <span class="score-good">健康</span></td>
-            <td>资产负债率92%，有息负债率68%。短债占比72%，期限错配严重 <span class="score-bad">极高风险</span></td>
-          </tr>
-          <tr>
-            <td>流动性覆盖</td>
-            <td>流动比率1.45x，速动比率1.12x。非受限货币资金覆盖短债1.2x <span class="score-ok">流动性充裕</span></td>
-            <td>流动比率0.65x，速动比率0.38x。非受限货币资金/短债仅0.15x，流动性极度紧张 <span class="score-bad">流动性危机</span></td>
-          </tr>
-          <tr>
-            <td>盈利能力</td>
-            <td>毛利率16.2%，行业对比中处于领先水平。净利润率5.8%，ROE 8.2% <span class="score-ok">盈利领先</span></td>
-            <td>毛利率2.8%，接近盈亏平衡点。净利润率-3.5%，连续2个季度亏损 <span class="score-bad">亏损状态</span></td>
-          </tr>
-          <tr>
-            <td>现金流质量</td>
-            <td>经营性现金流95亿元(TTM)，自由现金流28亿元。经营现金流/营业收入12% <span class="tag tag-green">现金流强劲</span></td>
-            <td>经营性现金流-8.5亿元(TTM)，自由现金流-15亿元。需持续外部融资维持运营 <span class="tag tag-red">现金枯竭</span></td>
-          </tr>
-          <tr>
-            <td>偿债保障</td>
-            <td>EBITDA/利息费用12.3x，具有充裕的利息覆盖能力。DSCR 2.5x <span class="score-good">安全</span></td>
-            <td>EBITDA/利息费用0.8x，经营性收益无法覆盖利息支出。DSCR 0.4x <span class="score-bad">资不抵息</span></td>
-          </tr>
-          <tr>
-            <td>资本开支与投资</td>
-            <td>年度资本开支120亿元，聚焦高效BC产能扩张。投资回收期3-4年，规划合理 <span class="tag tag-green">投资有序</span></td>
-            <td>资本开支已收缩至15亿元，仅维持现有产能运行。新产能投资计划推迟 <span class="tag tag-amber">投资停滞</span></td>
-          </tr>
-          <tr>
-            <td>EV/EBITDA</td>
-            <td>8.5x，行业估值中枢偏低，反映周期底部预期。龙头企业估值相对稳健 <span class="tag tag-green">合理估值</span></td>
-            <td>28.5x，高负债导致企业价值偏离，实际偿债能力被估值扭曲 <span class="tag tag-red">估值失真</span></td>
-          </tr>
-          <tr>
-            <td>净债务/EBITDA</td>
-            <td>1.8x，净债务规模可控，EBITDA覆盖能力强。杠杆水平在行业内属健康区间 <span class="score-good">杠杆健康</span></td>
-            <td>12.5x，净债务远超EBITDA，即使微小的EBITDA下降也将导致偿债能力急剧恶化 <span class="score-bad">极高杠杆</span></td>
-          </tr>
-          <tr>
-            <td>总资产周转率</td>
-            <td>0.52x，资产运营效率行业领先。高效BC产线产能利用率高，资产创收能力强 <span class="tag tag-green">运营高效</span></td>
-            <td>0.28x，资产周转效率低下，大量固定资产闲置。资产创收能力不足隆基的一半 <span class="tag tag-red">运营低效</span></td>
-          </tr>
-          <tr>
-            <td>存货周转天数</td>
-            <td>68天，存货管理精细化。高效供应链管理和以销定产策略有效控制库存水平 <span class="tag tag-green">库存健康</span></td>
-            <td>145天，存货积压严重。产品滞销和备货策略失当导致资金大量沉淀 <span class="tag tag-red">库存积压</span></td>
-          </tr>
-          <tr>
-            <td>应收账款周转天数</td>
-            <td>42天，回款能力强。大客户信用管理严格，应收账款账龄结构以1年内为主 <span class="tag tag-green">回款良好</span></td>
-            <td>98天，回款周期长。下游客户议价能力强，应收账龄延长趋势明显，坏账风险上升 <span class="tag tag-red">回款困难</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-tertiary);">L3层级分差 +6.6，贡献总差异的42.0%，是两者信用质量最根本的分水岭。资产负债率和现金流的差异最为显著。</div>
-
-      <div style="margin-top:14px;padding:12px;background:var(--bg-tertiary);border-radius:6px;">
-        <h4 style="font-size:13px;color:var(--text-primary);margin-bottom:8px;">同业财务实力评分参照</h4>
-        <table style="font-size:12px;">
-          <thead><tr><th>企业</th><th>资本结构</th><th>流动性</th><th>盈利能力</th><th>现金流</th><th>偿债保障</th><th>L3总分</th></tr></thead>
-          <tbody>
-            <tr><td>隆基绿能</td><td class="text-green">8.0</td><td class="text-green">7.5</td><td class="text-green">7.5</td><td class="text-green">8.5</td><td class="text-green">8.5</td><td class="text-green">8.0</td></tr>
-            <tr><td>通威股份</td><td class="text-amber">6.5</td><td class="text-amber">6.0</td><td class="text-amber">6.5</td><td class="text-green">7.5</td><td class="text-amber">7.0</td><td class="text-amber">6.7</td></tr>
-            <tr><td>晶科能源</td><td class="text-amber">5.5</td><td>5.0</td><td>5.0</td><td>5.5</td><td>5.0</td><td>5.2</td></tr>
-            <tr><td>一道新能</td><td class="text-red">1.0</td><td class="text-red">1.0</td><td class="text-red">1.5</td><td class="text-red">1.0</td><td class="text-red">1.0</td><td class="text-red">1.1</td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:11px;color:var(--text-tertiary);margin-top:6px;">L3是拉大龙头与尾部差距的核心层级。隆基凭借规模效应和融资优势稳居行业第一，一道新能流动性和偿债指标全线亮红灯。</p>
-      </div>
-    </div>
-
-    <!-- Level 4 -->
-    <div class="card card-blue" style="margin-bottom:16px;">
-      <h3>L4 · 管理战略与治理 <span class="tag tag-blue" style="margin-left:8px;">权重 20%</span> <span class="tag tag-green">隆基: 6.5</span> <span class="tag tag-red">一道: 1.5</span></h3>
-      <table class="split-table">
-        <thead><tr><th>评估维度</th><th>隆基绿能 (Benchmark)</th><th>一道新能 (Distressed)</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>管理团队与经验</td>
-            <td>行业深耕20年+高管团队，CEO李振国技术出身，拥有多项核心专利。高管平均任期8年，稳定性强 <span class="tag tag-green">经验丰富</span></td>
-            <td>管理层变动频繁，近3年CEO两次更换，CFO在任不足1年。团队缺乏行业周期应对经验 <span class="tag tag-red">管理不稳</span></td>
-          </tr>
-          <tr>
-            <td>公司治理结构</td>
-            <td>股权分散，无单一实际控制人。独立董事占比50%，审计/薪酬/提名委员会运作规范 <span class="tag tag-green">治理规范</span></td>
-            <td>实际控制人持股72%，一股独大。董事会中独立董事仅1人，关联交易需经控股股东批准 <span class="tag tag-red">治理薄弱</span></td>
-          </tr>
-          <tr>
-            <td>战略规划与执行</td>
-            <td>BC技术路线一以贯之，产能扩张与市场需求匹配良好。储能+氢能第二曲线布局逐步落地 <span class="tag tag-green">战略清晰</span></td>
-            <td>技术路线在TOPCon与HJT之间摇摆，研发资源分散。战略规划缺乏连贯性和可执行性 <span class="tag tag-red">战略失焦</span></td>
-          </tr>
-          <tr>
-            <td>信息披露透明度</td>
-            <td>定期报告及时充分，投资者沟通机制完善。ESG报告连续发布5年，获MSCI ESG AA评级 <span class="tag tag-green">透明</span></td>
-            <td>财务报告披露存在滞后，关联方交易细节披露不充分。无公开ESG报告 <span class="tag tag-amber">信息不透明</span></td>
-          </tr>
-          <tr>
-            <td>风险控制体系</td>
-            <td>拥有完善的风险管理框架，汇率/利率/商品价格风险均有对冲方案 <span class="tag tag-green">风控完善</span></td>
-            <td>风控体系初步，缺乏专业的风险管理团队。对外部冲击的应对预案不足 <span class="tag tag-red">风控薄弱</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-tertiary);">L4层级分差 +5.0，贡献总差异的18.2%。治理结构和管理团队稳定性是核心差异点。</div>
-
-      <div style="margin-top:14px;padding:12px;background:var(--bg-tertiary);border-radius:6px;">
-        <h4 style="font-size:13px;color:var(--text-primary);margin-bottom:8px;">同业治理评分参照</h4>
-        <table style="font-size:12px;">
-          <thead><tr><th>企业</th><th>管理团队</th><th>治理结构</th><th>战略规划</th><th>信息披露</th><th>风控体系</th><th>L4总分</th></tr></thead>
-          <tbody>
-            <tr><td>隆基绿能</td><td class="text-green">8.0</td><td class="text-green">8.5</td><td class="text-green">7.5</td><td class="text-green">8.0</td><td class="text-green">8.0</td><td class="text-green">8.0</td></tr>
-            <tr><td>通威股份</td><td class="text-amber">6.5</td><td class="text-amber">6.0</td><td class="text-amber">6.5</td><td class="text-amber">6.0</td><td class="text-amber">6.5</td><td class="text-amber">6.3</td></tr>
-            <tr><td>晶科能源</td><td>5.5</td><td>5.0</td><td>5.5</td><td>5.5</td><td>5.0</td><td>5.3</td></tr>
-            <tr><td>一道新能</td><td class="text-red">1.5</td><td class="text-red">1.0</td><td class="text-red">1.5</td><td class="text-amber">2.5</td><td class="text-red">1.0</td><td class="text-red">1.5</td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:11px;color:var(--text-tertiary);margin-top:6px;">隆基治理评分行业领先，通威处于中上水平，一道新能因股权集中度和管理层不稳定评分垫底。</p>
-      </div>
-    </div>
-
-    <!-- Level 5 -->
-    <div class="card card-blue">
-      <h3>L5 · 外部支持 <span class="tag tag-blue" style="margin-left:8px;">权重 15%</span> <span class="tag tag-green">隆基: 6.0</span> <span class="tag tag-red">一道: 1.0</span></h3>
-      <table class="split-table">
-        <thead><tr><th>评估维度</th><th>隆基绿能 (Benchmark)</th><th>一道新能 (Distressed)</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>银行授信支持</td>
-            <td>合作银行28家，总授信额度820亿元，未使用额度320亿元。授信条件优厚，利率为LPR下浮5-10bp <span class="tag tag-green">授信充裕</span></td>
-            <td>合作银行5家，总授信额度38亿元，已使用35亿元。授信利率LPR上浮150bp+，部分授信需追加抵押 <span class="tag tag-red">授信紧张</span></td>
-          </tr>
-          <tr>
-            <td>资本市场通道</td>
-            <td>上证50、沪深300成分股，可转债、配股、定增等再融资工具齐备。2025年成功发行50亿绿色可转债 <span class="tag tag-green">通道畅通</span></td>
-            <td>科创板IPO在审，尚无直接融资渠道。上市审核因行业下行和自身财务问题可能受阻 <span class="tag tag-amber">通道阻断</span></td>
-          </tr>
-          <tr>
-            <td>政府支持力度</td>
-            <td>国家重点扶持光伏龙头企业，享受西部大开发税收优惠(15%所得税率)。陕西省重点企业，土地/能源配套有政策倾斜 <span class="tag tag-green">政策扶持</span></td>
-            <td>浙江省中小企业支持政策覆盖，但非重点扶持对象。在省级产业基金支持中的优先级较低 <span class="tag tag-amber">支持有限</span></td>
-          </tr>
-          <tr>
-            <td>产业链协同支持</td>
-            <td>与上下游龙头企业建立战略联盟，与通威/阳光电源等有长期合作协议 <span class="tag tag-green">生态优势</span></td>
-            <td>产业链协同度低，主要供应商和客户均为市场化交易关系，缺乏长期合作契约 <span class="tag tag-red">协同不足</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-tertiary);">L5层级分差 +5.0，贡献总差异的13.6%。银行授信和资本市场通道的分化在行业下行期将加速信用分化。</div>
-
-      <div style="margin-top:14px;padding:12px;background:var(--bg-tertiary);border-radius:6px;">
-        <h4 style="font-size:13px;color:var(--text-primary);margin-bottom:8px;">同业外部支持评分参照</h4>
-        <table style="font-size:12px;">
-          <thead><tr><th>企业</th><th>银行授信</th><th>资本市场</th><th>政府支持</th><th>产业链协同</th><th>L5总分</th></tr></thead>
-          <tbody>
-            <tr><td>隆基绿能</td><td class="text-green">8.5</td><td class="text-green">8.0</td><td class="text-green">7.5</td><td class="text-green">8.0</td><td class="text-green">8.0</td></tr>
-            <tr><td>通威股份</td><td class="text-amber">6.5</td><td class="text-amber">7.0</td><td class="text-amber">6.5</td><td class="text-green">7.5</td><td class="text-amber">6.9</td></tr>
-            <tr><td>晶科能源</td><td>5.5</td><td>5.0</td><td>5.5</td><td>6.0</td><td>5.5</td></tr>
-            <tr><td>一道新能</td><td class="text-red">1.0</td><td class="text-red">0.5</td><td class="text-amber">3.0</td><td class="text-red">1.5</td><td class="text-red">1.5</td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:11px;color:var(--text-tertiary);margin-top:6px;">隆基和通威的外部支持评分远高于行业平均，一道新能处于绝对劣势。IPO受阻进一步切断了其资本市场通道。</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 3: 综合评分总表 ====== -->
-  <div class="section">
-    <h2 class="section-title">三、综合评分总表 · 分差贡献度分析</h2>
-
-    <div class="grid-2">
-      <div class="card">
-        <h3>五层金字塔评分对比汇总</h3>
-        <table>
-          <thead><tr><th>金字塔层级</th><th>权重</th><th>隆基评分</th><th>一道评分</th><th>层级分差</th><th>加权贡献</th></tr></thead>
-          <tbody>
-            <tr><td>L1 宏观与区域</td><td>10%</td><td class="score-ok">6.0</td><td class="score-warn">4.0</td><td class="text-amber">+2.0</td><td>+0.20</td></tr>
-            <tr><td>L2 行业与经营</td><td>20%</td><td class="score-good">8.0</td><td class="score-bad">2.0</td><td class="text-red">+6.0</td><td>+1.20</td></tr>
-            <tr><td>L3 财务实力</td><td>35%</td><td class="score-good">7.8</td><td class="score-bad">1.2</td><td class="text-red">+6.6</td><td>+2.31</td></tr>
-            <tr><td>L4 管理治理</td><td>20%</td><td class="score-ok">6.5</td><td class="score-bad">1.5</td><td class="text-red">+5.0</td><td>+1.00</td></tr>
-            <tr><td>L5 外部支持</td><td>15%</td><td class="score-ok">6.0</td><td class="score-bad">1.0</td><td class="text-red">+5.0</td><td>+0.75</td></tr>
-            <tr style="background:var(--bg-tertiary);">
-              <td><strong>加权总分</strong></td><td><strong>100%</strong></td>
-              <td><strong class="score-good">7.00</strong></td>
-              <td><strong class="score-bad">1.50</strong></td>
-              <td><strong class="text-red">5.50</strong></td>
-              <td><strong class="text-red">5.50</strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card">
-        <h3>层级贡献度排序与累积分布</h3>
-        <p style="color:var(--text-secondary);margin-bottom:12px;">按贡献分差从高到低排列，展示各层级对总差异的累积解释力</p>
-        <table>
-          <thead><tr><th>排序</th><th>层级</th><th>贡献分差</th><th>贡献占比</th><th>累积占比</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>1</td><td>L3 财务实力</td><td>+2.31</td><td>42.0%</td>
-              <td><div class="contrib-bar"><div class="contrib-fill" style="width:42%;background:var(--red);"></div></div></td>
-            </tr>
-            <tr>
-              <td>2</td><td>L2 行业与经营</td><td>+1.20</td><td>21.8%</td>
-              <td><div class="contrib-bar"><div class="contrib-fill" style="width:22%;background:var(--amber);"></div></div></td>
-            </tr>
-            <tr>
-              <td>3</td><td>L4 管理治理</td><td>+1.00</td><td>18.2%</td>
-              <td><div class="contrib-bar"><div class="contrib-fill" style="width:18%;background:var(--amber);"></div></div></td>
-            </tr>
-            <tr>
-              <td>4</td><td>L5 外部支持</td><td>+0.75</td><td>13.6%</td>
-              <td><div class="contrib-bar"><div class="contrib-fill" style="width:14%;background:var(--blue);"></div></div></td>
-            </tr>
-            <tr>
-              <td>5</td><td>L1 宏观与区域</td><td>+0.20</td><td>3.6%</td>
-              <td><div class="contrib-bar"><div class="contrib-fill" style="width:4%;background:var(--green);"></div></div></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="callout" style="margin-top:12px;">
-          <strong>分差结构分析：</strong>前3层级（L3+L2+L4）合计贡献了82.0%的总分差，其中单层L3贡献42.0%。这表明两家公司的信用质量分化主要由<strong>客观财务指标</strong>驱动，而非宏观环境或外部支持的差异。在行业下行周期中，L3-L2的权重总和已达55%，体现了框架对财务实力和行业地位的高度重视。
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 3.5: 数据完备性评估 ====== -->
-  <div class="section">
-    <h2 class="section-title">三（附）、数据完备性评估</h2>
-    <section class="completeness">
-      <h3>数据完备性评估</h3>
-      <div class="density-bar" data-density="{L1_density}">L1 信号密度: {L1_density}%</div>
-      <div class="density-bar" data-density="{L2_density}">L2 信号密度: {L2_density}%</div>
-      <div class="density-bar" data-density="{L3_density}">L3 信号密度: {L3_density}%</div>
-      <div class="density-bar" data-density="{L4_density}">L4 信号密度: {L4_density}%</div>
-      <ul class="gap-list">{gap_items}</ul>
-      <p class="confidence">综合置信度: {confidence_level}（{confidence_reason}）</p>
-    </section>
-  </div>
-
-  <!-- ====== SECTION 4: 关键发现 ====== -->
-  <div class="section">
-    <h2 class="section-title">四、关键发现与风险提示</h2>
-    <div class="grid-2">
-      <div class="card card-red">
-        <h3><span class="signal signal-red"></span> 发现 1 · 财务脆弱性断崖</h3>
-        <p style="color:var(--text-secondary);line-height:1.6;">一道新能资产负债率92%、流动比率0.65x、经营性现金流净流出8.5亿元，三项指标均触及框架红色阈值。在L3财务实力层级（权重35%）上与隆基分差达6.6分，贡献了总差异的42%。财务脆弱性的核心不是某一项指标的恶化，而是偿付能力、流动性、盈利能力和现金流四个维度的同步崩溃，形成"财务死亡螺旋"——盈利能力下降导致现金流枯竭，迫使增加负债维持运营，高负债反过来侵蚀利润空间。</p>
-      </div>
-      <div class="card card-amber">
-        <h3><span class="signal signal-amber"></span> 发现 2 · 行业地位马太效应加速</h3>
-        <p style="color:var(--text-secondary);line-height:1.6;">在行业洗牌期，隆基作为全球龙头凭借BC电池技术和垂直一体化成本优势，持续扩大市场份额（2025年市占率18%）；一道新能既不具备规模效应（市占率不足2%），也无差异化技术储备（TOPCon路线无优势），面临被出清风险。2024-2026年已有12家尾部光伏企业退出市场，一道新能很可能是下一个。行业集中度提升将进一步拉大两者差距。</p>
-      </div>
-      <div class="card card-amber">
-        <h3><span class="signal signal-amber"></span> 发现 3 · 治理结构缺陷是隐性风险放大器</h3>
-        <p style="color:var(--text-secondary);line-height:1.6;">一道新能实际控制人持股72%且管理层频繁变动，治理评分仅1.5分。大股东一股独大导致的关联交易风险（采购/销售/资金拆借可能与实控人其他企业进行）和战略失焦（技术路线在TOPCon与HJT之间摇摆），在市场下行期会放大经营风险。虽然在权重上治理仅占20%，但它是所有层级中唯一一个可以"传导放大"其他层级风险的因子，应当给予更高关注。</p>
-      </div>
-      <div class="card card-blue">
-        <h3><span class="signal signal-green"></span> 发现 4 · 外部支持分化将加速信用分化</h3>
-        <p style="color:var(--text-secondary);line-height:1.6;">隆基拥有820亿元银行授信投资和畅通的资本市场渠道（2025年成功发行50亿绿色可转债），一道新能授信几乎用尽（已使用35亿/总额38亿）且IPO受阻。在行业流动性收紧环境下，外部支持的分化可能成为一道新能违约的触发因素：一旦银行抽贷或续贷不成功，将直接触发流动性危机和交叉违约。</p>
-      </div>
-      <div class="card card-purple">
-        <h3><span class="signal signal-green"></span> 发现 5 · 框架权重在当前行业周期中合理但可优化</h3>
-        <p style="color:var(--text-secondary);line-height:1.6;">当前框架中L3财务实力（35%）+ L2行业经营（20%）合计55%，在下行周期中基本合理。但根据分差贡献度数据，L3实际贡献了42%的分差却仅占35%权重，L2贡献22%却仅占20%权重。建议在洗牌期将L2+L3的合计权重临时提高至65-70%，将L1宏观环境权重从10%降至5%，以更灵敏地捕捉行业洗牌期的信用分化。</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 5: 核心差异指标速览 ====== -->
-  <div class="section">
-    <h2 class="section-title">五、核心差异化指标速览</h2>
-    <div class="card">
-      <table>
-        <thead><tr><th>核心指标</th><th>隆基绿能</th><th>一道新能</th><th>绝对差异</th><th>相对差异</th><th>判断方向</th></tr></thead>
-        <tbody>
-          <tr><td>资产负债率</td><td>58%</td><td>92%</td><td>+34pp</td><td>+58.6%</td><td class="text-red">一道严重劣于隆基</td></tr>
-          <tr><td>流动比率</td><td>1.45x</td><td>0.65x</td><td>-0.80x</td><td>-55.2%</td><td class="text-red">一道严重劣于隆基</td></tr>
-          <tr><td>毛利率</td><td>16.2%</td><td>2.8%</td><td>-13.4pp</td><td>-82.7%</td><td class="text-red">一道严重劣于隆基</td></tr>
-          <tr><td>经营性现金流(亿元)</td><td>+95</td><td>-8.5</td><td>103.5</td><td>n/a(正负差异)</td><td class="text-red">一道现金净流出</td></tr>
-          <tr><td>EBITDA/利息费用</td><td>12.3x</td><td>0.8x</td><td>11.5x</td><td>-93.5%</td><td class="text-red">一道资不抵息</td></tr>
-          <tr><td>市占率</td><td>18%</td><td>&lt;2%</td><td>&gt;16pp</td><td>&gt;8x</td><td class="text-red">一道市场份额微末</td></tr>
-          <tr><td>银行授信使用率</td><td>61%(未用320亿)</td><td>92%(未用3亿)</td><td>+31pp</td><td>+50.8%</td><td class="text-red">一道授信接近耗尽</td></tr>
-          <tr><td>电池量产效率</td><td>26.5%(BC)</td><td>24.8%(TOPCon)</td><td>+1.7pp</td><td>+6.9%</td><td class="text-amber">隆基技术领先</td></tr>
-          <tr><td>产能利用率</td><td>78%</td><td>43%</td><td>+35pp</td><td>+81.4%</td><td class="text-red">一道产能大量闲置</td></tr>
-          <tr><td>客户集中度(前5)</td><td>25%</td><td>65%</td><td>+40pp</td><td>+160%</td><td class="text-amber">一道客户过于集中</td></tr>
-        </tbody>
-      </table>
-      <div style="margin-top:10px;padding:10px;background:var(--bg-tertiary);border-radius:6px;font-size:12px;color:var(--text-secondary);">
-        <span class="text-red">总结：</span>在10项核心指标中，一道新能在9项上显著劣于隆基绿能，仅区域地理位置上因长三角产业链配套而略占优势。最值得关注的"死亡交叉"是：毛利率2.8%无法覆盖债务利息(EBITDA/利息=0.8x)，导致必须借新还旧维持运营，而授信额度已使用92%。
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 6: 行业可比公司财务指标全景对比 ====== -->
-  <div class="section">
-    <h2 class="section-title">六、行业可比公司财务指标全景对比</h2>
-    <div class="card">
-      <h3>光伏龙头企业关键财务指标对比（2025年）</h3>
-      <p style="color:var(--text-secondary);font-size:12px;margin-bottom:12px;">选取全球组件出货排名前六的企业，基于最近完整财年数据对比。隆基绿能和一道新能分别处于矩阵的两端，中间层的分化同样值得关注。</p>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead><tr><th>财务指标</th><th>隆基绿能</th><th>通威股份</th><th>晶科能源</th><th>天合光能</th><th>晶澳科技</th><th>一道新能</th></tr></thead>
-          <tbody>
-            <tr><td><strong>总资产（亿元）</strong></td><td>1,580</td><td>1,250</td><td>980</td><td>1,020</td><td>750</td><td>120</td></tr>
-            <tr><td><strong>资产负债率</strong></td><td class="text-green">58%</td><td class="text-amber">62%</td><td class="text-amber">65%</td><td class="text-amber">63%</td><td class="text-amber">60%</td><td class="text-red">92%</td></tr>
-            <tr><td><strong>流动比率</strong></td><td class="text-green">1.45x</td><td class="text-amber">1.22x</td><td class="text-amber">1.18x</td><td class="text-amber">1.15x</td><td class="text-amber">1.25x</td><td class="text-red">0.65x</td></tr>
-            <tr><td><strong>毛利率</strong></td><td>16.2%</td><td>14.5%</td><td>12.8%</td><td>13.5%</td><td>14.2%</td><td>2.8%</td></tr>
-            <tr><td><strong>净利率</strong></td><td>5.8%</td><td>4.2%</td><td>2.5%</td><td>3.0%</td><td>3.8%</td><td class="text-red">-3.5%</td></tr>
-            <tr><td><strong>ROE</strong></td><td>8.2%</td><td>6.5%</td><td>4.8%</td><td>5.2%</td><td>6.0%</td><td class="text-red">-8.5%</td></tr>
-            <tr><td><strong>经营现金流（亿元）</strong></td><td class="text-green">+95</td><td class="text-green">+62</td><td>+38</td><td>+42</td><td>+35</td><td class="text-red">-8.5</td></tr>
-            <tr><td><strong>EBITDA/利息费用</strong></td><td class="text-green">12.3x</td><td>8.5x</td><td>5.2x</td><td>6.1x</td><td>7.0x</td><td class="text-red">0.8x</td></tr>
-            <tr><td><strong>有息负债率</strong></td><td class="text-green">32%</td><td>38%</td><td>42%</td><td>40%</td><td>36%</td><td class="text-red">68%</td></tr>
-            <tr><td><strong>短债占比</strong></td><td class="text-green">35%</td><td>42%</td><td>48%</td><td>45%</td><td>40%</td><td class="text-red">72%</td></tr>
-            <tr><td><strong>总资产周转率</strong></td><td>0.52x</td><td>0.48x</td><td>0.55x</td><td>0.50x</td><td>0.45x</td><td>0.62x</td></tr>
-            <tr><td><strong>研发投入/营收</strong></td><td class="text-green">8.2%</td><td>5.5%</td><td>4.8%</td><td>5.0%</td><td>5.2%</td><td>2.5%</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-secondary);">
-        <strong>矩阵观察：</strong>财务指标呈现明显的竞争格局分层——隆基绿能在流动性和覆盖比率上领先全行业，通威股份在硅料端有成本优势，晶科/天合/晶澳处于中间梯队但各有特色。一道新能在12项指标中的11项垫底，仅总资产周转率因资产规模小（分母效应）略高于行业。值得注意的是，行业整体资产负债率均偏高（58-92%），反映光伏行业重资产属性。
-      </div>
-    </div>
-
-    <div class="card card-purple" style="margin-top:14px;">
-      <h3>行业竞争格局雷达图 · 六维评分对比</h3>
-      <p style="color:var(--text-secondary);font-size:12px;margin-bottom:12px;">基于框架六维核心能力维度对6家光伏企业的标准化评分（10分制），核心能力维度包括：技术壁垒、成本控制、财务实力、品牌渠道、供应链韧性、多元化。</p>
-      <table>
-        <thead><tr><th>能力维度</th><th>隆基绿能</th><th>通威股份</th><th>晶科能源</th><th>天合光能</th><th>晶澳科技</th><th>一道新能</th></tr></thead>
-        <tbody>
-          <tr><td>技术壁垒</td><td class="text-green">9.0</td><td class="text-amber">6.5</td><td class="text-amber">5.5</td><td class="text-amber">6.0</td><td class="text-amber">5.5</td><td class="text-red">2.0</td></tr>
-          <tr><td>成本控制</td><td class="text-green">8.5</td><td class="text-green">8.0</td><td class="text-amber">7.0</td><td class="text-amber">6.5</td><td class="text-amber">6.5</td><td class="text-red">2.5</td></tr>
-          <tr><td>财务实力</td><td class="text-green">7.8</td><td class="text-amber">6.0</td><td class="text-amber">5.0</td><td class="text-amber">5.2</td><td class="text-amber">5.5</td><td class="text-red">1.2</td></tr>
-          <tr><td>品牌渠道</td><td class="text-green">8.5</td><td class="text-amber">6.0</td><td class="text-amber">7.0</td><td class="text-amber">6.5</td><td class="text-amber">6.0</td><td class="text-red">1.5</td></tr>
-          <tr><td>供应链韧性</td><td class="text-green">8.0</td><td class="text-green">8.5</td><td class="text-amber">7.5</td><td class="text-amber">6.0</td><td class="text-amber">6.5</td><td class="text-red">2.0</td></tr>
-          <tr><td>多元化</td><td class="text-amber">6.5</td><td class="text-green">7.5</td><td class="text-amber">6.0</td><td class="text-amber">6.5</td><td class="text-amber">5.0</td><td class="text-red">1.0</td></tr>
-          <tr style="background:var(--bg-tertiary);"><td><strong>平均分</strong></td><td><strong class="text-green">8.05</strong></td><td><strong class="text-amber">7.08</strong></td><td><strong class="text-amber">6.33</strong></td><td><strong class="text-amber">6.12</strong></td><td><strong class="text-amber">5.83</strong></td><td><strong class="text-red">1.70</strong></td></tr>
-        </tbody>
-      </table>
-      <div class="callout" style="margin-top:12px;">
-        <strong>竞争格局研判：</strong>光伏行业已形成清晰的"1-2-3"竞争格局——隆基作为唯一全能型龙头的第一梯队（均分8.05），通威凭借硅料优势单点突破的第二梯队（均分7.08），晶科/天合/晶澳各具特色的第三梯队（均分5.83-6.33）。一道新能处于出清边缘，均分仅1.70。隆基在"多元化"一项评分偏低，反映其对BC技术路径的集中押注——若钙钛矿叠层技术在2028年前提前量产，可能削弱BC技术路线生命周期；若BC技术如期占据效率制高点，隆基的"集中押注"将被证明是正确策略。
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 7: 评级分化路径 ====== -->
-  <div class="section">
-    <h2 class="section-title">七、评级分化路径与情景展望</h2>
-    <div class="grid-2">
-      <div class="card card-green">
-        <h3>隆基绿能 · 潜在上调路径</h3>
-        <p style="color:var(--text-secondary);font-size:13px;margin-bottom:10px;">乐观情景下，以下触发因素可能导致评级上调：</p>
-        <ul style="color:var(--text-secondary);font-size:13px;line-height:2.2;padding-left:18px;">
-          <li>BC二代电池量产良率突破至95%以上，带动毛利率回升至20%+</li>
-          <li>海外产能（马来西亚8GW+越南5GW）关税规避效果超预期，海外营收占比提升至70%</li>
-          <li>储能业务第二曲线形成规模效应，收入占比超过15%且贡献正利润</li>
-          <li>资产负债率通过可转债转股等方式降至55%以下</li>
-          <li>行业自发产能出清后组件价格企稳回升至$0.10/W以上</li>
-        </ul>
-        <div style="margin-top:12px;background:var(--bg-tertiary);padding:10px 14px;border-radius:6px;">
-          <span class="tag tag-green">目标评级：7.50 / A-</span>
-          <span style="color:var(--text-tertiary);font-size:12px;margin-left:8px;">触发概率：25% · 时间窗口：12-18个月</span>
-        </div>
-      </div>
-      <div class="card card-red">
-        <h3>一道新能 · 潜在下调路径</h3>
-        <p style="color:var(--text-secondary);font-size:13px;margin-bottom:10px;">悲观情景下，以下触发因素可能导致评级进一步下调：</p>
-        <ul style="color:var(--text-secondary);font-size:13px;line-height:2.2;padding-left:18px;">
-          <li>经营性现金流持续净流出（当前-8.5亿/年），2026年全年预计-12亿</li>
-          <li>IPO审核以"行业景气度下行+自身盈利能力恶化"为由被否或推迟</li>
-          <li>组件价格跌破$0.06/W，毛利率转负，亏损总额扩大</li>
-          <li>银行抽贷或续贷条件收紧，授信额度实际可动用部分降至0</li>
-          <li>大股东质押比例从当前35%攀升至60%+，触发平仓风险</li>
-          <li>下游客户因担心交付能力而转向其他供应商，订单进一步萎缩</li>
-        </ul>
-        <div style="margin-top:12px;background:var(--bg-tertiary);padding:10px 14px;border-radius:6px;">
-          <span class="tag tag-red">警戒评级：1.00 / CC</span>
-          <span style="color:var(--text-tertiary);font-size:12px;margin-left:8px;">触发概率：55% · 时间窗口：6-12个月</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="card card-amber" style="margin-top:14px;">
-      <h3>极端情景模拟：如果一道新能违约</h3>
-      <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;">若一道新能在未来12个月内发生违约，预计的影响传导路径为：流动性危机（银行抽贷）-> 交叉违约触发（存续债券/贷款加速到期）-> 破产重整或司法重组。回收率方面，有抵押银行贷款预计回收率40-55%，而无担保债券（如果有）回收率预计15-25%。相比之下，即便在极端情景下隆基绿能仅受到间接冲击（行业信心层面），对其自身信用质量影响有限，预计其评分波动区间为6.5-7.3（BBB至A-）。</p>
-    </div>
-
-    <div class="card card-blue" style="margin-top:14px;">
-      <h3>多情景量化对比分析</h3>
-      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:10px;">三情景下两家公司的评级演变路径预测，概率加权后的预期评分用于投资决策参考。</p>
-      <table>
-        <thead><tr><th>情景设定</th><th>触发条件</th><th>概率</th><th>隆基预期评分</th><th>隆基评级</th><th>一道预期评分</th><th>一道评级</th></tr></thead>
-        <tbody>
-          <tr><td><strong>乐观情景</strong></td><td>组件价格回升至$0.10/W+，行业需求增长>15%，尾部企业加速出清</td><td class="text-green">20%</td><td class="text-green">7.80</td><td>A-</td><td class="text-amber">2.50</td><td>B-</td></tr>
-          <tr><td><strong>基准情景</strong></td><td>组件价格维持$0.07-0.09/W，行业缓慢出清，信贷政策中性</td><td class="text-amber">55%</td><td class="text-amber">6.80</td><td>BBB</td><td class="text-red">1.20</td><td>CCC</td></tr>
-          <tr><td><strong>悲观情景</strong></td><td>组件价格跌破$0.06/W，欧洲/美国关税再加码，系统性信用事件</td><td class="text-red">25%</td><td class="text-red">5.80</td><td>BB+</td><td class="text-red">0.50</td><td>CC</td></tr>
-          <tr style="background:var(--bg-tertiary);"><td><strong>概率加权期望</strong></td><td>—</td><td><strong>100%</strong></td><td><strong>6.73</strong></td><td><strong>BBB</strong></td><td><strong>1.24</strong></td><td><strong>CCC</strong></td></tr>
-        </tbody>
-      </table>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-secondary);">
-        概率加权后的隆基期望评分为6.73（BBB），一道新能为1.24（CCC），分差5.49分。即使在悲观情景下，隆基预计仍能维持BB+评级，而一道新能将降至CC级。三道新能的最差情景回收估值已低于20%面值，市场已部分定价违约预期。
-      </div>
-    </div>
-
-    <div class="card card-amber" style="margin-top:14px;">
-      <h3>关键触发事件时间线（2026H2-2027）</h3>
-      <table>
-        <thead><tr><th style="width:18%;">时间窗口</th><th style="width:30%;">触发事件</th><th style="width:25%;">对隆基影响</th><th style="width:27%;">对一道新能影响</th></tr></thead>
-        <tbody>
-          <tr><td>2026年Q3</td><td>一道新能2025中报披露，预计净亏损扩大</td><td class="text-green">无直接影响</td><td class="text-red">负面 · 市场信心进一步恶化</td></tr>
-          <tr><td>2026年Q4</td><td>一道新能IPO审核结果公示</td><td class="text-green">无直接影响</td><td class="text-red">负面 · 大概率被否或推迟</td></tr>
-          <tr><td>2026年Q4</td><td>隆基绿能HPBC二代技术量产进展更新</td><td class="text-green">正面 · 技术估值提升</td><td class="text-amber">中性 · 行业格局进一步固化</td></tr>
-          <tr><td>2027年Q1</td><td>一道新能银行授信续贷窗口期</td><td class="text-green">无直接影响</td><td class="text-red">关键 · 抽贷则触发流动性危机</td></tr>
-          <tr><td>2027年Q1</td><td>光伏行业"十四五"规划中期评估</td><td class="text-green">正面 · 龙头集中度政策利好</td><td class="text-red">负面 · 中小产能加速退出</td></tr>
-          <tr><td>2027年H1</td><td>一道新能12亿短债到期高峰</td><td class="text-green">无直接影响</td><td class="text-red">关键 · 再融资能力存疑</td></tr>
-          <tr><td>2027年H2</td><td>隆基BC二代技术放量至30GW</td><td class="text-green">正面 · 盈利拐点确认</td><td class="text-amber">中性 · 竞争差距继续拉大</td></tr>
-        </tbody>
-      </table>
-      <div class="callout" style="margin-top:10px;">
-        <strong>关键观察：</strong>一道新能在未来12个月内有3个关键触发节点（IPO审核、授信续贷、短债到期），任何一个节点的负面结果都可能导致信用评级的阶梯式下调。隆基则主要受益于技术迭代顺风，2027年H2的BC二代放量是评级上调的关键催化。
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 8: 历史信用迁移矩阵 ====== -->
-  <div class="section">
-    <h2 class="section-title">八、历史信用迁移矩阵</h2>
-    <div class="card">
-      <h3>全球光伏企业1年期历史信用迁移概率（2020-2025）</h3>
-      <p style="color:var(--text-secondary);font-size:12px;margin-bottom:12px;">基于全球38家样本光伏企业（含中国15家、美国8家、欧洲6家、东南亚/印度9家）的历史评级变动统计。行表示初始评级，列表示期末评级，数字为百分比概率。</p>
-      <table>
-        <thead><tr><th style="width:10%;">初始\期末</th><th>AAA/A</th><th>BBB</th><th>BB</th><th>B</th><th>CCC</th><th>D</th><th style="width:12%;">迁移率</th></tr></thead>
-        <tbody>
-          <tr><td><strong>AAA/A</strong></td><td class="text-green">72%</td><td>18%</td><td>6%</td><td>3%</td><td>1%</td><td>0%</td><td>28%</td></tr>
-          <tr><td><strong>BBB</strong></td><td>8%</td><td class="text-green">65%</td><td>15%</td><td>7%</td><td>3%</td><td>2%</td><td>35%</td></tr>
-          <tr><td><strong>BB</strong></td><td>2%</td><td>10%</td><td class="text-green">55%</td><td>18%</td><td>10%</td><td>5%</td><td>45%</td></tr>
-          <tr><td><strong>B</strong></td><td>0%</td><td>3%</td><td>12%</td><td class="text-green">48%</td><td>22%</td><td>15%</td><td>52%</td></tr>
-          <tr><td><strong>CCC</strong></td><td>0%</td><td>0%</td><td>5%</td><td>15%</td><td class="text-amber">40%</td><td class="text-red">40%</td><td>60%</td></tr>
-        </tbody>
-      </table>
-      <div style="margin-top:12px;font-size:12px;color:var(--text-secondary);">
-        <strong>迁移特征分析：</strong>光伏行业整体评级不稳定性高于传统制造业：BBB级企业1年内保持不变概率仅65%，显著低于电力（~82%）或城投（~88%）。CCC级企业1年内40%概率违约（D）的统计特征与一道新能当前状态高度匹配。行业下行期（如2024-2026）迁移率整体上升约15个百分点，BBB级及以上企业向下的迁移概率增至35%。
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 9: ESG维度补充分析 ====== -->
-  <div class="section">
-    <h2 class="section-title">九、ESG维度补充分析</h2>
-    <div class="card">
-      <div class="grid-2">
-        <div>
-          <h3 style="color:var(--green);">环境（E）</h3>
-          <table>
-            <thead><tr><th>评估项</th><th>隆基绿能</th><th>一道新能</th></tr></thead>
-            <tbody>
-              <tr><td>碳排放强度(吨CO₂/百万收入)</td><td>12.5</td><td>18.8</td></tr>
-              <tr><td>绿色电力使用比例</td><td class="text-green">65%</td><td class="text-amber">35%</td></tr>
-              <tr><td>产品回收体系</td><td class="text-green">已建立</td><td class="text-red">未建立</td></tr>
-              <tr><td>环境处罚记录</td><td>无</td><td>1次(2024)</td></tr>
-              <tr><td>MSCI环境评分</td><td class="text-green">7.2/10</td><td class="text-red">3.5/10</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div>
-          <h3 style="color:var(--blue);">社会（S）</h3>
-          <table>
-            <thead><tr><th>评估项</th><th>隆基绿能</th><th>一道新能</th></tr></thead>
-            <tbody>
-              <tr><td>员工总数</td><td>58,000</td><td>7,500</td></tr>
-              <tr><td>工伤率(每百万工时)</td><td class="text-green">0.28</td><td class="text-amber">0.65</td></tr>
-              <tr><td>员工培训投入(万元/年)</td><td class="text-green">3,200</td><td>280</td></tr>
-              <tr><td>社会捐赠(万元)</td><td>5,000</td><td>300</td></tr>
-              <tr><td>供应商合规审查覆盖</td><td class="text-green">100%</td><td class="text-amber">60%</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div style="margin-top:14px;">
-          <h3 style="color:var(--purple);">治理（G）</h3>
-          <table>
-            <thead><tr><th>评估项</th><th>隆基绿能</th><th>一道新能</th></tr></thead>
-            <tbody>
-              <tr><td>独立董事占比</td><td class="text-green">50%</td><td class="text-red">25%</td></tr>
-              <tr><td>女性高管比例</td><td>22%</td><td>15%</td></tr>
-              <tr><td>ESG报告披露</td><td class="text-green">连续5年</td><td class="text-red">未披露</td></tr>
-              <tr><td>审计委员会</td><td class="text-green">已设立</td><td class="text-amber">已设立但独立不足</td></tr>
-              <tr><td>内部控制审计意见</td><td class="text-green">无保留意见</td><td class="text-amber">带强调事项段</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="info-box" style="margin-top:16px;">
-        <strong>ESG整合结论：</strong>隆基绿能在三个ESG维度均显著领先，MSCI ESG AA评级（光伏行业最高）验证了其ESG管理水平。一道新能在环境事故、产品回收、信息披露等多项ESG指标上处于行业落后水平，治理薄弱是其信用质量的重要拖累因素。框架当前在核心信用评分中尚未将ESG作为独立权重层级，但建议在L4治理维度和L2经营稳定性维度中融入ESG因子——一道新能在ESG上的不足已在框架核心评分中通过L2和L4的评分折扣得以体现。
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 10: 框架改进建议 ====== -->
-  <div class="section">
-    <h2 class="section-title">十、框架改进建议</h2>
-    <div class="card card-purple">
-      <h3>基于本次对比分析的方法论优化建议</h3>
-      <div style="margin-bottom:12px;font-size:13px;color:var(--text-secondary);">
-        本次双标对比验证了框架在区分信用质量上的有效性（5个完整子级的评级差距），同时也揭示了以下可优化项：
-      </div>
-      <table>
-        <thead><tr><th style="width:5%;">#</th><th style="width:32%;">改进建议</th><th style="width:28%;">涉及层级</th><th style="width:20%;">预期效果</th><th>优先级</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>增加"短债覆盖率（非受限货币资金/短期债务）"指标，替代当前单一的流动比率。该指标在洗牌期识别流动性风险更敏感</td>
-            <td>L3 财务实力</td>
-            <td>提前2-3个季度识别流动性危机</td>
-            <td><span class="tag tag-red">高</span></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>在L2中新增"产能利用率"和"成本曲线位置"两个定量指标。本次对比中这两个指标是区分龙头和尾部企业的关键</td>
-            <td>L2 行业经营</td>
-            <td>提升L2区分度约25%</td>
-            <td><span class="tag tag-red">高</span></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>强化"实际控制人质押比例"在L4中的权重。当质押比例超过50%时自动扣减1个评分等级</td>
-            <td>L4 管理治理</td>
-            <td>更准确捕捉股权质押爆仓风险</td>
-            <td><span class="tag tag-amber">中</span></td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>在L5中增加"资本市场再融资能力评分"，综合评估IPO/定增/可转债/配股等多元渠道的可获得性</td>
-            <td>L5 外部支持</td>
-            <td>完善对未上市企业的外部支持评估</td>
-            <td><span class="tag tag-amber">中</span></td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td>增设"行业周期相位"调节因子，在下行周期中自动将L2+L3权重临时从55%调增至65%，压缩L1权重从10%至5%</td>
-            <td>跨层级</td>
-            <td>提升框架在不同周期的适应性</td>
-            <td><span class="tag tag-blue">低</span></td>
-          </tr>
-        </tbody>
+    <div class="duo-card b">
+      <h4>{标的B}</h4>
+      <table class="cmp-table">
+        <tr><th>层</th><th>得分</th><th>关键发现</th></tr>
+        <tr><td>L1 {层名}</td><td>{B_L1得分}</td><td>{B_L1关键发现}</td></tr>
+        <tr><td>L2 {层名}</td><td>{B_L2得分}</td><td>{B_L2关键发现}</td></tr>
+        <tr><td>L3 {层名}</td><td>{B_L3得分}</td><td>{B_L3关键发现}</td></tr>
+        <tr><td>L4 {层名}</td><td>{B_L4得分}</td><td>{B_L4关键发现}</td></tr>
       </table>
     </div>
   </div>
+</section>
 
-  <!-- ====== SECTION 11: 方法论说明 ====== -->
-  <div class="section">
-    <h2 class="section-title">十一、方法论说明</h2>
-    <div class="card">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;color:var(--text-secondary);line-height:1.7;">
-        <div>
-          <h4 style="color:var(--text-primary);margin-bottom:8px;">框架版本</h4>
-          <p>统一信贷评估框架 v2.0 · 2026-06发布</p>
-          <p style="margin-top:8px;">评分刻度：0-10分，对应18个评级区间 / 12-notch scheme（D–AAA，无CC级）</p>
-          <p style="margin-top:8px;">评级阈值：>=8.5 AAA, >=7.5 AA, >=6.5 A, >=5.5 BBB, >=4.0 BB, >=3.0 B, >=1.5 CCC, &lt;1.5 CC及以下</p>
-        </div>
-        <div>
-          <h4 style="color:var(--text-primary);margin-bottom:8px;">数据来源</h4>
-          <p>隆基绿能2026年Q1季报/2025年年报 · 一道新能招股说明书（更新版） · Wind行业数据库 · PVInsight市场报告 · 各公司投资者关系披露</p>
-        </div>
-      </div>
-      <div style="margin-top:12px;padding:10px;background:var(--bg-tertiary);border-radius:6px;font-size:11px;color:var(--text-tertiary);">
-        <strong>免责声明：</strong>本报告为框架自动生成的信用分析参考，所有评分和评级均为框架模型输出结果，不构成投资建议。报告中部分数据来源于公开市场信息，框架对数据的准确性和完整性不作保证。过往表现和框架模拟评级不预示未来结果。
-      </div>
-    </div>
+<section id="s3">
+  <h2>三、共识与分歧</h2>
+  <div class="alert green"><strong>共识：</strong>{两标的共识要点}</div>
+  <div class="alert amber"><strong>核心分歧：</strong>{核心分歧点}——分歧根源与各自依据</div>
+  <div class="alert red"><strong>独有红旗：</strong>{标的A独有红旗} / {标的B独有红旗}</div>
+</section>
+
+<section id="s4">
+  <h2>四、区分度结论</h2>
+  <div class="metric-row">
+    <div class="metric-box"><div class="val">{区分度评分}</div><div class="lbl">区分度</div></div>
+    <div class="metric-box"><div class="val">{首选标的}</div><div class="lbl">首选</div></div>
   </div>
+  <p>{选择建议：不同决策场景下的选择逻辑（保守/平衡/进取）}</p>
+  <p>{适用情景说明}</p>
+</section>
 
-  <!-- ====== SECTION 12: 行业周期相位调节因子详解 ====== -->
-  <div class="section">
-    <h2 class="section-title">十二、行业周期相位调节因子详解</h2>
-    <div class="card card-amber">
-      <h3>周期相位识别与权重动态调整机制</h3>
-      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">框架内置的"行业周期相位"调节因子通过一系列定量指标自动识别行业所处的周期阶段，并据此动态调整金字塔各层级的权重分配。当前光伏行业处于"洗牌出清期"，调节因子已触发。</p>
-      <table>
-        <thead><tr><th>周期阶段</th><th>识别标准</th><th>L1宏观权重</th><th>L2经营权重</th><th>L3财务权重</th><th>L4治理权重</th><th>L5支持权重</th></tr></thead>
-        <tbody>
-          <tr><td><strong>扩张期 (Expansion)</strong></td><td>需求增速>20%, 产能利用率>85%, 毛利率>20%</td><td>15%</td><td>25%</td><td>25%</td><td>20%</td><td>15%</td></tr>
-          <tr><td><strong>稳态期 (Stable)</strong></td><td>需求增速5-15%, 产能利用率70-85%, 毛利率12-20%</td><td>10%</td><td>20%</td><td>35%</td><td>20%</td><td>15%</td></tr>
-          <tr><td><strong>下行期 (Downturn)</strong></td><td>需求增速0-5%, 产能利用率60-70%, 毛利率8-12%</td><td>8%</td><td>22%</td><td>38%</td><td>18%</td><td>14%</td></tr>
-          <tr style="background:var(--bg-hover);"><td><strong class="text-amber">洗牌出清期 (Current)</strong></td><td class="text-amber">需求增速5-10%但产能过剩>50%, 毛利率<10%, 尾部企业出清加速</td><td class="text-amber">5%</td><td class="text-amber">25%</td><td class="text-amber">40%</td><td class="text-amber">18%</td><td class="text-amber">12%</td></tr>
-          <tr><td><strong>危机期 (Crisis)</strong></td><td>全行业亏损, 违约事件频发, 系统性风险暴露</td><td>5%</td><td>20%</td><td>45%</td><td>15%</td><td>15%</td></tr>
-        </tbody>
-      </table>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-secondary);">
-        <strong>当前调节状态：</strong>光伏行业当前处于"洗牌出清期"，调节因子已将L3财务权重从默认的35%提升至40%（+5pp），L1宏观权重从10%降至5%（-5pp），以更灵敏地捕捉行业洗牌期的财务分化信号。一道新能的L3评分仅1.2分，高权重放大了财务脆弱性对总评分的拖累；隆基绿能的L3评分7.8分则由其充裕现金储备和合理的债务结构支撑。该调节因子每季度自动评估一次，在行业出现重大政策变化或突发事件时可临时触发人工评估。
-      </div>
-    </div>
+<section id="s5">
+  <h2>五、数据完备性</h2>
+  <table class="cmp-table">
+    <tr><th>主体</th><th>完备性</th><th>主要缺口</th></tr>
+    <tr><td>{标的A}</td><td>{A完备性}</td><td>{A主要缺口}</td></tr>
+    <tr><td>{标的B}</td><td>{B完备性}</td><td>{B主要缺口}</td></tr>
+  </table>
+</section>
 
-    <div class="card card-blue" style="margin-top:14px;">
-      <h3>动态调节因子触发记录（2024-2026）</h3>
-      <table>
-        <thead><tr><th>触发时点</th><th>识别周期</th><th>触发指标</th><th>调节动作</th><th>当前状态</th></tr></thead>
-        <tbody>
-          <tr><td>2024-06</td><td>过渡期（扩张→下行）</td><td>组件价格跌破$0.12/W, 行业平均毛利率降至15%</td><td>L3 +2pp, L1 -2pp</td><td class="text-green">已完成</td></tr>
-          <tr><td>2024-12</td><td>下行期确认</td><td>产能过剩率>35%, 3家尾部企业违约</td><td>L3 +3pp, L1 -2pp, L2 +2pp</td><td class="text-green">已完成</td></tr>
-          <tr><td>2025-06</td><td>洗牌出清期</td><td>组件价格跌破$0.09/W, 尾部企业亏损面>70%</td><td>L3 +5pp, L1 -5pp, L2 +5pp</td><td class="text-amber">生效中</td></tr>
-          <tr><td>2026-03</td><td>洗牌出清期（深化）</td><td>组件价格跌至$0.07/W, 12家企业出清, 全行业毛利率<5%</td><td>维持L3+5pp, 增加现金流指标权重</td><td class="text-amber">生效中</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+<section id="s6">
+  <h2>六、方法论引用</h2>
+  <ul class="ref-list">
+    <li>双轨对比：<code>{引用双轨方法论文档}</code></li>
+    <li>前瞻对比与区分度：<code>{引用验证方法论文档}</code></li>
+  </ul>
+</section>
 
-  <!-- ====== SECTION 13: 方法论深度说明 ====== -->
-  <div class="section">
-    <h2 class="section-title">十三、方法论深度说明</h2>
-    <div class="card card-purple">
-      <h3>L1-L5子维度权重分布</h3>
-      <p style="color:var(--text-secondary);margin-bottom:12px;">每个金字塔层级下各子维度的评分权重分配，反映各因子在不同层级内的相对重要性。</p>
-      <table>
-        <thead><tr><th>金字塔层级</th><th>子维度</th><th>子维度权重</th><th>层内合计</th><th>框架总权重</th></tr></thead>
-        <tbody>
-          <tr><td rowspan="4">L1 宏观与区域</td><td>区域经济环境</td><td>30%</td><td rowspan="4">100%</td><td rowspan="4">10%</td></tr>
-          <tr><td>产业政策导向</td><td>25%</td></tr>
-          <tr><td>汇率与贸易环境</td><td>25%</td></tr>
-          <tr><td>融资环境</td><td>20%</td></tr>
-          <tr><td rowspan="5">L2 行业与经营</td><td>行业地位与市占率</td><td>30%</td><td rowspan="5">100%</td><td rowspan="5">20%</td></tr>
-          <tr><td>技术路线与研发</td><td>25%</td></tr>
-          <tr><td>供应链垂直整合</td><td>20%</td></tr>
-          <tr><td>客户与市场多元化</td><td>15%</td></tr>
-          <tr><td>产能利用率</td><td>10%</td></tr>
-          <tr><td rowspan="7">L3 财务实力</td><td>资本结构与负债率</td><td>20%</td><td rowspan="7">100%</td><td rowspan="7">35%</td></tr>
-          <tr><td>流动性覆盖</td><td>20%</td></tr>
-          <tr><td>盈利能力</td><td>20%</td></tr>
-          <tr><td>现金流质量</td><td>15%</td></tr>
-          <tr><td>偿债保障</td><td>10%</td></tr>
-          <tr><td>总资产规模</td><td>10%</td></tr>
-          <tr><td>资本开支与投资</td><td>5%</td></tr>
-          <tr><td rowspan="5">L4 管理战略与治理</td><td>管理团队与经验</td><td>25%</td><td rowspan="5">100%</td><td rowspan="5">20%</td></tr>
-          <tr><td>公司治理结构</td><td>25%</td></tr>
-          <tr><td>战略规划与执行</td><td>20%</td></tr>
-          <tr><td>信息披露透明度</td><td>15%</td></tr>
-          <tr><td>风险控制体系</td><td>15%</td></tr>
-          <tr><td rowspan="4">L5 外部支持</td><td>银行授信支持</td><td>35%</td><td rowspan="4">100%</td><td rowspan="4">15%</td></tr>
-          <tr><td>资本市场通道</td><td>30%</td></tr>
-          <tr><td>政府支持力度</td><td>20%</td></tr>
-          <tr><td>产业链协同支持</td><td>15%</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card card-purple" style="margin-top:14px;">
-      <h3>各子维度评分阈值标准</h3>
-      <p style="color:var(--text-secondary);margin-bottom:12px;">以下为关键定量指标的评分阈值体系，采用10分制映射原始数据。</p>
-      <table>
-        <thead><tr><th style="width:18%;">评估维度</th><th style="width:16%;">10分(AAA)</th><th style="width:16%;">8分(A)</th><th style="width:16%;">6分(BBB)</th><th style="width:16%;">4分(B)</th><th style="width:16%;">2分及以下(CCC及以下)</th></tr></thead>
-        <tbody>
-          <tr><td>区域经济环境(GDP排名)</td><td>排名≤10</td><td>排名11-20</td><td>排名21-30</td><td>排名31-40</td><td>排名>40</td></tr>
-          <tr><td>资产负债率</td><td>&lt;30%</td><td>30-50%</td><td>50-65%</td><td>65-80%</td><td>&gt;80%</td></tr>
-          <tr><td>流动比率</td><td>&gt;2.5x</td><td>1.8-2.5x</td><td>1.2-1.8x</td><td>0.8-1.2x</td><td>&lt;0.8x</td></tr>
-          <tr><td>毛利率</td><td>&gt;30%</td><td>20-30%</td><td>10-20%</td><td>5-10%</td><td>&lt;5%</td></tr>
-          <tr><td>净利率</td><td>&gt;15%</td><td>8-15%</td><td>3-8%</td><td>0-3%</td><td>&lt;0%</td></tr>
-          <tr><td>ROE</td><td>&gt;20%</td><td>12-20%</td><td>6-12%</td><td>2-6%</td><td>&lt;2%</td></tr>
-          <tr><td>EBITDA/利息费用</td><td>&gt;15x</td><td>10-15x</td><td>5-10x</td><td>2-5x</td><td>&lt;2x</td></tr>
-          <tr><td>有息负债率</td><td>&lt;15%</td><td>15-30%</td><td>30-45%</td><td>45-60%</td><td>&gt;60%</td></tr>
-          <tr><td>短债占比</td><td>&lt;20%</td><td>20-35%</td><td>35-50%</td><td>50-65%</td><td>&gt;65%</td></tr>
-          <tr><td>总资产周转率</td><td>&gt;1.0x</td><td>0.7-1.0x</td><td>0.4-0.7x</td><td>0.2-0.4x</td><td>&lt;0.2x</td></tr>
-          <tr><td>应收账款周转天数</td><td>&lt;30天</td><td>30-50天</td><td>50-75天</td><td>75-100天</td><td>&gt;100天</td></tr>
-          <tr><td>存货周转天数</td><td>&lt;45天</td><td>45-65天</td><td>65-90天</td><td>90-120天</td><td>&gt;120天</td></tr>
-          <tr><td>产能利用率</td><td>&gt;95%</td><td>80-95%</td><td>60-80%</td><td>40-60%</td><td>&lt;40%</td></tr>
-          <tr><td>市占率</td><td>&gt;20%</td><td>10-20%</td><td>5-10%</td><td>2-5%</td><td>&lt;2%</td></tr>
-          <tr><td>客户集中度(前5)</td><td>&lt;15%</td><td>15-30%</td><td>30-50%</td><td>50-70%</td><td>&gt;70%</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="callout">
-      <strong>阈值设定逻辑：</strong>评分阈值参照光伏行业历史数据分布和企业信用违约历史校准。每个指标的阈值分为5档，分别对应AAA至CCC及以下的评级区间。其中资产负债率、流动比率和EBITDA/利息费用三个指标的权重最高，因其在企业信用违约预测中的历史表现最为稳定。阈值在行业周期切换时会根据框架内置的"行业周期相位"调节因子进行动态调整，下行周期中财务指标的阈值整体收紧5-10%。
-    </div>
-  </div>
-
-  <!-- ====== SECTION 14: 同业对比深度参照 ====== -->
-  <div class="section">
-    <h2 class="section-title">十四、同业对比深度参照</h2>
-    <div class="card">
-      <h3>行业各梯队金字塔评分全貌</h3>
-      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">将当前L1-L5评分置于行业竞争格局中审视，区分隆基与一道的评分是行业特性还是个体特性。每个梯队选取代表性企业进行框架评分。</p>
-      <table>
-        <thead><tr><th>行业梯队</th><th>代表企业</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th><th>L5</th><th>综合</th><th>等价评级</th></tr></thead>
-        <tbody>
-          <tr><td><strong>第一梯队（龙头）</strong></td><td>隆基绿能</td><td>6.0</td><td>8.0</td><td>7.8</td><td>6.5</td><td>6.0</td><td class="text-green">7.00</td><td><span class="tag tag-green">BBB+</span></td></tr>
-          <tr><td><strong>第二梯队（领先）</strong></td><td>通威股份</td><td>6.0</td><td>6.5</td><td>6.5</td><td>5.5</td><td>5.5</td><td class="text-amber">6.10</td><td><span class="tag tag-amber">BBB-</span></td></tr>
-          <tr><td><strong>第三梯队（中等）</strong></td><td>晶科/天合</td><td>5.5</td><td>5.5</td><td>5.0</td><td>5.0</td><td>4.5</td><td class="text-amber">5.1-5.5</td><td><span class="tag tag-amber">BB+</span></td></tr>
-          <tr><td><strong>第四梯队（尾部）</strong></td><td>一道新能</td><td>4.0</td><td>2.0</td><td>1.2</td><td>1.5</td><td>1.0</td><td class="text-red">1.50</td><td><span class="tag tag-red">CCC</span></td></tr>
-        </tbody>
-      </table>
-      <div style="margin-top:12px;font-size:12px;color:var(--text-secondary);">
-        <strong>行业参照结论：</strong>隆基的评分在行业中处于第一梯队顶端，但BBB+的绝对评级受限于行业β风险——即使是最优质的光伏企业，在当前行业环境下也难以突破A-评级上限。一道新能位于第四梯队，其CCC评级反映出在行业出清期尾部企业面临的结构性淘汰风险。两个评级之间的5.50分差距是"行业龙头 vs 尾部企业"的天然分层，也是洗牌期行业集中度提升的信用映射。
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== SECTION 15: 附录: 数据源与假设说明 ====== -->
-  <div class="section">
-    <h2 class="section-title">十五、附录：数据源与假设说明</h2>
-
-    <div class="card">
-      <h3>数据来源清单</h3>
-      <table>
-        <thead><tr><th style="width:5%;">#</th><th style="width:25%;">数据来源</th><th style="width:25%;">数据类型</th><th style="width:30%;">覆盖范围</th><th>更新频率</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>隆基绿能2026年Q1季报</td><td>财务数据</td><td>资产负债表/利润表/现金流量表</td><td>季度</td></tr>
-          <tr><td>2</td><td>隆基绿能2025年年报</td><td>财务数据+管理层讨论</td><td>完整年度财务+经营分析</td><td>年度</td></tr>
-          <tr><td>3</td><td>一道新能招股说明书(更新版)</td><td>财务数据+风险披露</td><td>历史财务+募资用途+风险因素</td><td>单次</td></tr>
-          <tr><td>4</td><td>Wind行业数据库</td><td>行业统计</td><td>光伏产业链各环节价格/产量/出货量</td><td>周度/月度</td></tr>
-          <tr><td>5</td><td>PVInsight市场报告</td><td>行业研究</td><td>全球光伏装机量/产能/技术路线</td><td>月度</td></tr>
-          <tr><td>6</td><td>BNEF能源展望</td><td>行业预测</td><td>中长期光伏需求/技术路线图</td><td>季度</td></tr>
-          <tr><td>7</td><td>各公司投资者关系披露</td><td>公司公告</td><td>重大合同/产能规划/人事变动</td><td>即时</td></tr>
-          <tr><td>8</td><td>中国海关出口数据</td><td>贸易数据</td><td>光伏组件/电池片出口量价</td><td>月度</td></tr>
-          <tr><td>9</td><td>国家能源局统计</td><td>政策数据</td><td>国内光伏装机/政策指引</td><td>季度</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card" style="margin-top:14px;">
-      <h3>关键假设与局限</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;color:var(--text-secondary);line-height:1.7;">
-        <div>
-          <h4 style="color:var(--text-primary);margin-bottom:8px;">核心假设</h4>
-          <ul style="padding-left:16px;">
-            <li>组件价格在2026年下半年至2027年上半年大概率维持$0.07-0.08/W区间震荡，不会出现V型反弹</li>
-            <li>全球光伏装机量2026年全年预计550-580GW，同比增长10-15%</li>
-            <li>中国光伏行业信贷政策不会出现方向性收紧，但银行对尾部企业的风险偏好将进一步降低</li>
-            <li>美国/欧盟/印度的贸易壁垒在2026-2027年不会出现系统性放松</li>
-            <li>一道新能IPO审核结果将在2026年Q4前明确，大概率被要求补充材料或终止审核</li>
-            <li>隆基绿能BC二代技术2027年如期量产，效率目标27.2%可实现</li>
-          </ul>
-        </div>
-        <div>
-          <h4 style="color:var(--text-primary);margin-bottom:8px;">分析局限</h4>
-          <ul style="padding-left:16px;">
-            <li>一道新能为非上市公司，信息披露完整性和可靠性低于上市公司，部分数据来自招股说明书（2025年末更新）</li>
-            <li>框架评分仅反映基于公开信息的信用评价，未考虑尚未披露的内外部突发事件</li>
-            <li>行业预测模型基于历史数据和线性外推，在技术颠覆或政策突变情景下可能失真</li>
-            <li>ESG评价维度当前在框架中作为辅助参考，尚未完全整合进核心信用评分权重</li>
-            <li>历史信用迁移矩阵基于全球光伏企业样本构建，中国市场特定因素可能使迁移概率存在偏差</li>
-            <li>框架的行业周期相位调节因子仍处于beta测试阶段，尚未经过完整的周期验证</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="callout">
-      <strong>补充说明：</strong>本报告为统一信贷评估框架v2.0的自动生成输出。所有评分和评级均为框架模型结果，不构成投资建议。报告中的前瞻性判断基于当前可获取的信息和合理的假设推演，实际结果可能与预测存在重大差异。框架团队将持续跟踪行业变化并更新分析。数据截止日期：2026年6月30日。报告生成时间：2026-07-09。
-    </div>
-  </div>
-
-  <!-- ====== HERO ====== -->
-<div class="hero" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #065f46);">
-  <span class="chip">TYPE 2 · 双标的前瞻对比</span>
-  <h1>光伏行业 · 隆基绿能 vs 一道新能</h1>
-  <p class="subtitle">基于统一信贷评估框架的平行前瞻对比，通过五层金字塔逐层差异分析，识别相对信用风险与评级分化路径，为投资决策提供多维度参照</p>
-  <div class="meta">
-    <span>分析时点：2026-06-30</span>
-    <span>隆基绿能：7.00 / BBB+</span>
-    <span>一道新能：1.50 / CCC</span>
-    <span>分差：5.50</span>
-    <span>版本：v2.0</span>
-    <span>分析师：框架引擎</span>
-  </div>
-</div>
-
-<!-- ====== CONTAINER ====== -->
-<div class="container">
-
-  <!-- ====== STRIP 2x4 ====== -->
-  <div class="strip cols-8">
-    <div class="strip-item">
-      <div class="slabel">隆基 · 综合评分</div>
-      <div class="sval score-good">7.00</div>
-      <div class="ssub">BBB+</div>
-    </div>
-    <div class="strip-item">
-      <div class="slabel">隆基 · 行业地位</div>
-      <div class="sval" style="color:var(--blue);">龙头</div>
-      <div class="ssub">全球组件出货第一</div>
-    </div>
-    <div class="strip-item">
-      <div class="slabel">隆基 · 财务健康</div>
-      <div class="sval score-good">7.8</div>
-      <div class="ssub">资产负债率 58%</div>
-    </div>
-    <div class="strip-item">
-      <div class="slabel">隆基 · 经营稳定性</div>
-      <div class="sval score-ok">6.5</div>
-      <div class="ssub">产能利用率 78%</div>
-    </div>
-    <div class="strip-item">
-      <div class="slabel">一道 · 综合评分</div>
-      <div class="sval score-bad">1.50</div>
-      <div class="ssub">CCC</div>
-    </div>
-    <div class="strip-item">
-      <div class="slabel">一道 · 行业地位</div>
-      <div class="sval" style="color:var(--amber);">尾部</div>
-      <div class="ssub">组件出货排名 15+</div>
-    </div>
-    <div class="strip-item">
-      <div class="slabel">一道 · 财务健康</div>
-      <div class="sval score-bad">1.2</div>
-      <div class="ssub">资产负债率 92%</div>
-    </div>
-    <div class="strip-item">
-      <div class="slabel">一道 · 经营稳定性</div>
-      <div class="sval score-bad">0.8</div>
-      <div class="ssub">产能利用率 43%</div>
-    </div>
-  </div>
-
-  <!-- ====== FOOTER ====== -->
-  <div class="divider"></div>
-  <div class="footer">
-    <p><strong>双标的前瞻对比报告 · 隆基绿能 vs 一道新能 · 光伏行业</strong></p>
-    <p>报告生成时间：2026-07-09 | 基于统一信贷评估框架 v2.0 | 仅供内部参考 | 分类：信用分析</p>
-    <p style="margin-top:8px;font-size:10px;">Confidential · 本报告包含框架可识别的非公开信息，未经授权不得转发或引用</p>
-  </div>
-
-</div>
-
+<footer>
+  <p>报告编号 T2-{报告编号} · 版本 v0.8.6-release · 生成于 {生成日期} · 仅供内部风险评估使用</p>
+  <p>基于 Credence 引擎 v0.8.6-release · 所有分析均为内部推演，不构成投资建议</p>
+</footer>
 </body>
 </html>

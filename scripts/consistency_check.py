@@ -55,6 +55,7 @@ CORE_DOCS = [
     "paradigm-network-traffic.md",
     "work-path-registry.md",
     "dimension-registry.md",
+    "m2-underwriting-framework.md",
     "pipeline-contract.md",
 ]
 

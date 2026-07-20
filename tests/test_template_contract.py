@@ -16,8 +16,9 @@ CASE_CONTEXT_RE = re.compile(r"案例|回测|历史|示例|违约")
 HEADING_RE = re.compile(r"<h[1-6][^>]*>(.*?)</h[1-6]>", re.DOTALL)
 
 
-def test_sixteen_templates_present():
-    assert len(TEMPLATE_FILES) == 16
+def test_templates_present():
+    """模板数量下限（Type 1-15 + 18 + 新增 16/17，随路径扩展只增不减）。"""
+    assert len(TEMPLATE_FILES) >= 16
 
 
 def test_stamps_and_base_css():

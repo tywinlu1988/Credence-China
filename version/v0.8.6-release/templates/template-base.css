@@ -283,3 +283,52 @@ td.rt { text-align: right; }
   table { font-size: 12px; }
   thead th, tbody td { padding: 7px 9px; }
 }
+
+/* ============================================================
+   v0.9.0 基座扩容：打印样式 · 响应式 · 组件库
+   ============================================================ */
+
+/* === 打印样式：白底、去渐变与阴影 === */
+@media print {
+  body { background: #fff; color: #111; }
+  .hero, .toc-nav { background: #fff !important; color: #111 !important; }
+  .card, .signal-card, .metric-box, .summary-card, .watchlist-card { border: 1px solid #999 !important; background: #fff !important; color: #111 !important; box-shadow: none !important; }
+  a { color: #111; text-decoration: none; }
+}
+
+/* === 响应式：窄屏适配 === */
+@media (max-width: 640px) {
+  .container { padding: 0 12px; }
+  .hero { padding: 32px 0 24px; }
+  .metric-row { flex-direction: column; gap: 10px; }
+  .strip { grid-template-columns: repeat(2, 1fr); }
+  table { font-size: 12px; }
+  .toc-nav { position: static; }
+}
+
+/* === 组件库 === */
+/* 目录导航（吸顶） */
+.toc-nav { position: sticky; top: 0; z-index: 10; background: var(--bg-primary); border-bottom: 1px solid var(--border-default); padding: 10px 0; margin-bottom: 24px; font-size: 12px; }
+.toc-nav a { color: var(--text-secondary); text-decoration: none; margin-right: 14px; }
+.toc-nav a:hover { color: var(--text-primary); }
+/* 执行摘要卡 */
+.summary-card { background: var(--bg-secondary); border: 1px solid var(--border-strong); border-left: 4px solid var(--blue); border-radius: var(--radius); padding: 20px 24px; margin: 20px 0; }
+.summary-card .s-title { font-size: 13px; font-weight: 700; color: var(--text-tertiary); letter-spacing: 1px; margin-bottom: 8px; }
+.summary-card .s-body { font-size: 15px; line-height: 1.8; }
+/* 指标盒 */
+.metric-box { text-align: center; min-width: 120px; }
+.metric-box .val { font-size: 26px; font-weight: 800; }
+.metric-box .lbl { font-size: 12px; color: var(--text-tertiary); }
+/* 警示条 */
+.alert { border-radius: var(--radius); padding: 14px 18px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
+.alert.red { background: var(--red-bg); border-left: 4px solid var(--red); }
+.alert.amber { background: var(--amber-bg); border-left: 4px solid var(--amber); }
+.alert.green { background: var(--green-bg); border-left: 4px solid var(--green); }
+/* 时间线 */
+.timeline { border-left: 2px solid var(--border-strong); margin: 16px 0 16px 8px; padding-left: 20px; }
+.timeline .t-item { position: relative; margin-bottom: 14px; font-size: 13px; }
+.timeline .t-item::before { content: ""; position: absolute; left: -26px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+.timeline .t-date { color: var(--text-tertiary); font-size: 11px; margin-right: 8px; }
+/* 术语表 */
+.glossary dt { font-weight: 700; margin-top: 10px; }
+.glossary dd { color: var(--text-secondary); font-size: 13px; margin: 2px 0 8px 0; }
