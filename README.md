@@ -5,13 +5,23 @@
 >
 > **A methodology-first credit analysis engine for China's fixed-income market** — a vertical **domain-methodology skill pack** delivered as **Agent Skills** (`SKILL.md`), installable into Claude Code / Codex / Cursor / Gemini / OpenCode.
 
-**版本 Version** `v0.8.5-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI)
+**版本 Version** `v0.8.5-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
 
 [中文](#中文) · [English](#english)
 
 ---
 
 ## 中文
+
+**13 行业 · 16 工作路径 · 5 编码引擎 · 28 引擎文档 · 17 报告模板**
+
+### 能力亮点
+
+- **四段链技能**：路由 → 分析 → 报告 → 质检，意图确认后才执行，不脑补。
+- **5 条可复算编码引擎路径**（WP-M0-01 旗舰聚合 / WP-M4-01 集中度 / WP-M4-02 传染矩阵 / WP-M4-03 SRI / WP-X-05 展望监控）：评级、传染、SRI、展望等数值由 Python 确定性计算，非 LLM 即兴。
+- **系统智能层**：13×13 传染图谱 · 五维集中度 · SRI 预警温度计。
+- **双轨交叉验证**：基本面金字塔 × 市场定价信号，分歧即洞察。
+- **马赛克公开数据引擎**：零内部/付费数据，碎片信号拼图 + 完备性报告。
 
 ### 这是什么
 
@@ -51,6 +61,30 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
 可安装的发行包在 `version/v0.8.5-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
+
+### 快速上手
+
+安装（三选一）后把包根当项目打开，直接说需求即可：
+
+```
+帮我看看这家公司            → 路由四问 + 意图确认卡 → 评级
+这个组合有没有问题        → 集中度 + 传染 + SRI
+现在系统性风险什么水平    → SRI 读数 + 温度计
+给 X 一个评级展望并盯着   → 展望 + 观察名单 + 迁移矩阵
+```
+
+### 架构
+
+```
+用户需求 → [路由: 四问 + 意图确认] → 《工作路径单》
+        → [分析: 引擎文档 + 5 编码引擎] → [报告: 17 模板] → [质检: 质量门]
+引擎文档（dev/engine/）是唯一事实源；编码引擎（src/）运行时解析同一文档，不复制阈值。
+```
+
+### 路线图
+
+- **v0.9.0（规划中）**：M2 承销可行性 + M5 融资顾问路径与模板（Type 16/17），全量路径收官。
+- 版本历史与发布物见 [Releases](https://github.com/tywinlu1988/Credence-China/releases)。
 
 ### 仓库地图
 
@@ -94,6 +128,40 @@ Credence packages the methodology of a seasoned China fixed-income credit analys
 **Core principle**: traditional financial analysis fails systematically in policy-driven, tech-barrier, and asset-lease industries; the heaviest credit factors rarely appear on the balance sheet; external ratings lag real credit deterioration by 17+ months on average.
 
 ### Quickstart
+
+**13 industries · 16 work paths · 5 coded engines · 28 engine docs · 17 report templates**
+
+### Highlights
+
+- **Four-stage skill chain**: route → analyze → report → QA, with a mandatory intent-confirmation gate before execution.
+- **5 reproducible coded-engine paths** (WP-M0-01 composite rating / WP-M4-01 concentration / WP-M4-02 contagion / WP-M4-03 SRI / WP-X-05 outlook): deterministic Python numbers, not LLM improvisation.
+- **System-intelligence layer**: 13×13 contagion matrix · 5-dim concentration · SRI thermometer.
+- **Dual-track cross-validation**: fundamentals pyramid × market-pricing signals.
+- **Mosaic public-data engine**: zero private/paid data; fragment signals → completeness report.
+
+### Quickstart
+
+Install (3 options below), open the package root as a project, then just ask:
+
+```
+帮我看看这家公司            → router + intent card → rating
+这个组合有没有问题        → concentration + contagion + SRI
+现在系统性风险什么水平    → SRI reading + thermometer
+给 X 一个评级展望并盯着   → outlook + watchlist + migration
+```
+
+### Architecture
+
+```
+Request → [Router: 4 questions + intent confirmation] → Path Sheet
+        → [Analysis: engine docs + 5 coded engines] → [Report: 17 templates] → [QA gates]
+Engine docs (dev/engine/) are the single source of truth; coded engines (src/) parse them at runtime.
+```
+
+### Roadmap
+
+- **v0.9.0 (planned)**: M2 underwriting + M5 financing-advisor paths & templates (Type 16/17).
+- History & artifacts: [Releases](https://github.com/tywinlu1988/Credence-China/releases).
 
 **Key premise**: the skills are NOT self-contained — at runtime they read `engine/` and `templates/` from the **package root** (single source of truth, never copied). So the install unit is the whole package root; **open the package root as your project** (Model A) and everything resolves with zero copying.
 
