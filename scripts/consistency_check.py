@@ -56,6 +56,7 @@ CORE_DOCS = [
     "work-path-registry.md",
     "dimension-registry.md",
     "m2-underwriting-framework.md",
+    "m5-financing-advisor-framework.md",
     "pipeline-contract.md",
 ]
 
