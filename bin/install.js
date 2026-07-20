@@ -4,7 +4,7 @@
  * 把仓库内当前 release 包（version/<v>-release/，单一可安装包）复制为一个可直接
  * 用 agent CLI 打开的项目目录。用法：
  *
- *   npx github:tywinlu1988/fixedincome [目标目录名]      （默认目录名 credence）
+ *   npx github:tywinlu1988/Credence-China [目标目录名]      （默认目录名 credence）
  *
  * 设计说明：本仓库经 GitHub 清理后，version/ 下仅保留当前一个 *-release 发行包
  * （历史快照在 git 标签、分发 zip 在 GitHub Releases）。npx 从 git 树下载的正是
@@ -31,7 +31,7 @@ function main() {
   if (!src) {
     console.error('✗ 未在仓库中找到 release 包（version/*-release/）。');
     console.error('  请改从 GitHub Releases 下载 zip：');
-    console.error('  https://github.com/tywinlu1988/fixedincome/releases');
+    console.error('  https://github.com/tywinlu1988/Credence-China/releases');
     process.exit(1);
   }
 

@@ -50,7 +50,7 @@
 2. 运行 `python scripts/build_dist.py`：把 `dev/` 源确定性组装为 `dist/credence/` 可安装包（复制 + 引用重写 + 溯源指针清除 + 入口/安装文档生成），并通过其内置校验（零绝对路径、零 dev/ token、全链接可解析）。
 3. 把 `dist/credence/` 的内容复制为 `version/<version>/`（**v0.8.0-release 起**；`dist/` 本身是 gitignored 构建产物，提交的快照在 `version/`）。
 4. 生成 `version/<version>.zip`（顶层为 `version/<version>/` 单根目录，跨平台），作为 **GitHub Releases 附件**上传分发（**不提交进仓库**；`*.zip` 已 gitignore）。
-5. **git 跟踪约定**：主仓库仅跟踪**当前一个 release** 的 `version/<version>/` 目录。发新版时 `git rm -r` 旧 release 目录（**不带 `--cached`**——避免与 merge 叠加误删工作区文件的陷阱）、`git add` 新 release 目录，并把 `.gitignore` 里 `version/*` 的 `!version/<旧>/` 反例行改为 `!version/<新>/`。历史快照保留在本地磁盘与 git 提交历史。**git 标签约定（2026-07-17 起）**：标签与 Release **留痕保留、不再清理**——历史版本可按标签直接检出/下载，也支持 `npx github:tywinlu1988/fixedincome#<tag>` 钉版本安装；GitHub 的 Latest 标记始终指向最新 Release。主仓库 git 仍仅跟踪当前一个 release 快照目录。（此前约定为"远程仅保留当前 release 标签"；v0.8.0 及更早的历史标签已删，相应提交可从 master 历史按 SHA 找回。）
+5. **git 跟踪约定**：主仓库仅跟踪**当前一个 release** 的 `version/<version>/` 目录。发新版时 `git rm -r` 旧 release 目录（**不带 `--cached`**——避免与 merge 叠加误删工作区文件的陷阱）、`git add` 新 release 目录，并把 `.gitignore` 里 `version/*` 的 `!version/<旧>/` 反例行改为 `!version/<新>/`。历史快照保留在本地磁盘与 git 提交历史。**git 标签约定（2026-07-17 起）**：标签与 Release **留痕保留、不再清理**——历史版本可按标签直接检出/下载，也支持 `npx github:tywinlu1988/Credence-China#<tag>` 钉版本安装；GitHub 的 Latest 标记始终指向最新 Release。主仓库 git 仍仅跟踪当前一个 release 快照目录。（此前约定为"远程仅保留当前 release 标签"；v0.8.0 及更早的历史标签已删，相应提交可从 master 历史按 SHA 找回。）
 6. 更新 `dev/README.md` 与 `dev/engine/engine-overview.md` 的版本历史。
 
 > **v0.8.0-alpha 例外**：该快照为旧的镜像三根布局——手动把 `dev/`、`src/` 整拷贝 + 根级 `AGENTS.md` 复制到 `version/v0.8.0-alpha/`，未经 `build_dist.py` 可安装化。自 v0.8.0-release 起统一走上述 build_dist 流程。
