@@ -226,7 +226,9 @@ def test_t9_4_unwired_path_skips_gracefully(contract, registry_paths):
 # --------------------------------------------------------------------------
 
 def test_t9_5_planned_path_notice(registry_paths):
-    notice = planned_path_notice(_sheet("WP-M2-01"), registry_paths)
+    # 注册表当前无 planned 路径：以 WP-M2-01 注入 planned 状态验证待开发提示机制
+    fake = {**registry_paths, "WP-M2-01": {**registry_paths["WP-M2-01"], "status": "planned"}}
+    notice = planned_path_notice(_sheet("WP-M2-01"), fake)
     assert notice is not None
     assert "待开发" in notice
     assert "WP-M2-01" in notice

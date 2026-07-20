@@ -3,11 +3,11 @@
 These tests assert the *integration* of the v0.7.6-v0.7.9 staircase into a coherent
 release, not any single component:
 
-- T11.1: every one of the 9 active work paths yields a valid 4-stage plan (S1..S4,
+- T11.1: every one of the 11 active work paths yields a valid 4-stage plan (S1..S4,
   non-empty names/skills) via the thin orchestrator.
 - T11.2: the 5 wired paths (WP-M0-01 composite, WP-M4-01 concentration, WP-M4-02
   contagion, WP-M4-03 SRI, WP-X-05 outlook) execute code at the analysis stage; the
-  other 4 active paths produce a complete LLM-orchestrated plan.
+  other 6 active paths produce a complete LLM-orchestrated plan.
 - T11.3: the end-to-end walkthrough record exists and literally names all 8 path ids.
 - T11.4: version promotion is consistent (EXPECTED_VERSION well-formed and aligned with
   pyproject/package.json; every CORE_DOCS doc + skill declares it), mirroring
@@ -64,8 +64,8 @@ CONSISTENCY_CHECK = ROOT / "scripts" / "consistency_check.py"
 BUILD_DIST = ROOT / "scripts" / "build_dist.py"
 
 ACTIVE_PATHS = [
-    "WP-M0-01", "WP-M1-01", "WP-M4-01", "WP-M4-02",
-    "WP-M4-03", "WP-X-01", "WP-X-02", "WP-X-03", "WP-X-05",
+    "WP-M0-01", "WP-M1-01", "WP-M2-01", "WP-M4-01", "WP-M4-02",
+    "WP-M4-03", "WP-M5-01", "WP-X-01", "WP-X-02", "WP-X-03", "WP-X-05",
 ]
 WIRED_PATHS = ["WP-M0-01", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-X-05"]
 UNWIRED_ACTIVE = [p for p in ACTIVE_PATHS if p not in WIRED_PATHS]
@@ -262,7 +262,7 @@ def test_t11_2_wired_execute_code_others_llm_orchestrated(contract, registry_pat
         assert set(analysis["outputs"]) == EXPECTED_OUTPUT_KEYS[pid]
 
     # unwired: complete plan, analysis not executable, every stage llm-orchestrated
-    assert len(UNWIRED_ACTIVE) == 4
+    assert len(UNWIRED_ACTIVE) == 6
     for pid in UNWIRED_ACTIVE:
         assert pid not in EXECUTABLE_ENGINES
         plan = load_stage_plan(_sheet_for(pid, registry_paths), registry_paths, contract)

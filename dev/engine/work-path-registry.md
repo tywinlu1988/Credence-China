@@ -31,20 +31,20 @@
 | WP-M0-02 | 审贷专项附加包（LGD+外部支持） | M0 | lgd-recovery + external-support | 专项 | Type 8 + Type 9 | 🟡 partial |
 | WP-M1-01 | 债券投资仪表盘 | M1 | M1 四维（相对价值/条款/流动性/事件） | L2 | Type 5 | ✅ active |
 | WP-M1-02 | 双标的前瞻对比 | M1 | 双轨对比+区分度分析 | L2 | Type 2 | 🟡 partial |
-| WP-M2-01 | 承销可行性评估 | M2 | 发行窗口+投资人匹配+可比定价 | 专项 | 🔴 无 | 🔴 planned |
+| WP-M2-01 | 承销可行性评估 | M2 | 发行窗口+投资人匹配+可比定价 | 专项 | Type 16 | ✅ active |
 | WP-M3-01 | 交易盯市信号卡 | M3 | L0 信号+SRI 温度计联动 | L0 | L0 规范 | 🟡 partial |
 | WP-M4-01 | 组合集中度评估 | M4 | 五维集中度 | 专项 | Type 14 | ✅ active |
 | WP-M4-02 | 跨行业传染分析 | M4 | 传染矩阵+传染理论 | 专项 | Type 13 | ✅ active |
 | WP-M4-03 | 系统性风险读数 | M4 | SRI+温度计 | 专项 | Type 15 | ✅ active |
 | WP-M4-04 | 组合压力测试 | M4 | 压力情景+财务深潜压力节 | 专项 | Type 11 | 🟡 partial |
-| WP-M5-01 | 企业融资顾问 | M5 | 融资渠道对比+时机 | 专项 | 🔴 无 | 🔴 planned |
+| WP-M5-01 | 企业融资顾问 | M5 | 融资渠道对比+时机 | 专项 | Type 17 | ✅ active |
 | WP-X-01 | 黑天鹅回溯验证 | 元（验证） | validation-methodology | 专项 | Type 3 | ✅ active |
 | WP-X-02 | 多身份并行评估 | 元（对比） | M0/M1/M4 并行+交叉矩阵 | L2 | Type 4 | ✅ active |
 | WP-X-03 | 行业分析框架建设 | 元（建设） | 新行业金字塔+D1-D10 | 专项 | Type 7 | ✅ active |
 | WP-X-04 | ESG/治理风险扫描 | 专项 | esg + governance-fraud | 专项 | Type 10 | 🟡 partial |
 | WP-X-05 | 展望与持续监控 | 专项 | outlook-monitoring+迁移矩阵 | 专项 | Type 18 | ✅ active |
 
-> 状态分布：✅ active 8 条 · 🟡 partial 6 条 · 🔴 planned 2 条。待开发缺口见 [附录](#附录待开发缺口清单)。
+> 状态分布：✅ active 11 条 · 🟡 partial 5 条 · 🔴 planned 0 条。待开发缺口见 [附录](#附录待开发缺口清单)。
 
 ## 三、路径 schema 定义
 
@@ -180,25 +180,28 @@ quality_gates:
   - "区分度 (dev/engine/validation-methodology.md §4.2)"
 ```
 
-### WP-M2-01 承销可行性评估（🔴 planned）
+### WP-M2-01 承销可行性评估（✅ active）
 
-承销商视角：评估某发行人债券的承销可行性——发行窗口判断、投资人匹配、可比券定价。**引擎缺失**：M2 承销框架 engine 文档与 Type 16 承销报告模板均待开发，见 [附录](#附录待开发缺口清单)。
+承销商视角：评估某发行人债券的承销可行性——发行窗口判断、投资人匹配、可比券定价。m2-underwriting-framework + Type 16 模板齐备（v0.9.0 激活）。
 
 ```yaml
 id: WP-M2-01
 name: 承销可行性评估
-status: planned
+status: active
 role: M2
 trigger:
   user_intent: [能不能承销, 发行窗口, 可比定价, 投资人匹配, 簿记]
   object: single-issuer
 depth: 专项
-engine_sequence: []
-paradigm_selection: 待定（M2 承销框架待开发后确定）
+engine_sequence:
+  - dev/engine/m2-underwriting-framework.md
+paradigm_selection: n/a（承销评估跨范式，按券种与发行人评级档位）
 templates:
-  - planned
+  - dev/templates/template-type16.html
 outputs: [承销可行性结论, 定价区间]
-quality_gates: []
+quality_gates:
+  - "发行窗口 (dev/engine/m2-underwriting-framework.md §二)"
+  - "可比定价 (dev/engine/m2-underwriting-framework.md §四)"
 ```
 
 ### WP-M3-01 交易盯市信号卡（🟡 partial）
@@ -325,25 +328,28 @@ quality_gates:
   - "场景敏感性 (dev/engine/financial-deep-dive.md §E)"
 ```
 
-### WP-M5-01 企业融资顾问（🔴 planned）
+### WP-M5-01 企业融资顾问（✅ active）
 
-企业（发行人）视角的反向应用：对比融资渠道（发债/贷款/非标）、判断融资时机与成本。**引擎缺失**：M5 融资顾问框架 engine 文档与 Type 17 融资顾问模板均待开发，见 [附录](#附录待开发缺口清单)。
+企业（发行人）视角的反向应用：对比融资渠道（发债/贷款/非标）、判断融资时机与成本。m5-financing-advisor-framework + Type 17 模板齐备（v0.9.0 激活）。
 
 ```yaml
 id: WP-M5-01
 name: 企业融资顾问
-status: planned
+status: active
 role: M5
 trigger:
   user_intent: [融资渠道, 发债还是贷款, 融资时机, 融资成本, 怎么融资]
   object: single-issuer
 depth: 专项
-engine_sequence: []
-paradigm_selection: 待定（M5 融资顾问框架待开发后确定）
+engine_sequence:
+  - dev/engine/m5-financing-advisor-framework.md
+paradigm_selection: n/a（融资顾问跨范式，按主体评级档位与资金用途）
 templates:
-  - planned
+  - dev/templates/template-type17.html
 outputs: [融资渠道对比, 时机建议]
-quality_gates: []
+quality_gates:
+  - "渠道选择 (dev/engine/m5-financing-advisor-framework.md §二)"
+  - "时机判断 (dev/engine/m5-financing-advisor-framework.md §三)"
 ```
 
 ### WP-X-01 黑天鹅回溯验证（✅ active）
@@ -510,11 +516,11 @@ quality_gates:
 
 | # | 缺口 | 缺失组件类型 | 受影响路径 | 备注 |
 |---|---|---|---|---|
-| 1 | M2 承销框架 engine 文档 | engine | WP-M2-01 | 发行窗口+投资人匹配+可比定价方法论 |
-| 2 | M5 融资顾问框架 engine 文档 | engine | WP-M5-01 | 融资渠道对比+时机判断方法论 |
+| 1 | M2 承销框架 engine 文档 | engine | WP-M2-01 | ✅ 已交付（v0.9.0，m2-underwriting-framework.md） |
+| 2 | M5 融资顾问框架 engine 文档 | engine | WP-M5-01 | ✅ 已交付（v0.9.0，m5-financing-advisor-framework.md） |
 | 3 | M3 交易框架补全 | engine | WP-M3-01 | 交易盯市专用引擎（当前仅 L0 规范+温度计，partial） |
-| 4 | Type 16 承销报告模板 | 模板 | WP-M2-01 | 承销可行性结论+定价区间报告 |
-| 5 | Type 17 融资顾问模板 | 模板 | WP-M5-01 | 融资渠道对比+时机建议报告 |
+| 4 | Type 16 承销报告模板 | 模板 | WP-M2-01 | ✅ 已交付（v0.9.0，template-type16.html） |
+| 5 | Type 17 融资顾问模板 | 模板 | WP-M5-01 | ✅ 已交付（v0.9.0，template-type17.html） |
 | 6 | 展望监控模板 | 模板 | WP-X-05 | ✅ 已交付（v0.8.4，template-type18.html） |
 
 > 演进追踪：每次版本发布应更新本表状态分布（🔴→🟡→✅），并在 engine-overview.md §六 版本历史中登记。

@@ -285,7 +285,8 @@ def test_load_registry_paths_parses_real_registry():
     """load_registry_paths is the single-source parser shared by validator and tests."""
     paths = load_registry_paths(REGISTRY)
     assert len(paths) == 16
-    assert paths["WP-M2-01"]["status"] == PathStatus.PLANNED.value
+    assert paths["WP-M2-01"]["status"] == PathStatus.ACTIVE.value
+    assert paths["WP-M0-02"]["status"] == PathStatus.PARTIAL.value
 
 
 def test_path_sheet_dataclass_roundtrip():
