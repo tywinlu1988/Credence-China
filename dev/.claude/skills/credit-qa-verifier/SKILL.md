@@ -5,7 +5,7 @@ description: Use when verifying a Chinese fixed-income credit report or analysis
 
 ## Purpose
 
-**对应引擎版本**: v0.8.4-release
+**对应引擎版本**: v0.8.5-release
 
 质检层，四段链**终态**。职责：对《交付单》及其上游《分析产物》《工作路径单》做交付前复核，产出《质检裁决》（QA Verdict）。本 skill 以引擎文档为规则源，**从不放宽门禁**（never relaxes a gate）：任何一项质量门或强制检查不通过，即判 `fail` 并退回整改，不得为了交付而降低标准。本 skill 不复制任何阈值/评级映射；规则正文以所引引擎文档为单一事实源。
 

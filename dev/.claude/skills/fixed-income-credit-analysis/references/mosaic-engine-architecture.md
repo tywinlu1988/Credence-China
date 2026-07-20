@@ -1,6 +1,6 @@
 # Mosaic Engine Architecture (Mode A — Primary)
 
-**版本**: v0.8.4-release
+**版本**: v0.8.5-release
 
 > 本文自 `fixed-income-credit-analysis` SKILL.md 下沉而来，组织马赛克引擎（Mode A）的详述参考。阈值/规则的单一事实源为 `dev/engine/mosaic-engine.md`；本文件仅作导航与组织，不引入新数值。
 

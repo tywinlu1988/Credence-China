@@ -1,6 +1,6 @@
 # Multi-Stakeholder Coverage & Path-Sheet Consumption
 
-**版本**: v0.8.4-release
+**版本**: v0.8.5-release
 
 > 本文自 `fixed-income-credit-analysis` SKILL.md 下沉而来，组织多利益相关者覆盖与 M1 仪表盘内容，并补充《工作路径单》消费指引。单一事实源为 `dev/engine/multi-stakeholder.md` 与 `dev/engine/work-path-registry.md`。
 
