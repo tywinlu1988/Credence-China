@@ -2,19 +2,17 @@
 
 单一事实源：§3.1 判定规则、§3.2 四标准范式权重模板、§七 行业→范式判定表、§3.3 特殊
 结构、paradigm-brand-channel.md/paradigm-network-traffic.md 的 E/F 权重模板，均运行时
-解析；18 档评级映射复用 consistency_check.CANONICAL_RATING_INTERVALS（import 同源）。
+解析；18 档评级映射复用 src.rating_map.CANONICAL_RATING_INTERVALS（import 同源，
+src/ 随发行包分发，包内包外均可导入）。
 覆盖 9/13 行业（4 标准范式 + E×2 + F×3）；半导体 5 层/新能源车/生物医药双轨/城投特殊
 返回 out_of_scope 标记，由 LLM 按对应规格文档编排（诚实降级）。
 """
 
 import re
-import sys
 from pathlib import Path
 
 from src.path_sheet import engine_dir
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from consistency_check import CANONICAL_RATING_INTERVALS  # noqa: E402  18 档单源，不复制
+from src.rating_map import CANONICAL_RATING_INTERVALS  # 18 档单源，不复制
 
 _EF_TEMPLATE_SOURCES = {
     "品牌+渠道型": "paradigm-brand-channel.md",

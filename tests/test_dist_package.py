@@ -9,6 +9,7 @@
 
 import importlib.util
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -174,3 +175,20 @@ def test_t12_7_deterministic_rebuild(builder, tmp_path):
     assert files_a.keys() == files_b.keys()
     diff = [str(k) for k in files_a if files_a[k] != files_b[k]]
     assert not diff, f"non-deterministic outputs: {diff[:5]}"
+
+
+# T12.8 — (m) dist 布局下编排器可导入：src.pipeline 顶层链式导入全部 5 引擎，
+#          不依赖包外的 scripts/（回归锁：composite_scorer 曾 sys.path 注入 ../scripts
+#          import consistency_check，导致发行包内 pipeline 整体 ModuleNotFoundError）。
+def test_t12_8_pipeline_importable_in_dist(dist):
+    code = (
+        "import sys; sys.path.insert(0, sys.argv[1]);"
+        "import src.pipeline as p;"
+        "assert len(p.EXECUTABLE_ENGINES) == 5;"
+        "print('PIPELINE_OK')"
+    )
+    r = subprocess.run(
+        [sys.executable, "-c", code, str(dist)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert r.returncode == 0 and "PIPELINE_OK" in r.stdout, r.stderr

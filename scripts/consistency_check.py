@@ -9,6 +9,9 @@ from pathlib import Path
 
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # 仓库根，供 src.* 可导入
+from src.rating_map import CANONICAL_RATING_INTERVALS  # noqa: E402  18 档单源（src/，随发行包分发）
+
 ROOT = Path(__file__).resolve().parent.parent
 ENGINE_DIR = ROOT / "dev" / "engine"
 TEMPLATES_DIR = ROOT / "dev" / "templates"
@@ -68,26 +71,6 @@ OLD_NOTCH_PATTERNS = [re.compile(p) for p in (
     r"2\.0-3\.9",
 )]
 
-CANONICAL_RATING_INTERVALS = [
-    (9.5, 10.0, "AAA"),
-    (9.0, 9.4, "AA+"),
-    (8.5, 8.9, "AA"),
-    (8.0, 8.4, "AA-"),
-    (7.5, 7.9, "A+"),
-    (7.0, 7.4, "A"),
-    (6.5, 6.9, "A-"),
-    (6.0, 6.4, "BBB+"),
-    (5.5, 5.9, "BBB"),
-    (5.0, 5.4, "BBB-"),
-    (4.5, 4.9, "BB+"),
-    (4.0, 4.4, "BB"),
-    (3.5, 3.9, "BB-"),
-    (3.0, 3.4, "B+"),
-    (2.5, 2.9, "B"),
-    (2.0, 2.4, "B-"),
-    (1.0, 1.9, "CCC"),
-    (0.0, 0.9, "D"),
-]
 RATING_INTERVAL_RE = re.compile(
     r"\|\s*(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*\|\s*([A-D]{1,3}[+-]?)\s*\|"
 )
