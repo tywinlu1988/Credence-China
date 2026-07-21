@@ -98,7 +98,9 @@ Full specification: `references/system-intelligence.md` and `dev/engine/systemic
 
 - **上游**：`credit-analysis-router` —— 消费其《工作路径单》（见 Invocation Protocol）。
 - **产出**：分析完成后输出《分析产物》（Analysis Artifact，schema 见 `dev/engine/pipeline-contract.md` §2.2），`path_id` 承自路径单。
-- **下游（REQUIRED NEXT SUB-SKILL）**：`credit-report-builder` —— 把《分析产物》移交该 skill 装配为交付报告；本 skill 不做报告装配。
+- **下游（REQUIRED NEXT SUB-SKILL）**：`credit-report-builder` —— 《分析产物》产出后**立即自动**移交该 skill 装配为交付报告；本 skill 不做报告装配。
+- **交付完整性（强制）**：分析完成 ≠ 交付完成。链的完成态 = 《质检裁决》产出；仅以文字性调查结论/分析摘要收尾、未产出模板报告文件，视为**未完成交付**（协议违规）。合法提前终止仅两种且须显式说明：① 该路径 registry `templates` 为 `planned` 标记（如实告知模板待开发）；② Mode B 数据缺口无法继续。
+- **自动接续**：移交 report-builder 后无需用户指令，report → qa 自动接续；不得就"是否生成报告/做成哪种形式/是否质检/是否继续"询问用户——报告模板由 registry `templates` 字段决定，质检是链的必经终态。全链交互点预算见 `dev/engine/pipeline-contract.md` §三「链式接续规则」。
 
 ## References
 

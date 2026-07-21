@@ -72,10 +72,11 @@ source_analysis: 上游分析产物（findings/completeness/veto，见 pipeline-
 ## Chaining（链式交接）
 
 - **上游**：`fixed-income-credit-analysis` skill —— 消费其《分析产物》。无分析产物时本 skill 不启动（自身不做分析，先回上游完成分析）。
-- **REQUIRED NEXT SUB-SKILL**：`credit-qa-verifier` —— 《交付单》产出后，移交质检 skill 做交付前终态复核（质量门 + 强制检查），质检通过方可交付。
+- **REQUIRED NEXT SUB-SKILL**：`credit-qa-verifier` —— 《交付单》产出后**自动**移交质检 skill 做交付前终态复核（质量门 + 强制检查），质检通过方可交付。**不得就"是否质检/是否继续"询问用户**——质检是链的必经终态，不是可选步骤。全链交互点预算见 `dev/engine/pipeline-contract.md` §三「链式接续规则」。
 
 ## Guardrails
 
+- **自动接续**：本 skill 由上游 analysis 自动触发，《交付单》产出后自动移交 qa-verifier；链上不设"是否继续/是否质检"确认点。
 - **不做分析**：本 skill 只做模板选择、分层映射与装配，不重新计算评分、不补信号、不改评级。分析结论一律来自上游《分析产物》。
 - **不复制引擎内容**：只引用路径 ID、模板名与文档章节，不复制任何阈值、分层时间预算、信号优先级门槛或评级映射。分层语义以 `dev/engine/output-layered-framework.md` 为准，模板清单以 `dev/engine/work-path-registry.md` 为准。
 - **低密度不补数值**：上游分析产物中因密度不足而置 null 的维度评分（信息不足无法评估），在报告中保持"信息不足"标注，不得为了报告完整而编造数值。

@@ -114,6 +114,14 @@ remediation: []             # 不通过项的整改建议
 - 升级触发（深度上调）：L0→L1、L1→L2 的层级语义见 [output-layered-framework.md](output-layered-framework.md) §二/§三/§四。
 - 监控触发（重跑条件）：M4 组合路径在温度计/迁移矩阵事件下重跑，档位语义见 [systemic-warning-framework.md](systemic-warning-framework.md) §三 与 [outlook-monitoring-framework.md](outlook-monitoring-framework.md) §四/§五。
 
+**链式接续规则（交互点预算，全链单一事实源）**：四段链经 S1 Step 5 意图确认后**自动跑完**——阶段间切换（S1→S2→S3→S4）与 qa `fail` 的一轮回退整改均为自动接续，无需用户指令。全链仅允许 3 个用户交互点：
+
+1. S1 Step 5 意图确认卡（必经；确认后不再设任何中途确认点）；
+2. Mode B 数据缺口澄清（用户未显式提供数据源时的真实缺口）；
+3. qa `fail` 且一轮自动整改后仍 `fail`（向用户出示裁决与整改选项）。
+
+qa `pass` / `pass-with-findings` 直接回执并结束；任何阶段不得就"是否生成报告/做成哪种形式/是否质检/是否继续"发起用户询问——报告模板由注册表 `templates` 字段决定，质检是链的必经终态。各 SKILL.md 的 Chaining/Guardrails 与本规则保持一致表述。
+
 ```yaml
 chaining_edges:
   - id: edge-l0-to-l1-upgrade

@@ -77,8 +77,8 @@ remediation: []
 
 ## Chaining（链式交接 · 终态）
 
-- **上游（REQUIRED）**：`credit-report-builder` —— 消费其《交付单》及上游产物。
-- **终态**：本 skill 为四段链最后一段，无下游。判 `fail` 时按 `remediation` 退回对应阶段（密度/否决问题回 analysis；模板/装配问题回 report）整改后重新质检。
+- **上游（REQUIRED）**：`credit-report-builder` —— 消费其《交付单》及上游产物。本 skill 由上游**自动触发**，无需用户指令；不得就"是否需要质检"询问用户。
+- **终态**：本 skill 为四段链最后一段，无下游。判 `pass` / `pass-with-findings` 时直接回执裁决并结束，不问用户。判 `fail` 时先按 `remediation` **自动**退回对应阶段（密度/否决问题回 analysis；模板/装配问题回 report）整改一轮后重新质检（自愈）；仅当一轮自愈后仍 `fail`，才向用户出示裁决与整改选项。全链交互点预算见 `dev/engine/pipeline-contract.md` §三「链式接续规则」。
 
 ## Guardrails
 
