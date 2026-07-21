@@ -1,6 +1,6 @@
 # 四段链 I/O 契约（Pipeline Contract）
 
-**版本**: v0.9.0-release | **日期**: 2026-07-16
+**版本**: v0.9.1-release | **日期**: 2026-07-16
 
 本契约是 v0.8.0 skill 架构四段链（intake → analysis → report → qa）的**单一事实源**：它定义四个阶段之间传递的四份产物（artifact）的结构，以及驱动阶段切换/重跑的链式边（chaining edges）。四份产物由四个 skill 分别承载：
 

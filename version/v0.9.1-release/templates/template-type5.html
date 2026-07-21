@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- @template: templates/template-type5.html -->
+<!-- @engine-version: v0.9.1-release -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="债券投资仪表盘模板 Type 5 · 相对价值·条款保护·流动性·事件日历·综合排名">
+<title>债券投资仪表盘 · {行业}可转债</title>
+<link rel="stylesheet" href="template-base.css">
+<style>
+.hero { background: linear-gradient(135deg, #0f172a, #1e3a5f, #2563eb); }
+.hero .chip { background: rgba(37,99,235,0.22); color: #bfdbfe; border-color: rgba(37,99,235,0.4); }
+.bond-table th, .bond-table td { padding: 8px 10px; text-align: center; vertical-align: top; }
+.bond-table td.l { text-align: left; }
+.rank-1 { color: var(--green); font-weight: 800; }
+.event-tag { display:inline-block; padding:2px 10px; border-radius:10px; font-size:11px; font-weight:700; }
+.event-high { background:var(--red-bg); color:var(--red); }
+.event-mid { background:var(--amber-bg); color:var(--amber); }
+.event-low { background:var(--green-bg); color:var(--green); }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="chip">Type 5 · 债券投资仪表盘</div>
+  <h1>{行业}可转债投资仪表盘</h1>
+  <div class="hero-sub">覆盖 {只数} 只 · 相对价值/条款/流动性/事件 四维 · {报告日期}</div>
+</header>
+
+<nav class="toc-nav">
+  <a href="#s1">§1 相对价值</a>
+  <a href="#s2">§2 条款保护</a>
+  <a href="#s3">§3 流动性</a>
+  <a href="#s4">§4 事件日历</a>
+  <a href="#s5">§5 综合排名</a>
+  <a href="#s6">§6 方法论引用</a>
+</nav>
+
+<section id="s1">
+  <h2>一、相对价值分析</h2>
+  <table class="bond-table">
+    <tr><th>券</th><th>评级</th><th>价格</th><th>转股溢价率</th><th>纯债溢价率</th><th>到期收益率</th><th>相对价值判断</th></tr>
+    <tr><td class="l">{券A}</td><td>{券A评级}</td><td>{券A价格}</td><td>{券A转股溢价率}</td><td>{券A纯债溢价率}</td><td>{券A到期收益率}</td><td>{券A价值判断}</td></tr>
+    <tr><td class="l">{券B}</td><td>{券B评级}</td><td>{券B价格}</td><td>{券B转股溢价率}</td><td>{券B纯债溢价率}</td><td>{券B到期收益率}</td><td>{券B价值判断}</td></tr>
+    <tr><td class="l">{券C}</td><td>{券C评级}</td><td>{券C价格}</td><td>{券C转股溢价率}</td><td>{券C纯债溢价率}</td><td>{券C到期收益率}</td><td>{券C价值判断}</td></tr>
+    <tr><td class="l">{券D}</td><td>{券D评级}</td><td>{券D价格}</td><td>{券D转股溢价率}</td><td>{券D纯债溢价率}</td><td>{券D到期收益率}</td><td>{券D价值判断}</td></tr>
+    <tr><td class="l">{券E}</td><td>{券E评级}</td><td>{券E价格}</td><td>{券E转股溢价率}</td><td>{券E纯债溢价率}</td><td>{券E到期收益率}</td><td>{券E价值判断}</td></tr>
+  </table>
+  <table class="bond-table">
+    <tr><th>可比对标</th><th>评级</th><th>利差</th><th>期限</th><th>说明</th></tr>
+    <tr><td class="l">{可比券1}</td><td>{可比评级1}</td><td>{可比利差1}</td><td>{可比期限1}</td><td>{可比说明1}</td></tr>
+    <tr><td class="l">{可比券2}</td><td>{可比评级2}</td><td>{可比利差2}</td><td>{可比期限2}</td><td>{可比说明2}</td></tr>
+  </table>
+  <div class="alert green"><strong>相对价值关键发现：</strong>{相对价值关键发现}</div>
+</section>
+
+<section id="s2">
+  <h2>二、条款保护分析</h2>
+  <table class="bond-table">
+    <tr><th>券</th><th>回售条款</th><th>下修条款</th><th>赎回条款</th><th>保护评级</th></tr>
+    <tr><td class="l">{券A}</td><td>{券A回售}</td><td>{券A下修}</td><td>{券A赎回}</td><td>{券A保护评级}</td></tr>
+    <tr><td class="l">{券B}</td><td>{券B回售}</td><td>{券B下修}</td><td>{券B赎回}</td><td>{券B保护评级}</td></tr>
+    <tr><td class="l">{券C}</td><td>{券C回售}</td><td>{券C下修}</td><td>{券C赎回}</td><td>{券C保护评级}</td></tr>
+    <tr><td class="l">{券D}</td><td>{券D回售}</td><td>{券D下修}</td><td>{券D赎回}</td><td>{券D保护评级}</td></tr>
+    <tr><td class="l">{券E}</td><td>{券E回售}</td><td>{券E下修}</td><td>{券E赎回}</td><td>{券E保护评级}</td></tr>
+  </table>
+  <div class="alert amber"><strong>条款风险矩阵：</strong>{条款风险矩阵要点}</div>
+  <p>{下修博弈价值量化：当前价位下的下修触发概率与价值}</p>
+</section>
+
+<section id="s3">
+  <h2>三、流动性分析</h2>
+  <table class="bond-table">
+    <tr><th>券</th><th>日均成交额</th><th>换手率</th><th>流动性分层</th><th>交易成本估计</th></tr>
+    <tr><td class="l">{券A}</td><td>{券A日均成交额}</td><td>{券A换手率}</td><td>{券A流动性分层}</td><td>{券A交易成本}</td></tr>
+    <tr><td class="l">{券B}</td><td>{券B日均成交额}</td><td>{券B换手率}</td><td>{券B流动性分层}</td><td>{券B交易成本}</td></tr>
+    <tr><td class="l">{券C}</td><td>{券C日均成交额}</td><td>{券C换手率}</td><td>{券C流动性分层}</td><td>{券C交易成本}</td></tr>
+    <tr><td class="l">{券D}</td><td>{券D日均成交额}</td><td>{券D换手率}</td><td>{券D流动性分层}</td><td>{券D交易成本}</td></tr>
+    <tr><td class="l">{券E}</td><td>{券E日均成交额}</td><td>{券E换手率}</td><td>{券E流动性分层}</td><td>{券E交易成本}</td></tr>
+  </table>
+  <p>{流动性深度分析：日内分布/持有期结构/做市商参与度}</p>
+</section>
+
+<section id="s4">
+  <h2>四、事件日历 · 未来 {月数} 个月关键事件</h2>
+  <table class="bond-table">
+    <tr><th>日期</th><th>券</th><th>事件</th><th>影响方向</th><th>重要度</th></tr>
+    <tr><td>{事件日期1}</td><td>{事件券1}</td><td class="l">{事件1}</td><td>{事件影响1}</td><td><span class="event-tag {事件重要度样式1}">{事件重要度1}</span></td></tr>
+    <tr><td>{事件日期2}</td><td>{事件券2}</td><td class="l">{事件2}</td><td>{事件影响2}</td><td><span class="event-tag {事件重要度样式2}">{事件重要度2}</span></td></tr>
+    <tr><td>{事件日期3}</td><td>{事件券3}</td><td class="l">{事件3}</td><td>{事件影响3}</td><td><span class="event-tag {事件重要度样式3}">{事件重要度3}</span></td></tr>
+  </table>
+</section>
+
+<section id="s5">
+  <h2>五、综合排名与投资建议</h2>
+  <table class="bond-table">
+    <tr><th>排名</th><th>券</th><th>四维综合评分</th><th>投资建议</th><th>关键依据</th></tr>
+    <tr><td class="rank-1">{排名1}</td><td class="l">{排名券1}</td><td>{排名评分1}</td><td>{排名建议1}</td><td class="l">{排名依据1}</td></tr>
+    <tr><td>{排名2}</td><td class="l">{排名券2}</td><td>{排名评分2}</td><td>{排名建议2}</td><td class="l">{排名依据2}</td></tr>
+    <tr><td>{排名3}</td><td class="l">{排名券3}</td><td>{排名评分3}</td><td>{排名建议3}</td><td class="l">{排名依据3}</td></tr>
+    <tr><td>{排名4}</td><td class="l">{排名券4}</td><td>{排名评分4}</td><td>{排名建议4}</td><td class="l">{排名依据4}</td></tr>
+    <tr><td>{排名5}</td><td class="l">{排名券5}</td><td>{排名评分5}</td><td>{排名建议5}</td><td class="l">{排名依据5}</td></tr>
+  </table>
+  <div class="alert green"><strong>组合建议：</strong>{组合配置建议}</div>
+</section>
+
+<section id="s6">
+  <h2>六、方法论引用与数据完备性</h2>
+  <table class="bond-table">
+    <tr><th>维度</th><th>完备性</th><th>主要缺口</th></tr>
+    <tr><td class="l">相对价值</td><td>{相对价值完备性}</td><td class="l">{相对价值缺口}</td></tr>
+    <tr><td class="l">条款保护</td><td>{条款完备性}</td><td class="l">{条款缺口}</td></tr>
+    <tr><td class="l">流动性</td><td>{流动性完备性}</td><td class="l">{流动性缺口}</td></tr>
+    <tr><td class="l">事件</td><td>{事件完备性}</td><td class="l">{事件缺口}</td></tr>
+  </table>
+  <ul class="ref-list">
+    <li>M1 四维框架：<code>{引用 multi-stakeholder 相关章节}</code></li>
+  </ul>
+</section>
+
+<footer>
+  <p>报告编号 T5-{报告编号} · 版本 v0.9.1-release · 生成于 {生成日期} · 仅供内部风险评估使用</p>
+  <p>基于 Credence 引擎 v0.9.1-release · 所有分析均为内部推演，不构成投资建议</p>
+</footer>
+</body>
+</html>

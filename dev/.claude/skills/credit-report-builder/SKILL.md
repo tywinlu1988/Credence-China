@@ -5,7 +5,7 @@ description: Use when turning a completed Chinese fixed-income credit analysis i
 
 ## Purpose
 
-**对应引擎版本**: v0.9.0-release
+**对应引擎版本**: v0.9.1-release
 
 装配层，**本 skill 不做分析**（does not perform analysis）。职责仅两步：把上游 `fixed-income-credit-analysis` 产出的《分析产物》映射到 L0/L1/L2 输出层并选中正确模板 → 装配为交付报告并产出《交付单》。本 skill 不复制任何引擎阈值/分层时间预算/评级映射；模板选择与分层语义一律以引擎文档为单一事实源。
 

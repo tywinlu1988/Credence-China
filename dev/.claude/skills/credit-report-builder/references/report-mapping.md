@@ -1,6 +1,6 @@
 # 路径 → 模板 → 分层 映射视图
 
-**版本**: v0.9.0-release
+**版本**: v0.9.1-release
 
 > 本表是 `credit-report-builder` 的装配映射视图：给定 `path_id`，列出应选模板与主分层。模板清单的单一事实源为 `dev/engine/work-path-registry.md`（各路径 `templates` 字段）；分层语义的单一事实源为 `dev/engine/output-layered-framework.md` §二/§三/§五。本表不含任何阈值、分层时间预算或评级值——凡数值判断以所引引擎文档为准。本表如出现与该两份文档不一致之处，以其为准。
 
