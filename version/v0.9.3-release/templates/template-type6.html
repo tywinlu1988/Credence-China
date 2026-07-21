@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!-- @template: templates/template-type6.html -->
+<!-- @engine-version: v0.9.3-release -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="马赛克完备性报告模板 Type 6 · 信号密度·维度覆盖·数据缺口·完备性结论">
+<title>马赛克完备性报告 · {主体名称}</title>
+<link rel="stylesheet" href="template-base.css">
+<style>
+.hero { background: linear-gradient(135deg, #0f172a, #312e81, #6d28d9); }
+.hero .chip { background: rgba(168,85,247,0.22); color: #d8b4fe; border-color: rgba(168,85,247,0.4); }
+.density-wrap { text-align:center; margin: 20px 0; }
+.density-num { font-size: 44px; font-weight: 800; }
+.density-lbl { font-size: 12px; color: var(--text-tertiary); }
+.dim-table th, .dim-table td { padding: 8px 10px; text-align: center; vertical-align: top; }
+.dim-table td.l { text-align: left; }
+.gap-tag { display:inline-block; padding:2px 10px; border-radius:10px; font-size:11px; font-weight:700; }
+.gap-high { background:var(--red-bg); color:var(--red); }
+.gap-mid { background:var(--amber-bg); color:var(--amber); }
+.gap-low { background:var(--green-bg); color:var(--green); }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="chip">Type 6 · 马赛克完备性报告</div>
+  <h1>马赛克完备性报告 · {主体名称}</h1>
+  <div class="hero-sub">信号密度 {信号密度} · 已提取 {信号数} 个信号 · 覆盖 {维度数} 个分析维度 · {报告日期}</div>
+</header>
+
+<nav class="toc-nav">
+  <a href="#s1">§1 密度总览</a>
+  <a href="#s2">§2 维度覆盖</a>
+  <a href="#s3">§3 数据缺口</a>
+  <a href="#s4">§4 完备性结论</a>
+</nav>
+
+<section id="s1">
+  <h2>一、信号密度总览</h2>
+  <div class="density-wrap">
+    <div class="density-num">{信号密度}</div>
+    <div class="density-lbl">综合信号密度（{密度等级}）</div>
+  </div>
+  <div class="metric-row">
+    <div class="metric-box"><div class="val">{信号数}</div><div class="lbl">已提取信号</div></div>
+    <div class="metric-box"><div class="val">{维度数}</div><div class="lbl">覆盖维度</div></div>
+    <div class="metric-box"><div class="val">{缺口数}</div><div class="lbl">数据缺口</div></div>
+    <div class="metric-box"><div class="val">{交叉验证率}</div><div class="lbl">交叉验证率</div></div>
+  </div>
+</section>
+
+<section id="s2">
+  <h2>二、维度覆盖明细</h2>
+  <table class="dim-table">
+    <tr><th>分析维度</th><th>完备度</th><th>已获信号</th><th>主要来源</th><th>缺口标记</th></tr>
+    <tr><td class="l">{维度1}</td><td>{完备度1}</td><td>{信号数1}</td><td class="l">{来源1}</td><td><span class="gap-tag {缺口样式1}">{缺口标记1}</span></td></tr>
+    <tr><td class="l">{维度2}</td><td>{完备度2}</td><td>{信号数2}</td><td class="l">{来源2}</td><td><span class="gap-tag {缺口样式2}">{缺口标记2}</span></td></tr>
+    <tr><td class="l">{维度3}</td><td>{完备度3}</td><td>{信号数3}</td><td class="l">{来源3}</td><td><span class="gap-tag {缺口样式3}">{缺口标记3}</span></td></tr>
+    <tr><td class="l">{维度4}</td><td>{完备度4}</td><td>{信号数4}</td><td class="l">{来源4}</td><td><span class="gap-tag {缺口样式4}">{缺口标记4}</span></td></tr>
+    <tr><td class="l">{维度5}</td><td>{完备度5}</td><td>{信号数5}</td><td class="l">{来源5}</td><td><span class="gap-tag {缺口样式5}">{缺口标记5}</span></td></tr>
+    <tr><td class="l">{维度6}</td><td>{完备度6}</td><td>{信号数6}</td><td class="l">{来源6}</td><td><span class="gap-tag {缺口样式6}">{缺口标记6}</span></td></tr>
+    <tr><td class="l">{维度7}</td><td>{完备度7}</td><td>{信号数7}</td><td class="l">{来源7}</td><td><span class="gap-tag {缺口样式7}">{缺口标记7}</span></td></tr>
+  </table>
+</section>
+
+<section id="s3">
+  <h2>三、数据缺口清单</h2>
+  <table class="dim-table">
+    <tr><th>缺口</th><th>影响维度</th><th>影响程度</th><th>替代方案</th><th>风险含义</th></tr>
+    <tr><td class="l">{缺口1}</td><td>{影响维度1}</td><td>{影响程度1}</td><td class="l">{替代方案1}</td><td class="l">{风险含义1}</td></tr>
+    <tr><td class="l">{缺口2}</td><td>{影响维度2}</td><td>{影响程度2}</td><td class="l">{替代方案2}</td><td class="l">{风险含义2}</td></tr>
+    <tr><td class="l">{缺口3}</td><td>{影响维度3}</td><td>{影响程度3}</td><td class="l">{替代方案3}</td><td class="l">{风险含义3}</td></tr>
+  </table>
+  <div class="alert amber"><strong>缺口即风险信号：</strong>{缺口综合风险评估}</div>
+</section>
+
+<section id="s4">
+  <h2>四、完备性结论</h2>
+  <div class="summary-card">
+    <div class="s-title">完备性结论</div>
+    <div class="s-body">{完备性结论：密度评级、可用性边界与使用建议（结论在何种置信度下成立、哪些维度结论应打折使用）}</div>
+  </div>
+  <p>{使用建议：报告各节结论的置信度调整规则（完备度低者的降级规则）}</p>
+</section>
+
+<footer>
+  <p>报告编号 T6-{报告编号} · 版本 v0.9.3-release · 生成于 {生成日期} · 仅供内部风险评估使用</p>
+  <p>基于 Credence 引擎 v0.9.3-release · 所有分析均为内部推演，不构成投资建议</p>
+</footer>
+</body>
+</html>
