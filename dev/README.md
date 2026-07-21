@@ -2,7 +2,7 @@
 
 **项目代号**: Credence
 **版本**: v0.9.2-release
-**状态**: 方法论文档阶段 · 产品设计完成 · 13行业覆盖 · 系统智能层上线 · 文档结构重整完成
+**状态**: 正式发布（v0.9.x 系列） · 13行业覆盖 · 系统智能层上线 · 5 编码引擎接线 · 四段链技能交付
 
 ---
 
@@ -25,7 +25,7 @@ dev/
 │   ├── industry-framework.md                       行业分类（十维评分·13行业金字塔）
 │   ├── qualitative-analysis.md                     定性分析（信源·政策·马赛克·叙事）
 │   ├── quantitative-analysis.md                    定量分析（利差·波动率·因子·压力·市场信号）
-│   ├── dual-track-methodology.md                   双轨+交叉对撞·12档评级·EL整合·缓释建议
+│   ├── dual-track-methodology.md                   双轨+交叉对撞·18档评级·EL整合·缓释建议
 │   ├── mosaic-engine.md                            马赛克引擎（信号·拼图·完备性·Mode B）
 │   ├── multi-stakeholder.md                        多利益相关者（M0-M6·集中度风险·系统智能层集成）
 │   ├── validation-methodology.md                   验证方法论（黑天鹅回溯·双时点·前瞻对比）
@@ -49,7 +49,7 @@ dev/
 │   ├── dimension-registry.md                       维度注册表（6范式+LGFV·M0-M5角色·可寻址索引）
 │   └── audits/                                     15份历史审查/审计归档
 │
-├── templates/                                       → 报告模板单一事实源（16文件）
+├── templates/                                       → 报告模板单一事实源（20 文件）
 │   ├── template-base.css                           共享样式基底
 │   └── template-type1..18.html                     Type 1 - Type 18 报告模板
 │
@@ -91,15 +91,15 @@ dev/
 
 | 类型 | 数量 | 说明 |
 |---|---|---|
-| 报告模板 | 15种（Type 1-Type 15） | `templates/` 单一事实源（template-base.css + type1-15.html） |
+| 报告模板 | 18种（Type 1-Type 18） | `templates/` 单一事实源（template-base.css + type1-18.html + README 导航页） |
 
 ### 产品设计（完成）
 
 产品愿景·Magic Experience·三层输出体系·商业化模型·定价·GTM
 
-### 技术实现（未开始）
+### 技术实现（进行中）
 
-方法和产品设计全部固化后启动。
+可执行编排器（`../src/pipeline.py`）+ 5 个编码引擎已接线（WP-M0-01/WP-M4-01/-02/-03/WP-X-05），CI 双门在线；剩余扩展见根 README 路线图。
 
 ---
 
@@ -156,6 +156,8 @@ dev/
 | **v0.8.5-release** | **2026-07-20** | **WP-M0-01 旗舰聚合编码（composite_scorer，覆盖 9/13）+ 实体清单改结构化评估。211 项测试通过。** |
 | **v0.8.6-release** | **2026-07-20** | **体验与引导强化：模板导航页、router 意图确认、README 门面丰富。211 项测试通过。** |
 | **v0.9.0-release** | **2026-07-20** | **广度收口 + 模板全域升级：M2/M5 收官（active 11）+ 模板契约/基座/去案例化。215 项测试通过。** |
+| **v0.9.1-release** | **2026-07-21** | **四段链协议加固：router 渐进式单问制（禁批量抛四问）、analysis 交付完整性（文字总结收尾=未完成）、全链交互点预算仅 3 处（pipeline-contract §三）。216 项测试通过。** |
+| **v0.9.2-release** | **2026-07-21** | **发行包热修：18 档评级映射迁至 src/rating_map.py 单源（composite_scorer 曾反向依赖包外 scripts/ 致发行包 pipeline 不可导入）+ T12.8 回归锁。217 项测试通过。** |
 
 > **注**：v0.6.x系列为模块级预发布版本（contagion-matrix.md、concentration-framework.md、systemic-warning-framework.md 等独立发布），功能统一纳入 v0.7.0-alpha。
 

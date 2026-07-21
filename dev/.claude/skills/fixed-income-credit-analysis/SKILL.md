@@ -63,7 +63,7 @@ Defined but not implemented. Adapter contract (`query_bond_analytics` / `query_m
 ## 一票否决与评级上限 (Veto & Rating Ceiling — mandatory)
 
 - **一票否决（one-shot veto）**：任一分析层触发一票否决条件时，该发行人评级**上限锁定为 CCC**，不得上调。每层否决条件见 `dev/engine/industry-framework.md` §五。
-- 评级映射一律采用官方 12 档表（`dev/engine/dual-track-methodology.md` §六）；不得自造档位。
+- 评级映射一律采用官方 18 档表（`dev/engine/dual-track-methodology.md` §六）；不得自造档位。
 - 城投类标的：政府信用定上限、平台自身定下限、支持意愿定落点（`dev/engine/lgfv-framework.md` §五）。
 
 ## Two-Track Parallel Structure (Core)

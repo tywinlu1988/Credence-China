@@ -35,7 +35,7 @@ For each analysis dimension, compute signal density = obtained signals / expecte
 Before finalizing any numeric rating, verify:
 1. Every dimension used in the score has a documented density.
 2. No critical dimension is below 20% density.
-3. The final rating maps to the official 12-notch table.
+3. The final rating maps to the official 18-notch table.
 4. Every veto condition has been explicitly checked.
 If any check fails, downgrade the rating or replace it with a directional statement.
 
