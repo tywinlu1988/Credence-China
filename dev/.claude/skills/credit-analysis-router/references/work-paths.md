@@ -1,6 +1,6 @@
 # 工作路径路由视图
 
-**版本**: v0.9.1-release
+**版本**: v0.9.2-release
 
 > 本表是 `dev/engine/work-path-registry.md` 的精简路由视图，供 `credit-analysis-router` 匹配用。只列路径 ID / 名称 / 角色 / 状态 / 一句话触发特征，不含任何引擎阈值、权重或评级映射——规则正文以注册表 `engine_sequence` 指向的引擎文档为单一事实源。
 
