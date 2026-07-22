@@ -5,7 +5,7 @@
 >
 > **A methodology-first credit analysis engine for China's fixed-income market** — a vertical **domain-methodology skill pack** delivered as **Agent Skills** (`SKILL.md`), installable into Claude Code / Codex / Cursor / Gemini / OpenCode.
 
-**版本 Version** `v0.9.5-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
+**版本 Version** `v0.9.6-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
 
 [中文](#中文) · [English](#english)
 
@@ -60,7 +60,7 @@ npx github:tywinlu1988/Credence-China
 git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
-可安装的发行包在 `version/v0.9.5-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
+可安装的发行包在 `version/v0.9.6-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
 
 ### 快速上手
 
@@ -99,7 +99,7 @@ dev/          方法论与技能的开发源（engine/ 30 份 · .claude/skills/
 src/          可执行编排器 + 5 个编码引擎（pipeline.py · sri_calculator.py · concentration_scorer.py 等）
 scripts/      build_dist.py（dev/ → 发行包组装器）· consistency_check.py（一致性校验）
 tests/        回归测试（217 项）
-version/      当前可安装发行包 version/v0.9.5-release/（历史快照见 git 标签）
+version/      当前可安装发行包 version/v0.9.6-release/（历史快照见 git 标签）
 validation/   能力验证证据（验证方法论 + 11 条端到端走查 + 2 份行业方法论参照）
 docs/         版本管理策略 · Codex 深度适配
 AGENTS.md     跨 CLI 通用入口（任何 agent CLI 从这里开始）
@@ -197,7 +197,7 @@ Download the latest `vX.Y.Z-release.zip` from [Releases](https://github.com/tywi
 git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
-The installable package is at `version/v0.9.5-release/` (browse/copy and use; see `INSTALL.md` inside for per-tool setup); methodology source lives in `dev/`.
+The installable package is at `version/v0.9.6-release/` (browse/copy and use; see `INSTALL.md` inside for per-tool setup); methodology source lives in `dev/`.
 
 ### Repository map
 
@@ -206,7 +206,7 @@ dev/          methodology & skill source (engine/ 30 docs · .claude/skills/ 4-s
 src/          executable orchestrator + 5 coded engines (pipeline.py · sri_calculator.py · concentration_scorer.py et al.)
 scripts/      build_dist.py (dev/ → release-package assembler) · consistency_check.py
 tests/        regression tests (217)
-version/      current installable package version/v0.9.5-release/ (history via git tags)
+version/      current installable package version/v0.9.6-release/ (history via git tags)
 validation/   capability evidence (validation methodology + 11 end-to-end walkthroughs + 2 industry references)
 docs/         versioning strategy · Codex deep-dive adapter
 AGENTS.md     cross-CLI universal entry (start here from any agent CLI)

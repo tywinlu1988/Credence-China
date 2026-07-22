@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!-- @template: templates/template-type17.html -->
+<!-- @engine-version: v0.9.6-release -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="融资顾问报告模板 Type 17 · 渠道对比·时机判断·成本优化·建议与备选">
+<title>融资顾问报告 · {主体名称}</title>
+<link rel="stylesheet" href="template-base.css">
+<style>
+.hero { background: linear-gradient(135deg, #0f172a, #14532d, #16a34a); }
+.hero .chip { background: rgba(34,197,94,0.22); color: #bbf7d0; border-color: rgba(34,197,94,0.4); }
+.channel-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.channel-card { background: var(--bg-secondary); border-radius: var(--radius); padding: 14px 16px; border: 1px solid var(--border-default); font-size: 12px; }
+.channel-card.first { outline: 2px solid var(--green); }
+.channel-card h4 { font-size: 14px; margin-bottom: 6px; }
+.channel-card .score { font-size: 20px; font-weight: 800; color: var(--green); }
+.timing-pill { display:inline-block; padding:8px 22px; border-radius:999px; font-weight:800; font-size:17px; }
+.timing-pill.now { background:var(--green-bg); color:var(--green); border:1px solid rgba(34,197,94,.4); }
+.timing-pill.wait { background:var(--amber-bg); color:var(--amber); border:1px solid rgba(245,158,11,.4); }
+.timing-pill.hold { background:var(--red-bg); color:var(--red); border:1px solid rgba(239,68,68,.4); }
+.cost-table th, .cost-table td { text-align: center; padding: 8px 10px; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="chip">Type 17 · 融资顾问报告</div>
+  <h1>融资顾问报告 · {主体名称}</h1>
+  <div class="hero-sub">{资金用途} · {融资规模} · {报告日期}</div>
+</header>
+
+<nav class="toc-nav">
+  <a href="#s0">§0 建议</a>
+  <a href="#s1">§1 渠道对比</a>
+  <a href="#s2">§2 时机判断</a>
+  <a href="#s3">§3 成本优化</a>
+  <a href="#s4">§4 风险与备选</a>
+  <a href="#s5">§5 数据完备性</a>
+  <a href="#s6">§6 方法论引用</a>
+</nav>
+
+<section id="s0">
+  <div class="summary-card">
+    <div class="s-title">融资建议</div>
+    <div class="s-body">首选渠道：<strong>{首选渠道}</strong> · 时机：<strong>{时机建议}</strong>——{一句话逻辑}</div>
+  </div>
+  <div style="text-align:center; margin:16px 0;">
+    <span class="timing-pill {时机档位样式}">{时机档位：即刻/择机/暂缓}</span>
+  </div>
+</section>
+
+<section id="s1">
+  <h2>一、融资渠道对比</h2>
+  <div class="channel-grid">
+    <div class="channel-card {首选标记1}">
+      <h4>信用债（发债）</h4>
+      <div class="score">{信用债适配度}</div>
+      <p>成本 {信用债成本} · 期限 {信用债期限} · 速度 {信用债速度}</p>
+      <p>{信用债备注}</p>
+    </div>
+    <div class="channel-card {首选标记2}">
+      <h4>银行贷款</h4>
+      <div class="score">{银行贷款适配度}</div>
+      <p>成本 {银行贷款成本} · 期限 {银行贷款期限} · 速度 {银行贷款速度}</p>
+      <p>{银行贷款备注}</p>
+    </div>
+    <div class="channel-card {首选标记3}">
+      <h4>非标（租赁/保理/供应链）</h4>
+      <div class="score">{非标适配度}</div>
+      <p>成本 {非标成本} · 期限 {非标期限} · 速度 {非标速度}</p>
+      <p>{非标备注}</p>
+    </div>
+  </div>
+  <p>渠道组合建议：{主渠道 + 储备渠道双轨建议}</p>
+</section>
+
+<section id="s2">
+  <h2>二、融资时机判断</h2>
+  <table>
+    <tr><th>因子</th><th>读数</th><th>判定依据</th></tr>
+    <tr><td>利率周期位置</td><td>{利率周期读数}</td><td>{利率周期依据}</td></tr>
+    <tr><td>信用利差分位</td><td>{利差分位读数}</td><td>{利差分位依据}</td></tr>
+    <tr><td>资金缺口排程</td><td>{缺口排程读数}</td><td>{缺口排程依据}</td></tr>
+    <tr><td>政策窗口</td><td>{政策窗口读数}</td><td>{政策窗口依据}</td></tr>
+  </table>
+  <p>时机结论：<strong>{时机档位}</strong>（判定纪律：缺口排程优先于市场择时）· 复评节点：{复评节点}</p>
+</section>
+
+<section id="s3">
+  <h2>三、成本优化策略</h2>
+  <table class="cost-table">
+    <tr><th>策略</th><th>内容</th><th>预期效果</th></tr>
+    <tr><td>增信措施</td><td>{增信建议}</td><td>{增信效果}</td></tr>
+    <tr><td>条款设计</td><td>{条款建议}</td><td>{条款效果}</td></tr>
+    <tr><td>发行节奏</td><td>{节奏建议}</td><td>{节奏效果}</td></tr>
+    <tr><td>授信维护</td><td>{授信维护建议}</td><td>{授信维护效果}</td></tr>
+  </table>
+  <table class="cost-table">
+    <tr><th>成本测算（年化）</th><th>票面/利率</th><th>费用</th><th>增信成本</th><th>合计</th></tr>
+    <tr><td>{首选渠道}</td><td>{票面1}</td><td>{费用1}</td><td>{增信成本1}</td><td>{合计1}</td></tr>
+    <tr><td>{备选渠道}</td><td>{票面2}</td><td>{费用2}</td><td>{增信成本2}</td><td>{合计2}</td></tr>
+  </table>
+</section>
+
+<section id="s4">
+  <h2>四、风险与备选</h2>
+  <div class="alert red"><strong>主要风险：</strong>{主要风险点与缓释建议}</div>
+  <div class="alert amber"><strong>备选方案：</strong>{渠道/时机备选方案及触发条件}</div>
+</section>
+
+<section id="s5">
+  <h2>五、数据完备性</h2>
+  <table>
+    <tr><th>数据缺口</th><th>影响</th><th>替代方案</th></tr>
+    <tr><td>{缺口1}</td><td>{影响1}</td><td>{替代方案1}</td></tr>
+    <tr><td>{缺口2}</td><td>{影响2}</td><td>{替代方案2}</td></tr>
+  </table>
+</section>
+
+<section id="s6">
+  <h2>六、方法论引用</h2>
+  <ul class="ref-list">
+    <li>融资顾问框架：<code>engine/m5-financing-advisor-framework.md</code></li>
+    <li>承销窗口镜像：<code>engine/m2-underwriting-framework.md</code></li>
+    <li>外部支持评估：<code>{引用 external-support-framework 相关章节}</code></li>
+  </ul>
+</section>
+
+<footer>
+  <p>报告编号 T17-{报告编号} · 版本 v0.9.6-release · 生成于 {生成日期} · 仅供内部风险评估使用</p>
+  <p>基于 Credence 引擎 v0.9.6-release · 所有分析均为内部推演，不构成投资建议</p>
+</footer>
+</body>
+</html>
