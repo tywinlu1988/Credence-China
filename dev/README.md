@@ -1,7 +1,7 @@
 # 固收信贷智能分析引擎
 
 **项目代号**: Credence
-**版本**: v0.9.4-release
+**版本**: v0.9.5-release
 **状态**: 正式发布（v0.9.x 系列） · 13行业覆盖 · 系统智能层上线 · 5 编码引擎接线 · 四段链技能交付
 
 ---
@@ -160,6 +160,7 @@ dev/
 | **v0.9.2-release** | **2026-07-21** | **发行包热修：18 档评级映射迁至 src/rating_map.py 单源（composite_scorer 曾反向依赖包外 scripts/ 致发行包 pipeline 不可导入）+ T12.8 回归锁。217 项测试通过。** |
 | **v0.9.3-release** | **2026-07-21** | **文档一致性：12档→18档全域修正（表为权威 18 行）、版本历史补齐、§11.3 版本倒序消除、README 计数与路线图更新（v0.10.x 规划）。217 项测试通过。** |
 | **v0.9.4-release** | **2026-07-21** | **小问题清扫：dev/README 72 份实测报告声明修正、lgfv §十 迭代行去引擎版本号碰撞；CI 历史补验全绿。217 项测试通过。** |
+| **v0.9.5-release** | **2026-07-22** | **防漂移约束体系：AGENTS.md 铁律四条 + SKILL 负面清单 + qa 强制检查 4→6（模板/方法论一致性，规则源 pipeline-contract §五）。217 项测试通过。** |
 
 > **注**：v0.6.x系列为模块级预发布版本（contagion-matrix.md、concentration-framework.md、systemic-warning-framework.md 等独立发布），功能统一纳入 v0.7.0-alpha。
 

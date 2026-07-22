@@ -1,6 +1,6 @@
 # 固定收益信用分析引擎 — 架构总览
 
-**版本**: v0.9.4-release | **日期**: 2026-07-10
+**版本**: v0.9.5-release | **日期**: 2026-07-10
 
 ---
 
@@ -212,6 +212,7 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | **0.9.2-release** | **2026-07-21** | **发行包热修：18 档评级映射迁至 src/rating_map.py 单源（composite_scorer 反向依赖包外 scripts/ 致 v0.8.5 起发行包 pipeline 不可导入）+ T12.8 dist 布局导入回归锁。217 项测试通过** |
 | **0.9.3-release** | **2026-07-21** | **文档一致性：12档→18档全域修正（dual-track §六 表为权威 18 行）、三处版本历史补齐、systemic §11.3 版本倒序消除、README 计数与路线图更新。217 项测试通过** |
 | **0.9.4-release** | **2026-07-21** | **小问题清扫：项目自述实测报告声明修正、lgfv §十 迭代行去引擎版本号碰撞（本框架与阈值无变更）。217 项测试通过** |
+| **0.9.5-release** | **2026-07-22** | **防漂移约束体系：AGENTS.md 防漂移铁律四条、SKILL 负面清单、qa 强制检查 4→6 项（模板一致性/方法论一致性，规则源 pipeline-contract 新 §五 输出保真规则）。217 项测试通过** |
 
 ---
 
@@ -223,43 +224,43 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 
 | 版本体系 | 适用范围 | 示例 | 说明 |
 |---|---|---|---|
-| **引擎版本** | 核心方法论文档 | v0.9.4-release | 反映引擎方法论的整体迭代阶段，所有核心方法论文档统一标注此版本 |
+| **引擎版本** | 核心方法论文档 | v0.9.5-release | 反映引擎方法论的整体迭代阶段，所有核心方法论文档统一标注此版本 |
 | **审查报告版本** | 审计/自评/终审文档 | v1.0, v1.1 | 独立的审查报告版本体系，在文件头标注"对应引擎版本: v0.8.0-release" |
 
 ### 7.2 核心方法论文档版本对应关系
 
 | 文档 | 当前版本 | 说明 |
 |---|---|---|
-| engine-overview.md | v0.9.4-release | 引擎架构总览 |
-| dual-track-methodology.md | v0.9.4-release | 双轨分析方法论 |
-| industry-framework.md | v0.9.4-release | 行业分类与分析框架 |
-| qualitative-analysis.md | v0.9.4-release | 定性分析方法论 |
-| quantitative-analysis.md | v0.9.4-release | 定量分析方法论 |
-| mosaic-engine.md | v0.9.4-release | 马赛克引擎 |
-| output-layered-framework.md | v0.9.4-release | 分层输出框架 |
-| contagion-theory.md | v0.9.4-release | 传染理论基础（系统智能层） |
-| contagion-matrix.md | v0.9.4-release | 13行业传染矩阵 |
-| concentration-framework.md | v0.9.4-release | 五维集中度分析框架 |
-| systemic-warning-framework.md | v0.9.4-release | 系统性预警框架 |
-| validation-methodology.md | v0.9.4-release | 黑天鹅回溯验证方法论 |
-| financial-bond-framework.md | v0.9.4-release | 金融债分析框架 |
-| holding-company-framework.md | v0.9.4-release | 控股公司信用分析框架 |
-| non-credit-risk-overlay.md | v0.9.4-release | 非信用风险叠加层 |
-| external-support-framework.md | v0.9.4-release | 外部支持评估框架 |
-| esg-framework.md | v0.9.4-release | ESG 与治理风险框架 |
-| governance-fraud-risk.md | v0.9.4-release | 治理/欺诈风险框架 |
-| outlook-monitoring-framework.md | v0.9.4-release | 展望与持续监控框架 |
-| lgd-recovery-framework.md | v0.9.4-release | LGD 与回收率分析框架 |
-| lgfv-framework.md | v0.9.4-release | 城投债分析框架 |
-| multi-stakeholder.md | v0.9.4-release | 多利益相关者框架 |
-| financial-deep-dive.md | v0.9.4-release | 财务深度分析框架 |
-| paradigm-brand-channel.md | v0.9.4-release | 品牌+渠道范式规格 |
-| paradigm-network-traffic.md | v0.9.4-release | 网络+流量范式规格 |
-| work-path-registry.md | v0.9.4-release | 工作路径注册表 |
-| dimension-registry.md | v0.9.4-release | 维度注册表 |
-| pipeline-contract.md | v0.9.4-release | 四段链产物契约 |
-| m2-underwriting-framework.md | v0.9.4-release | M2 承销可行性评估框架 |
-| m5-financing-advisor-framework.md | v0.9.4-release | M5 融资顾问框架 |
+| engine-overview.md | v0.9.5-release | 引擎架构总览 |
+| dual-track-methodology.md | v0.9.5-release | 双轨分析方法论 |
+| industry-framework.md | v0.9.5-release | 行业分类与分析框架 |
+| qualitative-analysis.md | v0.9.5-release | 定性分析方法论 |
+| quantitative-analysis.md | v0.9.5-release | 定量分析方法论 |
+| mosaic-engine.md | v0.9.5-release | 马赛克引擎 |
+| output-layered-framework.md | v0.9.5-release | 分层输出框架 |
+| contagion-theory.md | v0.9.5-release | 传染理论基础（系统智能层） |
+| contagion-matrix.md | v0.9.5-release | 13行业传染矩阵 |
+| concentration-framework.md | v0.9.5-release | 五维集中度分析框架 |
+| systemic-warning-framework.md | v0.9.5-release | 系统性预警框架 |
+| validation-methodology.md | v0.9.5-release | 黑天鹅回溯验证方法论 |
+| financial-bond-framework.md | v0.9.5-release | 金融债分析框架 |
+| holding-company-framework.md | v0.9.5-release | 控股公司信用分析框架 |
+| non-credit-risk-overlay.md | v0.9.5-release | 非信用风险叠加层 |
+| external-support-framework.md | v0.9.5-release | 外部支持评估框架 |
+| esg-framework.md | v0.9.5-release | ESG 与治理风险框架 |
+| governance-fraud-risk.md | v0.9.5-release | 治理/欺诈风险框架 |
+| outlook-monitoring-framework.md | v0.9.5-release | 展望与持续监控框架 |
+| lgd-recovery-framework.md | v0.9.5-release | LGD 与回收率分析框架 |
+| lgfv-framework.md | v0.9.5-release | 城投债分析框架 |
+| multi-stakeholder.md | v0.9.5-release | 多利益相关者框架 |
+| financial-deep-dive.md | v0.9.5-release | 财务深度分析框架 |
+| paradigm-brand-channel.md | v0.9.5-release | 品牌+渠道范式规格 |
+| paradigm-network-traffic.md | v0.9.5-release | 网络+流量范式规格 |
+| work-path-registry.md | v0.9.5-release | 工作路径注册表 |
+| dimension-registry.md | v0.9.5-release | 维度注册表 |
+| pipeline-contract.md | v0.9.5-release | 四段链产物契约 |
+| m2-underwriting-framework.md | v0.9.5-release | M2 承销可行性评估框架 |
+| m5-financing-advisor-framework.md | v0.9.5-release | M5 融资顾问框架 |
 
 **职责边界说明：** 原有M4组合风控框架（multi-stakeholder.md §5）承担单发行人/单组合的风控职能（集中度限额/压力测试/评级调整）。系统智能层（contagion-matrix.md/concentration-framework.md/systemic-warning-framework.md）在M4基础上增加跨发行人/跨组合的系统性风险分析——传染矩阵覆盖全市场行业对传导、集中度框架覆盖五维组合集中度、预警框架提供全市场SRI读数。两者分工明确：原有M4做单发行人风控·系统智能层做跨发行人系统性风险。
 

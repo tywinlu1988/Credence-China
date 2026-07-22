@@ -1,6 +1,6 @@
 # Industry Scoring (Track A)
 
-**版本**: v0.9.4-release
+**版本**: v0.9.5-release
 
 > 本文自 `fixed-income-credit-analysis` SKILL.md 下沉而来，组织 Track A 行业评分相关内容（行业金字塔 / 六范式 / 十维评分 / 行业筛选）。阈值、权重与一票否决条件的单一事实源为 `dev/engine/industry-framework.md`；本文件仅作导航与组织，不引入新数值。
 
