@@ -192,3 +192,25 @@ def test_t12_8_pipeline_importable_in_dist(dist):
         capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     assert r.returncode == 0 and "PIPELINE_OK" in r.stdout, r.stderr
+
+
+# T12.9 — (n) 生成的 AGENTS.md 保真：含防漂移铁律与 5 引擎清单，路径计数/模板数与
+#          注册表真值一致（回归锁：生成器模板曾自带 Type 1–15、2 引擎、8/6/2 过期声明，
+#          根 AGENTS.md 修正从未触达发行包用户）。
+def test_t12_9_generated_agents_md_fidelity(dist):
+    agents = (dist / "AGENTS.md").read_text(encoding="utf-8")
+    assert "防漂移铁律" in agents, "generated AGENTS.md missing 防漂移铁律"
+    assert "Type 1–18" in agents and "Type 1–15" not in agents
+    for pid in ("WP-M0-01", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-X-05"):
+        assert pid in agents, f"generated AGENTS.md missing wired engine {pid}"
+    reg = load_registry_paths(dist / "engine" / "work-path-registry.md")
+    counts = {"active": 0, "partial": 0, "planned": 0}
+    for p in reg.values():
+        s = str(p.get("status"))
+        if s in counts:
+            counts[s] += 1
+    claim = (
+        f"{counts['active']} 条 active / {counts['partial']} 条 partial / "
+        f"{counts['planned']} 条 planned"
+    )
+    assert claim in agents, f"generated AGENTS.md path counts stale, expect {claim!r}"
