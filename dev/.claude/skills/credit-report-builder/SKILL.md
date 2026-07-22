@@ -76,6 +76,7 @@ source_analysis: 上游分析产物（findings/completeness/veto，见 pipeline-
 
 ## Guardrails
 
+- **禁自造报告形式（防漂移）**：交付报告一律使用 registry `templates` 字段指定的 `dev/templates/` 模板，章节结构与模板逐节对应；禁止自行设计版式或"参考模板风格自制"。无可用模板时按 `planned` 标记规则如实告知，不自创。
 - **自动接续**：本 skill 由上游 analysis 自动触发，《交付单》产出后自动移交 qa-verifier；链上不设"是否继续/是否质检"确认点。
 - **不做分析**：本 skill 只做模板选择、分层映射与装配，不重新计算评分、不补信号、不改评级。分析结论一律来自上游《分析产物》。
 - **不复制引擎内容**：只引用路径 ID、模板名与文档章节，不复制任何阈值、分层时间预算、信号优先级门槛或评级映射。分层语义以 `dev/engine/output-layered-framework.md` 为准，模板清单以 `dev/engine/work-path-registry.md` 为准。

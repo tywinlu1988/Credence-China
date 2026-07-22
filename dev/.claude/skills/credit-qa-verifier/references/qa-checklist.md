@@ -2,9 +2,9 @@
 
 **版本**: v0.9.4-release
 
-> 本清单是 `credit-qa-verifier` 的复核依据：四项强制检查 + 常见路径质量门。每条**规则名必须能在所引引擎文档中 grep 到**（与注册表质量门同一溯源口径），不得虚构规则。规则正文与数值以所引引擎文档为单一事实源，本清单不复制任何阈值、SRI 档位、分层时间预算或评级值。
+> 本清单是 `credit-qa-verifier` 的复核依据：六项强制检查 + 常见路径质量门。每条**规则名必须能在所引引擎文档中 grep 到**（与注册表质量门同一溯源口径），不得虚构规则。规则正文与数值以所引引擎文档为单一事实源，本清单不复制任何阈值、SRI 档位、分层时间预算或评级值。
 
-## 四项强制检查（mandatory_checks）
+## 六项强制检查（mandatory_checks）
 
 任一不通过即判 `fail`：
 
@@ -17,6 +17,8 @@
 | mode_b | Mode B | dev/engine/mosaic-engine.md §六 |
 | mode_b | 数据缺口 | dev/engine/mosaic-engine.md §六 |
 | single_source | 单一事实源 | dev/engine/work-path-registry.md |
+| template_fidelity | 模板一致性 | dev/engine/pipeline-contract.md §五 |
+| methodology_fidelity | 方法论一致性 | dev/engine/pipeline-contract.md §五 |
 
 ## 常见路径质量门（gate_results）
 
@@ -39,5 +41,7 @@
 - 编造阈值/权重/评级映射；引擎未定义的量未如实标注。
 - 三份产物 `path_id` 不一致或在注册表不可解析。
 - 残留示例数据或未清理的占位符（对照 `tests/test_template_contract.py` 的 INSTANCE_NAMES 与数值残留检测口径）。
+- 报告结构自行设计或与 registry 指定模板不对应（含"参考模板风格自制"、模板外自创章节）。
+- 分析维度/评分体系/框架无法溯源至引擎文档章节，或以通用信用分析先验补位。
 
 > 本清单如出现与所引引擎文档不一致之处，以引擎文档为准。

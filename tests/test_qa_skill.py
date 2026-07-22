@@ -118,7 +118,8 @@ def test_t8_3_qa_verdict_required_fields():
         f"illegal verdict {v['verdict']!r}"
     )
     mc = v["mandatory_checks"]
-    for check in ("density_rule", "veto_ceiling", "mode_b", "single_source"):
+    for check in ("density_rule", "veto_ceiling", "mode_b", "single_source",
+                  "template_fidelity", "methodology_fidelity"):
         assert check in mc, f"mandatory_checks missing {check!r}"
     for g in v["gate_results"]:
         for sub in ("gate", "status", "evidence"):

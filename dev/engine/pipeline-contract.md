@@ -90,7 +90,7 @@ source_analysis: ""         # 上游分析产物引用（溯源）
 
 ### 2.4 S4 质检裁决（QA Verdict，终态）
 
-credit-qa-verifier 产出，为四段链终态。逐质量门复核承自路径单 `quality_gates`；四项强制检查的规则源见所引引擎文档章节。
+credit-qa-verifier 产出，为四段链终态。逐质量门复核承自路径单 `quality_gates`；六项强制检查的规则源见所引引擎文档章节（前四项）与 §五（后两项）。
 
 ```yaml
 path_id: ""                 # join key（承自路径单，不得更改）
@@ -99,11 +99,13 @@ gate_results:               # 逐质量门复核结果
   - gate: ""                # "规则名 (dev/engine/<doc>.md §节)"（承自路径单 quality_gates）
     status: ""              # pass|fail
     evidence: ""            # 复核证据（引用引擎文档章节，不复制数值）
-mandatory_checks:           # 强制检查（规则源见各引擎文档）
+mandatory_checks:           # 强制检查（规则源见各引擎文档与 §五）
   density_rule: ""          # 信号密度规则（mosaic-engine §4.3）
   veto_ceiling: ""          # 一票否决评级上限（industry-framework §五）
   mode_b: ""                # Mode B 防幻觉护栏（mosaic-engine §六）
   single_source: ""         # 单一事实源合规（不编造阈值）
+  template_fidelity: ""     # 模板一致性（本契约 §五）
+  methodology_fidelity: ""  # 方法论一致性（本契约 §五）
 remediation: []             # 不通过项的整改建议
 ```
 
@@ -154,3 +156,10 @@ chaining_edges:
 - 本契约定义四份产物的字段形状与链式边的拓扑结构，是四段链 I/O 的**唯一权威定义**；各 skill 文档引用本契约，不再各自重新定义产物结构。
 - 本契约**不复制**任何阈值、SRI 温度计档位、L0/L1/L2 分层时间预算、信号优先级门槛或评级映射值。这些数值的单一事实源分别是：[mosaic-engine.md](mosaic-engine.md)（信号密度/完备性）、[industry-framework.md](industry-framework.md) §五（一票否决上限）、[systemic-warning-framework.md](systemic-warning-framework.md) §三（SRI 温度计）、[output-layered-framework.md](output-layered-framework.md) §二/§三/§五/§六（分层与优先级）、[dual-track-methodology.md](dual-track-methodology.md) §六（评级映射）、[concentration-framework.md](concentration-framework.md)（五维集中度）。
 - 本契约如出现与上述引擎文档不一致之处，以引擎文档为准。路径拓扑（16 条路径的状态/`templates`/`engine_sequence`/`quality_gates`）以 [work-path-registry.md](work-path-registry.md) 为单一事实源。
+
+## 五、输出保真规则（防漂移）
+
+四段链的全部产物——**含最终交付物与对话中间产物**（调研总结、维度清单、过程评分表）——在无明确指令时不得自由发挥。以下两条为链级强制规则，由 qa-verifier 作为强制检查（`template_fidelity` / `methodology_fidelity`）执行，任一违反即 `fail`：
+
+1. **模板一致性（template_fidelity）**：S3 交付报告的结构（章节序列与组件）必须与 [work-path-registry.md](work-path-registry.md) 该路径 `templates` 字段指定的模板逐节对应；禁止自行设计报告版式、"参考模板风格自制"或在模板结构外自创章节。路径模板为 `planned` 标记时如实告知"模板待开发"并给出替代交付物，不得伪造渲染产物。
+2. **方法论一致性（methodology_fidelity）**：S2 分析产物与 S3 报告中的分析维度、评分体系、权重结构、分析框架必须可溯源至引擎文档具体章节；禁止自造维度/框架，禁止以通用信用分析先验补位——引擎文档未定义的量与结构一律输出 `引擎未定义`。对话中间产物同受此约束。

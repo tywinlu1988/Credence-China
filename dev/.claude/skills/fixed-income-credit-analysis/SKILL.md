@@ -14,6 +14,7 @@ When this Skill is invoked:
 5. For every quantitative judgment, cite the source document and section.
 6. If a required threshold, weight, or mapping is missing from the engine documents, output `引擎未定义` and do not invent a value.
 7. Do not invoke Mode B or generate external-data values unless the user has explicitly provided a CSV upload, API endpoint, or MCP server. Treat Mode B fields as data gaps until then.
+8. **防漂移（结构保真）**：分析维度、评分体系、分析框架一律出自引擎文档并可引用到具体章节；禁止自造维度/框架，禁止以通用信用分析先验补位（文档未定义 → `引擎未定义`）。对话中间产物（调研总结、维度清单、过程评分表）同受此约束。
 
 # Fixed Income Credit Analysis Engine v0.9.4-release
 

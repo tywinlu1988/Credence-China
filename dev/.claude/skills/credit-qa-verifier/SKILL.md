@@ -23,7 +23,7 @@ description: Use when verifying a Chinese fixed-income credit report or analysis
 
 1. **join key 一致性**：三份产物的 `path_id` 必须相同且在注册表可解析；不一致即 `fail`。
 2. **逐质量门复核**：对路径单 `quality_gates` 逐条复核，产 `gate_results`（每门 `status` + `evidence`，证据引用引擎文档章节）。
-3. **四项强制检查**：见下「Mandatory Checks」，任一不通过即 `fail`。
+3. **六项强制检查**：见下「Mandatory Checks」，任一不通过即 `fail`。
 4. **产裁决**：全部通过 → `pass`；通过但有应注记的发现 → `pass-with-findings`；任一不通过 → `fail` 并列 `remediation`。
 
 ## Mandatory Checks（强制检查，规则源为引擎文档）
@@ -32,6 +32,8 @@ description: Use when verifying a Chinese fixed-income credit report or analysis
 - **一票否决上限 `veto_ceiling`**：触发一票否决的发行人，评级上限锁定为 CCC 不得上调。规则源 `dev/engine/industry-framework.md` §五。
 - **Mode B 防幻觉 `mode_b`**：用户未显式提供数据源（CSV/API/MCP）时，不得出现任何 Mode B 外部数据值；所有 Mode B 字段须作数据缺口处理。规则源 `dev/engine/mosaic-engine.md` §六。
 - **单一事实源 `single_source`**：报告/分析不得编造阈值、权重、评级映射；引擎未定义的量须标注 `引擎未定义`。规则源为全部所引引擎文档。
+- **模板一致性 `template_fidelity`**：交付报告的结构（章节序列与组件）必须与该路径 registry `templates` 字段指定的模板逐节对应；自行设计报告版式、"参考模板风格自制"、模板结构外自创章节，一律 `fail`。规则源 `dev/engine/pipeline-contract.md` §五。
+- **方法论一致性 `methodology_fidelity`**：分析产物与报告中的分析维度、评分体系、分析框架必须可溯源至引擎文档具体章节；自造维度/框架、以通用信用分析先验补位，一律 `fail`。规则源 `dev/engine/pipeline-contract.md` §五。
 
 ## QA Verdict Output（《质检裁决》）
 
@@ -44,11 +46,13 @@ gate_results:               # 逐质量门复核结果
   - gate: ""                # "规则名 (dev/engine/<doc>.md §节)"（承自路径单 quality_gates）
     status: ""              # pass|fail
     evidence: ""            # 复核证据（引用引擎文档章节，不复制数值）
-mandatory_checks:           # 四项强制检查
+mandatory_checks:           # 六项强制检查
   density_rule: ""
   veto_ceiling: ""
   mode_b: ""
   single_source: ""
+  template_fidelity: ""
+  methodology_fidelity: ""
 remediation: []             # 不通过项的整改建议
 ```
 
@@ -72,6 +76,8 @@ mandatory_checks:
   veto_ceiling: pass
   mode_b: pass
   single_source: pass
+  template_fidelity: pass
+  methodology_fidelity: pass
 remediation: []
 ```
 
