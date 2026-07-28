@@ -110,8 +110,8 @@ def _rules(root: Path, old: str, new: str, semver: str, old_semver: str):
 
 
 def sanitize_note(note: str) -> str:
-    """--note 消毒：换行/dev-/（当前）/竖线 四类非法内容拒绝。"""
-    for bad, why in (("\n", "换行"), ("dev/", "dev/ token"), ("（当前）", "（当前）标记"), ("|", "竖线")):
+    """--note 消毒：换行/回车/dev-/（当前）/竖线 五类非法内容拒绝。"""
+    for bad, why in (("\n", "换行"), ("\r", "回车"), ("dev/", "dev/ token"), ("（当前）", "（当前）标记"), ("|", "竖线")):
         if bad in note:
             raise ValueError(f"--note 含非法内容（{why}）: {note!r}")
     return note
@@ -139,13 +139,20 @@ def _section_last_table_line(lines: list, header_re) -> tuple:
     return start, last
 
 
-def _append_dev_readme_history(root: Path, new: str, today: str, note: str, tests, apply: bool) -> list:
+def _append_dev_readme_history(root: Path, new: str, today: str, note: str, tests, apply: bool, hints=None) -> list:
     path = root / "dev" / "README.md"
     if not path.is_file():
         return []
     lines = _read_lines(path)
-    _, last = _section_last_table_line(lines, re.compile(r"^##\s+版本历史"))
+    start, last = _section_last_table_line(lines, re.compile(r"^##\s+版本历史"))
     if last is None:
+        if hints is not None:
+            hints.append("dev/README.md 版本历史节未找到表格行，跳过历史行追加")
+        return []
+    marker = f"**{new}**"
+    if any(marker in lines[i] for i in range(start + 1, last + 1)):
+        if hints is not None:
+            hints.append(f"dev/README.md 版本历史表已含 {new} 行，跳过（防重复）")
         return []
     row = f"| **{new}** | **{today}** | **{note}。{tests} 项测试通过。** |\n"
     anchor = lines[last]
@@ -155,13 +162,20 @@ def _append_dev_readme_history(root: Path, new: str, today: str, note: str, test
     return [Change("dev-readme-history", "dev/README.md", last + 2, anchor.rstrip("\n"), row.rstrip("\n"))]
 
 
-def _append_overview_history(root: Path, new: str, today: str, note: str, tests, framework_changed: bool, apply: bool) -> list:
+def _append_overview_history(root: Path, new: str, today: str, note: str, tests, framework_changed: bool, apply: bool, hints=None) -> list:
     path = root / "dev" / "engine" / "engine-overview.md"
     if not path.is_file():
         return []
     lines = _read_lines(path)
-    _, last = _section_last_table_line(lines, re.compile(r"^##\s+六[、.]\s*版本历史"))
+    start, last = _section_last_table_line(lines, re.compile(r"^##\s+六[、.]\s*版本历史"))
     if last is None:
+        if hints is not None:
+            hints.append("dev/engine/engine-overview.md §六 版本历史节未找到表格行，跳过历史行追加")
+        return []
+    marker = f"**{new.removeprefix('v')}**"
+    if any(marker in lines[i] for i in range(start + 1, last + 1)):
+        if hints is not None:
+            hints.append(f"dev/engine/engine-overview.md §六 版本历史表已含 {new} 行，跳过（防重复）")
         return []
     suffix = "" if framework_changed else "（本框架与阈值无变更）"
     row = f"| **{new.removeprefix('v')}** | **{today}** | **{note}{suffix}。{tests} 项测试通过** |\n"
@@ -172,23 +186,34 @@ def _append_overview_history(root: Path, new: str, today: str, note: str, tests,
     return [Change("overview-history", "dev/engine/engine-overview.md", last + 2, anchor.rstrip("\n"), row.rstrip("\n"))]
 
 
-def _append_systemic_history(root: Path, old: str, new: str, note: str, framework_changed: bool, apply: bool) -> list:
+def _append_systemic_history(root: Path, old: str, new: str, note: str, framework_changed: bool, apply: bool, hints=None) -> list:
     path = root / "dev" / "engine" / "systemic-warning-framework.md"
     if not path.is_file():
         return []
     lines = _read_lines(path)
     start, _ = _section_last_table_line(lines, re.compile(r"^###\s+11\.3"))
     if start is None:
+        if hints is not None:
+            hints.append("dev/engine/systemic-warning-framework.md 未找到 §11.3 节，跳过历史行追加")
+        return []
+    end = len(lines)
+    for i in range(start + 1, len(lines)):
+        if re.match(r"^#{1,3} ", lines[i]):
+            end = i
+            break
+    if any(f"{new}（当前）" in lines[i] for i in range(start + 1, end)):
+        if hints is not None:
+            hints.append(f"dev/engine/systemic-warning-framework.md §11.3 已含 {new}（当前）行，跳过（防重复）")
         return []
     cur_re = re.compile(r"\|\s*" + re.escape(old) + r"（当前）\s*\|")
     idx = None
-    for i in range(start + 1, len(lines)):
-        if re.match(r"^#{1,3} ", lines[i]):
-            break
+    for i in range(start + 1, end):
         if cur_re.search(lines[i]):
             idx = i
             break
     if idx is None:
+        if hints is not None:
+            hints.append("dev/engine/systemic-warning-framework.md §11.3 未找到（当前）标记行，跳过")
         return []
     old_line = lines[idx]
     migrated = old_line.replace(f"{old}（当前）", old, 1)
@@ -232,8 +257,10 @@ def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=No
     old_semver = derive_semver(old)
     if semver is None or old_semver is None:
         raise ValueError(f"版本号形式不合法: old={old!r} new={new!r}")
-    if apply and (note is None or tests is None):
-        raise ValueError("--apply 必须提供 note 与 tests")
+    if apply and (note is None or tests is None or tests < 1):
+        raise ValueError("--apply 必须提供 note 与 tests（tests 需为正整数）")
+    if note is not None:
+        sanitize_note(note)  # 内置消毒：直接调用方不可绕过（main 亦前置检查以早反馈）
     changes = []
     for rule_id, files, pattern, repl in _rules(root, old, new, semver, old_semver):
         for rel in files:
@@ -255,9 +282,9 @@ def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=No
     today = date.today().isoformat()
     note_text = note if note is not None else "〈note〉"
     tests_text = tests if tests is not None else "〈N〉"
-    changes.extend(_append_dev_readme_history(root, new, today, note_text, tests_text, apply))
-    changes.extend(_append_overview_history(root, new, today, note_text, tests_text, framework_changed, apply))
-    changes.extend(_append_systemic_history(root, old, new, note_text, framework_changed, apply))
+    changes.extend(_append_dev_readme_history(root, new, today, note_text, tests_text, apply, hints=hints))
+    changes.extend(_append_overview_history(root, new, today, note_text, tests_text, framework_changed, apply, hints=hints))
+    changes.extend(_append_systemic_history(root, old, new, note_text, framework_changed, apply, hints=hints))
     roadmap_changes, hint = _flip_roadmap(root, new, apply)
     changes.extend(roadmap_changes)
     if hint and hints is not None:
@@ -312,8 +339,8 @@ def main() -> int:
         except ValueError as e:
             print(e)
             return 1
-    if args.apply and (args.note is None or args.tests is None):
-        print("--apply 必须提供 --note 与 --tests")
+    if args.apply and (args.note is None or args.tests is None or args.tests < 1):
+        print("--apply 必须提供 --note 与 --tests（--tests 需为正整数）")
         return 1
 
     hints = []

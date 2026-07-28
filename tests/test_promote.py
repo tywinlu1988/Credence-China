@@ -263,7 +263,7 @@ def test_real_tree_dry_run_includes_history_sync_points():
 
 def test_sanitize_note_rejects_illegal_content():
     pm = _load_promote()
-    for bad in ("含\n换行", "引用 dev/README 路径", "自带（当前）标记", "含|竖线"):
+    for bad in ("含\n换行", "含\r回车", "引用 dev/README 路径", "自带（当前）标记", "含|竖线"):
         try:
             pm.sanitize_note(bad)
         except ValueError:
@@ -275,12 +275,23 @@ def test_sanitize_note_rejects_illegal_content():
 def test_apply_requires_note_and_tests(tmp_path):
     pm = _load_promote()
     _fake_tree(tmp_path)
-    for kwargs in (dict(note=None, tests=217), dict(note="说明", tests=None)):
+    for kwargs in (dict(note=None, tests=217), dict(note="说明", tests=None), dict(note="说明", tests=0)):
         try:
             pm.apply_rules(tmp_path, OLD, NEW, apply=True, **kwargs)
         except ValueError:
             continue
         raise AssertionError(f"缺参未拒绝: {kwargs}")
+
+
+def test_apply_rules_sanitizes_note_internally(tmp_path):
+    """直接调用 apply_rules 也拒绝非法 note（不依赖 main() 前置消毒）。"""
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    try:
+        pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="含|竖线", tests=1)
+    except ValueError:
+        return
+    raise AssertionError("apply_rules 未内部消毒 note")
 
 
 def test_history_rows_dev_readme_and_overview(tmp_path):
@@ -327,6 +338,24 @@ def test_systemic_history_framework_changed(tmp_path):
     pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999, framework_changed=True)
     text = _read(tmp_path / "dev" / "engine" / "systemic-warning-framework.md")
     assert "| v0.8.1-release（当前） | 测试说明 |" in text
+
+
+def test_same_version_rerun_does_not_duplicate_history_rows(tmp_path):
+    """同版本二次晋升（old == new，重做 apply）不得重复插入历史行，且追加器给出跳过提示。"""
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999)
+    hints = []
+    pm.apply_rules(tmp_path, NEW, NEW, apply=True, note="二次说明", tests=999, hints=hints)
+    dev = _read(tmp_path / "dev" / "README.md")
+    assert dev.count("| **v0.8.1-release** |") == 1, "dev/README 版本历史重复行"
+    overview = _read(tmp_path / "dev" / "engine" / "engine-overview.md")
+    assert overview.count("| **0.8.1-release** |") == 1, "overview §六 重复行"
+    systemic = _read(tmp_path / "dev" / "engine" / "systemic-warning-framework.md")
+    v81_lines = [l for l in systemic.splitlines() if "v0.8.1-release" in l]
+    assert len(v81_lines) == 2, f"§11.3 应只有 文件头+唯一当前行: {v81_lines}"
+    assert systemic.count("（当前）") == 1, "（当前）标记不唯一"
+    assert hints, "二次晋升应给出防重复提示"
 
 
 def test_roadmap_flip_bilingual(tmp_path):
