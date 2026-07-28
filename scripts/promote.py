@@ -117,6 +117,61 @@ def sanitize_note(note: str) -> str:
     return note
 
 
+def _read_lines(path: Path) -> list:
+    return path.read_text(encoding="utf-8").splitlines(keepends=True)
+
+
+def _write_lines(path: Path, lines: list) -> None:
+    path.write_text("".join(lines), encoding="utf-8", newline="\n")
+
+
+def _section_last_table_line(lines: list, header_re) -> tuple:
+    """header 命中行之后、下一个 ^#{1,3} 标题或 EOF 之前，最后一个 | 开头行的索引。"""
+    start = next((i for i, l in enumerate(lines) if header_re.search(l)), None)
+    if start is None:
+        return None, None
+    last = None
+    for i in range(start + 1, len(lines)):
+        if re.match(r"^#{1,3} ", lines[i]):
+            break
+        if lines[i].lstrip().startswith("|"):
+            last = i
+    return start, last
+
+
+def _append_dev_readme_history(root: Path, new: str, today: str, note: str, tests, apply: bool) -> list:
+    path = root / "dev" / "README.md"
+    if not path.is_file():
+        return []
+    lines = _read_lines(path)
+    _, last = _section_last_table_line(lines, re.compile(r"^##\s+版本历史"))
+    if last is None:
+        return []
+    row = f"| **{new}** | **{today}** | **{note}。{tests} 项测试通过。** |\n"
+    anchor = lines[last]
+    lines.insert(last + 1, row)
+    if apply:
+        _write_lines(path, lines)
+    return [Change("dev-readme-history", "dev/README.md", last + 2, anchor.rstrip("\n"), row.rstrip("\n"))]
+
+
+def _append_overview_history(root: Path, new: str, today: str, note: str, tests, framework_changed: bool, apply: bool) -> list:
+    path = root / "dev" / "engine" / "engine-overview.md"
+    if not path.is_file():
+        return []
+    lines = _read_lines(path)
+    _, last = _section_last_table_line(lines, re.compile(r"^##\s+六[、.]\s*版本历史"))
+    if last is None:
+        return []
+    suffix = "" if framework_changed else "（本框架与阈值无变更）"
+    row = f"| **{new.removeprefix('v')}** | **{today}** | **{note}{suffix}。{tests} 项测试通过** |\n"
+    anchor = lines[last]
+    lines.insert(last + 1, row)
+    if apply:
+        _write_lines(path, lines)
+    return [Change("overview-history", "dev/engine/engine-overview.md", last + 2, anchor.rstrip("\n"), row.rstrip("\n"))]
+
+
 def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=None, framework_changed=False) -> list:
     """按规则表改写声明点；apply=False 只报告不落盘。返回 Change 列表。"""
     semver = derive_semver(new)
@@ -143,6 +198,11 @@ def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=No
                     touched = True
             if touched and apply:
                 path.write_text("".join(lines), encoding="utf-8", newline="\n")
+    today = date.today().isoformat()
+    note_text = note if note is not None else "〈note〉"
+    tests_text = tests if tests is not None else "〈N〉"
+    changes.extend(_append_dev_readme_history(root, new, today, note_text, tests_text, apply))
+    changes.extend(_append_overview_history(root, new, today, note_text, tests_text, framework_changed, apply))
     return changes
 
 

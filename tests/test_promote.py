@@ -29,7 +29,11 @@ def _fake_tree(tmp_path: Path) -> None:
         "| **引擎版本** | 核心方法论文档 | v0.8.0-release | 说明 |\n"
         '| 独立体系，在文件头标注"对应引擎版本: v0.8.0-release" |\n'
         "| engine-overview.md | v0.8.0-release | 引擎架构总览 |\n"
-        "| **0.8.0-release** | **2026-07-16** | 历史行不动 |\n",
+        "| **0.8.0-release** | **2026-07-16** | 历史行不动 |\n"
+        "\n## 六、版本历史\n\n"
+        "| 版本 | 日期 | 变更内容 |\n|---|---|---|\n"
+        "| **0.8.0-release** | **2026-07-16** | 历史行不动 |\n"
+        "\n---\n\n## 七、版本管理策略\n",
         encoding="utf-8",
     )
     (tmp_path / "dev" / "engine" / "industry-framework.md").write_text(
@@ -54,7 +58,11 @@ def _fake_tree(tmp_path: Path) -> None:
     )
     (tmp_path / "dev").mkdir(exist_ok=True)
     (tmp_path / "dev" / "README.md").write_text(
-        "**版本**: v0.8.0-release\n| **v0.8.0-release** | **2026-07-16** | 历史行不动 |\n",
+        "**版本**: v0.8.0-release\n"
+        "## 版本历史\n\n"
+        "| 版本 | 日期 | 里程碑 |\n|---|---|---|\n"
+        "| **v0.8.0-release** | **2026-07-16** | 历史行不动 |\n"
+        "\n> **注**：尾注行。\n",
         encoding="utf-8",
     )
     (tmp_path / "AGENTS.md").write_text("**引擎版本**：v0.8.0-release\n", encoding="utf-8")
@@ -224,3 +232,29 @@ def test_apply_requires_note_and_tests(tmp_path):
         except ValueError:
             continue
         raise AssertionError(f"缺参未拒绝: {kwargs}")
+
+
+def test_history_rows_dev_readme_and_overview(tmp_path):
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999)
+    dev = _read(tmp_path / "dev" / "README.md")
+    assert "| **v0.8.1-release** | **" in dev
+    assert "| **v0.8.1-release** | **2" in dev and "测试说明。999 项测试通过。** |" in dev
+    # 新行在旧行之后、尾注之前（定位带 "| **" 前缀以跳过文件头 **版本** 行）
+    assert dev.index("历史行不动") < dev.index("| **v0.8.1-release**") < dev.index("尾注行")
+    overview = _read(tmp_path / "dev" / "engine" / "engine-overview.md")
+    assert "| **0.8.1-release** | **" in overview  # 无 v 前缀
+    assert "测试说明（本框架与阈值无变更）。999 项测试通过** |" in overview
+    assert overview.index("历史行不动") < overview.index("| **0.8.1-release**") < overview.index("## 七")
+
+
+def test_history_rows_framework_changed_flag(tmp_path):
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999, framework_changed=True)
+    overview = _read(tmp_path / "dev" / "engine" / "engine-overview.md")
+    section = overview.split("## 六、版本历史")[1].split("## 七")[0]
+    new_row = next(l for l in section.splitlines() if "0.8.1-release" in l)
+    assert "测试说明。999 项测试通过** |" in new_row
+    assert "本框架与阈值无变更" not in new_row
