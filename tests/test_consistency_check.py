@@ -417,3 +417,28 @@ def test_check_migration_matrix_structure_flags_missing_rating(tmp_path, monkeyp
     errors = cc.check_migration_matrix_structure()
     assert any("AA+" in e for e in errors)
     assert any("D" in e for e in errors)
+
+
+def test_roadmap_freshness_flags_stale_planned(tmp_path, monkeypatch):
+    cc = _import_checker()
+    (tmp_path / "README.md").write_text(
+        "- ~~**v0.9.5**~~（已发布）：旧版。\n"
+        "- **v0.9.6（规划中）**：已发布却挂规划中。\n"
+        "- **v0.9.7 (planned)**: 同版本英文不超标（0.9.7 > 0.9.6）。\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(cc, "ROOT", tmp_path)
+    monkeypatch.setattr(cc, "EXPECTED_VERSION", "v0.9.6-release")
+    errors = cc.check_roadmap_freshness()
+    assert len(errors) == 1 and "v0.9.6" in errors[0] and errors[0].startswith("ROADMAP_STALE")
+
+
+def test_roadmap_freshness_allows_future_planned(tmp_path, monkeypatch):
+    cc = _import_checker()
+    (tmp_path / "README.md").write_text(
+        "- **v0.10.0（规划中）**：未来版本。\n- **v0.10.1 (planned)**: future.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(cc, "ROOT", tmp_path)
+    monkeypatch.setattr(cc, "EXPECTED_VERSION", "v0.9.6-release")
+    assert cc.check_roadmap_freshness() == []

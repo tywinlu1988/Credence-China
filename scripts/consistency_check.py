@@ -520,6 +520,25 @@ def check_agents_entry() -> list[str]:
     return errors
 
 
+ROADMAP_PLANNED_RE = re.compile(r"\*\*v(\d+)\.(\d+)\.(\d+)(?:（规划中）| \(planned\))\*\*")
+
+
+def check_roadmap_freshness() -> list[str]:
+    """已发布版本不许在 README 路线图仍挂（规划中）/(planned) 标记。"""
+    errors = []
+    m = re.match(r"v(\d+)\.(\d+)\.(\d+)", EXPECTED_VERSION)
+    expected = tuple(int(x) for x in m.groups())
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    for pm in ROADMAP_PLANNED_RE.finditer(text):
+        ver = tuple(int(x) for x in pm.groups())
+        if ver <= expected:
+            errors.append(
+                f"ROADMAP_STALE: README.md 路线图 v{ver[0]}.{ver[1]}.{ver[2]} 仍标记（规划中）/(planned)，"
+                f"但 EXPECTED_VERSION={EXPECTED_VERSION}"
+            )
+    return errors
+
+
 def _parse_contagion_industries(path: Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
     start = text.find("### 1.2 范式映射表")
@@ -585,6 +604,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_path_sheets())
     errors.extend(check_artifact_path_ids())
     errors.extend(check_agents_entry())
+    errors.extend(check_roadmap_freshness())
     errors.extend(check_version_alignment())
     errors.extend(check_registry_templates())
     errors.extend(check_registry_quality_gates())
