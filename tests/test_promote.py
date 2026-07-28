@@ -226,6 +226,41 @@ def test_real_tree_dry_run_reports_changes_and_stays_clean():
     assert _status() == before, "dry-run 改变了工作区"
 
 
+def test_real_tree_dry_run_includes_history_sync_points():
+    """植入-还原门：真树 dry-run 必含 4 同步点 + 占位形态 + 工作区不变。"""
+    pm = _load_promote()
+    old = pm.detect_old_version(ROOT)
+
+    def _status():
+        return subprocess.run(
+            ["git", "status", "--porcelain"], cwd=ROOT,
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+        ).stdout
+
+    before = _status()
+    hints = []
+    changes = pm.apply_rules(ROOT, old, "v9.9.9-release", apply=False, hints=hints)
+    rule_ids = {c.rule_id for c in changes}
+    assert "dev-readme-history" in rule_ids, "真树 dry-run 缺同步点: dev-readme-history"
+    assert "overview-history" in rule_ids, "真树 dry-run 缺同步点: overview-history"
+    assert "systemic-history" in rule_ids, "真树 dry-run 缺同步点: systemic-history"
+    # dry-run 占位形态（未传 note/tests）
+    hist = [c for c in changes if c.rule_id == "dev-readme-history"]
+    assert "〈note〉" in hist[0].new_line and "〈N〉" in hist[0].new_line
+    # 真树无 v9.9.9（规划中）行 → roadmap-flip 无 changes 但 hints 非空
+    assert "roadmap-flip" not in rule_ids
+    assert any("v9.9.9" in h for h in hints), "无匹配规划行应有提示"
+
+    # 真树有 v0.10.0（规划中）行 → 双语翻转各一条
+    changes2 = pm.apply_rules(ROOT, old, "v0.10.0-release", apply=False, hints=[])
+    flip = [c for c in changes2 if c.rule_id == "roadmap-flip"]
+    assert len(flip) == 2, f"双语翻转应各一条: {len(flip)}"
+    assert any("~~**v0.10.0**~~（已发布）" in c.new_line for c in flip)
+    assert any("~~**v0.10.0**~~ (released)" in c.new_line for c in flip)
+
+    assert _status() == before, "dry-run 改变了工作区"
+
+
 def test_sanitize_note_rejects_illegal_content():
     pm = _load_promote()
     for bad in ("含\n换行", "引用 dev/README 路径", "自带（当前）标记", "含|竖线"):
