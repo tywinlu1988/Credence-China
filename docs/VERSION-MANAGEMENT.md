@@ -34,14 +34,14 @@
 
 在创建新的 `version/<version>/` 快照前，必须完成以下检查：
 
-- [ ] `python scripts/promote.py vX.Y.Z-<stage>`（dry-run 预览）→ `--apply` 落盘，且打印的"规则未覆盖剩余"经人工核对全部为历史引用；两个版本历史表（engine-overview §六、dev/README.md）已人工补新行。
+- [ ] `python scripts/promote.py vX.Y.Z-<stage>`（dry-run 预览）→ `--apply` 落盘，且打印的"规则未覆盖剩余"经人工核对全部为历史引用。v0.10.0 起 promote 随晋升自动追加三处版本历史行（dev/README、engine-overview §六、systemic §11.3 含（当前）标记迁移）并翻转 README 路线图，命令形如 `python scripts/promote.py vX.Y.Z-release --note "…" --tests N`（--note 末尾不加句号；本版改 systemic/overview 框架本体时加 --framework-changed）。
 - [ ] 所有核心方法论文档的 `**版本**:` 头统一为当前引擎版本。
 - [ ] Claude Skill 包 (`dev/.claude/skills/fixed-income-credit-analysis/`) 已同步并升级到当前引擎版本。
 - [ ] Skill 包已随构建归位到 `version/<version>/.claude/skills/`（v0.8.0-release 起为包根 `.claude/skills/`，由 `scripts/build_dist.py` 生成）。
 - [ ] `scripts/consistency_check.py` 运行通过（无断裂链接、版本号一致、SRI 示例在合法范围内）。
 - [ ] `python scripts/build_dist.py` 构建 + 内置校验通过（零绝对路径、零 dev/ token、全链接可解析、4 skill 严格 frontmatter、28 份 CORE_DOCS 齐备）。
 - [ ] 所有模板和报告的版本号与引擎版本对齐。
-- [ ] `dev/README.md` 的版本历史和目录结构描述已更新。
+- [ ] `dev/README.md` 的目录结构描述已随内容变化更新（版本历史行由 promote 自动追加）。
 - [ ] 压缩包 `version/<version>.zip` 已生成。
 
 ## 快照创建流程
@@ -51,7 +51,7 @@
 3. 把 `dist/credence/` 的内容复制为 `version/<version>/`（**v0.8.0-release 起**；`dist/` 本身是 gitignored 构建产物，提交的快照在 `version/`）。
 4. 生成 `version/<version>.zip`（顶层为 `version/<version>/` 单根目录，跨平台），作为 **GitHub Releases 附件**上传分发（**不提交进仓库**；`*.zip` 已 gitignore）。
 5. **git 跟踪约定**：主仓库仅跟踪**当前一个 release** 的 `version/<version>/` 目录。发新版时 `git rm -r` 旧 release 目录（**不带 `--cached`**——避免与 merge 叠加误删工作区文件的陷阱）、`git add` 新 release 目录，并把 `.gitignore` 里 `version/*` 的 `!version/<旧>/` 反例行改为 `!version/<新>/`。历史快照保留在本地磁盘与 git 提交历史。**git 标签约定（2026-07-17 起）**：标签与 Release **留痕保留、不再清理**——历史版本可按标签直接检出/下载，也支持 `npx github:tywinlu1988/Credence-China#<tag>` 钉版本安装；GitHub 的 Latest 标记始终指向最新 Release。主仓库 git 仍仅跟踪当前一个 release 快照目录。（此前约定为"远程仅保留当前 release 标签"；v0.8.0 及更早的历史标签已删，相应提交可从 master 历史按 SHA 找回。）
-6. 更新 `dev/README.md` 与 `dev/engine/engine-overview.md` 的版本历史。
+6. 版本历史（dev/README、engine-overview §六、systemic §11.3）与 README 路线图翻转均由 promote.py 在晋升时自动完成（v0.10.0 起），此处无需人工补行；发布提交应包含 promote 的全部改写。
 
 > **v0.8.0-alpha 例外**：该快照为旧的镜像三根布局——手动把 `dev/`、`src/` 整拷贝 + 根级 `AGENTS.md` 复制到 `version/v0.8.0-alpha/`，未经 `build_dist.py` 可安装化。自 v0.8.0-release 起统一走上述 build_dist 流程。
 
