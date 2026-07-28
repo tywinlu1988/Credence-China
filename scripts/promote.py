@@ -205,7 +205,28 @@ def _append_systemic_history(root: Path, old: str, new: str, note: str, framewor
     ]
 
 
-def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=None, framework_changed=False) -> list:
+def _flip_roadmap(root: Path, new: str, apply: bool) -> tuple:
+    """README 双语路线图：（规划中）/(planned) → 删除线 + （已发布）/(released)。无匹配返回提示。"""
+    path = root / "README.md"
+    if not path.is_file():
+        return [], None
+    semver = derive_semver(new)
+    lines = _read_lines(path)
+    zh_old, zh_new = f"**v{semver}（规划中）**", f"~~**v{semver}**~~（已发布）"
+    en_old, en_new = f"**v{semver} (planned)**", f"~~**v{semver}**~~ (released)"
+    changes = []
+    for i, line in enumerate(lines):
+        nl = line.replace(zh_old, zh_new).replace(en_old, en_new)
+        if nl != line:
+            changes.append(Change("roadmap-flip", "README.md", i + 1, line.rstrip("\n"), nl.rstrip("\n")))
+            lines[i] = nl
+    if changes and apply:
+        _write_lines(path, lines)
+    hint = None if changes else f"README 路线图无 v{semver} 的（规划中）/(planned) 行；如为计划外版本（热修等）可忽略"
+    return changes, hint
+
+
+def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=None, framework_changed=False, hints=None) -> list:
     """按规则表改写声明点；apply=False 只报告不落盘。返回 Change 列表。"""
     semver = derive_semver(new)
     old_semver = derive_semver(old)
@@ -237,6 +258,10 @@ def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=No
     changes.extend(_append_dev_readme_history(root, new, today, note_text, tests_text, apply))
     changes.extend(_append_overview_history(root, new, today, note_text, tests_text, framework_changed, apply))
     changes.extend(_append_systemic_history(root, old, new, note_text, framework_changed, apply))
+    roadmap_changes, hint = _flip_roadmap(root, new, apply)
+    changes.extend(roadmap_changes)
+    if hint and hints is not None:
+        hints.append(hint)
     return changes
 
 
@@ -291,7 +316,8 @@ def main() -> int:
         print("--apply 必须提供 --note 与 --tests")
         return 1
 
-    changes = apply_rules(ROOT, old, args.new_version, apply=args.apply, note=args.note, tests=args.tests, framework_changed=args.framework_changed)
+    hints = []
+    changes = apply_rules(ROOT, old, args.new_version, apply=args.apply, note=args.note, tests=args.tests, framework_changed=args.framework_changed, hints=hints)
     mode = "APPLY" if args.apply else "DRY-RUN"
     print(f"[{mode}] {old} -> {args.new_version}: {len(changes)} 处声明改写")
     for c in changes:
@@ -304,6 +330,8 @@ def main() -> int:
     print(f"\n规则未覆盖的旧版本出现处（{len(leftovers)}，应全部为历史引用，请人工核对）:")
     for path, line_no in leftovers:
         print(f"  {path}:{line_no}")
+    for h in hints:
+        print(f"提示: {h}")
     if not args.apply:
         print("\n（dry-run，未落盘；确认后加 --apply）")
     return 0

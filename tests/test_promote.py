@@ -76,7 +76,12 @@ def _fake_tree(tmp_path: Path) -> None:
     )
     (tmp_path / "AGENTS.md").write_text("**引擎版本**：v0.8.0-release\n", encoding="utf-8")
     (tmp_path / "README.md").write_text(
-        "**版本 Version** `v0.8.0-release`\n发行包在 `version/v0.8.0-release/`。\n",
+        "**版本 Version** `v0.8.0-release`\n发行包在 `version/v0.8.0-release/`。\n"
+        "### 路线图\n\n"
+        "- ~~**v0.8.0**~~（已发布）：旧版。\n"
+        "- **v0.8.1（规划中）**：待发布功能。\n"
+        "### Roadmap\n\n"
+        "- **v0.8.1 (planned)**: upcoming feature.\n",
         encoding="utf-8",
     )
     (tmp_path / "pyproject.toml").write_text('version = "0.8.0"\n', encoding="utf-8")
@@ -287,3 +292,23 @@ def test_systemic_history_framework_changed(tmp_path):
     pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999, framework_changed=True)
     text = _read(tmp_path / "dev" / "engine" / "systemic-warning-framework.md")
     assert "| v0.8.1-release（当前） | 测试说明 |" in text
+
+
+def test_roadmap_flip_bilingual(tmp_path):
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    hints = []
+    pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999, hints=hints)
+    readme = _read(tmp_path / "README.md")
+    assert "- ~~**v0.8.1**~~（已发布）：待发布功能。" in readme
+    assert "- ~~**v0.8.1**~~ (released): upcoming feature." in readme
+    assert "（规划中）" not in readme and "(planned)" not in readme
+    assert hints == [], "有匹配行时不应提示"
+
+
+def test_roadmap_flip_no_match_hints(tmp_path):
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    hints = []
+    pm.apply_rules(tmp_path, OLD, "v0.9.9-release", apply=False, hints=hints)
+    assert hints and "v0.9.9" in hints[0], "无匹配行应给出提示"
