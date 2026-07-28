@@ -44,6 +44,15 @@ def _fake_tree(tmp_path: Path) -> None:
         "| v0.8.0-release（当前） | 自带历史表行不动 |\n",
         encoding="utf-8",
     )
+    (tmp_path / "dev" / "engine" / "systemic-warning-framework.md").write_text(
+        "**版本**: v0.8.0-release | **日期**: 2026-07-10 | **状态**: 已发布\n"
+        "### 11.3 版本演进路线\n\n"
+        "| 版本 | 计划内容 |\n|------|---------|\n"
+        "| v0.7.0-alpha | 旧行 |\n"
+        "| v0.8.0-release（当前） | 旧当前行（本框架与阈值无变更） |\n"
+        "| v0.10.3（规划） | 未来行：SRI 时间序列 |\n",
+        encoding="utf-8",
+    )
     skills = tmp_path / "dev" / ".claude" / "skills"
     (skills / "fixed-income-credit-analysis" / "references").mkdir(parents=True)
     (skills / "fixed-income-credit-analysis" / "SKILL.md").write_text(
@@ -258,3 +267,23 @@ def test_history_rows_framework_changed_flag(tmp_path):
     new_row = next(l for l in section.splitlines() if "0.8.1-release" in l)
     assert "测试说明。999 项测试通过** |" in new_row
     assert "本框架与阈值无变更" not in new_row
+
+
+def test_systemic_history_row_and_marker_migration(tmp_path):
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999)
+    text = _read(tmp_path / "dev" / "engine" / "systemic-warning-framework.md")
+    assert "| v0.8.0-release | 旧当前行（本框架与阈值无变更） |" in text, "旧行未摘（当前）"
+    assert "| v0.8.1-release（当前） | 测试说明（本框架与阈值无变更） |" in text
+    # 顺序：旧当前行 < 新当前行 < 未来行
+    assert text.index("旧当前行") < text.index("v0.8.1-release（当前）") < text.index("v0.10.3（规划）")
+    assert text.count("（当前）") == 1, "（当前）标记不唯一"
+
+
+def test_systemic_history_framework_changed(tmp_path):
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999, framework_changed=True)
+    text = _read(tmp_path / "dev" / "engine" / "systemic-warning-framework.md")
+    assert "| v0.8.1-release（当前） | 测试说明 |" in text

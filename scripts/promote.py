@@ -172,6 +172,39 @@ def _append_overview_history(root: Path, new: str, today: str, note: str, tests,
     return [Change("overview-history", "dev/engine/engine-overview.md", last + 2, anchor.rstrip("\n"), row.rstrip("\n"))]
 
 
+def _append_systemic_history(root: Path, old: str, new: str, note: str, framework_changed: bool, apply: bool) -> list:
+    path = root / "dev" / "engine" / "systemic-warning-framework.md"
+    if not path.is_file():
+        return []
+    lines = _read_lines(path)
+    start, _ = _section_last_table_line(lines, re.compile(r"^###\s+11\.3"))
+    if start is None:
+        return []
+    cur_re = re.compile(r"\|\s*" + re.escape(old) + r"（当前）\s*\|")
+    idx = None
+    for i in range(start + 1, len(lines)):
+        if re.match(r"^#{1,3} ", lines[i]):
+            break
+        if cur_re.search(lines[i]):
+            idx = i
+            break
+    if idx is None:
+        return []
+    old_line = lines[idx]
+    migrated = old_line.replace(f"{old}（当前）", old, 1)
+    suffix = "" if framework_changed else "（本框架与阈值无变更）"
+    row = f"| {new}（当前） | {note}{suffix} |\n"
+    lines[idx] = migrated
+    lines.insert(idx + 1, row)
+    if apply:
+        _write_lines(path, lines)
+    rel = "dev/engine/systemic-warning-framework.md"
+    return [
+        Change("systemic-history", rel, idx + 1, old_line.rstrip("\n"), migrated.rstrip("\n")),
+        Change("systemic-history", rel, idx + 2, "", row.rstrip("\n")),
+    ]
+
+
 def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=None, framework_changed=False) -> list:
     """按规则表改写声明点；apply=False 只报告不落盘。返回 Change 列表。"""
     semver = derive_semver(new)
@@ -203,6 +236,7 @@ def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=No
     tests_text = tests if tests is not None else "〈N〉"
     changes.extend(_append_dev_readme_history(root, new, today, note_text, tests_text, apply))
     changes.extend(_append_overview_history(root, new, today, note_text, tests_text, framework_changed, apply))
+    changes.extend(_append_systemic_history(root, old, new, note_text, framework_changed, apply))
     return changes
 
 
