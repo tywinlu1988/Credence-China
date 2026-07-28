@@ -5,7 +5,7 @@
 >
 > **A methodology-first credit analysis engine for China's fixed-income market** — a vertical **domain-methodology skill pack** delivered as **Agent Skills** (`SKILL.md`), installable into Claude Code / Codex / Cursor / Gemini / OpenCode.
 
-**版本 Version** `v0.9.6-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
+**版本 Version** `v0.10.0-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
 
 [中文](#中文) · [English](#english)
 
@@ -60,7 +60,7 @@ npx github:tywinlu1988/Credence-China
 git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
-可安装的发行包在 `version/v0.9.6-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
+可安装的发行包在 `version/v0.10.0-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
 
 ### 快速上手
 
@@ -86,7 +86,7 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 - ~~**v0.9.0**~~（已发布）：M2 承销 + M5 融资顾问收官（active 11）；模板契约体系与全域去案例化。
 - ~~**v0.9.1**~~（已发布）：四段链协议加固——router 渐进式单问制、analysis 交付完整性、全链交互点预算（3 处）。
 - ~~**v0.9.2**~~（已发布）：发行包热修——pipeline 包内可导入（`src/rating_map.py` 单源）+ T12.8 回归锁。
-- **v0.10.0（规划中）**：扫尾清单机制化——promote.py 自动追加版本历史行 + 路线图一致性门禁，杜绝文档失同步。
+- ~~**v0.10.0**~~（已发布）：扫尾清单机制化——promote.py 自动追加版本历史行 + 路线图一致性门禁，杜绝文档失同步。
 - **v0.10.1（规划中）**：M3 交易框架补全——盯市信号卡路径（WP-M3-01）激活，16 条工作路径全部 active。
 - **v0.10.2（规划中）**：partial 激活扫尾——WP-M0-02 审贷专项 / WP-M1-02 双标的对比 / WP-M4-04 压力测试 / WP-X-04 ESG 扫描。
 - **v0.10.3（规划中）**：SRI 深化——时间序列追踪、组合级 SRI（持仓权重）、SRI 压力测试、传染升级因子联动。
@@ -99,7 +99,7 @@ dev/          方法论与技能的开发源（engine/ 30 份 · .claude/skills/
 src/          可执行编排器 + 5 个编码引擎（pipeline.py · sri_calculator.py · concentration_scorer.py 等）
 scripts/      build_dist.py（dev/ → 发行包组装器）· consistency_check.py（一致性校验）
 tests/        回归测试（217 项）
-version/      当前可安装发行包 version/v0.9.6-release/（历史快照见 git 标签）
+version/      当前可安装发行包 version/v0.10.0-release/（历史快照见 git 标签）
 validation/   能力验证证据（验证方法论 + 11 条端到端走查 + 2 份行业方法论参照）
 docs/         版本管理策略 · Codex 深度适配
 AGENTS.md     跨 CLI 通用入口（任何 agent CLI 从这里开始）
@@ -167,7 +167,7 @@ Engine docs (dev/engine/) are the single source of truth; coded engines (src/) p
 - ~~**v0.9.0**~~ (released): M2 underwriting + M5 financing-advisor completion (11 active paths); template contract system & full de-casing.
 - ~~**v0.9.1**~~ (released): four-stage-chain protocol hardening — progressive single-question router intake, analysis delivery completeness, 3-point interaction budget.
 - ~~**v0.9.2**~~ (released): release-package hotfix — pipeline importable inside the package (`src/rating_map.py` single source) + T12.8 regression lock.
-- **v0.10.0 (planned)**: housekeeping mechanization — promote.py auto-appends version-history rows + roadmap consistency gate.
+- ~~**v0.10.0**~~ (released): housekeeping mechanization — promote.py auto-appends version-history rows + roadmap consistency gate.
 - **v0.10.1 (planned)**: M3 trading framework — market-watch signal-card path (WP-M3-01) activated; all 16 work paths active.
 - **v0.10.2 (planned)**: partial-path activation sweep — WP-M0-02 / WP-M1-02 / WP-M4-04 / WP-X-04.
 - **v0.10.3 (planned)**: SRI deep-dive — time-series tracking, portfolio-level SRI (holding weights), SRI stress testing, contagion-escalation linkage.
@@ -197,7 +197,7 @@ Download the latest `vX.Y.Z-release.zip` from [Releases](https://github.com/tywi
 git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
-The installable package is at `version/v0.9.6-release/` (browse/copy and use; see `INSTALL.md` inside for per-tool setup); methodology source lives in `dev/`.
+The installable package is at `version/v0.10.0-release/` (browse/copy and use; see `INSTALL.md` inside for per-tool setup); methodology source lives in `dev/`.
 
 ### Repository map
 
@@ -206,7 +206,7 @@ dev/          methodology & skill source (engine/ 30 docs · .claude/skills/ 4-s
 src/          executable orchestrator + 5 coded engines (pipeline.py · sri_calculator.py · concentration_scorer.py et al.)
 scripts/      build_dist.py (dev/ → release-package assembler) · consistency_check.py
 tests/        regression tests (217)
-version/      current installable package version/v0.9.6-release/ (history via git tags)
+version/      current installable package version/v0.10.0-release/ (history via git tags)
 validation/   capability evidence (validation methodology + 11 end-to-end walkthroughs + 2 industry references)
 docs/         versioning strategy · Codex deep-dive adapter
 AGENTS.md     cross-CLI universal entry (start here from any agent CLI)

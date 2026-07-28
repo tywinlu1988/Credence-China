@@ -251,12 +251,17 @@ def test_real_tree_dry_run_includes_history_sync_points():
     assert "roadmap-flip" not in rule_ids
     assert any("v9.9.9" in h for h in hints), "无匹配规划行应有提示"
 
-    # 真树有 v0.10.0（规划中）行 → 双语翻转各一条
-    changes2 = pm.apply_rules(ROOT, old, "v0.10.0-release", apply=False, hints=[])
+    # 真树路线图中首个（规划中）版本 → 双语翻转各一条（版本无关：目标随路线图滚动）
+    import re as _re
+
+    planned = _re.search(r"\*\*v(\d+\.\d+\.\d+)（规划中）\*\*", (ROOT / "README.md").read_text(encoding="utf-8"))
+    assert planned, "真树 README 路线图无（规划中）行"
+    target_semver = planned.group(1)
+    changes2 = pm.apply_rules(ROOT, old, f"v{target_semver}-release", apply=False, hints=[])
     flip = [c for c in changes2 if c.rule_id == "roadmap-flip"]
     assert len(flip) == 2, f"双语翻转应各一条: {len(flip)}"
-    assert any("~~**v0.10.0**~~（已发布）" in c.new_line for c in flip)
-    assert any("~~**v0.10.0**~~ (released)" in c.new_line for c in flip)
+    assert any(f"~~**v{target_semver}**~~（已发布）" in c.new_line for c in flip)
+    assert any(f"~~**v{target_semver}**~~ (released)" in c.new_line for c in flip)
 
     assert _status() == before, "dry-run 改变了工作区"
 
