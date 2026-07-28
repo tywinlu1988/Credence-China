@@ -103,7 +103,7 @@ def _read(path: Path) -> str:
 def test_apply_rules_rewrites_all_declaration_points(tmp_path):
     pm = _load_promote()
     _fake_tree(tmp_path)
-    changes = pm.apply_rules(tmp_path, OLD, NEW, apply=True)
+    changes = pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999)
     assert changes, "no changes reported"
     overview = _read(tmp_path / "dev" / "engine" / "engine-overview.md")
     assert "**版本**: v0.8.1-release" in overview
@@ -147,7 +147,7 @@ def test_apply_rules_rewrites_all_declaration_points(tmp_path):
 def test_apply_rules_preserves_historical_references(tmp_path):
     pm = _load_promote()
     _fake_tree(tmp_path)
-    pm.apply_rules(tmp_path, OLD, NEW, apply=True)
+    pm.apply_rules(tmp_path, OLD, NEW, apply=True, note="测试说明", tests=999)
     overview = _read(tmp_path / "dev" / "engine" / "engine-overview.md")
     assert "| **0.8.0-release** |" in overview, "历史表行被误伤"
     assert "对应引擎版本: v0.8.0-release" in overview, "audits 约定示例被误伤"
@@ -202,3 +202,25 @@ def test_real_tree_dry_run_reports_changes_and_stays_clean():
     changes = pm.apply_rules(ROOT, old, "v9.9.9-release", apply=False)
     assert len(changes) > 30, f"真树改动数异常: {len(changes)}"
     assert _status() == before, "dry-run 改变了工作区"
+
+
+def test_sanitize_note_rejects_illegal_content():
+    pm = _load_promote()
+    for bad in ("含\n换行", "引用 dev/README 路径", "自带（当前）标记", "含|竖线"):
+        try:
+            pm.sanitize_note(bad)
+        except ValueError:
+            continue
+        raise AssertionError(f"未拒绝: {bad!r}")
+    assert pm.sanitize_note("扫尾清单机制化：promote 自动补历史行") == "扫尾清单机制化：promote 自动补历史行"
+
+
+def test_apply_requires_note_and_tests(tmp_path):
+    pm = _load_promote()
+    _fake_tree(tmp_path)
+    for kwargs in (dict(note=None, tests=217), dict(note="说明", tests=None)):
+        try:
+            pm.apply_rules(tmp_path, OLD, NEW, apply=True, **kwargs)
+        except ValueError:
+            continue
+        raise AssertionError(f"缺参未拒绝: {kwargs}")

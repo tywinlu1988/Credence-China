@@ -16,6 +16,7 @@ import re
 import subprocess
 import sys
 from collections import namedtuple
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -108,12 +109,22 @@ def _rules(root: Path, old: str, new: str, semver: str, old_semver: str):
     ]
 
 
-def apply_rules(root: Path, old: str, new: str, apply: bool) -> list:
+def sanitize_note(note: str) -> str:
+    """--note 消毒：换行/dev-/（当前）/竖线 四类非法内容拒绝。"""
+    for bad, why in (("\n", "换行"), ("dev/", "dev/ token"), ("（当前）", "（当前）标记"), ("|", "竖线")):
+        if bad in note:
+            raise ValueError(f"--note 含非法内容（{why}）: {note!r}")
+    return note
+
+
+def apply_rules(root: Path, old: str, new: str, apply: bool, note=None, tests=None, framework_changed=False) -> list:
     """按规则表改写声明点；apply=False 只报告不落盘。返回 Change 列表。"""
     semver = derive_semver(new)
     old_semver = derive_semver(old)
     if semver is None or old_semver is None:
         raise ValueError(f"版本号形式不合法: old={old!r} new={new!r}")
+    if apply and (note is None or tests is None):
+        raise ValueError("--apply 必须提供 note 与 tests")
     changes = []
     for rule_id, files, pattern, repl in _rules(root, old, new, semver, old_semver):
         for rel in files:
@@ -160,6 +171,10 @@ def main() -> int:
     parser.add_argument("new_version")
     parser.add_argument("--old", default=None, help="旧版本（默认从 consistency_check 检测）")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--note", default=None, help="版本历史行描述（末尾不加句号）")
+    parser.add_argument("--tests", type=int, default=None, help="测试通过数 N")
+    parser.add_argument("--framework-changed", action="store_true",
+                        help="本版改动了 systemic/overview 框架本体，抑制（本框架与阈值无变更）后缀")
     args = parser.parse_args()
 
     if derive_semver(args.new_version) is None:
@@ -172,8 +187,17 @@ def main() -> int:
     if args.apply and not _working_tree_clean(ROOT):
         print("工作区有已跟踪改动，--apply 拒绝执行（先提交或stash）")
         return 1
+    if args.note is not None:
+        try:
+            sanitize_note(args.note)
+        except ValueError as e:
+            print(e)
+            return 1
+    if args.apply and (args.note is None or args.tests is None):
+        print("--apply 必须提供 --note 与 --tests")
+        return 1
 
-    changes = apply_rules(ROOT, old, args.new_version, apply=args.apply)
+    changes = apply_rules(ROOT, old, args.new_version, apply=args.apply, note=args.note, tests=args.tests, framework_changed=args.framework_changed)
     mode = "APPLY" if args.apply else "DRY-RUN"
     print(f"[{mode}] {old} -> {args.new_version}: {len(changes)} 处声明改写")
     for c in changes:
