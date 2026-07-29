@@ -46,7 +46,7 @@ def _fake_tree(tmp_path: Path) -> None:
     )
     (tmp_path / "dev" / "engine" / "systemic-warning-framework.md").write_text(
         "**版本**: v0.8.0-release | **日期**: 2026-07-10 | **状态**: 已发布\n"
-        "### 11.3 版本演进路线\n\n"
+        "### 15.3 版本演进路线\n\n"
         "| 版本 | 计划内容 |\n|------|---------|\n"
         "| v0.7.0-alpha | 旧行 |\n"
         "| v0.8.0-release（当前） | 旧当前行（本框架与阈值无变更） |\n"

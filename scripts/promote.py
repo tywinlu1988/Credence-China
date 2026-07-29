@@ -191,10 +191,10 @@ def _append_systemic_history(root: Path, old: str, new: str, note: str, framewor
     if not path.is_file():
         return []
     lines = _read_lines(path)
-    start, _ = _section_last_table_line(lines, re.compile(r"^###\s+11\.3"))
+    start, _ = _section_last_table_line(lines, re.compile(r"^###\s+15\.3"))
     if start is None:
         if hints is not None:
-            hints.append("dev/engine/systemic-warning-framework.md 未找到 §11.3 节，跳过历史行追加")
+            hints.append("dev/engine/systemic-warning-framework.md 未找到 §15.3 节，跳过历史行追加")
         return []
     end = len(lines)
     for i in range(start + 1, len(lines)):
@@ -203,7 +203,7 @@ def _append_systemic_history(root: Path, old: str, new: str, note: str, framewor
             break
     if any(f"{new}（当前）" in lines[i] for i in range(start + 1, end)):
         if hints is not None:
-            hints.append(f"dev/engine/systemic-warning-framework.md §11.3 已含 {new}（当前）行，跳过（防重复）")
+            hints.append(f"dev/engine/systemic-warning-framework.md §15.3 已含 {new}（当前）行，跳过（防重复）")
         return []
     cur_re = re.compile(r"\|\s*" + re.escape(old) + r"（当前）\s*\|")
     idx = None
@@ -213,7 +213,7 @@ def _append_systemic_history(root: Path, old: str, new: str, note: str, framewor
             break
     if idx is None:
         if hints is not None:
-            hints.append("dev/engine/systemic-warning-framework.md §11.3 未找到（当前）标记行，跳过")
+            hints.append("dev/engine/systemic-warning-framework.md §15.3 未找到（当前）标记行，跳过")
         return []
     old_line = lines[idx]
     migrated = old_line.replace(f"{old}（当前）", old, 1)
