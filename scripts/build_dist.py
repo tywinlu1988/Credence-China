@@ -312,7 +312,7 @@ def _gen_readme_md(v: str) -> str:
 - `.claude/skills/` — 四段链技能（intake 路由 → analysis 分析 → report 报告 → qa 质检）
 - `engine/` — 28 份方法论文档（阈值/权重/评级映射的单一事实源）
 - `templates/` — Type 1–19 报告模板
-- `src/` — 可执行编排器与 2 个编码引擎（SRI、五维集中度）
+- `src/` — 可执行编排器与 5 个编码引擎（旗舰聚合、五维集中度、传染矩阵、SRI、展望监控）
 - `adapters/` — 按工具的深度适配说明
 """
 

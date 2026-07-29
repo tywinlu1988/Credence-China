@@ -206,6 +206,10 @@ def test_t12_9_generated_agents_md_fidelity(dist):
         f"generated AGENTS.md template range stale, expect Type 1–{n_tpl}"
     )
     assert "Type 1–15" not in agents
+    # 生成 README.md 同类保真锁：引擎计数曾与 AGENTS.md 同步漂移（v0.8.2 残留"2 个"）
+    readme = (dist / "README.md").read_text(encoding="utf-8")
+    assert "5 个编码引擎" in readme, "generated README.md engine count stale"
+    assert "2 个编码引擎" not in readme
     for pid in ("WP-M0-01", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-X-05"):
         assert pid in agents, f"generated AGENTS.md missing wired engine {pid}"
     reg = load_registry_paths(dist / "engine" / "work-path-registry.md")
