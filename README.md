@@ -100,7 +100,7 @@ src/          可执行编排器 + 5 个编码引擎（pipeline.py · sri_calcul
 scripts/      build_dist.py（dev/ → 发行包组装器）· consistency_check.py（一致性校验）
 tests/        回归测试（217 项）
 version/      当前可安装发行包 version/v0.10.1-release/（历史快照见 git 标签）
-validation/   能力验证证据（验证方法论 + 11 条端到端走查 + 2 份行业方法论参照）
+validation/   能力验证证据（验证方法论 + 16 条端到端走查 + 2 份行业方法论参照）
 docs/         版本管理策略 · Codex 深度适配
 AGENTS.md     跨 CLI 通用入口（任何 agent CLI 从这里开始）
 ```
@@ -207,7 +207,7 @@ src/          executable orchestrator + 5 coded engines (pipeline.py · sri_calc
 scripts/      build_dist.py (dev/ → release-package assembler) · consistency_check.py
 tests/        regression tests (217)
 version/      current installable package version/v0.10.1-release/ (history via git tags)
-validation/   capability evidence (validation methodology + 11 end-to-end walkthroughs + 2 industry references)
+validation/   capability evidence (validation methodology + 16 end-to-end walkthroughs + 2 industry references)
 docs/         versioning strategy · Codex deep-dive adapter
 AGENTS.md     cross-CLI universal entry (start here from any agent CLI)
 ```
