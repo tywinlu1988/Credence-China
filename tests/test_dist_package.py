@@ -223,3 +223,8 @@ def test_t12_9_generated_agents_md_fidelity(dist):
         f"{counts['planned']} 条 planned"
     )
     assert claim in agents, f"generated AGENTS.md path counts stale, expect {claim!r}"
+    # 生成器语义同步锁：partial=0 时不得残留旧免责句（v0.10.2 根 AGENTS 修了但生成器漏同步，v0.10.3 复发）
+    if counts["partial"] == 0:
+        assert "推荐到 partial" not in agents, (
+            "generated AGENTS.md stale partial-disclaimer — 应由'全部路径均已激活可直接使用'替代"
+        )
