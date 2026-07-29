@@ -79,7 +79,7 @@ credit-report-builder 产出。模板选择以 [work-path-registry.md](work-path
 path_id: ""                 # join key（承自路径单，不得更改）
 depth: ""                   # L0|L1|L2|专项（承自路径单）
 templates_used: []          # 该路径 registry templates 字段选中的模板（单一事实源）
-rendered: []                # 实际产出的报告文件（来自 dev/templates/）
+rendered: []                # 实际写入磁盘的报告文件名（完全自包含 HTML，CSS 已内联）
 tier_mapping:               # 分析产物 → L0/L1/L2 层（语义见 output-layered-framework §二/§三/§五）
   L0: ""
   L1: ""
@@ -161,7 +161,7 @@ chaining_edges:
 
 ## 五、输出保真规则（防漂移）
 
-四段链的全部产物——**含最终交付物与对话中间产物**（调研总结、维度清单、过程评分表）——在无明确指令时不得自由发挥。以下两条为链级强制规则，由 qa-verifier 作为强制检查（`template_fidelity` / `methodology_fidelity`）执行，任一违反即 `fail`：
+四段链的全部产物——**含最终交付物与对话中间产物**（调研总结、维度清单、过程评分表）——在无明确指令时不得自由发挥。以下三条为链级强制规则，由 qa-verifier 作为强制检查（`template_fidelity` / `methodology_fidelity` / `css_independent`）执行，任一违反即 `fail`：
 
 1. **模板一致性（template_fidelity）**：S3 交付报告的结构（章节序列与组件）必须与 [work-path-registry.md](work-path-registry.md) 该路径 `templates` 字段指定的模板逐节对应；禁止自行设计报告版式、"参考模板风格自制"或在模板结构外自创章节。路径模板为 `planned` 标记时如实告知"模板待开发"并给出替代交付物，不得伪造渲染产物。
 2. **方法论一致性（methodology_fidelity）**：S2 分析产物与 S3 报告中的分析维度、评分体系、权重结构、分析框架必须可溯源至引擎文档具体章节；禁止自造维度/框架，禁止以通用信用分析先验补位——引擎文档未定义的量与结构一律输出 `引擎未定义`。对话中间产物同受此约束。
