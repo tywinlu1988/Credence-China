@@ -15,6 +15,11 @@ from src.sri_calculator import (
     PREDEFINED_SCENARIOS,
     portfolio_sri,
     stress_test,
+    # v0.10.3 T2
+    compute_trend,
+    detect_tipping_points,
+    sri_time_series,
+    linked_sri,
 )
 
 
@@ -203,3 +208,78 @@ def test_stress_test_predefined_scenarios():
         s = PREDEFINED_SCENARIOS[name]
         assert isinstance(s, ShockScenario)
         # Shock values filled in Task 3; structure is verified here
+
+
+# ── v0.10.3 T2: 时间序列 + 传染联动 ──
+
+
+def _reading(val, thermo=None):
+    return SRIReading(date=f"2026-07-{val*10:02.0f}", sri_value=val,
+                      thermometer=thermo or thermometer_level(val),
+                      industry_scores={}, weights={}, contagion_coeffs={})
+
+
+def test_time_series_trend_up():
+    readings = [_reading(0.3), _reading(0.5), _reading(0.7), _reading(0.9)]
+    assert compute_trend(readings) == "上升"
+
+
+def test_time_series_trend_down():
+    readings = [_reading(0.9), _reading(0.7), _reading(0.5), _reading(0.3)]
+    assert compute_trend(readings) == "下降"
+
+
+def test_time_series_trend_flat():
+    readings = [_reading(0.55), _reading(0.52), _reading(0.58), _reading(0.54)]
+    assert compute_trend(readings) == "平稳"
+
+
+def test_time_series_insufficient():
+    assert compute_trend([_reading(0.5), _reading(0.6)], window=4) == "insufficient"
+
+
+def test_detect_tipping_points():
+    readings = [
+        _reading(0.3, "normal"), _reading(0.6, "watch"), _reading(1.1, "alert"),
+    ]
+    events = detect_tipping_points(readings)
+    assert len(events) == 2  # normal→watch, watch→alert
+    assert events[0]["from"] == "normal" and events[0]["to"] == "watch"
+
+
+def test_detect_tipping_points_no_events():
+    readings = [_reading(0.3, "normal"), _reading(0.4, "normal"), _reading(0.45, "normal")]
+    assert detect_tipping_points(readings) == []
+
+
+def test_sri_time_series_basic():
+    readings = [_reading(0.3), _reading(0.6), _reading(0.9)]
+    result = sri_time_series(readings)
+    assert "trend" in result and "tipping_points" in result and "latest" in result and "count" in result
+    assert result["count"] == 3
+
+
+def test_linked_sri_escalation_delta_nonzero():
+    from src.contagion_engine import ContagionMatrix, ContagionCell
+    cells = {
+        ("A", "B"): ContagionCell("A", "B", 1, set(), ""),
+        ("B", "A"): ContagionCell("B", "A", 1, set(), ""),
+    }
+    matrix = ContagionMatrix(["A", "B"], cells)
+    inds = [IndustryInput(name="A", track_a_score=7.0, track_b_level=TrackBLevel.GREEN, outlook=Outlook.STABLE),
+            IndustryInput(name="B", track_a_score=3.0, track_b_level=TrackBLevel.RED, outlook=Outlook.NEGATIVE)]
+    result = linked_sri(inds, {"A": 0.5, "B": 0.5}, matrix, ["年末效应"])
+    assert "baseline_sri" in result and "stressed_sri" in result and "explanation" in result
+
+
+def test_linked_sri_unknown_factor_rejected():
+    from src.contagion_engine import ContagionMatrix, ContagionCell
+    cells = {
+        ("A", "B"): ContagionCell("A", "B", 1, set(), ""),
+        ("B", "A"): ContagionCell("B", "A", 1, set(), ""),
+    }
+    matrix = ContagionMatrix(["A", "B"], cells)
+    inds = [IndustryInput(name="A", track_a_score=7.0, track_b_level=TrackBLevel.GREEN, outlook=Outlook.STABLE),
+            IndustryInput(name="B", track_a_score=3.0, track_b_level=TrackBLevel.RED, outlook=Outlook.NEGATIVE)]
+    with pytest.raises(ValueError, match="未知升级因子"):
+        linked_sri(inds, {"A": 0.5, "B": 0.5}, matrix, ["不存在的因子"])

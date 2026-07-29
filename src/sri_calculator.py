@@ -221,3 +221,79 @@ def stress_test(base_result: dict, scenario: ShockScenario, matrix=None) -> dict
         "thermometer_after": stressed["thermometer"],
         "industry_deltas": industry_deltas,
     }
+
+
+# ── 时间序列 ──
+
+
+def compute_trend(readings: list[SRIReading], window: int = 4) -> str:
+    if len(readings) < window:
+        return "insufficient"
+    recent = readings[-window:]
+    ys = [r.sri_value for r in recent]
+    xs = list(range(window))
+    n = float(window)
+    slope = (n * sum(x * y for x, y in zip(xs, ys)) - sum(xs) * sum(ys)) / (
+        n * sum(x * x for x in xs) - sum(xs) ** 2
+    )
+    if slope > 0.05:
+        return "上升"
+    if slope < -0.05:
+        return "下降"
+    return "平稳"
+
+
+def detect_tipping_points(readings: list[SRIReading]) -> list[dict]:
+    events = []
+    for i in range(1, len(readings)):
+        prev, cur = readings[i - 1], readings[i]
+        if prev.thermometer != cur.thermometer:
+            events.append({
+                "date": cur.date,
+                "from": prev.thermometer,
+                "to": cur.thermometer,
+                "sri_delta": round(cur.sri_value - prev.sri_value, 4),
+            })
+    return events
+
+
+def sri_time_series(readings: list[SRIReading]) -> dict:
+    return {
+        "trend": compute_trend(readings),
+        "tipping_points": detect_tipping_points(readings),
+        "latest": readings[-1] if readings else None,
+        "count": len(readings),
+    }
+
+
+# ── 传染联动 ──
+
+
+def linked_sri(industries: list[IndustryInput], holdings: dict[str, float],
+               matrix, escalation_factors: list[str]) -> dict:
+    """apply_escalation → 新 contagion_coefficients → portfolio_sri → 对比 baseline。"""
+    from src.contagion_engine import apply_escalation, contagion_coefficients as cc
+
+    baseline = portfolio_sri(holdings, industries, cc(matrix))
+    stressed_matrix = apply_escalation(matrix, escalation_factors)
+    stressed_coeffs = cc(stressed_matrix)
+    stressed = portfolio_sri(holdings, industries, stressed_coeffs)
+    delta = round(stressed["sri"] - baseline["sri"], 4)
+
+    # 解释
+    if delta == 0.0:
+        explanation = f"升级因子 {escalation_factors} 触发，但传染力系数未变化，SRI 不变"
+    else:
+        explanation = (
+            f"升级因子 {escalation_factors} 触发 → 传染矩阵跳升 → 传染力系数变化 → "
+            f"SRI {round(baseline['sri'], 3)} → {round(stressed['sri'], 3)}（{delta:+.4f}），"
+            f"温度计 {baseline['thermometer']} → {stressed['thermometer']}"
+        )
+    return {
+        "baseline_sri": baseline["sri"],
+        "baseline_thermometer": baseline["thermometer"],
+        "stressed_sri": stressed["sri"],
+        "stressed_thermometer": stressed["thermometer"],
+        "delta": delta,
+        "explanation": explanation,
+    }
