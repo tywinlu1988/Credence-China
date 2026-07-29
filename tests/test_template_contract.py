@@ -37,6 +37,15 @@ def test_stamps_and_base_css():
         assert "template-base.css" in text, f"{f.name} 未引用 template-base.css"
 
 
+def test_no_external_css_link():
+    """所有模板 CSS 已内联，禁止外部 <link> 样式引用。"""
+    for f in TEMPLATE_FILES:
+        text = f.read_text(encoding="utf-8")
+        assert '<link rel="stylesheet"' not in text, f"{f.name} 仍含外部 CSS 链接"
+        assert 'href="template-base.css"' not in text, f"{f.name} 仍引用 template-base.css"
+        assert "CREDENCE BASE STYLES" in text, f"{f.name} 缺内联 CSS 标记（CREDENCE BASE STYLES）"
+
+
 def test_footer_contract():
     for f in TEMPLATE_FILES:
         text = f.read_text(encoding="utf-8")
@@ -77,16 +86,16 @@ STYLE_BLOCK_RE = re.compile(r"<style>.*?</style>", re.DOTALL)
 # 豁免表：{文件名: {行号: 理由}}——逐条审计后登记，禁止泛化豁免。
 EXEMPT: dict[str, dict[int, str]] = {
     "template-type8.html": {
-        44: "LGD1 等级定义区间（方法论，与 lgd-recovery-framework §2.1 一致）",
-        45: "LGD2 等级定义区间（同上）",
-        46: "LGD3 等级定义区间（同上）",
-        47: "LGD4 等级定义区间（同上）",
-        48: "LGD5 等级定义区间（同上）",
+        380: "LGD1 等级定义区间（方法论，与 lgd-recovery-framework §2.1 一致）",
+        381: "LGD2 等级定义区间（同上）",
+        382: "LGD3 等级定义区间（同上）",
+        383: "LGD4 等级定义区间（同上）",
+        384: "LGD5 等级定义区间（同上）",
     },
     "template-type14.html": {},
     "template-type15.html": {
-        740: "温度计标尺 UI（结构性刻度组件）",
-        741: "温度计标尺 UI（同上）",
+        1076: "温度计标尺 UI（结构性刻度组件）",
+        1077: "温度计标尺 UI（同上）",
     },
 }
 
