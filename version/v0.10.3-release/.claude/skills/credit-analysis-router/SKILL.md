@@ -41,7 +41,7 @@ description: Intake router for vague or compound Chinese fixed-income credit-ana
 
 ## Routing Table
 
-按用户表述匹配推荐路径。`状态` 列：✅ active / 🟡 partial / 🔴 planned（待开发，须如实告知）。模糊需求不直接给路径，先走四问协议。
+按用户表述匹配推荐路径。`状态` 列：✅ active — 全部 16 条工作路径均已激活可直接使用。模糊需求不直接给路径，先走四问协议。
 
 | 场景 | 用户表述样例 | 推荐路径 | 状态 | 备选 |
 |---|---|---|---|---|

@@ -25,7 +25,7 @@ description: Use when turning a completed Chinese fixed-income credit analysis i
 2. **选模板**：按 `path_id` 在 registry 的 `templates` 字段取模板清单（Type 1–19 或允许的标记值 `planned` / `L0-spec:`）。标记值含义以 registry §schema 为准；命中 `planned` 须如实告知"模板待开发"，不得伪造渲染产物。
 3. **映射分层**：把分析产物映射到 L0 信号卡 / L1 快照 / L2 深度报告三层。三层的定义、消费时间与信息密度以 `engine/output-layered-framework.md` §二（三层总览）/§三（L0 信号卡）/§五（L2 深度报告）为单一事实源，本 skill 不重新定义。
 4. **渲染**：用 `templates/` 的模板装配报告；完备性灯号口径见 output-layered-framework §8.4。
-5. **写文件**：将装配完成的每份报告**写入磁盘为独立 `.html` 文件**（每个 registry `templates` 字段指定的模板产出一份）。文件命名规则：`{发行人简称}-{路径简称}-{日期}.html`（示例：`隆基绿能-审贷评级-20260729.html`、`某城投-盯市信号卡-20260729.html`）。报告为完全自包含 HTML（CSS 已内联于模板 `<style>` 块首段），可直接在浏览器打开或转发。写入位置：当前工作目录或用户指定目录，文件名写入 `rendered` 列表。
+5. **写文件**：将装配完成的每份报告**写入磁盘为独立 `.html` 文件**（每个 registry `templates` 字段指定的模板产出一份）。文件命名规则：`{发行人简称}-{路径简称}-{日期}.html`（示例：`隆基绿能-审贷评级-20260729.html`、`某城投-盯市信号卡-20260729.html`）。若同一路径产出多份报告（如 Type 1 + Type 6），第二份起加报告类型标识，如 `{发行人简称}-{路径简称}-完备性报告-{日期}.html`。报告为完全自包含 HTML（CSS 已内联于模板 `<style>` 块首段），可直接在浏览器打开或转发。写入位置：当前工作目录或用户指定目录，文件名写入 `rendered` 列表。
 6. **索引页**：若 `rendered` 报告文件数 **>2**，额外生成 `report-index.html` 放入同目录。索引页为自包含 HTML（内联 base.css），深色主题，简洁居中布局，包含：
    - 页头标题：`{发行人简称} · 信用分析报告集` + 生成日期
    - 每条报告一行：**文件名（相对链接）** + 报告类型中文名 + 一句话简介（从交付单 `tier_mapping` 取对应层描述）
@@ -66,8 +66,8 @@ templates_used:
   - templates/template-type1.html
   - templates/template-type6.html
 rendered:
-  - 隆基绿能-审贷评级-20260729-type1.html
-  - 隆基绿能-审贷评级-20260729-type6.html
+  - 隆基绿能-审贷评级-20260729.html
+  - 隆基绿能-审贷评级-完备性报告-20260729.html
   - 隆基绿能-审贷评级-20260729-index.html
 tier_mapping:
   L0: 信号卡（评级+展望+今日关键信号+完备性灯号）
