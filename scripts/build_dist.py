@@ -37,7 +37,7 @@ dist/credence/
 ## 校验（--check 或构建后自动执行；任一失败即响亮退出）
 (i) 零 `[A-Za-z]:[\\/]` 绝对路径；(ii) 零残留 `dev/` 路径 token；(iii) 每个相对
 链接在 dist 内可解析；(iv) 4 个 SKILL.md 且 frontmatter 恰为 name+description；
-(v) 28 份 CORE_DOCS 全部在 engine/ 下；(vi) src 能在 dist 布局定位 engine/templates；
+(v) {len(CORE_DOCS)} 份 CORE_DOCS 全部在 engine/ 下；(vi) src 能在 dist 布局定位 engine/templates；
 (vii) 无任何被剔除的产物。
 (viii) 文本文件无 CRLF（LF 强制，见根 .gitattributes）。
 """
@@ -310,7 +310,7 @@ def _gen_readme_md(v: str) -> str:
 
 ## 包内容
 - `.claude/skills/` — 四段链技能（intake 路由 → analysis 分析 → report 报告 → qa 质检）
-- `engine/` — 28 份方法论文档（阈值/权重/评级映射的单一事实源）
+- `engine/` — {len(CORE_DOCS)} 份方法论文档（阈值/权重/评级映射的单一事实源）
 - `templates/` — Type 1–19 报告模板
 - `src/` — 可执行编排器与 5 个编码引擎（旗舰聚合、五维集中度、传染矩阵、SRI、展望监控）
 - `adapters/` — 按工具的深度适配说明
@@ -400,7 +400,7 @@ def validate(out_dir=None) -> list:
         if keys != ["name", "description"]:
             errors.append(f"FRONTMATTER: {name} keys={keys}, want ['name','description']")
 
-    # (v) 28 CORE_DOCS 在 engine/ 下
+    # (v) {len(CORE_DOCS)} CORE_DOCS 在 engine/ 下
     for doc in CORE_DOCS:
         if not (base / "engine" / doc).exists():
             errors.append(f"MISSING_CORE_DOC: engine/{doc}")

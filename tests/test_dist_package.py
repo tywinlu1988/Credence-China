@@ -198,7 +198,7 @@ def test_t12_8_pipeline_importable_in_dist(dist):
 #          注册表真值一致（回归锁：生成器模板曾自带 Type 1–15、2 引擎、8/6/2 过期声明，
 #          根 AGENTS.md 修正从未触达发行包用户）。模板区间断言版本无关：由 dist/templates
 #          实际模板文件数推导 n，Type 20 落地时本测试无需再改（仅保留 1–15 过期哨兵）。
-def test_t12_9_generated_agents_md_fidelity(dist):
+def test_t12_9_generated_agents_md_fidelity(dist, builder):
     agents = (dist / "AGENTS.md").read_text(encoding="utf-8")
     assert "防漂移铁律" in agents, "generated AGENTS.md missing 防漂移铁律"
     n_tpl = len(list((dist / "templates").glob("template-type*.html")))
@@ -210,6 +210,11 @@ def test_t12_9_generated_agents_md_fidelity(dist):
     readme = (dist / "README.md").read_text(encoding="utf-8")
     assert "5 个编码引擎" in readme, "generated README.md engine count stale"
     assert "2 个编码引擎" not in readme
+    # 生成 README.md 引擎文档计数保真锁（v0.10.3 审计发现 28 份 残留）
+    expected_docs = f"{len(builder.CORE_DOCS)} 份方法论文档"
+    assert expected_docs in readme, (
+        f"generated README.md engine count stale, expect {expected_docs!r}"
+    )
     for pid in ("WP-M0-01", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-X-05"):
         assert pid in agents, f"generated AGENTS.md missing wired engine {pid}"
     reg = load_registry_paths(dist / "engine" / "work-path-registry.md")
