@@ -72,7 +72,7 @@ skills 实体存放在 `dev/.claude/skills/`。不同 CLI 的发现机制不同�
 
 ## 路由基线（工作路径注册表）
 
-`dev/engine/work-path-registry.md` 是路由单一事实源：**16 条工作路径（12 条 active / 4 条 partial / 0 planned）**。router 据此把模糊需求路由到具体工作路径；推荐到 partial 路径时须如实告知完备度边界并给出可替代的 active 路径。
+`dev/engine/work-path-registry.md` 是路由单一事实源：**16 条工作路径（16 条 active / 0 条 partial / 0 planned）**。router 据此把模糊需求路由到具体工作路径；推荐到 partial 路径时须如实告知完备度边界并给出可替代的 active 路径。
 
 ## 验证命令
 

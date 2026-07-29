@@ -88,7 +88,7 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 - ~~**v0.9.2**~~（已发布）：发行包热修——pipeline 包内可导入（`src/rating_map.py` 单源）+ T12.8 回归锁。
 - ~~**v0.10.0**~~（已发布）：扫尾清单机制化——promote.py 自动追加版本历史行 + 路线图一致性门禁，杜绝文档失同步。
 - ~~**v0.10.1**~~（已发布）：M3 交易框架补全——盯市信号卡路径（WP-M3-01）激活（active 12/16），引擎缺口清零。
-- **v0.10.2（规划中）**：partial 激活扫尾——WP-M0-02 审贷专项 / WP-M1-02 双标的对比 / WP-M4-04 压力测试 / WP-X-04 ESG 扫描。
+- **v0.10.2（规划中）**：partial 激活扫尾——WP-M0-02/WP-M1-02/WP-M4-04/WP-X-04 四条全 active，16/16 零 partial。
 - **v0.10.3（规划中）**：SRI 深化——时间序列追踪、组合级 SRI（持仓权重）、SRI 压力测试、传染升级因子联动。
 - 版本历史与发布物见 [Releases](https://github.com/tywinlu1988/Credence-China/releases)。
 
@@ -169,7 +169,7 @@ Engine docs (dev/engine/) are the single source of truth; coded engines (src/) p
 - ~~**v0.9.2**~~ (released): release-package hotfix — pipeline importable inside the package (`src/rating_map.py` single source) + T12.8 regression lock.
 - ~~**v0.10.0**~~ (released): housekeeping mechanization — promote.py auto-appends version-history rows + roadmap consistency gate.
 - ~~**v0.10.1**~~ (released): M3 trading framework — market-watch signal-card path (WP-M3-01) activated (12/16 active); engine-gap cleared.
-- **v0.10.2 (planned)**: partial-path activation sweep — WP-M0-02 / WP-M1-02 / WP-M4-04 / WP-X-04.
+- **v0.10.2 (planned)**: partial-path activation sweep — WP-M0-02/WP-M1-02/WP-M4-04/WP-X-04 all active, 16/16 zero partial.
 - **v0.10.3 (planned)**: SRI deep-dive — time-series tracking, portfolio-level SRI (holding weights), SRI stress testing, contagion-escalation linkage.
 - History & artifacts: [Releases](https://github.com/tywinlu1988/Credence-China/releases).
 
