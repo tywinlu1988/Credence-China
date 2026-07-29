@@ -1,6 +1,6 @@
 # Credence 报告模板导航
 
-> 本目录是报告模板的**单一事实源**（`template-base.css` + Type 1–18，共 18 份模板 + 1 份共享样式）。
+> 本目录是报告模板的**单一事实源**（`template-base.css` + Type 1–19，共 19 份模板 + 1 份共享样式）。
 > 路径 → 模板映射以 `dev/engine/work-path-registry.md` 的 `templates` 字段为唯一权威；本页只做导航与契约说明，不复制模板内容。
 
 ## 模板总表
@@ -25,6 +25,7 @@
 | 16 | 承销可行性报告 | WP-M2-01 承销可行性评估 | [template-type16.html](template-type16.html) |
 | 17 | 融资顾问报告 | WP-M5-01 企业融资顾问 | [template-type17.html](template-type17.html) |
 | 18 | 展望与持续监控 | WP-X-05 展望与持续监控 | [template-type18.html](template-type18.html) |
+| 19 | L0 交易盯市信号卡 | WP-M3-01 交易盯市信号卡 | [template-type19.html](template-type19.html) |
 
 ## 模板契约（自制/填充前必读）
 
@@ -46,4 +47,4 @@
 ## 如何选择模板
 
 - **按工作路径选（默认）**：先确定 path_id，按注册表 `templates` 字段取（上表已列映射）。
-- **按报告形态选**：深度叙事（Type 1/2/4/5/7/8/9/11）、专项卡片/警报（Type 13/14/15/18）、验证留档（Type 3/12）、附加模块（Type 6/10）。
+- **按报告形态选**：深度叙事（Type 1/2/4/5/7/8/9/11）、专项卡片/警报（Type 13/14/15/18/19）、验证留档（Type 3/12）、附加模块（Type 6/10）。

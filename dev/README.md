@@ -54,7 +54,7 @@ dev/
 │
 ├── templates/                                       → 报告模板单一事实源（20 文件）
 │   ├── template-base.css                           共享样式基底
-│   └── template-type1..18.html                     Type 1 - Type 18 报告模板
+│   └── template-type1..19.html                     Type 1 - Type 19 报告模板
 │
 ├── design/                                          → 报告设计体系
 │   ├── report-style-system.md                      报告样式系统
@@ -110,7 +110,7 @@ dev/
 
 | 想了解... | 去看... |
 |---|---|
-| 报告模板（Type 1-18 + 共享样式） | `templates/` |
+| 报告模板（Type 1-19 + 共享样式） | `templates/` |
 | 系统智能层总览 | `engine/systemic-warning-framework.md` + `engine/contagion-matrix.md` + `engine/concentration-framework.md` |
 | 产品愿景和魔法体验 | `product/product-overview.md` |
 | 怎么卖、卖给谁 | `product/commercial-model.md` |
