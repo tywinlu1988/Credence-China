@@ -20,7 +20,7 @@
 ../AGENTS.md                                       ← 跨 CLI 通用入口（仓库根级 · 任何 agent CLI 从这里开始）
 dev/
 ├── README.md                                        ← 你在这里
-├── engine/                                          → 算法与方法论（30份现行文档）
+├── engine/                                          → 算法与方法论（31份现行文档）
 │   ├── engine-overview.md                          架构总览 · 文档导航
 │   ├── industry-framework.md                       行业分类（十维评分·13行业金字塔）
 │   ├── qualitative-analysis.md                     定性分析（信源·政策·马赛克·叙事）
@@ -46,6 +46,9 @@ dev/
 │   ├── systemic-warning-framework.md               ⭐系统性预警框架（SRI信号聚合·温度计·历史回测）
 │   ├── paradigm-brand-channel.md                   品牌+渠道范式（食品饮料·纺织服装）
 │   ├── paradigm-network-traffic.md                 网络+流量范式（交运·零售·传媒互联网）
+│   ├── m2-underwriting-framework.md                M2 承销可行性评估框架（发行窗口·投资人匹配·可比定价）
+│   ├── m5-financing-advisor-framework.md           M5 融资顾问框架（渠道比选·时机判断·成本优化）
+│   ├── m3-trading-framework.md                     M3 交易盯市框架（盯市三拍·信号源分层·L0信号卡）
 │   ├── dimension-registry.md                       维度注册表（6范式+LGFV·M0-M5角色·可寻址索引）
 │   └── audits/                                     15份历史审查/审计归档
 │
@@ -128,6 +131,7 @@ dev/
 | 任意 agent CLI 的通用入口（Claude Code/Codex/Cursor/Gemini/OpenCode） | `../AGENTS.md` |
 | 四段链产物契约（工作路径单/分析产物/交付单/质检裁决） | `engine/pipeline-contract.md` |
 | 维度注册表（6范式+LGFV 与 M0-M5 角色的可寻址索引，单源指针层） | `engine/dimension-registry.md` |
+| M3 交易盯市框架（盯市三拍/信号源/L0 信号卡） | `engine/m3-trading-framework.md` |
 | 可执行编排器（v0.7.8：以代码驱动四段链，接 WP-M0-01/WP-M4-01/-02/-03/WP-X-05 五个编码引擎） | `../src/pipeline.py` |
 | AI Agent使用这套方法论（四段链：路由/分析/报告/质检） | `.claude/skills/` |
 | 版本管理策略与发布流程 | `../docs/VERSION-MANAGEMENT.md` |

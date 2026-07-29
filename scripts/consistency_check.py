@@ -60,6 +60,7 @@ CORE_DOCS = [
     "dimension-registry.md",
     "m2-underwriting-framework.md",
     "m5-financing-advisor-framework.md",
+    "m3-trading-framework.md",
     "pipeline-contract.md",
 ]
 

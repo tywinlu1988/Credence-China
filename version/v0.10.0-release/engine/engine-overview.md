@@ -27,6 +27,9 @@
 | **contagion-matrix.md** | 13×13行业传染矩阵 · 传导强度 · 行业聚类 · 升级因子 | 需要评估跨行业传染风险 |
 | **concentration-framework.md** | 五维集中度分析 · 阈值体系 · 评级调整映射 · 压力测试 | 需要评估组合集中度风险 |
 | **systemic-warning-framework.md** | SRI信号聚合 · 四级温度计 · 历史回测 · 即时计算 | 需要系统性风险读数 |
+| **m2-underwriting-framework.md** | 承销可行性评估 · 发行窗口 · 投资人匹配 · 可比券定价 | 需要承销可行性评估时查阅 |
+| **m5-financing-advisor-framework.md** | 融资顾问 · 融资方案比选 | 需要融资顾问建议时查阅 |
+| **m3-trading-framework.md** | M3 交易盯市 · 盯市三拍 · 信号源分层 · L0 信号卡触发 | 需要交易盯市/信号卡时查阅 |
 | **work-path-registry.md** | 工作路径注册表 · 角色×方向×深度×报告的路径定义 | 需要确认走哪条路径时查阅 |
 | **dimension-registry.md** | 维度注册表 · 6范式+LGFV 与 M0-M5 角色的可寻址索引（单源指针层） | 需要按维度路由/检索时查阅 |
 | **pipeline-contract.md** | 四段链 I/O 契约 · 四份产物 schema · 链式边（机器可读） | 需要确认阶段间传递什么产物时查阅 |
@@ -253,6 +256,7 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | pipeline-contract.md | v0.10.0-release | 四段链产物契约 |
 | m2-underwriting-framework.md | v0.10.0-release | M2 承销可行性评估框架 |
 | m5-financing-advisor-framework.md | v0.10.0-release | M5 融资顾问框架 |
+| m3-trading-framework.md | v0.10.0-release | M3 交易盯市框架 |
 
 **职责边界说明：** 原有M4组合风控框架（multi-stakeholder.md §5）承担单发行人/单组合的风控职能（集中度限额/压力测试/评级调整）。系统智能层（contagion-matrix.md/concentration-framework.md/systemic-warning-framework.md）在M4基础上增加跨发行人/跨组合的系统性风险分析——传染矩阵覆盖全市场行业对传导、集中度框架覆盖五维组合集中度、预警框架提供全市场SRI读数。两者分工明确：原有M4做单发行人风控·系统智能层做跨发行人系统性风险。
 
@@ -277,3 +281,4 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 - [传染理论基础](contagion-theory.md) — 传染类型、传导机制、升级因子理论
 - [五维集中度分析框架](concentration-framework.md) — 行业/区域/评级/期限/融资渠道集中度评估
 - [系统性预警框架](systemic-warning-framework.md) — SRI信号聚合算法、四级温度计、历史回测
+- [M3 交易盯市框架](m3-trading-framework.md) — 盯市工作流三拍、信号源分层与刷新节奏、L0 信号卡触发决策
