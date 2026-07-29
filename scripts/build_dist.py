@@ -225,21 +225,39 @@ def _gen_agents_md(v: str) -> str:
 """
 
 
-def _gen_claude_md() -> str:
-    return """# CLAUDE.md — Credence
+def _gen_claude_md(v: str) -> str:
+    return f"""# CLAUDE.md — Credence（{v}）
+
+固收信贷智能分析引擎：方法论优先（methodology-first），四段链 skill 驱动。
 
 先读 `AGENTS.md`。skills 在 `.claude/skills/`。
 
-阈值、权重、评级映射只存放在 `engine/*.md`；绝不编造数值——引用 `engine/<doc>.md §节`，引擎未定义就输出 `引擎未定义`。
+| Skill | 一句话 |
+|---|---|
+| `credit-analysis-router` | 模糊/复合需求四问路由到工作路径 |
+| `fixed-income-credit-analysis` | 按路径单或核心文档集执行分析 |
+| `credit-report-builder` | 装配交付报告（选模板、映射 L0/L1/L2） |
+| `credit-qa-verifier` | 四段链终态质检（质量门 + 强制检查） |
+
+阈值、权重、评级映射只存放在 `engine/*.md`；绝不编造数值——引用 `engine/<doc>.md §节`，引擎未定义就输出 `引擎未定义`。详情见 `AGENTS.md`。
 """
 
 
-def _gen_gemini_md() -> str:
-    return """# GEMINI.md — Credence
+def _gen_gemini_md(v: str) -> str:
+    return f"""# GEMINI.md — Credence（{v}）
+
+固收信贷智能分析引擎：方法论优先（methodology-first），四段链 skill 驱动。
 
 先读 `AGENTS.md`。skills 在 `.claude/skills/`（Gemini CLI 兼容读取该目录）。
 
-阈值、权重、评级映射只存放在 `engine/*.md`；绝不编造数值——引用 `engine/<doc>.md §节`，引擎未定义就输出 `引擎未定义`。
+| Skill | 一句话 |
+|---|---|
+| `credit-analysis-router` | 模糊/复合需求四问路由到工作路径 |
+| `fixed-income-credit-analysis` | 按路径单或核心文档集执行分析 |
+| `credit-report-builder` | 装配交付报告（选模板、映射 L0/L1/L2） |
+| `credit-qa-verifier` | 四段链终态质检（质量门 + 强制检查） |
+
+阈值、权重、评级映射只存放在 `engine/*.md`；绝不编造数值——引用 `engine/<doc>.md §节`，引擎未定义就输出 `引擎未定义`。详情见 `AGENTS.md`。
 """
 
 
@@ -301,18 +319,23 @@ AGENTS.md / CLAUDE.md / GEMINI.md  →  并入你项目对应的 instructions fi
 def _gen_readme_md(v: str) -> str:
     return f"""# Credence — 固收信贷智能分析引擎（{v}）
 
-方法论优先的中国固定收益信用分析引擎：行业多层金字塔 + 双轨交叉验证 + 马赛克公开数据引擎 +
-多利益相关者视角 + 系统智能层（传染/集中度/SRI）。以 **Agent Skills**（`SKILL.md`）形式分发，
+方法论优先的中国固定收益信用分析引擎：四段链 pipeline（intake → analysis → report → qa），
+`path_id` 贯穿各段；行业多层金字塔 + 双轨交叉验证 + 马赛克公开数据引擎 +
+多利益相关者视角 + 系统智能层（传染/集中度/SRI）。以 **Agent Skills** 形式分发，
 可在 Claude Code / Codex / Cursor / Gemini / OpenCode 中安装使用。
 
 ## 快速开始
 见 **`INSTALL.md`**（推荐 Model A：把本包根当项目打开，零配置）。入口为 **`AGENTS.md`**。
 
 ## 包内容
-- `.claude/skills/` — 四段链技能（intake 路由 → analysis 分析 → report 报告 → qa 质检）
+- `.claude/skills/` — 四段链技能：
+  - `credit-analysis-router` — 模糊/复合需求四问路由到工作路径
+  - `fixed-income-credit-analysis` — 按路径单或核心文档集执行分析
+  - `credit-report-builder` — 装配交付报告（选模板、映射 L0/L1/L2）
+  - `credit-qa-verifier` — 四段链终态质检（质量门 + 强制检查）
 - `engine/` — {len(CORE_DOCS)} 份方法论文档（阈值/权重/评级映射的单一事实源）
 - `templates/` — Type 1–19 报告模板
-- `src/` — 可执行编排器与 5 个编码引擎（旗舰聚合、五维集中度、传染矩阵、SRI、展望监控）
+- `src/` — 可执行编排器与 5 个编码引擎（composite_scorer 旗舰聚合、concentration_scorer 五维集中度、contagion_engine 传染矩阵、sri_calculator SRI、outlook_engine 展望监控）
 - `adapters/` — 按工具的深度适配说明
 """
 
@@ -444,8 +467,8 @@ def build(out_dir=None) -> list:
 
     v = _version()
     _write_text(out / "AGENTS.md", _gen_agents_md(v))
-    _write_text(out / "CLAUDE.md", _gen_claude_md())
-    _write_text(out / "GEMINI.md", _gen_gemini_md())
+    _write_text(out / "CLAUDE.md", _gen_claude_md(v))
+    _write_text(out / "GEMINI.md", _gen_gemini_md(v))
     _write_text(out / "INSTALL.md", _gen_install_md(v))
     _write_text(out / "README.md", _gen_readme_md(v))
     _write_text(out / ".claude-plugin" / "plugin.json", _gen_plugin_json(v))
