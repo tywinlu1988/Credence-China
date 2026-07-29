@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<!-- @template: templates/template-type1.html -->
+<!-- @engine-version: v0.10.4-release -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="L2 深度信用报告模板 Type 1 · 执行摘要·评级总览·金字塔分层·双轨对撞·一票否决·数据完备性·监控建议">
+<title>{报告标题}</title>
+<style>
+/* === CREDENCE BASE STYLES (inline from template-base.css) === */
+/* ============================================================
+   Credence Report System — Base Template v1.0
+   12种报告类型共享的基础色板、字体、布局、组件
+   ============================================================ */
+
+/* === CSS Variables === */
+:root {
+  /* Background */
+  --bg-primary:    #0f1117;
+  --bg-secondary:  #1a1d28;
+  --bg-tertiary:   #212433;
+  --bg-hover:      #252b38;
+
+  /* Text */
+  --text-primary:   #e2e4ea;
+  --text-secondary: #9398a9;
+  --text-tertiary:  #5d6270;
+
+  /* Border */
+  --border-default: #2a2e3c;
+  --border-strong:  #3d4250;
+
+  /* Semantic */
+  --red:       #ef4444;
+  --red-bg:    rgba(239,68,68,0.08);
+  --amber:     #f59e0b;
+  --amber-bg:  rgba(245,158,11,0.08);
+  --green:     #22c55e;
+  --green-bg:  rgba(34,197,94,0.08);
+  --blue:      #6366f1;
+  --blue-bg:   rgba(99,102,241,0.08);
+  --purple:    #a855f7;
+  --purple-bg: rgba(168,85,247,0.08);
+
+  /* Layout */
+  --radius: 8px;
+  --radius-sm: 4px;
+  --max-w: 960px;
+}
+
+/* === Reset === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* === Body === */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* === Container === */
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+/* === Hero === */
+.hero {
+  text-align: center;
+  padding: 56px 0 40px;
+}
+.hero .chip {
+  display: inline-block;
+  background: var(--purple-bg);
+  color: var(--purple);
+  border: 1px solid rgba(168,85,247,0.25);
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+}
+.hero h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 10px; }
+.hero .subtitle { font-size: 14px; color: var(--text-secondary); max-width: 680px; margin: 0 auto; line-height: 1.7; }
+.hero .meta {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  flex-wrap: wrap;
+}
+.hero .meta span {
+  padding: 5px 14px;
+  background: var(--bg-secondary);
+  border-radius: 20px;
+  border: 1px solid var(--border-default);
+}
+
+/* === Section === */
+.section { margin: 44px 0; }
+.section-title {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-default);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* === Card === */
+.card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 14px 0;
+  border: 1px solid var(--border-default);
+}
+.card h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+.card-red   { border-left: 4px solid var(--red); }
+.card-amber { border-left: 4px solid var(--amber); }
+.card-green { border-left: 4px solid var(--green); }
+.card-blue  { border-left: 4px solid var(--blue); }
+.card-purple{ border-left: 4px solid var(--purple); }
+
+/* === Strip === */
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border-default);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 0 40px;
+}
+.strip.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.strip.cols-5 { grid-template-columns: repeat(5, 1fr); }
+.strip.cols-6 { grid-template-columns: repeat(6, 1fr); }
+.strip-item {
+  background: var(--bg-secondary);
+  padding: 20px 16px;
+  text-align: center;
+}
+.strip-item .slabel { font-size: 10px; color: var(--text-secondary); letter-spacing: 0.5px; margin-bottom: 4px; text-transform: uppercase; }
+.strip-item .sval   { font-size: 22px; font-weight: 800; }
+.strip-item .ssub   { font-size: 10px; color: var(--text-tertiary); margin-top: 3px; }
+
+/* === Table === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead th {
+  background: var(--bg-tertiary);
+  padding: 9px 13px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-default);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+tbody td {
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--border-default);
+  vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--bg-hover); }
+td.ct { text-align: center; }
+td.rt { text-align: right; }
+
+/* === Metric Grid === */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.metric {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  text-align: center;
+  border: 1px solid var(--border-default);
+}
+.metric .m-num   { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+.metric .m-label { font-size: 12px; color: var(--text-secondary); }
+
+/* === Timeline === */
+.timeline { position: relative; padding-left: 28px; margin: 16px 0; }
+.timeline::before { content: ''; position: absolute; left: 12px; top: 4px; bottom: 4px; width: 2px; background: var(--border-default); }
+.tl-item { position: relative; padding: 8px 0 8px 20px; font-size: 13px; }
+.tl-item::before { content: ''; position: absolute; left: -20px; top: 12px; width: 12px; height: 12px; border-radius: 50%; }
+.tl-item.red::before   { background: var(--red); }
+.tl-item.amber::before { background: var(--amber); }
+.tl-item.green::before { background: var(--green); }
+.tl-date { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+
+/* === Text Colors === */
+.text-red    { color: var(--red); font-weight: 600; }
+.text-amber  { color: var(--amber); font-weight: 600; }
+.text-green  { color: var(--green); font-weight: 600; }
+.text-blue   { color: var(--blue); font-weight: 600; }
+.text-purple { color: var(--purple); font-weight: 600; }
+
+/* === Score Colors === */
+.score-good { color: var(--green); font-weight: 600; }
+.score-ok   { color: var(--blue); font-weight: 600; }
+.score-warn { color: var(--amber); font-weight: 600; }
+.score-bad  { color: var(--red); font-weight: 600; }
+
+/* === Tags / Badges === */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.tag-red    { background: var(--red-bg);    color: var(--red); }
+.tag-amber  { background: var(--amber-bg);  color: var(--amber); }
+.tag-green  { background: var(--green-bg);  color: var(--green); }
+.tag-blue   { background: var(--blue-bg);   color: var(--blue); }
+.tag-purple { background: var(--purple-bg); color: var(--purple); }
+
+.rating-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* === Signal === */
+.signal {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.signal-red   { background: var(--red); }
+.signal-amber { background: var(--amber); }
+.signal-green { background: var(--green); }
+
+/* === Grid helpers === */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+/* === Info Box === */
+.info-box {
+  padding: 15px 20px;
+  border-radius: var(--radius);
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.info-red    { background: var(--red-bg);    border-left: 3px solid var(--red); }
+.info-amber  { background: var(--amber-bg);  border-left: 3px solid var(--amber); }
+.info-green  { background: var(--green-bg);  border-left: 3px solid var(--green); }
+.info-blue   { background: var(--blue-bg);   border-left: 3px solid var(--blue); }
+.info-purple { background: var(--purple-bg); border-left: 3px solid var(--purple); }
+
+/* === Divider === */
+.divider { height: 1px; background: var(--border-default); margin: 32px 0; }
+
+/* === Footer === */
+.footer {
+  text-align: center;
+  padding: 28px 0 36px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  border-top: 1px solid var(--border-default);
+}
+.footer p { margin-top: 4px; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 22px; }
+  .strip, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .strip.cols-3, .strip.cols-5, .strip.cols-6 { grid-template-columns: repeat(2, 1fr); }
+  table { font-size: 12px; }
+  thead th, tbody td { padding: 7px 9px; }
+}
+
+/* ============================================================
+   v0.9.0 基座扩容：打印样式 · 响应式 · 组件库
+   ============================================================ */
+
+/* === 打印样式：白底、去渐变与阴影 === */
+@media print {
+  body { background: #fff; color: #111; }
+  .hero, .toc-nav { background: #fff !important; color: #111 !important; }
+  .card, .signal-card, .metric-box, .summary-card, .watchlist-card { border: 1px solid #999 !important; background: #fff !important; color: #111 !important; box-shadow: none !important; }
+  a { color: #111; text-decoration: none; }
+}
+
+/* === 响应式：窄屏适配 === */
+@media (max-width: 640px) {
+  .container { padding: 0 12px; }
+  .hero { padding: 32px 0 24px; }
+  .metric-row { flex-direction: column; gap: 10px; }
+  .strip { grid-template-columns: repeat(2, 1fr); }
+  table { font-size: 12px; }
+  .toc-nav { position: static; }
+}
+
+/* === 组件库 === */
+/* 目录导航（吸顶） */
+.toc-nav { position: sticky; top: 0; z-index: 10; background: var(--bg-primary); border-bottom: 1px solid var(--border-default); padding: 10px 0; margin-bottom: 24px; font-size: 12px; }
+.toc-nav a { color: var(--text-secondary); text-decoration: none; margin-right: 14px; }
+.toc-nav a:hover { color: var(--text-primary); }
+/* 执行摘要卡 */
+.summary-card { background: var(--bg-secondary); border: 1px solid var(--border-strong); border-left: 4px solid var(--blue); border-radius: var(--radius); padding: 20px 24px; margin: 20px 0; }
+.summary-card .s-title { font-size: 13px; font-weight: 700; color: var(--text-tertiary); letter-spacing: 1px; margin-bottom: 8px; }
+.summary-card .s-body { font-size: 15px; line-height: 1.8; }
+/* 指标盒 */
+.metric-box { text-align: center; min-width: 120px; }
+.metric-box .val { font-size: 26px; font-weight: 800; }
+.metric-box .lbl { font-size: 12px; color: var(--text-tertiary); }
+/* 警示条 */
+.alert { border-radius: var(--radius); padding: 14px 18px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
+.alert.red { background: var(--red-bg); border-left: 4px solid var(--red); }
+.alert.amber { background: var(--amber-bg); border-left: 4px solid var(--amber); }
+.alert.green { background: var(--green-bg); border-left: 4px solid var(--green); }
+/* 时间线 */
+.timeline { border-left: 2px solid var(--border-strong); margin: 16px 0 16px 8px; padding-left: 20px; }
+.timeline .t-item { position: relative; margin-bottom: 14px; font-size: 13px; }
+.timeline .t-item::before { content: ""; position: absolute; left: -26px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+.timeline .t-date { color: var(--text-tertiary); font-size: 11px; margin-right: 8px; }
+/* 术语表 */
+.glossary dt { font-weight: 700; margin-top: 10px; }
+.glossary dd { color: var(--text-secondary); font-size: 13px; margin: 2px 0 8px 0; }
+</style>
+<style>
+.hero { background: linear-gradient(135deg, #0f172a, #1e293b, #334155); }
+.hero .chip { background: rgba(99,102,241,0.22); color: #c7d2fe; border-color: rgba(99,102,241,0.4); }
+.verdict { text-align:center; padding:28px 24px; border-radius:10px; margin:24px 0; }
+.verdict .v-big { font-size:36px; font-weight:800; margin-bottom:6px; }
+.verdict.pass { border:1px solid rgba(34,197,94,.3); background:var(--green-bg); }
+.verdict.pass .v-big { color:var(--green); }
+.verdict.watch { border:1px solid rgba(245,158,11,.3); background:var(--amber-bg); }
+.verdict.watch .v-big { color:var(--amber); }
+.verdict.fail { border:1px solid rgba(239,68,68,.3); background:var(--red-bg); }
+.verdict.fail .v-big { color:var(--red); }
+.strip { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border-default); border-radius:10px; overflow:hidden; margin:0 0 24px; }
+.strip-item { background:var(--bg-secondary); padding:18px 16px; text-align:center; }
+.strip-item .label { font-size:11px; color:var(--text-tertiary); letter-spacing:.5px; margin-bottom:4px; }
+.strip-item .val { font-size:24px; font-weight:800; }
+.strip-item .sub { font-size:11px; color:var(--text-tertiary); }
+.pyramid { display:flex; flex-direction:column; align-items:center; gap:4px; margin:24px 0; }
+.pyr-layer { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-radius:6px; color:#fff; font-size:13px; font-weight:600; }
+.pyr-layer .pyr-score { font-size:12px; opacity:.85; font-weight:400; }
+.pyr-l4 { width:46%; background:linear-gradient(135deg,#64748b,#475569); }
+.pyr-l3 { width:60%; background:linear-gradient(135deg,#7c3aed,#6d28d9); }
+.pyr-l2 { width:74%; background:linear-gradient(135deg,#2563eb,#1d4ed8); }
+.pyr-l1 { width:88%; background:linear-gradient(135deg,#0f172a,#1e293b); }
+.duo-table td, .duo-table th { text-align:left; vertical-align:top; padding:8px 10px; }
+.sig-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+.sig-green { background:var(--green); } .sig-amber { background:var(--amber); }
+.sig-red { background:var(--red); } .sig-orange { background:#ea580c; }
+.ref-list li { margin: 4px 0; font-size: 13px; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="chip">Type 1 · L2 深度信用报告</div>
+  <h1>{主体名称} · 深度信用报告</h1>
+  <div class="hero-sub">当前评级 {当前评级} · 展望 {展望} · {报告日期}</div>
+</header>
+
+<nav class="toc-nav">
+  <a href="#s0">§0 执行摘要</a>
+  <a href="#s1">§1 评级总览</a>
+  <a href="#s2">§2 金字塔分层</a>
+  <a href="#s3">§3 双轨对撞</a>
+  <a href="#s4">§4 关键风险</a>
+  <a href="#s5">§5 市场盲区</a>
+  <a href="#s6">§6 数据完备性</a>
+  <a href="#s7">§7 时间线监控</a>
+  <a href="#s8">§8 方法论引用</a>
+</nav>
+
+<section id="s0">
+  <div class="summary-card">
+    <div class="s-title">执行摘要</div>
+    <div class="s-body">{一句话结论}</div>
+  </div>
+  <div class="verdict {评级档位样式}">
+    <div class="v-big">{当前评级}</div>
+    <div>展望 {展望} · 置信度 {置信度} · 数据完备性 {完备性}</div>
+  </div>
+</section>
+
+<section id="s1">
+  <h2>一、评级总览</h2>
+  <div class="strip">
+    <div class="strip-item"><div class="label">综合评级</div><div class="val">{当前评级}</div><div class="sub">{评级说明}</div></div>
+    <div class="strip-item"><div class="label">展望</div><div class="val">{展望}</div><div class="sub">{展望置信度}</div></div>
+    <div class="strip-item"><div class="label">复合评分</div><div class="val">{复合分}</div><div class="sub">{行业范式}</div></div>
+    <div class="strip-item"><div class="label">数据完备性</div><div class="val">{完备性}</div><div class="sub">{完备性说明}</div></div>
+  </div>
+  <p>{范式判定与加权理由}</p>
+</section>
+
+<section id="s2">
+  <h2>二、金字塔分层评分</h2>
+  <div class="pyramid">
+    <div class="pyr-layer pyr-l1"><span>L1 {L1层名}</span><span class="pyr-score">{L1得分}/10 · {L1关键发现}</span></div>
+    <div class="pyr-layer pyr-l2"><span>L2 {L2层名}</span><span class="pyr-score">{L2得分}/10 · {L2关键发现}</span></div>
+    <div class="pyr-layer pyr-l3"><span>L3 {L3层名}</span><span class="pyr-score">{L3得分}/10 · {L3关键发现}</span></div>
+    <div class="pyr-layer pyr-l4"><span>L4 {L4层名}</span><span class="pyr-score">{L4得分}/10 · {L4关键发现}</span></div>
+  </div>
+  <table class="duo-table">
+    <tr><th>层</th><th>得分</th><th>关键证据</th><th>数据来源</th></tr>
+    <tr><td>L1 {L1层名}</td><td>{L1得分}</td><td>{L1关键证据}</td><td>{L1数据来源}</td></tr>
+    <tr><td>L2 {L2层名}</td><td>{L2得分}</td><td>{L2关键证据}</td><td>{L2数据来源}</td></tr>
+    <tr><td>L3 {L3层名}</td><td>{L3得分}</td><td>{L3关键证据}</td><td>{L3数据来源}</td></tr>
+    <tr><td>L4 {L4层名}</td><td>{L4得分}</td><td>{L4关键证据}</td><td>{L4数据来源}</td></tr>
+  </table>
+</section>
+
+<section id="s3">
+  <h2>三、双轨交叉对撞</h2>
+  <table class="duo-table">
+    <tr><th>维度</th><th>轨道A（基本面）</th><th>轨道B（市场信号）</th><th>对撞结论</th></tr>
+    <tr><td>方向</td><td>{轨道A方向}</td><td>{轨道B方向}</td><td>{方向对撞}</td></tr>
+    <tr><td>强度</td><td>{轨道A强度}</td><td>{轨道B强度}</td><td>{强度对撞}</td></tr>
+  </table>
+  <div class="alert green"><strong>共识：</strong>{共识要点}</div>
+  <div class="alert amber"><strong>分歧：</strong>{分歧要点}——分歧即最有价值的洞察，需持续跟踪</div>
+</section>
+
+<section id="s4">
+  <h2>四、关键风险与一票否决</h2>
+  <div class="alert red">
+    <strong>一票否决状态：{否决状态}</strong><br>
+    {否决条件说明}
+  </div>
+  <table class="duo-table">
+    <tr><th>红旗信号</th><th>严重程度</th><th>证据</th><th>来源</th></tr>
+    <tr><td><span class="sig-dot sig-red"></span>{红旗1}</td><td>{严重度1}</td><td>{证据1}</td><td>{来源1}</td></tr>
+    <tr><td><span class="sig-dot sig-orange"></span>{红旗2}</td><td>{严重度2}</td><td>{证据2}</td><td>{来源2}</td></tr>
+    <tr><td><span class="sig-dot sig-amber"></span>{红旗3}</td><td>{严重度3}</td><td>{证据3}</td><td>{来源3}</td></tr>
+  </table>
+</section>
+
+<section id="s5">
+  <h2>五、市场盲区与分歧点</h2>
+  <div class="alert amber"><strong>市场叙事 vs 引擎判断：</strong>{市场叙事与引擎判断差异}</div>
+  <ul>
+    <li>{盲区点1}</li>
+    <li>{盲区点2}</li>
+    <li>{盲区点3}</li>
+  </ul>
+</section>
+
+<section id="s6">
+  <h2>六、数据完备性</h2>
+  <div class="strip">
+    <div class="strip-item"><div class="label">综合完备性</div><div class="val">{完备性}</div><div class="sub">{完备性等级}</div></div>
+  </div>
+  <table class="duo-table">
+    <tr><th>数据缺口</th><th>影响维度</th><th>影响程度</th><th>替代方案</th></tr>
+    <tr><td>{缺口1}</td><td>{影响维度1}</td><td>{影响程度1}</td><td>{替代方案1}</td></tr>
+    <tr><td>{缺口2}</td><td>{影响维度2}</td><td>{影响程度2}</td><td>{替代方案2}</td></tr>
+    <tr><td>{缺口3}</td><td>{影响维度3}</td><td>{影响程度3}</td><td>{替代方案3}</td></tr>
+  </table>
+  <p class="alert amber"><strong>提示：</strong>数据缺口本身即风险信号——缺口越大，评级置信度越低，结论使用时需相应谨慎。</p>
+</section>
+
+<section id="s7">
+  <h2>七、时间线与监控建议</h2>
+  <div class="timeline">
+    <div class="t-item"><span class="t-date">{时点1}</span>{事件1}</div>
+    <div class="t-item"><span class="t-date">{时点2}</span>{事件2}</div>
+    <div class="t-item"><span class="t-date">{时点3}</span>{事件3}</div>
+  </div>
+  <p>{监控建议：触发式复核条件与建议监控频率}</p>
+</section>
+
+<section id="s8">
+  <h2>八、方法论引用与术语</h2>
+  <ul class="ref-list">
+    <li>行业框架：<code>{引用行业框架文档}</code></li>
+    <li>方法论：<code>{引用双轨方法论文档}</code></li>
+    <li>信号完备性：<code>{引用马赛克引擎文档}</code></li>
+    <li>展望监控：<code>{引用展望监控文档}</code></li>
+  </ul>
+  <dl class="glossary">
+    <dt>评级（Rating）</dt><dd>18 档信用等级（AAA→D），由复合评分映射而得。</dd>
+    <dt>展望（Outlook）</dt><dd>12-24 个月评级变动方向的概率性判断（正面/稳定/负面/发展中）。</dd>
+    <dt>一票否决</dt><dd>生存性风险条件，触发后综合评级上限锁定为 CCC。</dd>
+    <dt>数据完备性</dt><dd>分析所依赖数据的覆盖程度；缺口本身即风险信号。</dd>
+  </dl>
+</section>
+
+<footer>
+  <p>报告编号 T1-{报告编号} · 版本 v0.10.4-release · 生成于 {生成日期} · 仅供内部风险评估使用</p>
+  <p>基于 Credence 引擎 v0.10.4-release · 所有分析均为内部推演，不构成投资建议</p>
+</footer>
+</body>
+</html>
