@@ -13,7 +13,7 @@
 
 ## 中文
 
-**13 行业 · 16 工作路径 · 5 编码引擎 · 30 引擎文档 · 19 报告模板**
+**13 行业 · 16 工作路径 · 5 编码引擎 · 31 引擎文档 · 19 报告模板**
 
 ### 能力亮点
 
@@ -29,7 +29,7 @@ Credence 把"资深固收信用分析师的方法论"打包成 agent 能直接�
 
 | 层 | 内容 | 位置 |
 |---|---|---|
-| **核心资产 = 领域方法论** | 十维评分 · 双轨对撞 · 18 档评级映射 · LGD · 外部支持 · 系统智能层（30 份文档） | `dev/engine/` |
+| **核心资产 = 领域方法论** | 十维评分 · 双轨对撞 · 18 档评级映射 · LGD · 外部支持 · 系统智能层（31 份文档） | `dev/engine/` |
 | **交付形态 = Agent Skills 包** | 四段链技能：路由 → 分析 → 报告 → 质检 | `dev/.claude/skills/` |
 | **运行方式 = 嵌入现有 agent CLI** | 模型与循环借宿主的，Credence 只供给领域专长 | — |
 | **辅助件** | 报告模板（Type 1–19）+ 可执行编排器（接 5 个编码引擎） | `dev/templates/` · `src/` |
@@ -95,7 +95,7 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 ### 仓库地图
 
 ```
-dev/          方法论与技能的开发源（engine/ 30 份 · .claude/skills/ 四段链 · templates/ 19 模板）
+dev/          方法论与技能的开发源（engine/ 31 份 · .claude/skills/ 四段链 · templates/ 19 模板）
 src/          可执行编排器 + 5 个编码引擎（pipeline.py · sri_calculator.py · concentration_scorer.py 等）
 scripts/      build_dist.py（dev/ → 发行包组装器）· consistency_check.py（一致性校验）
 tests/        回归测试（217 项）
@@ -126,14 +126,14 @@ Credence packages the methodology of a seasoned China fixed-income credit analys
 
 | Layer | Contents | Location |
 |---|---|---|
-| **Core asset = domain methodology** | 10-dimension scoring · dual-track cross-validation · 18-notch rating map · LGD · external support · system-intelligence layer (30 docs) | `dev/engine/` |
+| **Core asset = domain methodology** | 10-dimension scoring · dual-track cross-validation · 18-notch rating map · LGD · external support · system-intelligence layer (31 docs) | `dev/engine/` |
 | **Delivery = Agent Skills pack** | 4-stage skill chain: route → analyze → report → QA | `dev/.claude/skills/` |
 | **Runtime = inside existing agent CLIs** | the model and loop come from the host; Credence supplies the domain expertise | — |
 | **Extras** | report templates (Type 1–19) + executable orchestrator (5 coded engines) | `dev/templates/` · `src/` |
 
 **Core principle**: traditional financial analysis fails systematically in policy-driven, tech-barrier, and asset-lease industries; the heaviest credit factors rarely appear on the balance sheet; external ratings lag real credit deterioration by 17+ months on average.
 
-**13 industries · 16 work paths · 5 coded engines · 30 engine docs · 19 report templates**
+**13 industries · 16 work paths · 5 coded engines · 31 engine docs · 19 report templates**
 
 ### Highlights
 
@@ -202,7 +202,7 @@ The installable package is at `version/v0.10.1-release/` (browse/copy and use; s
 ### Repository map
 
 ```
-dev/          methodology & skill source (engine/ 30 docs · .claude/skills/ 4-stage chain · templates/ 19)
+dev/          methodology & skill source (engine/ 31 docs · .claude/skills/ 4-stage chain · templates/ 19)
 src/          executable orchestrator + 5 coded engines (pipeline.py · sri_calculator.py · concentration_scorer.py et al.)
 scripts/      build_dist.py (dev/ → release-package assembler) · consistency_check.py
 tests/        regression tests (217)
