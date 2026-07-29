@@ -25,13 +25,20 @@ description: Use when turning a completed Chinese fixed-income credit analysis i
 2. **选模板**：按 `path_id` 在 registry 的 `templates` 字段取模板清单（Type 1–19 或允许的标记值 `planned` / `L0-spec:`）。标记值含义以 registry §schema 为准；命中 `planned` 须如实告知"模板待开发"，不得伪造渲染产物。
 3. **映射分层**：把分析产物映射到 L0 信号卡 / L1 快照 / L2 深度报告三层。三层的定义、消费时间与信息密度以 `dev/engine/output-layered-framework.md` §二（三层总览）/§三（L0 信号卡）/§五（L2 深度报告）为单一事实源，本 skill 不重新定义。
 4. **渲染**：用 `dev/templates/` 的模板装配报告；完备性灯号口径见 output-layered-framework §8.4。
-5. **产交付单**：按下述 schema 输出《交付单》。
+5. **写文件**：将装配完成的每份报告**写入磁盘为独立 `.html` 文件**（每个 registry `templates` 字段指定的模板产出一份）。文件命名规则：`{发行人简称}-{路径简称}-{日期}.html`（示例：`隆基绿能-审贷评级-20260729.html`、`某城投-盯市信号卡-20260729.html`）。报告为完全自包含 HTML（CSS 已内联于模板 `<style>` 块首段），可直接在浏览器打开或转发。写入位置：当前工作目录或用户指定目录，文件名写入 `rendered` 列表。
+6. **索引页**：若 `rendered` 报告文件数 **>2**，额外生成 `report-index.html` 放入同目录。索引页为自包含 HTML（内联 base.css），深色主题，简洁居中布局，包含：
+   - 页头标题：`{发行人简称} · 信用分析报告集` + 生成日期
+   - 每条报告一行：**文件名（相对链接）** + 报告类型中文名 + 一句话简介（从交付单 `tier_mapping` 取对应层描述）
+   - 页脚：同模板 footer（报告编号占位 + 生成日期 + "不构成投资建议"）
+   索引页本身写入 `rendered` 列表末尾。
+7. **产交付单**：按下述 schema 输出《交付单》。
 
 ## 装配纪律
 
 1. **逐节溯源**：每个 section 的内容必须可溯源至上游分析产物；任何数据点不得凭模板示例或印象生成。
 2. **示例区整节替换**：模板中的示例/演示内容（含数值、公司名、结论）必须整节替换，禁止部分保留。
 3. **交付前残留自查**：搜索 `{` 残留占位符与已知实例名（`tests/test_template_contract.py` 的 INSTANCE_NAMES），任一命中即回炉。
+4. **文件交付即交付**：仅有文字摘要、无 `.html` 文件落盘 = 未完成交付（协议违规）。`rendered` 列出的每个文件必须对应磁盘上可打开的独立 HTML 文件。若 `rendered` > 2 且缺 `report-index.html` — `pass-with-findings`。
 
 ## Delivery Note Output（《交付单》）
 
@@ -41,7 +48,7 @@ description: Use when turning a completed Chinese fixed-income credit analysis i
 path_id: ""                 # join key（承自路径单，不得更改）
 depth: ""                   # L0|L1|L2|专项（承自路径单）
 templates_used: []          # 该路径 registry templates 字段选中的模板
-rendered: []                # 实际产出的报告文件（来自 dev/templates/）
+rendered: []                # 实际写入磁盘的报告文件名（完全自包含 HTML，CSS 已内联）
 tier_mapping:               # 分析产物 → L0/L1/L2 层
   L0: ""
   L1: ""
@@ -59,8 +66,9 @@ templates_used:
   - dev/templates/template-type1.html
   - dev/templates/template-type6.html
 rendered:
-  - dev/templates/template-type1.html
-  - dev/templates/template-type6.html
+  - 隆基绿能-审贷评级-20260729-type1.html
+  - 隆基绿能-审贷评级-20260729-type6.html
+  - 隆基绿能-审贷评级-20260729-index.html
 tier_mapping:
   L0: 信号卡（评级+展望+今日关键信号+完备性灯号）
   L1: 快照（四维雷达+关键异常+评级对比）
@@ -77,6 +85,7 @@ source_analysis: 上游分析产物（findings/completeness/veto，见 pipeline-
 ## Guardrails
 
 - **禁自造报告形式（防漂移）**：交付报告一律使用 registry `templates` 字段指定的 `dev/templates/` 模板，章节结构与模板逐节对应；禁止自行设计版式或"参考模板风格自制"。无可用模板时按 `planned` 标记规则如实告知，不自创。
+- **交付物 = 文件**：链的完成态 = HTML 文件已落盘且质检通过；`rendered` 字段列出的是磁盘上真实存在的文件名，不是模板引用路径。
 - **自动接续**：本 skill 由上游 analysis 自动触发，《交付单》产出后自动移交 qa-verifier；链上不设"是否继续/是否质检"确认点。
 - **不做分析**：本 skill 只做模板选择、分层映射与装配，不重新计算评分、不补信号、不改评级。分析结论一律来自上游《分析产物》。
 - **不复制引擎内容**：只引用路径 ID、模板名与文档章节，不复制任何阈值、分层时间预算、信号优先级门槛或评级映射。分层语义以 `dev/engine/output-layered-framework.md` 为准，模板清单以 `dev/engine/work-path-registry.md` 为准。

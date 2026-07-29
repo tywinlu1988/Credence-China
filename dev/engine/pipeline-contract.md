@@ -90,7 +90,7 @@ source_analysis: ""         # 上游分析产物引用（溯源）
 
 ### 2.4 S4 质检裁决（QA Verdict，终态）
 
-credit-qa-verifier 产出，为四段链终态。逐质量门复核承自路径单 `quality_gates`；六项强制检查的规则源见所引引擎文档章节（前四项）与 §五（后两项）。
+credit-qa-verifier 产出，为四段链终态。逐质量门复核承自路径单 `quality_gates`；八项强制检查的规则源见所引引擎文档章节（前四项）与 §五（后四项）。
 
 ```yaml
 path_id: ""                 # join key（承自路径单，不得更改）
@@ -106,6 +106,8 @@ mandatory_checks:           # 强制检查（规则源见各引擎文档与 §�
   single_source: ""         # 单一事实源合规（不编造阈值）
   template_fidelity: ""     # 模板一致性（本契约 §五）
   methodology_fidelity: ""  # 方法论一致性（本契约 §五）
+  file_delivered: ""        # 文件交付（本契约 §五）
+  css_independent: ""       # CSS 独立性（本契约 §五）
 remediation: []             # 不通过项的整改建议
 ```
 
@@ -163,3 +165,4 @@ chaining_edges:
 
 1. **模板一致性（template_fidelity）**：S3 交付报告的结构（章节序列与组件）必须与 [work-path-registry.md](work-path-registry.md) 该路径 `templates` 字段指定的模板逐节对应；禁止自行设计报告版式、"参考模板风格自制"或在模板结构外自创章节。路径模板为 `planned` 标记时如实告知"模板待开发"并给出替代交付物，不得伪造渲染产物。
 2. **方法论一致性（methodology_fidelity）**：S2 分析产物与 S3 报告中的分析维度、评分体系、权重结构、分析框架必须可溯源至引擎文档具体章节；禁止自造维度/框架，禁止以通用信用分析先验补位——引擎文档未定义的量与结构一律输出 `引擎未定义`。对话中间产物同受此约束。
+3. **CSS 独立性（css_independent）**：S3 交付的每个 HTML 报告文件须为完全自包含——所有 CSS 样式以内联 `<style>…</style>` 形态嵌入文件，禁止以 `<link rel="stylesheet">` 或任何外部 URL 引用样式表。此项确保报告在转发、离线或跨设备查看时格式完整不丢失。

@@ -23,7 +23,7 @@ description: Use when verifying a Chinese fixed-income credit report or analysis
 
 1. **join key 一致性**：三份产物的 `path_id` 必须相同且在注册表可解析；不一致即 `fail`。
 2. **逐质量门复核**：对路径单 `quality_gates` 逐条复核，产 `gate_results`（每门 `status` + `evidence`，证据引用引擎文档章节）。
-3. **六项强制检查**：见下「Mandatory Checks」，任一不通过即 `fail`。
+3. **八项强制检查**：见下「Mandatory Checks」，任一不通过即 `fail`。
 4. **产裁决**：全部通过 → `pass`；通过但有应注记的发现 → `pass-with-findings`；任一不通过 → `fail` 并列 `remediation`。
 
 ## Mandatory Checks（强制检查，规则源为引擎文档）
@@ -34,6 +34,8 @@ description: Use when verifying a Chinese fixed-income credit report or analysis
 - **单一事实源 `single_source`**：报告/分析不得编造阈值、权重、评级映射；引擎未定义的量须标注 `引擎未定义`。规则源为全部所引引擎文档。
 - **模板一致性 `template_fidelity`**：交付报告的结构（章节序列与组件）必须与该路径 registry `templates` 字段指定的模板逐节对应；自行设计报告版式、"参考模板风格自制"、模板结构外自创章节，一律 `fail`。规则源 `dev/engine/pipeline-contract.md` §五。
 - **方法论一致性 `methodology_fidelity`**：分析产物与报告中的分析维度、评分体系、分析框架必须可溯源至引擎文档具体章节；自造维度/框架、以通用信用分析先验补位，一律 `fail`。规则源 `dev/engine/pipeline-contract.md` §五。
+- **文件交付 `file_delivered`**：`rendered` 列出的每个报告文件必须实际存在于本地文件系统且可读取（文件存在性验证）；文件缺失 = `fail`。若 `rendered` 报告数 >2 且缺 `report-index.html` → `pass-with-findings` 并提醒补索引页。
+- **CSS 独立性 `css_independent`**：交付的每个 HTML 报告文件不得包含外部样式引用（`<link rel="stylesheet"` 或 `href=".css"` 任一命中即 `fail`）；CSS 须为内联 `<style>…</style>` 形态。规则源 `dev/engine/pipeline-contract.md` §五。
 
 ## QA Verdict Output（《质检裁决》）
 
@@ -46,13 +48,15 @@ gate_results:               # 逐质量门复核结果
   - gate: ""                # "规则名 (dev/engine/<doc>.md §节)"（承自路径单 quality_gates）
     status: ""              # pass|fail
     evidence: ""            # 复核证据（引用引擎文档章节，不复制数值）
-mandatory_checks:           # 六项强制检查
+mandatory_checks:           # 八项强制检查
   density_rule: ""
   veto_ceiling: ""
   mode_b: ""
   single_source: ""
   template_fidelity: ""
   methodology_fidelity: ""
+  file_delivered: ""
+  css_independent: ""
 remediation: []             # 不通过项的整改建议
 ```
 
@@ -78,6 +82,8 @@ mandatory_checks:
   single_source: pass
   template_fidelity: pass
   methodology_fidelity: pass
+  file_delivered: pass
+  css_independent: pass
 remediation: []
 ```
 
