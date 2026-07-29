@@ -1,7 +1,7 @@
 # 固收信贷智能分析引擎
 
 **项目代号**: Credence
-**版本**: v0.10.2-release
+**版本**: v0.10.3-release
 **状态**: 正式发布（v0.9.x 系列） · 13行业覆盖 · 系统智能层上线 · 5 编码引擎接线 · 四段链技能交付
 
 ---
@@ -169,6 +169,7 @@ dev/
 | **v0.10.0-release** | **2026-07-28** | **扫尾清单机制化：promote 自动追加三处版本历史行与 README 路线图翻转 + roadmap_freshness 门禁（含同版本防重/失锚提示）。231 项测试通过。** |
 | **v0.10.1-release** | **2026-07-29** | **M3 交易框架补全：m3-trading-framework 编排层文档 + Type 19 L0 信号卡模板 + WP-M3-01 激活（active 12/16）+ 报告独立性修复（CSS 内联/交付硬化/索引页/qa 8 项）。233 项测试通过。** |
 | **v0.10.2-release** | **2026-07-29** | **partial 激活扫尾：WP-M0-02/WP-M1-02/WP-M4-04/WP-X-04 四条全 active（16/16 零 partial）+ 逐路径走查。234 项测试通过。** |
+| **v0.10.3-release** | **2026-07-29** | **SRI 深化四件套：时间序列追踪/组合级 SRI/压力测试/传染联动 + systemic §11.3 规划落地。249 项测试通过。** |
 
 > **注**：v0.6.x系列为模块级预发布版本（contagion-matrix.md、concentration-framework.md、systemic-warning-framework.md 等独立发布），功能统一纳入 v0.7.0-alpha。
 
