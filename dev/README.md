@@ -94,7 +94,7 @@ dev/
 
 | 类型 | 数量 | 说明 |
 |---|---|---|
-| 报告模板 | 18种（Type 1-Type 18） | `templates/` 单一事实源（template-base.css + type1-18.html + README 导航页） |
+| 报告模板 | 19种（Type 1-Type 19） | `templates/` 单一事实源（template-base.css + type1-19.html + README 导航页） |
 
 ### 产品设计（完成）
 
