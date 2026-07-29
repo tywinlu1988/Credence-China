@@ -32,7 +32,7 @@
 | WP-M1-01 | 债券投资仪表盘 | M1 | M1 四维（相对价值/条款/流动性/事件） | L2 | Type 5 | ✅ active |
 | WP-M1-02 | 双标的前瞻对比 | M1 | 双轨对比+区分度分析 | L2 | Type 2 | 🟡 partial |
 | WP-M2-01 | 承销可行性评估 | M2 | 发行窗口+投资人匹配+可比定价 | 专项 | Type 16 | ✅ active |
-| WP-M3-01 | 交易盯市信号卡 | M3 | L0 信号+SRI 温度计联动 | L0 | L0 规范 | 🟡 partial |
+| WP-M3-01 | 交易盯市信号卡 | M3 | L0 信号+SRI 温度计联动 | L0 | L0 规范 | ✅ active |
 | WP-M4-01 | 组合集中度评估 | M4 | 五维集中度 | 专项 | Type 14 | ✅ active |
 | WP-M4-02 | 跨行业传染分析 | M4 | 传染矩阵+传染理论 | 专项 | Type 13 | ✅ active |
 | WP-M4-03 | 系统性风险读数 | M4 | SRI+温度计 | 专项 | Type 15 | ✅ active |
@@ -44,7 +44,7 @@
 | WP-X-04 | ESG/治理风险扫描 | 专项 | esg + governance-fraud | 专项 | Type 10 | 🟡 partial |
 | WP-X-05 | 展望与持续监控 | 专项 | outlook-monitoring+迁移矩阵 | 专项 | Type 18 | ✅ active |
 
-> 状态分布：✅ active 11 条 · 🟡 partial 5 条 · 🔴 planned 0 条。待开发缺口见 [附录](#附录待开发缺口清单)。
+> 状态分布：✅ active 12 条 · 🟡 partial 4 条 · 🔴 planned 0 条。待开发缺口见 [附录](#附录待开发缺口清单)。
 
 ## 三、路径 schema 定义
 
@@ -204,25 +204,26 @@ quality_gates:
   - "可比定价 (dev/engine/m2-underwriting-framework.md §四)"
 ```
 
-### WP-M3-01 交易盯市信号卡（🟡 partial）
+### WP-M3-01 交易盯市信号卡（✅ active）
 
-交易员视角的轻量盯市：L0 信号卡（5 秒速览：评级+展望+今日关键信号）联动 SRI 系统性预警温度计。L0 规范与温度计引擎齐备，但 L0 信号卡无独立模板文件（规范定义于 output-layered-framework §3），且 M3 交易框架仍待补全。
+交易员视角的轻量盯市：L0 信号卡（5 秒速览：评级+展望+今日关键信号）联动 SRI 系统性预警温度计。M3 交易盯市框架与 Type 19 信号卡模板已交付（v0.10.1），路径全量激活。
 
 ```yaml
 id: WP-M3-01
 name: 交易盯市信号卡
-status: partial
+status: active
 role: M3
 trigger:
   user_intent: [盯市, 交易信号, 今日异动, 信号卡, 盘中预警]
   object: single-issuer
 depth: L0
 engine_sequence:
+  - dev/engine/m3-trading-framework.md
   - dev/engine/output-layered-framework.md
   - dev/engine/systemic-warning-framework.md
 paradigm_selection: n/a（L0 信号层跨范式，直接读取单标的评级+系统温度计）
 templates:
-  - "L0-spec: dev/engine/output-layered-framework.md §3"
+  - dev/templates/template-type19.html
 outputs: [L0信号卡, 温度计读数]
 quality_gates:
   - "L0 信号卡 (dev/engine/output-layered-framework.md §三)"
@@ -518,7 +519,7 @@ quality_gates:
 |---|---|---|---|---|
 | 1 | M2 承销框架 engine 文档 | engine | WP-M2-01 | ✅ 已交付（v0.9.0，m2-underwriting-framework.md） |
 | 2 | M5 融资顾问框架 engine 文档 | engine | WP-M5-01 | ✅ 已交付（v0.9.0，m5-financing-advisor-framework.md） |
-| 3 | M3 交易框架补全 | engine | WP-M3-01 | 交易盯市专用引擎（当前仅 L0 规范+温度计，partial） |
+| 3 | M3 交易框架补全 | engine | WP-M3-01 | ✅ 已交付（v0.10.1，m3-trading-framework.md + template-type19.html） |
 | 4 | Type 16 承销报告模板 | 模板 | WP-M2-01 | ✅ 已交付（v0.9.0，template-type16.html） |
 | 5 | Type 17 融资顾问模板 | 模板 | WP-M5-01 | ✅ 已交付（v0.9.0，template-type17.html） |
 | 6 | 展望监控模板 | 模板 | WP-X-05 | ✅ 已交付（v0.8.4，template-type18.html） |

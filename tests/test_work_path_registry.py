@@ -162,3 +162,12 @@ def test_t2_7_active_quality_gates_traceable():
             assert rule in corpus, (
                 f"{p['id']}: quality-gate rule {rule!r} not found in engine_sequence docs"
             )
+
+
+def test_wp_m3_01_activated_with_type19():
+    """v0.10.1: WP-M3-01 partial->active, template points to dev/templates/template-type19.html."""
+    paths = {p["id"]: p for p in _load_paths()}
+    m3 = paths["WP-M3-01"]
+    assert m3["status"] == "active"
+    assert any("template-type19.html" in t for t in m3["templates"])
+    assert any("m3-trading-framework.md" in e for e in m3["engine_sequence"])

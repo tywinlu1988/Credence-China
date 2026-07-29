@@ -13,7 +13,7 @@
 | WP-M1-01 | 债券投资仪表盘 | L2 | L2 深度报告 | template-type5 |
 | WP-M1-02 | 双标的前瞻对比 | L2 | L2 深度报告 | template-type2 |
 | WP-M2-01 | 承销可行性评估 | 专项 | 专项（模板定义） | template-type16 |
-| WP-M3-01 | 交易盯市信号卡 | L0 | L0 信号卡 | L0-spec |
+| WP-M3-01 | 交易盯市信号卡 | L0 | L0 信号卡 | template-type19 |
 | WP-M4-01 | 组合集中度评估 | 专项 | 专项（模板定义） | template-type14 |
 | WP-M4-02 | 跨行业传染分析 | 专项 | 专项（模板定义） | template-type13 |
 | WP-M4-03 | 系统性风险读数 | 专项 | 专项（模板定义） | template-type15 |

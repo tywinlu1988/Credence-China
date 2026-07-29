@@ -213,7 +213,7 @@ def _gen_agents_md(v: str) -> str:
 
 ## 路由基线（工作路径注册表）
 
-`engine/work-path-registry.md` 是路由单一事实源：**16 条工作路径（11 条 active / 5 条 partial / 0 条 planned）**。router 据此把模糊需求路由到具体工作路径；推荐到 partial 路径时须如实告知完备度边界并给出可替代的 active 路径。
+`engine/work-path-registry.md` 是路由单一事实源：**16 条工作路径（12 条 active / 4 条 partial / 0 条 planned）**。router 据此把模糊需求路由到具体工作路径；推荐到 partial 路径时须如实告知完备度边界并给出可替代的 active 路径。
 
 ## 平台中立说明
 
