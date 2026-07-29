@@ -9,6 +9,12 @@ from src.sri_calculator import (
     m4_concentration_weight_adjustment,
     sri,
     thermometer_level,
+    # new
+    SRIReading,
+    ShockScenario,
+    PREDEFINED_SCENARIOS,
+    portfolio_sri,
+    stress_test,
 )
 
 
@@ -154,3 +160,46 @@ def test_m4_weight_adjustment():
     assert m4_concentration_weight_adjustment(0.7) == 1.0
     assert m4_concentration_weight_adjustment(1.2) == 1.1
     assert m4_concentration_weight_adjustment(2.0) == 1.2
+
+
+def test_portfolio_sri_normalizes_holdings():
+    ind = IndustryInput(name="test", track_a_score=7.0, track_b_level=TrackBLevel.GREEN, outlook=Outlook.STABLE)
+    result = portfolio_sri({"test": 50.0}, [ind], {"test": 1.0})
+    assert "sri" in result and "thermometer" in result and "industry_scores" in result
+    assert abs(sum(result["weights_used"].values()) - 1.0) < 1e-6
+
+
+def test_portfolio_sri_matches_flat_sri():
+    """全 1 系数 + 等权重 = 与裸 sri() 一致"""
+    inds = [IndustryInput(name=f"ind{i}", track_a_score=7.0, track_b_level=TrackBLevel.GREEN, outlook=Outlook.STABLE)
+            for i in range(3)]
+    holdings = {"ind0": 1.0, "ind1": 1.0, "ind2": 1.0}
+    coeffs = {"ind0": 1.0, "ind1": 1.0, "ind2": 1.0}
+    result = portfolio_sri(holdings, inds, coeffs)
+    expected_sri = sri(inds, [1/3, 1/3, 1/3])
+    assert abs(result["sri"] - expected_sri) < 1e-6
+
+
+def test_portfolio_sri_industry_mismatch():
+    ind = IndustryInput(name="A", track_a_score=7.0, track_b_level=TrackBLevel.GREEN, outlook=Outlook.STABLE)
+    with pytest.raises(ValueError):
+        portfolio_sri({"B": 1.0}, [ind], {"B": 1.0})  # B not in industry_inputs
+
+
+def test_stress_test_delta_positive():
+    ind = IndustryInput(name="光伏", track_a_score=3.0, track_b_level=TrackBLevel.GREEN, outlook=Outlook.NEGATIVE)
+    base = portfolio_sri({"光伏": 1.0}, [ind], {"光伏": 1.0})
+    scenario = ShockScenario(name="test", description="光伏 -2 shock",
+                             industry_shocks={"光伏": 2.0}, contagion_escalation=[],
+                             outlook_shifts={})
+    result = stress_test(base, scenario)
+    assert result["stressed_sri"] > result["baseline_sri"]
+    assert result["delta"] > 0
+
+
+def test_stress_test_predefined_scenarios():
+    assert "moderate" in PREDEFINED_SCENARIOS and "severe" in PREDEFINED_SCENARIOS and "extreme" in PREDEFINED_SCENARIOS
+    for name in ("moderate", "severe", "extreme"):
+        s = PREDEFINED_SCENARIOS[name]
+        assert isinstance(s, ShockScenario)
+        # Shock values filled in Task 3; structure is verified here
