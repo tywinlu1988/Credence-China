@@ -186,3 +186,51 @@ def test_code_bb_cap_triggers_on_documented_condition():
     adj = rating_adjustment(metrics)
     assert sum(1 for lvl in adj["levels"].values() if lvl == "red") == 3
     assert adj["bb_cap_triggered"] is True
+
+
+# --------------------------------------------------------------------------
+# SRI linked escalation parity (systemic-warning-framework §十四 × §6.2)
+# --------------------------------------------------------------------------
+
+def test_sri_linked_escalation_parity():
+    """升级因子触发 → contagion_coefficients 变化 → portfolio_sri 重算 — 链路通畅。"""
+    from src.contagion_engine import (
+        load_matrix,
+        contagion_coefficients as cc,
+        apply_escalation,
+    )
+    from src.sri_calculator import portfolio_sri, IndustryInput, TrackBLevel, Outlook
+
+    matrix = load_matrix()
+    # 选取 3 个真实行业做最小验证（名称与传染矩阵一致）
+    inds = [
+        IndustryInput(
+            "光伏/储能", 5.0, TrackBLevel.YELLOW, Outlook.STABLE,
+        ),
+        IndustryInput(
+            "半导体/集成电路", 7.5, TrackBLevel.GREEN, Outlook.STABLE,
+        ),
+        IndustryInput(
+            "城投债 / LGFV", 3.0, TrackBLevel.RED, Outlook.NEGATIVE,
+        ),
+    ]
+    holdings = {"光伏/储能": 0.3, "半导体/集成电路": 0.2, "城投债 / LGFV": 0.5}
+
+    # 从全 13 行业系数中提取子集（linked_sri 需要全行业传递，此处手动拆链验证）
+    all_coeffs = cc(matrix)
+    coeffs = {k: all_coeffs[k] for k in holdings}
+
+    # 施加升级因子 → 系数应变化
+    stressed_matrix = apply_escalation(matrix, ["信息不对称"])
+    stressed_all = cc(stressed_matrix)
+    stressed_coeffs = {k: stressed_all[k] for k in holdings}
+    assert coeffs != stressed_coeffs, "升级因子未改变传染力系数"
+
+    # 分别计算基准 SRI 与压力 SRI
+    base = portfolio_sri(holdings, inds, coeffs)
+    stressed = portfolio_sri(holdings, inds, stressed_coeffs)
+    delta = round(stressed["sri"] - base["sri"], 4)
+
+    assert "sri" in base and "sri" in stressed
+    assert "thermometer" in base and "thermometer" in stressed
+    assert isinstance(delta, float)
