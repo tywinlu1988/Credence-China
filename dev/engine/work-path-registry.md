@@ -28,23 +28,23 @@
 | ID | 路径名 | 角色 | 调查方向 | 深度 | 模板 | 状态 |
 |---|---|---|---|---|---|---|
 | WP-M0-01 | 信贷审批单标的评级 | M0 | 行业金字塔→马赛克→双轨→评级 | L2 | Type 1 + Type 6 | ✅ active |
-| WP-M0-02 | 审贷专项附加包（LGD+外部支持） | M0 | lgd-recovery + external-support | 专项 | Type 8 + Type 9 | 🟡 partial |
+| WP-M0-02 | 审贷专项附加包（LGD+外部支持） | M0 | lgd-recovery + external-support | 专项 | Type 8 + Type 9 | ✅ active |
 | WP-M1-01 | 债券投资仪表盘 | M1 | M1 四维（相对价值/条款/流动性/事件） | L2 | Type 5 | ✅ active |
-| WP-M1-02 | 双标的前瞻对比 | M1 | 双轨对比+区分度分析 | L2 | Type 2 | 🟡 partial |
+| WP-M1-02 | 双标的前瞻对比 | M1 | 双轨对比+区分度分析 | L2 | Type 2 | ✅ active |
 | WP-M2-01 | 承销可行性评估 | M2 | 发行窗口+投资人匹配+可比定价 | 专项 | Type 16 | ✅ active |
 | WP-M3-01 | 交易盯市信号卡 | M3 | L0 信号+SRI 温度计联动 | L0 | L0 规范 | ✅ active |
 | WP-M4-01 | 组合集中度评估 | M4 | 五维集中度 | 专项 | Type 14 | ✅ active |
 | WP-M4-02 | 跨行业传染分析 | M4 | 传染矩阵+传染理论 | 专项 | Type 13 | ✅ active |
 | WP-M4-03 | 系统性风险读数 | M4 | SRI+温度计 | 专项 | Type 15 | ✅ active |
-| WP-M4-04 | 组合压力测试 | M4 | 压力情景+财务深潜压力节 | 专项 | Type 11 | 🟡 partial |
+| WP-M4-04 | 组合压力测试 | M4 | 压力情景+财务深潜压力节 | 专项 | Type 11 | ✅ active |
 | WP-M5-01 | 企业融资顾问 | M5 | 融资渠道对比+时机 | 专项 | Type 17 | ✅ active |
 | WP-X-01 | 黑天鹅回溯验证 | 元（验证） | validation-methodology | 专项 | Type 3 | ✅ active |
 | WP-X-02 | 多身份并行评估 | 元（对比） | M0/M1/M4 并行+交叉矩阵 | L2 | Type 4 | ✅ active |
 | WP-X-03 | 行业分析框架建设 | 元（建设） | 新行业金字塔+D1-D10 | 专项 | Type 7 | ✅ active |
-| WP-X-04 | ESG/治理风险扫描 | 专项 | esg + governance-fraud | 专项 | Type 10 | 🟡 partial |
+| WP-X-04 | ESG/治理风险扫描 | 专项 | esg + governance-fraud | 专项 | Type 10 | ✅ active |
 | WP-X-05 | 展望与持续监控 | 专项 | outlook-monitoring+迁移矩阵 | 专项 | Type 18 | ✅ active |
 
-> 状态分布：✅ active 12 条 · 🟡 partial 4 条 · 🔴 planned 0 条。待开发缺口见 [附录](#附录待开发缺口清单)。
+> 状态分布：✅ active 16 条 · 🟡 partial 0 条 · 🔴 planned 0 条。待开发缺口见 [附录](#附录待开发缺口清单)。
 
 ## 三、路径 schema 定义
 
@@ -105,14 +105,14 @@ quality_gates:
   - "交叉对撞 (dev/engine/dual-track-methodology.md §四)"
 ```
 
-### WP-M0-02 审贷专项附加包（LGD+外部支持）（🟡 partial）
+### WP-M0-02 审贷专项附加包（LGD+外部支持）（✅ active）
 
-审贷的专项加深包：在 WP-M0-01 主体评级之上，追加违约损失率（LGD）与外部支持两个专项模块，用于债项评级、增信评估与支持上调判断。两个引擎文档齐备，但尚未串成带入口协议与质量门的显式附加路径。
+审贷的专项加深包：在 WP-M0-01 主体评级之上，追加违约损失率（LGD）与外部支持两个专项模块，用于债项评级、增信评估与支持上调判断。两个引擎文档齐备，已激活（v0.10.2）。
 
 ```yaml
 id: WP-M0-02
 name: 审贷专项附加包（LGD+外部支持）
-status: partial
+status: active
 role: M0
 trigger:
   user_intent: [违约损失率, LGD, 回收率, 外部支持, 政府支持, 增信]
@@ -155,14 +155,14 @@ quality_gates:
   - "相对价值 (dev/engine/multi-stakeholder.md §2.2)"
 ```
 
-### WP-M1-02 双标的前瞻对比（🟡 partial）
+### WP-M1-02 双标的前瞻对比（✅ active）
 
-投资视角的双标的横向对比：用双轨方法论对两个发行人做前瞻对比与区分度分析，回答"买哪只"。双轨与验证方法论（前瞻对比/区分度）均已就位，但作为独立投资路径尚未显式化。
+投资视角的双标的横向对比：用双轨方法论对两个发行人做前瞻对比与区分度分析，回答"买哪只"。双轨与验证方法论（前瞻对比/区分度）均已就位，已激活（v0.10.2）。
 
 ```yaml
 id: WP-M1-02
 name: 双标的前瞻对比
-status: partial
+status: active
 role: M1
 trigger:
   user_intent: [两只券对比, 哪个更好, 前瞻对比, 区分度, 二选一]
@@ -304,14 +304,14 @@ quality_gates:
   - "温度计四级 (dev/engine/systemic-warning-framework.md §三)"
 ```
 
-### WP-M4-04 组合压力测试（🟡 partial）
+### WP-M4-04 组合压力测试（✅ active）
 
-组合风控视角：对组合施加压力情景（五维阈值跳升 + 财务深潜压力节），评估极端情景下的损失。concentration-framework 压力节与 financial-deep-dive 场景敏感性矩阵齐备，但尚未串成显式压力测试路径。
+组合风控视角：对组合施加压力情景（五维阈值跳升 + 财务深潜压力节），评估极端情景下的损失。concentration-framework 压力节与 financial-deep-dive 场景敏感性矩阵齐备，已激活（v0.10.2）。
 
 ```yaml
 id: WP-M4-04
 name: 组合压力测试
-status: partial
+status: active
 role: M4
 trigger:
   user_intent: [压力测试, 极端情景, 组合压力, 敏感性, 压力情景]
@@ -426,14 +426,14 @@ quality_gates:
   - "一票否决 (dev/engine/industry-framework.md §五)"
 ```
 
-### WP-X-04 ESG/治理风险扫描（🟡 partial）
+### WP-X-04 ESG/治理风险扫描（✅ active）
 
-专项路径：对发行人做 ESG（环境/社会/治理）与财务欺诈/治理风险扫描，输出 ESG 叠加调整与治理红旗清单。esg-framework 与 governance-fraud-risk 齐备，但尚未串成显式专项路径。
+专项路径：对发行人做 ESG（环境/社会/治理）与财务欺诈/治理风险扫描，输出 ESG 叠加调整与治理红旗清单。esg-framework 与 governance-fraud-risk 齐备，已激活（v0.10.2）。
 
 ```yaml
 id: WP-X-04
 name: ESG/治理风险扫描
-status: partial
+status: active
 role: meta
 trigger:
   user_intent: [ESG, 治理风险, 财务造假, 欺诈, 逃废债]

@@ -171,3 +171,12 @@ def test_wp_m3_01_activated_with_type19():
     assert m3["status"] == "active"
     assert any("template-type19.html" in t for t in m3["templates"])
     assert any("m3-trading-framework.md" in e for e in m3["engine_sequence"])
+
+
+def test_all_paths_active_zero_partial():
+    """v0.10.2：全部 16 条路径 active，零 partial。"""
+    paths = _load_paths()
+    statuses = {p["id"]: str(p.get("status")) for p in paths}
+    for pid, s in statuses.items():
+        assert s == "active", f"{pid}: expected active, got {s}"
+    assert len(statuses) == 16, f"expected 16 paths, got {len(statuses)}"
