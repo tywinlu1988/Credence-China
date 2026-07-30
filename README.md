@@ -98,7 +98,7 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 dev/          方法论与技能的开发源（engine/ 31 份 · .claude/skills/ 四段链 · templates/ 19 模板）
 src/          可执行编排器 + 5 个编码引擎（pipeline.py · sri_calculator.py · concentration_scorer.py 等）
 scripts/      build_dist.py（dev/ → 发行包组装器）· consistency_check.py（一致性校验）
-tests/        回归测试（217 项）
+tests/        回归测试（249 项）
 version/      当前可安装发行包 version/v0.10.4-release/（历史快照见 git 标签）
 validation/   能力验证证据（验证方法论 + 16 条端到端走查 + 2 份行业方法论参照）
 docs/         版本管理策略 · Codex 深度适配
@@ -205,7 +205,7 @@ The installable package is at `version/v0.10.4-release/` (browse/copy and use; s
 dev/          methodology & skill source (engine/ 31 docs · .claude/skills/ 4-stage chain · templates/ 19)
 src/          executable orchestrator + 5 coded engines (pipeline.py · sri_calculator.py · concentration_scorer.py et al.)
 scripts/      build_dist.py (dev/ → release-package assembler) · consistency_check.py
-tests/        regression tests (217)
+tests/        regression tests (249)
 version/      current installable package version/v0.10.4-release/ (history via git tags)
 validation/   capability evidence (validation methodology + 16 end-to-end walkthroughs + 2 industry references)
 docs/         versioning strategy · Codex deep-dive adapter
