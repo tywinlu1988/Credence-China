@@ -197,13 +197,18 @@ def test_t12_8_pipeline_importable_in_dist(dist):
 # T12.9 — (n) 生成的 AGENTS.md 保真：含防漂移铁律与 5 引擎清单，路径计数/模板数与
 #          注册表真值一致（回归锁：生成器模板曾自带 Type 1–15、2 引擎、8/6/2 过期声明，
 #          根 AGENTS.md 修正从未触达发行包用户）。模板区间断言版本无关：由 dist/templates
-#          实际模板文件数推导 n，Type 20 落地时本测试无需再改（仅保留 1–15 过期哨兵）。
+#          实际模板文件推导编号族最大号 + 在役份数（归档缺口下不作连续区间伪装），
+#          模板增减时本测试无需再改（仅保留 1–15 过期哨兵）。
 def test_t12_9_generated_agents_md_fidelity(dist, builder):
     agents = (dist / "AGENTS.md").read_text(encoding="utf-8")
     assert "防漂移铁律" in agents, "generated AGENTS.md missing 防漂移铁律"
-    n_tpl = len(list((dist / "templates").glob("template-type*.html")))
-    assert f"Type 1–{n_tpl}" in agents, (
-        f"generated AGENTS.md template range stale, expect Type 1–{n_tpl}"
+    tpl_nums = sorted(
+        int(re.fullmatch(r"template-type(\d+)\.html", f.name).group(1))
+        for f in (dist / "templates").glob("template-type*.html")
+    )
+    expected_range = f"Type 1–{tpl_nums[-1]}，共 {len(tpl_nums)} 份"
+    assert expected_range in agents, (
+        f"generated AGENTS.md template range stale, expect {expected_range!r}"
     )
     assert "Type 1–15" not in agents
     # 生成 README.md 同类保真锁：引擎计数曾与 AGENTS.md 同步漂移（v0.8.2 残留"2 个"）

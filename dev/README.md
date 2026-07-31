@@ -94,7 +94,7 @@ dev/
 
 | 类型 | 数量 | 说明 |
 |---|---|---|
-| 报告模板 | 19种（Type 1-Type 19） | `templates/` 单一事实源（template-base.css + type1-19.html + README 导航页） |
+| 报告模板 | 18种（Type 1–19，Type 12 已归档） | `templates/` 单一事实源（template-base.css + type1-19.html + README 导航页） |
 
 ### 产品设计（完成）
 
@@ -110,7 +110,7 @@ dev/
 
 | 想了解... | 去看... |
 |---|---|
-| 报告模板（Type 1-19 + 共享样式） | `templates/` |
+| 报告模板（Type 1–19，Type 12 已归档；含共享样式） | `templates/` |
 | 系统智能层总览 | `engine/systemic-warning-framework.md` + `engine/contagion-matrix.md` + `engine/concentration-framework.md` |
 | 产品愿景和魔法体验 | `product/product-overview.md` |
 | 怎么卖、卖给谁 | `product/commercial-model.md` |

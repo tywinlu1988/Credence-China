@@ -1,6 +1,6 @@
 ---
 name: credit-report-builder
-description: Use when turning a completed Chinese fixed-income credit analysis into a deliverable report — selecting the correct report template (Type 1–19), mapping findings to the L0/L1/L2 output tiers, rendering a multi-stakeholder dashboard, or assembling a layered credit report from an analysis artifact. Triggers on '生成报告', '出一份授信审批报告', '做成仪表盘', 'L0信号卡', or when a work-path sheet's templates must be produced. Requires an upstream analysis artifact; does not perform analysis itself.
+description: Use when turning a completed Chinese fixed-income credit analysis into a deliverable report — selecting the correct report template (Type 1–19, Type 12 archived), mapping findings to the L0/L1/L2 output tiers, rendering a multi-stakeholder dashboard, or assembling a layered credit report from an analysis artifact. Triggers on '生成报告', '出一份授信审批报告', '做成仪表盘', 'L0信号卡', or when a work-path sheet's templates must be produced. Requires an upstream analysis artifact; does not perform analysis itself.
 ---
 
 ## Purpose
@@ -22,7 +22,7 @@ description: Use when turning a completed Chinese fixed-income credit analysis i
 ## Assembly Protocol（装配协议）
 
 1. **读 join key**：从路径单与分析产物取 `path_id`，校验它指向注册表中的已注册路径；不一致即停止并上报。
-2. **选模板**：按 `path_id` 在 registry 的 `templates` 字段取模板清单（Type 1–19 或允许的标记值 `planned` / `L0-spec:`）。标记值含义以 registry §schema 为准；命中 `planned` 须如实告知"模板待开发"，不得伪造渲染产物。
+2. **选模板**：按 `path_id` 在 registry 的 `templates` 字段取模板清单（Type 1–19，Type 12 已归档；或允许的标记值 `planned` / `L0-spec:`）。标记值含义以 registry §schema 为准；命中 `planned` 须如实告知"模板待开发"，不得伪造渲染产物。
 3. **映射分层**：把分析产物映射到 L0 信号卡 / L1 快照 / L2 深度报告三层。三层的定义、消费时间与信息密度以 `dev/engine/output-layered-framework.md` §二（三层总览）/§三（L0 信号卡）/§五（L2 深度报告）为单一事实源，本 skill 不重新定义。
 4. **渲染**：用 `dev/templates/` 的模板装配报告；完备性灯号口径见 output-layered-framework §8.4。
 5. **写文件**：将装配完成的每份报告**写入磁盘为独立 `.html` 文件**（每个 registry `templates` 字段指定的模板产出一份）。文件命名规则：`{发行人简称}-{路径简称}-{日期}.html`（示例：`隆基绿能-审贷评级-20260729.html`、`某城投-盯市信号卡-20260729.html`）。若同一路径产出多份报告（如 Type 1 + Type 6），第二份起加报告类型标识，如 `{发行人简称}-{路径简称}-完备性报告-{日期}.html`。报告为完全自包含 HTML（CSS 已内联于模板 `<style>` 块首段），可直接在浏览器打开或转发。写入位置：当前工作目录或用户指定目录，文件名写入 `rendered` 列表。
