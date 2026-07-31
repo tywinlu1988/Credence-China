@@ -176,6 +176,8 @@ SRI取值范围为0-3+，对应温度计四级体系（见§三）。
 | 3.0-5.0 (B+ 至 BB+) | 2 | 2.5 | 3.0 | 3.0 | 3.0 |
 | < 3.0 (CCC/B) | 3 | 3.0 | 3.0 | 3.0 | 3.0 |
 
+**快速估算（无需逐行业加权时）：** SRI估值 ≈ (A×3 + B×2 + C×1 + D×0) / 13 × 权重调整因子，其中 A/B/C/D 分别为风险得分 ≥3 / 2.0-2.9 / 1.0-1.9 / <1.0 的行业数，权重调整因子 ≈ 1.3（城投债等高权重行业的主导效应）。精确计算以 `src/sri_calculator.py` 为准。
+
 **阈值设定的理由：**
 
 | 基准分阈值 | 理论依据 |
@@ -1305,91 +1307,7 @@ linked_sri(industries, holdings, matrix, escalation_factors)
 
 ## 十六、附录
 
-### 附录A：信号聚合算法伪代码
-
-```
-function calculate_SRI(industries, weights):
-    """
-    计算系统性风险指数
-    
-    参数:
-      industries: 13个行业的字典列表，每个元素包含:
-        - name: 行业名称
-        - track_A_score: 轨道A评分 (0-10)
-        - track_B_level: 轨道B等级 ('green'/'yellow'/'orange'/'red')
-        - outlook: 展望方向 ('positive'/'stable'/'negative')
-        - veto_triggered: 一票否决 (True/False)
-      weights: 13个行业的权重百分比列表（归一化，和为100%）
-    
-    返回:
-      SRI: 系统性风险指数 (float)
-      level: 温度计等级 (str)
-      details: 各行业风险得分明细
-    """
-    
-    total_score = 0
-    details = []
-    
-    for i, ind in enumerate(industries):
-        # 1. 基准分来自轨道A评分
-        if ind.track_A_score < 3.0:
-            base = 3
-        elif ind.track_A_score < 5.0:
-            base = 2
-        elif ind.track_A_score < 6.0:
-            base = 1
-        else:
-            base = 0
-        
-        # 2. 展望惩罚
-        outlook_penalty = 0.5 if ind.outlook == 'negative' else 0
-        
-        # 3. 轨道B惩罚
-        if ind.track_B_level == 'red':
-            track_B_penalty = 1.5
-        elif ind.track_B_level == 'orange':
-            track_B_penalty = 1.0
-        elif ind.track_B_level == 'yellow':
-            track_B_penalty = 0.5
-        else:
-            track_B_penalty = 0
-        
-        # 4. 一票否决检查
-        if ind.veto_triggered:
-            risk_score = 3
-        else:
-            risk_score = min(base + outlook_penalty + track_B_penalty, 3.0)
-        
-        weighted_contribution = risk_score * weights[i]
-        total_score += weighted_contribution
-        
-        details.append({
-            'name': ind.name,
-            'risk_score': risk_score,
-            'base': base,
-            'outlook_penalty': outlook_penalty,
-            'track_B_penalty': track_B_penalty,
-            'veto': ind.veto_triggered,
-            'weight': weights[i],
-            'contribution': weighted_contribution
-        })
-    
-    SRI = total_score
-    
-    # 温度计判定
-    if SRI >= 1.8:
-        level = '🔴 危险'
-    elif SRI >= 1.0:
-        level = '🟠 警惕'
-    elif SRI >= 0.5:
-        level = '🟡 关注'
-    else:
-        level = '🟢 正常'
-    
-    return SRI, level, details
-```
-
-### 附录B：三个回测的SRI对比汇总
+### 附录A：三个回测的SRI对比汇总
 
 | 回测场景 | 时间窗口 | SRI估算 | 温度计 | 框架表现 |
 |---------|---------|---------|-------|---------|
@@ -1397,44 +1315,6 @@ function calculate_SRI(industries, weights):
 | 地产危机前 | 2021年3月 | 0.97 | 🟡关注(上沿) | 接近警惕阈值，识别了风险——良好 |
 | 疫情冲击 | 2020年2月 | 1.15 | 🟠警惕 | 实时反映危机严重程度——有效但无法提前 |
 | 2026年Q2 | 当前 | 0.57 | 🟡关注 | 城投债权重主导的温和风险——合理 |
-
-### 附录C：快速计算表
-
-使用下表快速估算任意13行业信号组合下的SRI：
-
-```
-SRI估值 = (A×3 + B×2 + C×1 + D×0) / 13 × 权重调整因子
-
-其中：
-  A = 高风险行业数（风险得分≥3，含一票否决强制3分）
-  B = 中高风险行业数（风险得分2.0-2.9）
-  C = 中等风险行业数（风险得分1.0-1.9）
-  D = 低风险行业数（风险得分<1.0）
-  
-  权重调整因子 ≈ 1.3（考虑城投债等权重行业的主导效应，默认加权因子为1.3）
-```
-
-**速查表：**
-
-| A(高风险) | B(中高风险) | C(中等风险) | D(低风险) | 加权SRI(估) | 温度计 |
-|-----------|-----------|-----------|----------|------------|-------|
-| 0 | 0 | 1 | 12 | 0.10 | 🟢正常 |
-| 0 | 1 | 2 | 10 | 0.31 | 🟢正常 |
-| 0 | 2 | 2 | 9 | 0.51 | 🟡关注 |
-| 1 | 0 | 3 | 9 | 0.58 | 🟡关注 |
-| 1 | 2 | 2 | 8 | 0.95 | 🟡关注(近警惕) |
-| 1 | 3 | 3 | 6 | 1.38 | 🟠警惕 |
-| 2 | 2 | 3 | 6 | 1.55 | 🟠警惕 |
-| 3 | 3 | 2 | 5 | 2.15 | 🔴危险 |
-| 4 | 4 | 3 | 2 | 3.02 | 🔴危险 |
-| 7 | 3 | 2 | 1 | 4.10 | 🔴危险(极端) |
-
-### 附录D：版本变更记录
-
-| 版本 | 日期 | 变更内容 | 作者 |
-|------|------|---------|------|
-| v0.6.8-alpha | 2026-07-10 | 初版创建：SRI信号聚合算法+温度计四级体系+3个历史回测+2026Q2当前计算+阈值敏感性分析+引擎集成方案 | 引擎团队 |
-| v0.7.0-alpha | 2026-07-10 | 系统智能层整合：引擎版本统一为v0.7.0-alpha，与传染矩阵/集中度框架形成完整M4组合风控体系 | 引擎团队 |
 
 ---
 
