@@ -242,7 +242,7 @@ def check_audit_versions() -> list[str]:
 
 
 def check_rating_map_consistency() -> list[str]:
-    """Flag any score-range -> rating table that deviates from the canonical 12-notch map."""
+    """Flag any score-range -> rating table that deviates from the canonical 18-notch map."""
     errors = []
     canonical_set = {(low, high, label) for low, high, label in CANONICAL_RATING_INTERVALS}
     for path in ENGINE_DIR.rglob("*.md"):
@@ -260,6 +260,33 @@ def check_rating_map_consistency() -> list[str]:
                     f"RATING_MAP: {path.relative_to(ENGINE_DIR)} has non-canonical "
                     f"interval/label ({low:g}-{high:g} -> {label})"
                 )
+    return errors
+
+
+AUTHORITATIVE_RATING_DOC = "dual-track-methodology.md"
+
+
+def check_single_source_rating_table() -> list[str]:
+    """L1: 18 档评级表只许出现在 dual-track-methodology.md（其 §六 HTML 注释规定的权威表）。
+
+    单文档含 ≥5 行评分区间→评级表行即判为表体复制（单档引用如 CCC 锁规则不触发）。
+    结构锁，与版本无关。
+    """
+    errors = []
+    for path in ENGINE_DIR.rglob("*.md"):
+        if "audits" in path.relative_to(ENGINE_DIR).parts:
+            continue
+        if path.name == AUTHORITATIVE_RATING_DOC:
+            continue
+        if any(p.match(path.name) for p in HISTORICAL_NAME_PATTERNS):
+            continue
+        text = path.read_text(encoding="utf-8")
+        rows = RATING_INTERVAL_RE.findall(text)
+        if len(rows) >= 5:
+            errors.append(
+                f"SINGLE_SOURCE: {path.relative_to(ENGINE_DIR)} 含 {len(rows)} 行评分区间→评级表行，"
+                f"18 档表权威定义仅在 {AUTHORITATIVE_RATING_DOC} §六，请改为指针引用"
+            )
     return errors
 
 
@@ -610,6 +637,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_registry_templates())
     errors.extend(check_registry_quality_gates())
     errors.extend(check_migration_matrix_structure())
+    errors.extend(check_single_source_rating_table())
     return errors
 
 

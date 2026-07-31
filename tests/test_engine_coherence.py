@@ -9,29 +9,6 @@ ROOT = Path(__file__).resolve().parent.parent
 ENGINE_DIR = ROOT / "dev" / "engine"
 SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "SKILL.md"
 
-# Authoritative 12-notch rating map from dual-track-methodology.md §六.
-# Each tuple is (low_score, high_score, rating_label).
-CANONICAL_RATING_INTERVALS = [
-    (9.5, 10.0, "AAA"),
-    (9.0, 9.4, "AA+"),
-    (8.5, 8.9, "AA"),
-    (8.0, 8.4, "AA-"),
-    (7.5, 7.9, "A+"),
-    (7.0, 7.4, "A"),
-    (6.5, 6.9, "A-"),
-    (6.0, 6.4, "BBB+"),
-    (5.5, 5.9, "BBB"),
-    (5.0, 5.4, "BBB-"),
-    (4.5, 4.9, "BB+"),
-    (4.0, 4.4, "BB"),
-    (3.5, 3.9, "BB-"),
-    (3.0, 3.4, "B+"),
-    (2.5, 2.9, "B"),
-    (2.0, 2.4, "B-"),
-    (1.0, 1.9, "CCC"),
-    (0.0, 0.9, "D"),
-]
-
 RATING_INTERVAL_RE = re.compile(
     r"\|\s*(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*\|\s*([A-D]{1,3}[+-]?)\s*\|"
 )
@@ -61,19 +38,23 @@ def _parse_rating_table(text: str, start_marker: str, end_marker: str | None = N
     return intervals
 
 
-def test_rating_map_consistency_in_systemic_warning_framework():
-    """The SRI input table must use the same canonical 12-notch map as the rest of the engine."""
+def test_rating_map_single_source_in_systemic_warning_framework():
+    """The SRI input section must not copy the 18-notch table; it points to the single source."""
     text = _read_engine_doc("systemic-warning-framework.md")
-    intervals = _parse_rating_table(
-        text,
-        start_marker="**信号A：轨道A行业评分**",
-        end_marker="**信号B：轨道B市场信号**",
+    start = text.find("**信号A：轨道A行业评分**")
+    assert start != -1, "信号A section missing from systemic-warning-framework.md"
+    section = text[start:]
+    end = section.find("**信号B：轨道B市场信号**", len("**信号A：轨道A行业评分**"))
+    assert end != -1, "信号B marker missing after 信号A in systemic-warning-framework.md"
+    section = section[:end]
+    intervals = _parse_rating_table(text, "**信号A：轨道A行业评分**", "**信号B：轨道B市场信号**")
+    assert intervals == [], (
+        f"systemic-warning-framework.md §2.1 must not copy the rating table body; "
+        f"found {len(intervals)} interval row(s)"
     )
-    assert intervals, "No rating intervals parsed from systemic-warning-framework.md"
-    assert intervals == CANONICAL_RATING_INTERVALS, (
-        f"Rating intervals in systemic-warning-framework.md do not match the canonical map.\n"
-        f"Expected: {CANONICAL_RATING_INTERVALS}\n"
-        f"Found: {intervals}"
+    assert "dual-track-methodology.md" in section and "§六" in section, (
+        "systemic-warning-framework.md §2.1 must point to the authoritative "
+        "18-notch table in dual-track-methodology.md §六"
     )
 
 
