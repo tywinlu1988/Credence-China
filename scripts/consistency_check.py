@@ -360,11 +360,11 @@ def check_concentration_single_source() -> list[str]:
 
 AUTHORITATIVE_VETO_DOC = "industry-framework.md"
 VETO_MARKERS = [
-    "PERC产能占比>70%（技术路线被淘汰信号）",
-    "数控系统+主轴+伺服全部外采无国内替代",
-    "核心管线III期临床失败",
-    "核心客户租约到期且确认不续约",
-    "三类注册证到期且无法续期",
+    "PERC产能",
+    "III期临床",
+    "三类注册证",
+    "数控系统+主轴+伺服",
+    "租约到期且确认不续约",
 ]
 
 
