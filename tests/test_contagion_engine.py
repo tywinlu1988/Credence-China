@@ -1,8 +1,9 @@
 """WP-M4-02 contagion_engine 测试。
 
-单一事实源纪律：漂移门的期望值全部从文档运行时解析（§2.3.1 系数表、§5.5/5.6
-top3、§3.1 链路清单、§3.3 计数），测试不复制任何矩阵数值；计算层测试用手工
-fixture 小矩阵。
+单一事实源纪律：漂移门的期望值全部从文档运行时解析（§5.5 top3 行合计总分、
+§5.5/5.6 top3 名单、§3.1 链路清单、§3.3 计数），测试不复制任何矩阵数值；计算层
+测试用手工 fixture 小矩阵。v0.11.0 起 systemic §2.3.1 静态系数表已删除（L5 单源锁），
+值级漂移门改挂传染矩阵权威节 §5.5。
 """
 
 import re
@@ -27,14 +28,6 @@ from src.contagion_engine import (
 from src.path_sheet import engine_dir
 
 MATRIX_MD = engine_dir() / "contagion-matrix.md"
-SYSTEMIC_MD = engine_dir() / "systemic-warning-framework.md"
-
-# systemic §2.3.1 表的别名形态 → §2.4 规范名（两处文档的行业名写法不一致）
-_NAME_ALIASES = {"城投债(LGFV)": "城投债 / LGFV"}
-
-
-def _canonical(name: str) -> str:
-    return _NAME_ALIASES.get(name, name)
 
 
 @pytest.fixture(scope="module")
@@ -65,18 +58,28 @@ def test_load_matrix_unknown_pair_raises(matrix):
 
 # ---------------- 漂移门（值全部来自文档本身） ----------------
 
-def _systemic_coefficient_table():
-    """解析 systemic §2.3.1：{行业: 行合计总分}。"""
-    text = _doc_text(SYSTEMIC_MD)
-    sec = re.search(r"#### 2\.3\.1.*?(?=####|\Z)", text, re.DOTALL).group(0)
-    out = {}
-    for m in re.finditer(r"^\|\s*\d+\s*\|\s*(.+?)\s*\|\s*(\d+)\s*\|", sec, re.MULTILINE):
-        out[_canonical(m.group(1).strip())] = int(m.group(2))
-    return out
+def _section_top3_scores(header_regex):
+    """解析 contagion-matrix §5.5/§5.6 top3 表：{行业: 总分}。"""
+    text = _doc_text()
+    sec = re.search(header_regex + r".*?(?=###|\Z)", text, re.DOTALL).group(0)
+    return {
+        m.group(1).strip(): int(m.group(2))
+        for m in re.finditer(
+            r"^\|\s*\*\*\d+\*\*\s*\|\s*\*\*(.+?)\*\*\s*\|\s*\*\*(\d+)\*\*\s*\|",
+            sec,
+            re.MULTILINE,
+        )
+    }
 
 
-def test_row_sums_match_systemic_table(matrix):
-    assert row_sums(matrix) == _systemic_coefficient_table()
+def test_super_spreader_scores_match_doc(matrix):
+    """§5.5 超级传染者 top3 的行合计总分与引擎派生一致（systemic §2.3.1 静态表
+    删除后的值级漂移门，挂权威节 §5.5）。"""
+    rs = row_sums(matrix)
+    top3 = _section_top3_scores(r"### 5\.5")
+    assert len(top3) == 3
+    for name, score in top3.items():
+        assert rs[name] == score
 
 
 def _section_top3(header_regex):
@@ -136,13 +139,6 @@ def test_contagion_coefficients_normalized(matrix):
     assert len(coefs) == 13
     mean = sum(coefs.values()) / len(coefs)
     assert abs(mean - 1.0) < 1e-9  # 系数均值恒为 1（行合计/均值）
-    # 与 systemic §2.3.1 的系数列一致（容差：文档保留 3 位小数）
-    text = _doc_text(SYSTEMIC_MD)
-    for m in re.finditer(
-        r"^\|\s*\d+\s*\|\s*(.+?)\s*\|\s*\d+\s*\|\s*\d+\s*/\s*[\d.]+\s*=\s*([\d.]+)\s*\|",
-        text, re.MULTILINE,
-    ):
-        assert abs(coefs[_canonical(m.group(1).strip())] - float(m.group(2))) < 5e-4
 
 
 def test_sri_weights():

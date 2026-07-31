@@ -324,6 +324,23 @@ def check_migration_matrix_single_source() -> list[str]:
     return errors
 
 
+def check_contagion_strength_single_source() -> list[str]:
+    """L5: 传染力系数由 contagion_engine 运行时从传染矩阵派生——静态副本（含派生均值
+    "19.38" 或矩阵附录B 排序表）一律报错。"""
+    errors = []
+    for path in _iter_live_engine_docs():
+        text = path.read_text(encoding="utf-8")
+        if "19.38" in text:
+            errors.append(
+                f"SINGLE_SOURCE: {path.relative_to(ENGINE_DIR)} 含派生均值 19.38 的静态副本，"
+                f"传染力系数由 src/contagion_engine.py 运行时派生，文档只留公式"
+            )
+    matrix = ENGINE_DIR / "contagion-matrix.md"
+    if matrix.exists() and "### 附录B" in matrix.read_text(encoding="utf-8"):
+        errors.append("SINGLE_SOURCE: contagion-matrix.md 附录B（传染力排序静态副本，与 §5.5 冲突）应删除")
+    return errors
+
+
 TEMPLATE_MARKER_RE = re.compile(r"^L0-spec:\s*(\S+)\s+§\S+$")
 QG_REF_RE = re.compile(r"\((dev/[^)]+\.md)\s+§([^\s)]+)\)")
 MIGRATION_RATINGS = [
@@ -674,6 +691,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_single_source_rating_table())
     errors.extend(check_single_source_lgd_table())
     errors.extend(check_migration_matrix_single_source())
+    errors.extend(check_contagion_strength_single_source())
     return errors
 
 
