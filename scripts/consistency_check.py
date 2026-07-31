@@ -341,6 +341,23 @@ def check_contagion_strength_single_source() -> list[str]:
     return errors
 
 
+def check_concentration_single_source() -> list[str]:
+    """L6: 五维集中度框架的权威文档是 concentration-framework.md（concentration_scorer.py
+    解析源）；multi-stakeholder §5.2 的 v0.7.0 前初始版本副本（含冲突阈值）禁止复活。"""
+    errors = []
+    for path in _iter_live_engine_docs():
+        text = path.read_text(encoding="utf-8")
+        rel = path.relative_to(ENGINE_DIR)
+        if path.name == "multi-stakeholder.md" and "初始版本定义" in text:
+            errors.append(f"SINGLE_SOURCE: {rel} 含自认过期的集中度初始版本副本，应仅留指针")
+        if "单一行业 > 30%" in text:
+            errors.append(
+                f"SINGLE_SOURCE: {rel} 含已废止的集中度阈值（单一行业 > 30%），"
+                f"权威阈值见 concentration-framework.md §2.2.4（MAX1 <25%/25-40%/40-60%/≥60%）"
+            )
+    return errors
+
+
 TEMPLATE_MARKER_RE = re.compile(r"^L0-spec:\s*(\S+)\s+§\S+$")
 QG_REF_RE = re.compile(r"\((dev/[^)]+\.md)\s+§([^\s)]+)\)")
 MIGRATION_RATINGS = [
@@ -692,6 +709,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_single_source_lgd_table())
     errors.extend(check_migration_matrix_single_source())
     errors.extend(check_contagion_strength_single_source())
+    errors.extend(check_concentration_single_source())
     return errors
 
 
