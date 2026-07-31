@@ -264,6 +264,16 @@ def check_rating_map_consistency() -> list[str]:
 
 
 AUTHORITATIVE_RATING_DOC = "dual-track-methodology.md"
+AUTHORITATIVE_LGD_DOC = "lgd-recovery-framework.md"
+
+
+def _iter_live_engine_docs():
+    for path in ENGINE_DIR.rglob("*.md"):
+        if "audits" in path.relative_to(ENGINE_DIR).parts:
+            continue
+        if any(p.match(path.name) for p in HISTORICAL_NAME_PATTERNS):
+            continue
+        yield path
 
 
 def check_single_source_rating_table() -> list[str]:
@@ -273,12 +283,8 @@ def check_single_source_rating_table() -> list[str]:
     结构锁，与版本无关。
     """
     errors = []
-    for path in ENGINE_DIR.rglob("*.md"):
-        if "audits" in path.relative_to(ENGINE_DIR).parts:
-            continue
+    for path in _iter_live_engine_docs():
         if path.name == AUTHORITATIVE_RATING_DOC:
-            continue
-        if any(p.match(path.name) for p in HISTORICAL_NAME_PATTERNS):
             continue
         text = path.read_text(encoding="utf-8")
         rows = RATING_INTERVAL_RE.findall(text)
@@ -286,6 +292,34 @@ def check_single_source_rating_table() -> list[str]:
             errors.append(
                 f"SINGLE_SOURCE: {path.relative_to(ENGINE_DIR)} 含 {len(rows)} 行评分区间→评级表行，"
                 f"18 档表权威定义仅在 {AUTHORITATIVE_RATING_DOC} §六，请改为指针引用"
+            )
+    return errors
+
+
+def check_single_source_lgd_table() -> list[str]:
+    """L2: LGD 五级表只许出现在 lgd-recovery-framework.md §二。"""
+    errors = []
+    for path in _iter_live_engine_docs():
+        if path.name == AUTHORITATIVE_LGD_DOC:
+            continue
+        rows = re.findall(r"^\|\s*LGD[1-5]\s*\|", path.read_text(encoding="utf-8"), re.MULTILINE)
+        if len(rows) >= 3:
+            errors.append(
+                f"SINGLE_SOURCE: {path.relative_to(ENGINE_DIR)} 含 {len(rows)} 行 LGD 等级表行，"
+                f"权威定义仅在 {AUTHORITATIVE_LGD_DOC} §二，请改为指针引用"
+            )
+    return errors
+
+
+def check_migration_matrix_single_source() -> list[str]:
+    """L4: 迁移矩阵权威版本在 outlook-monitoring-framework.md §5.1；
+    "1年后维持" 是已废止的 dual-track 副本表头，出现即报错。"""
+    errors = []
+    for path in _iter_live_engine_docs():
+        if "1年后维持" in path.read_text(encoding="utf-8"):
+            errors.append(
+                f"SINGLE_SOURCE: {path.relative_to(ENGINE_DIR)} 含已废止的迁移矩阵副本（表头 '1年后维持'），"
+                f"权威版本在 outlook-monitoring-framework.md §5.1"
             )
     return errors
 
@@ -638,6 +672,8 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_registry_quality_gates())
     errors.extend(check_migration_matrix_structure())
     errors.extend(check_single_source_rating_table())
+    errors.extend(check_single_source_lgd_table())
+    errors.extend(check_migration_matrix_single_source())
     return errors
 
 
