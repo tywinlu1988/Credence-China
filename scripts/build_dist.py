@@ -13,7 +13,7 @@ dist/credence/
 ├── .claude-plugin/plugin.json                                   (生成)
 ├── .claude/skills/<4 skills>/{SKILL.md,references/}            (dev/.claude/skills 复制+重写)
 ├── engine/          (dev/engine 剔除 audits/, 重写+清除溯源指针)
-├── templates/       (dev/templates 全量)
+├── templates/       (dev/templates 剔除 archive/ 历史留档)
 ├── src/             (剔除 __pycache__/*.pyc, 注释重写)
 └── adapters/codex.md (自 docs/adapters 移入+重写)
 
@@ -109,14 +109,17 @@ def _write_text(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8", newline="\n")
 
 
-def _copy_and_transform(src: Path, dst: Path, log: list, scrub: bool) -> None:
+def _copy_and_transform(src: Path, dst: Path, log: list, scrub: bool, exclude_dirs: tuple = ()) -> None:
     for f in sorted(src.rglob("*")):
         if f.is_dir():
             continue
-        if "__pycache__" in f.parts or f.suffix == ".pyc" or f.name == "settings.local.json":
-            log.append(f"excluded: {f.relative_to(src)}")
-            continue
         rel = f.relative_to(src)
+        if exclude_dirs and any(part in exclude_dirs for part in rel.parts[:-1]):
+            log.append(f"excluded: {rel}")
+            continue
+        if "__pycache__" in f.parts or f.suffix == ".pyc" or f.name == "settings.local.json":
+            log.append(f"excluded: {rel}")
+            continue
         out = dst / rel
         if f.suffix in TEXT_EXTS:
             text = f.read_text(encoding="utf-8")
@@ -137,6 +140,11 @@ def _version() -> str:
     text = (DEV / "engine" / "engine-overview.md").read_text(encoding="utf-8")
     m = re.search(r"\*\*版本\*\*\s*[:：]\s*(\S+)", text)
     return m.group(1) if m else "v0.10.4-release"
+
+
+def _template_range() -> int:
+    """在役模板数（顶层非递归 glob；archive/ 历史留档不计入）。T12.9 保真锁同源真值。"""
+    return len(list((DEV / "templates").glob("template-type*.html")))
 
 
 def _gen_agents_md(v: str) -> str:
@@ -180,7 +188,7 @@ def _gen_agents_md(v: str) -> str:
 |---|---|---|
 | `credit-analysis-router` | 需求模糊或复合（"帮我看看这家公司""该做哪种分析""该从哪儿入手"），需先四问路由到工作路径 | `.claude/skills/credit-analysis-router/SKILL.md` |
 | `fixed-income-credit-analysis` | 已点名的具体方法论任务或引擎路径，按路径单或核心文档集执行分析 | `.claude/skills/fixed-income-credit-analysis/SKILL.md` |
-| `credit-report-builder` | 把完成的信用分析装配为交付报告（选模板 Type 1–19、映射 L0/L1/L2 层、装配仪表盘）；需上游分析产物，自身不做分析 | `.claude/skills/credit-report-builder/SKILL.md` |
+| `credit-report-builder` | 把完成的信用分析装配为交付报告（选模板 Type 1–{_template_range()}、映射 L0/L1/L2 层、装配仪表盘）；需上游分析产物，自身不做分析 | `.claude/skills/credit-report-builder/SKILL.md` |
 | `credit-qa-verifier` | 交付前复核报告/分析（质量门、密度规则、一票否决上限、Mode B 护栏、单源合规）；四段链终态质检 | `.claude/skills/credit-qa-verifier/SKILL.md` |
 
 ## 四段管线
@@ -206,7 +214,7 @@ def _gen_agents_md(v: str) -> str:
 
 无明确指令时也不得自由发挥。以下禁令对**最终交付物与对话中间产物**（调研总结、维度清单、过程评分表）同等生效：
 
-1. **禁自造报告形式**：交付报告一律使用 `templates/` 中工作路径注册表为该路径指定的模板（Type 1–19），禁止自行设计版式或"参考模板风格自制"；无可用模板时如实告知，不自创。
+1. **禁自造报告形式**：交付报告一律使用 `templates/` 中工作路径注册表为该路径指定的模板（Type 1–{_template_range()}），禁止自行设计版式或"参考模板风格自制"；无可用模板时如实告知，不自创。
 2. **禁自造分析维度/评分体系/方法论框架**：一切维度、权重结构、评分表、分析流程以 `engine/` 文档为唯一来源，且可引用到具体章节；文档未定义 → 输出 `引擎未定义`，不得用通用信用分析先验补位。
 3. **禁偏离路径单**：分析按路径单 `engine_reading_order` 执行，不另立引擎文档之外的分析框架。
 4. **中间产物同受约束**：对话过程中的调研总结、维度清单、过程评分同样必须可溯源至引擎文档，不得即兴结构。
@@ -334,7 +342,7 @@ def _gen_readme_md(v: str) -> str:
   - `credit-report-builder` — 装配交付报告（选模板、映射 L0/L1/L2）
   - `credit-qa-verifier` — 四段链终态质检（质量门 + 强制检查）
 - `engine/` — {len(CORE_DOCS)} 份方法论文档（阈值/权重/评级映射的单一事实源）
-- `templates/` — Type 1–19 报告模板
+- `templates/` — Type 1–{_template_range()} 报告模板
 - `src/` — 可执行编排器与 5 个编码引擎（composite_scorer 旗舰聚合、concentration_scorer 五维集中度、contagion_engine 传染矩阵、sri_calculator SRI、outlook_engine 展望监控）
 - `adapters/` — 按工具的深度适配说明
 """
@@ -462,7 +470,7 @@ def build(out_dir=None) -> list:
             dst = out / "engine" / rel
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(f, dst)
-    _copy_and_transform(DEV / "templates", out / "templates", log, scrub=True)
+    _copy_and_transform(DEV / "templates", out / "templates", log, scrub=True, exclude_dirs=("archive",))
     _copy_and_transform(ROOT / "src", out / "src", log, scrub=False)
 
     v = _version()

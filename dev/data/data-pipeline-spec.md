@@ -757,7 +757,7 @@ RenderOptions:
   # "type9" — 外部支持专项评估（P1+）
   # "type10" — ESG+治理风险扫描（P1+）
   # "type11" — 压力测试报告（P1+）
-  # "type12" — 引擎验证统计（P2+）
+  # "type12" — 引擎验证统计（P2+；历史留档，模板已移至 templates/archive/，当前无路径引用）
 
   # ── 报告信息 ──
   report_title: string          # 报告标题（如"隆基绿能信用分析报告"）
@@ -907,7 +907,7 @@ TemplateSystem:
       - "template-type9.html"         # 外部支持专项评估
       - "template-type10.html"        # ESG+治理风险扫描
       - "template-type11.html"        # 压力测试报告
-      - "template-type12.html"        # 引擎验证统计
+      - "archive/template-type12.html"  # 引擎验证统计（历史留档，无路径引用）
 
   # ── 当前模板状态 ──
   template_status:
@@ -924,7 +924,7 @@ TemplateSystem:
     template-type9.html: "已创建"
     template-type10.html: "已创建"
     template-type11.html: "已创建"
-    template-type12.html: "已创建"
+    archive/template-type12.html: "已创建（历史留档，已归档至 archive/）"
 
   # ── 渲染策略 ──
   rendering_strategy:
