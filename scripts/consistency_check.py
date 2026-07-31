@@ -358,6 +358,33 @@ def check_concentration_single_source() -> list[str]:
     return errors
 
 
+AUTHORITATIVE_VETO_DOC = "industry-framework.md"
+VETO_MARKERS = [
+    "PERC产能占比>70%（技术路线被淘汰信号）",
+    "数控系统+主轴+伺服全部外采无国内替代",
+    "核心管线III期临床失败",
+    "核心客户租约到期且确认不续约",
+    "三类注册证到期且无法续期",
+]
+
+
+def check_veto_list_single_source() -> list[str]:
+    """L3: 行业一票否决清单只许出现在 industry-framework.md §五（composite_scorer.py 消费源）。
+    ≥3 个否决标记同现即判为清单复制。"""
+    errors = []
+    for path in _iter_live_engine_docs():
+        if path.name == AUTHORITATIVE_VETO_DOC:
+            continue
+        text = path.read_text(encoding="utf-8")
+        hits = [m for m in VETO_MARKERS if m in text]
+        if len(hits) >= 3:
+            errors.append(
+                f"SINGLE_SOURCE: {path.relative_to(ENGINE_DIR)} 含否决清单标记 {hits}，"
+                f"权威清单仅在 {AUTHORITATIVE_VETO_DOC} §五，请改为指针引用"
+            )
+    return errors
+
+
 TEMPLATE_MARKER_RE = re.compile(r"^L0-spec:\s*(\S+)\s+§\S+$")
 QG_REF_RE = re.compile(r"\((dev/[^)]+\.md)\s+§([^\s)]+)\)")
 MIGRATION_RATINGS = [
@@ -710,6 +737,7 @@ def collect_errors(only_links: bool = False) -> list[str]:
     errors.extend(check_migration_matrix_single_source())
     errors.extend(check_contagion_strength_single_source())
     errors.extend(check_concentration_single_source())
+    errors.extend(check_veto_list_single_source())
     return errors
 
 
