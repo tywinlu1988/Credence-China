@@ -20,7 +20,7 @@
 | **external-support-framework.md** | 政府/集团/战投支持 · 支持能力vs意愿 · 上调规则 · 陷阱信号 | 需要评估外部支持 |
 | **outlook-monitoring-framework.md** | 评级展望 · 观察名单 · 持续监控 · 迁移矩阵 | 需要前瞻方向和监控机制 |
 | **financial-deep-dive.md** | 三表联动 · 营运资金 · FCF · 场景敏感性· 压力测试升级 | 需要财务深度分析 |
-| **governance-fraud-risk.md** | 20+欺诈信号 · 逃废债检测 · 存贷双高 · 治理评估 | 需要检测财务欺诈 |
+| **governance-fraud-risk.md** | 20+欺诈信号 · 逃废债检测 · 资产负债质量异常 · 治理评估 | 需要检测财务欺诈 |
 | **lgfv-framework.md** | 城投债双轨(政府+平台) · 四级分类 · 六大预警 | 需要分析城投债 |
 | **non-credit-risk-overlay.md** | 市场/操作/声誉/战略/流动性风险叠加层 | 需要非信用风险评估 |
 | [false-positive-negative-testing.md](../../validation/docs/false-positive-negative-testing.md) | 假阳性/假阴性测试方法 · 测试执行记录（存档于 validation/docs/，非项目本体） | 需要验证引擎准确性 |

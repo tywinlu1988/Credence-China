@@ -51,6 +51,11 @@
 ### `docs/` — 测试执行记录
 
 - `false-positive-negative-testing.md` — 假阳性/假阴性测试方法与多案例实测执行记录
+- `v0.8.0-end-to-end-walkthroughs.md` — v0.8.0 集成发布 11 条 active 工作路径端到端走查记录
+- `v0.10.2-wp-m0-02-walkthrough.md` — v0.10.2 WP-M0-02 审贷专项附加包走查（LGD 五级分类 + 外部支持评估）
+- `v0.10.2-wp-m1-02-walkthrough.md` — v0.10.2 WP-M1-02 双标的前瞻对比走查（两标的双轨对比 + 区分度）
+- `v0.10.2-wp-m4-04-walkthrough.md` — v0.10.2 WP-M4-04 组合压力测试走查（假想组合五维压力）
+- `v0.10.2-wp-x-04-walkthrough.md` — v0.10.2 WP-X-04 ESG/治理风险扫描走查（ESG 扫描 + 治理红旗）
 
 ---
 
