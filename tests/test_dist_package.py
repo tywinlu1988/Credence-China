@@ -242,16 +242,15 @@ def test_t12_9_generated_agents_md_fidelity(dist, builder):
 
 # T12.10 — dist 模板 CSS 已构建期注入：dev 源只含 @inject-css 标记，装配后 dist
 #          模板保持完全自包含（v0.10.1 语义），无标记残留、无外部样式链接。
-#          残留判定与构建器同源：标记契约"独占一行"锚定，注释行内提及不构成残留。
-INJECT_CSS_LINE_RE = re.compile(r"^<!-- @inject-css: template-base\.css -->$", re.MULTILINE)
+#          残留判定与构建器同源：直接复用 builder.INJECT_CSS_RE（单源，避免双处漂移）。
 
 
-def test_dist_templates_css_injected(dist):
+def test_dist_templates_css_injected(dist, builder):
     """T12.10：dist 模板 CSS 已构建期注入——自包含交付物语义（v0.10.1）在装配后保持。"""
     files = sorted((dist / "templates").glob("template-type*.html"))
     assert files, "dist 无模板"
     for f in files:
         text = f.read_text(encoding="utf-8")
         assert "CREDENCE BASE STYLES" in text, f"{f.name} 缺内联 base CSS"
-        assert not INJECT_CSS_LINE_RE.search(text), f"{f.name} 有注入标记残留"
+        assert not builder.INJECT_CSS_RE.search(text), f"{f.name} 有注入标记残留"
         assert '<link rel="stylesheet"' not in text, f"{f.name} 含外部 CSS 链接"

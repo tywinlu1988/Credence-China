@@ -99,8 +99,10 @@ EXEMPT: dict[str, dict[int, str]] = {
     },
     "template-type14.html": {},
     "template-type15.html": {
-        616: "温度计标尺 UI（结构性刻度组件）",
-        617: "温度计标尺 UI（同上）",
+        # v0.11.1 Task 5 删除 8 行死 CSS（.contagion-chain-card/.concentration-warn-card），
+        # 以下两行内容逐字未变，行号自 616-617 平移至 608-609。
+        608: "温度计标尺 UI（结构性刻度组件）",
+        609: "温度计标尺 UI（同上）",
     },
 }
 
