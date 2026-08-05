@@ -97,8 +97,8 @@ EXEMPT: dict[str, dict[int, str]] = {
     },
     "template-type14.html": {},
     "template-type15.html": {
-        740: "温度计标尺 UI（结构性刻度组件）",
-        741: "温度计标尺 UI（同上）",
+        616: "温度计标尺 UI（结构性刻度组件）",
+        617: "温度计标尺 UI（同上）",
     },
 }
 

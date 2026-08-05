@@ -429,107 +429,8 @@
     <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
       基于传染矩阵（contagion-matrix.md）的强度数据，识别当前环境下风险最高的传染链。
       排序依据：传染强度 × 源头行业风险得分 × 目标行业脆弱度。强度数据引用自传染矩阵的行业间关联评分（1-5级）。
+      本节为摘要，完整传导路径与量级估算见《跨行业传染分析报告》（WP-M4-02 / template-type13）。
     </p>
-
-    <div class="contagion-chain-card">
-      <span class="chain-tag">传染链 #1 · 传染强度：{传染链1强度}/5</span>
-      <h4>{传染链1名称}</h4>
-      <p class="chain-desc">
-        <strong>路径：</strong>{传染链1路径}<br>
-        <strong>传染类型：</strong>{传染链1类型}<br>
-        <strong>传染矩阵引用：</strong>{传染链1矩阵引用}<br>
-        <strong>源头行业风险得分：</strong>{传染链1源头得分}<br>
-        <strong>目标行业脆弱度：</strong>{传染链1目标脆弱度}<br>
-        <strong>升级因子触发状态：</strong>{传染链1升级因子状态}<br>
-        <strong>潜在影响量级：</strong>{传染链1影响量级}
-      </p>
-      <div class="warning-tier" style="margin-top:8px;">
-        <span class="warn-badge red">强度 {传染链1强度}/5</span>
-        <span class="warn-badge amber">源头风险 {传染链1源头等级}</span>
-        <span class="warn-badge amber">目标脆弱 {传染链1目标等级}</span>
-        <span class="warn-badge red">综合评级：{传染链1综合评级}</span>
-      </div>
-    </div>
-
-    <div class="contagion-chain-card">
-      <span class="chain-tag">传染链 #2 · 传染强度：{传染链2强度}/5</span>
-      <h4>{传染链2名称}</h4>
-      <p class="chain-desc">
-        <strong>路径：</strong>{传染链2路径}<br>
-        <strong>传染类型：</strong>{传染链2类型}<br>
-        <strong>传染矩阵引用：</strong>{传染链2矩阵引用}<br>
-        <strong>源头行业风险得分：</strong>{传染链2源头得分}<br>
-        <strong>目标行业脆弱度：</strong>{传染链2目标脆弱度}<br>
-        <strong>升级因子触发状态：</strong>{传染链2升级因子状态}<br>
-        <strong>潜在影响量级：</strong>{传染链2影响量级}
-      </p>
-      <div class="warning-tier" style="margin-top:8px;">
-        <span class="warn-badge red">强度 {传染链2强度}/5</span>
-        <span class="warn-badge amber">源头风险 {传染链2源头等级}</span>
-        <span class="warn-badge amber">目标脆弱 {传染链2目标等级}</span>
-        <span class="warn-badge red">综合评级：{传染链2综合评级}</span>
-      </div>
-    </div>
-
-    <div class="contagion-chain-card">
-      <span class="chain-tag">传染链 #3 · 传染强度：{传染链3强度}/5</span>
-      <h4>{传染链3名称}</h4>
-      <p class="chain-desc">
-        <strong>路径：</strong>{传染链3路径}<br>
-        <strong>传染类型：</strong>{传染链3类型}<br>
-        <strong>传染矩阵引用：</strong>{传染链3矩阵引用}<br>
-        <strong>源头行业风险得分：</strong>{传染链3源头得分}<br>
-        <strong>目标行业脆弱度：</strong>{传染链3目标脆弱度}<br>
-        <strong>升级因子触发状态：</strong>{传染链3升级因子状态}<br>
-        <strong>潜在影响量级：</strong>{传染链3影响量级}
-      </p>
-      <div class="warning-tier" style="margin-top:8px;">
-        <span class="warn-badge red">强度 {传染链3强度}/5</span>
-        <span class="warn-badge amber">源头风险 {传染链3源头等级}</span>
-        <span class="warn-badge amber">目标脆弱 {传染链3目标等级}</span>
-        <span class="warn-badge red">综合评级：{传染链3综合评级}</span>
-      </div>
-    </div>
-
-    <div class="contagion-chain-card">
-      <span class="chain-tag">传染链 #4 · 传染强度：{传染链4强度}/5</span>
-      <h4>{传染链4名称}</h4>
-      <p class="chain-desc">
-        <strong>路径：</strong>{传染链4路径}<br>
-        <strong>传染类型：</strong>{传染链4类型}<br>
-        <strong>传染矩阵引用：</strong>{传染链4矩阵引用}<br>
-        <strong>源头行业风险得分：</strong>{传染链4源头得分}<br>
-        <strong>目标行业脆弱度：</strong>{传染链4目标脆弱度}<br>
-        <strong>升级因子触发状态：</strong>{传染链4升级因子状态}<br>
-        <strong>潜在影响量级：</strong>{传染链4影响量级}
-      </p>
-      <div class="warning-tier" style="margin-top:8px;">
-        <span class="warn-badge red">强度 {传染链4强度}/5</span>
-        <span class="warn-badge amber">源头风险 {传染链4源头等级}</span>
-        <span class="warn-badge amber">目标脆弱 {传染链4目标等级}</span>
-        <span class="warn-badge red">综合评级：{传染链4综合评级}</span>
-      </div>
-    </div>
-
-    <div class="contagion-chain-card">
-      <span class="chain-tag">传染链 #5 · 传染强度：{传染链5强度}/5</span>
-      <h4>{传染链5名称}</h4>
-      <p class="chain-desc">
-        <strong>路径：</strong>{传染链5路径}<br>
-        <strong>传染类型：</strong>{传染链5类型}<br>
-        <strong>传染矩阵引用：</strong>{传染链5矩阵引用}<br>
-        <strong>源头行业风险得分：</strong>{传染链5源头得分}<br>
-        <strong>目标行业脆弱度：</strong>{传染链5目标脆弱度}<br>
-        <strong>升级因子触发状态：</strong>{传染链5升级因子状态}<br>
-        <strong>潜在影响量级：</strong>{传染链5影响量级}
-      </p>
-      <div class="warning-tier" style="margin-top:8px;">
-        <span class="warn-badge red">强度 {传染链5强度}/5</span>
-        <span class="warn-badge amber">源头风险 {传染链5源头等级}</span>
-        <span class="warn-badge amber">目标脆弱 {传染链5目标等级}</span>
-        <span class="warn-badge red">综合评级：{传染链5综合评级}</span>
-      </div>
-    </div>
 
     <div class="card" style="margin-top:14px;">
       <h3>传染风险摘要</h3>
@@ -539,7 +440,10 @@
             <th>排名</th>
             <th>传染链</th>
             <th>传染强度</th>
+            <th>源头得分</th>
+            <th>目标脆弱度</th>
             <th>传染类型</th>
+            <th>影响量级</th>
             <th>综合警示</th>
           </tr>
         </thead>
@@ -548,35 +452,50 @@
             <td>1</td>
             <td>{传染链1名称}</td>
             <td><span class="tag tag-red">{传染链1强度}/5</span></td>
+            <td>{传染链1源头得分}</td>
+            <td>{传染链1目标脆弱度}</td>
             <td>{传染链1类型}</td>
+            <td>{传染链1影响量级}</td>
             <td><span class="tag tag-red">{传染链1综合评级}</span></td>
           </tr>
           <tr>
             <td>2</td>
             <td>{传染链2名称}</td>
             <td><span class="tag tag-red">{传染链2强度}/5</span></td>
+            <td>{传染链2源头得分}</td>
+            <td>{传染链2目标脆弱度}</td>
             <td>{传染链2类型}</td>
+            <td>{传染链2影响量级}</td>
             <td><span class="tag tag-red">{传染链2综合评级}</span></td>
           </tr>
           <tr>
             <td>3</td>
             <td>{传染链3名称}</td>
             <td><span class="tag tag-amber">{传染链3强度}/5</span></td>
+            <td>{传染链3源头得分}</td>
+            <td>{传染链3目标脆弱度}</td>
             <td>{传染链3类型}</td>
+            <td>{传染链3影响量级}</td>
             <td><span class="tag tag-amber">{传染链3综合评级}</span></td>
           </tr>
           <tr>
             <td>4</td>
             <td>{传染链4名称}</td>
             <td><span class="tag tag-amber">{传染链4强度}/5</span></td>
+            <td>{传染链4源头得分}</td>
+            <td>{传染链4目标脆弱度}</td>
             <td>{传染链4类型}</td>
+            <td>{传染链4影响量级}</td>
             <td><span class="tag tag-amber">{传染链4综合评级}</span></td>
           </tr>
           <tr>
             <td>5</td>
             <td>{传染链5名称}</td>
             <td><span class="tag tag-amber">{传染链5强度}/5</span></td>
+            <td>{传染链5源头得分}</td>
+            <td>{传染链5目标脆弱度}</td>
             <td>{传染链5类型}</td>
+            <td>{传染链5影响量级}</td>
             <td><span class="tag tag-amber">{传染链5综合评级}</span></td>
           </tr>
         </tbody>
@@ -584,6 +503,12 @@
       <div class="info-box info-purple" style="margin-top:10px;">
         <strong>传染风险综合评估：</strong>{传染风险综合评估——传染链之间的交叉放大效应、是否有多条传染链共享同一关键节点（关键节点识别）、在当前SRI温度下传染矩阵升级因子的协同状态、以及最需要关注的{关注传染链数}条传染链的组合风险。}
       </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px;">
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+        📎 本节为摘要联动视图。完整的跨行业传染分析见《跨行业传染分析报告》（WP-M4-02 路径产出 / template-type13.html）；多报告交付时经 report-index.html 导航。
+      </p>
     </div>
   </div>
 
@@ -599,115 +524,66 @@
       在当前系统性风险环境下，识别哪些集中度风险维度最具威胁性。
       结合行业集中度、区域集中度、评级集中度、期限集中度和融资渠道集中度的交叉分析，
       标注需要立即关注的高集中度敞口。
+      本节为摘要，完整五维集中度分析见《组合集中度评估报告》（WP-M4-01 / template-type14）。
     </p>
 
-    <div class="concentration-warn-card">
-      <span class="cw-tag">集中度风险 #1 · 优先级 P0</span>
-      <h4>{集中度风险1名称}</h4>
-      <p class="cw-desc">
-        <strong>集中度维度：</strong>{集中度风险1维度}<br>
-        <strong>当前敞口水平：</strong>{集中度风险1当前敞口}<br>
-        <strong>阈值位置：</strong>{集中度风险1阈值位置}<br>
-        <strong>与SRI的关联：</strong>{集中度风险1与SRI关联}<br>
-        <strong>传染放大效应：</strong>{集中度风险1传染放大描述}<br>
-        <strong>建议监控指标：</strong>{集中度风险1监控指标}
-      </p>
-      <div class="warning-tier" style="margin-top:8px;">
-        <span class="warn-badge red">影响量级：{集中度风险1量级}</span>
-        <span class="warn-badge amber">触发概率：{集中度风险1概率}</span>
-        <span class="warn-badge red">优先级 P0</span>
-      </div>
-    </div>
-
-    <div class="concentration-warn-card">
-      <span class="cw-tag">集中度风险 #2 · 优先级 P1</span>
-      <h4>{集中度风险2名称}</h4>
-      <p class="cw-desc">
-        <strong>集中度维度：</strong>{集中度风险2维度}<br>
-        <strong>当前敞口水平：</strong>{集中度风险2当前敞口}<br>
-        <strong>阈值位置：</strong>{集中度风险2阈值位置}<br>
-        <strong>与SRI的关联：</strong>{集中度风险2与SRI关联}<br>
-        <strong>传染放大效应：</strong>{集中度风险2传染放大描述}<br>
-        <strong>建议监控指标：</strong>{集中度风险2监控指标}
-      </p>
-      <div class="warning-tier" style="margin-top:8px;">
-        <span class="warn-badge amber">影响量级：{集中度风险2量级}</span>
-        <span class="warn-badge amber">触发概率：{集中度风险2概率}</span>
-        <span class="warn-badge amber">优先级 P1</span>
-      </div>
-    </div>
-
-    <div class="concentration-warn-card">
-      <span class="cw-tag">集中度风险 #3 · 优先级 P1</span>
-      <h4>{集中度风险3名称}</h4>
-      <p class="cw-desc">
-        <strong>集中度维度：</strong>{集中度风险3维度}<br>
-        <strong>当前敞口水平：</strong>{集中度风险3当前敞口}<br>
-        <strong>阈值位置：</strong>{集中度风险3阈值位置}<br>
-        <strong>与SRI的关联：</strong>{集中度风险3与SRI关联}<br>
-        <strong>传染放大效应：</strong>{集中度风险3传染放大描述}<br>
-        <strong>建议监控指标：</strong>{集中度风险3监控指标}
-      </p>
-      <div class="warning-tier" style="margin-top:8px;">
-        <span class="warn-badge amber">影响量级：{集中度风险3量级}</span>
-        <span class="warn-badge green">触发概率：{集中度风险3概率}</span>
-        <span class="warn-badge amber">优先级 P1</span>
-      </div>
-    </div>
-
     <div class="card" style="margin-top:14px;">
-      <h3>五维集中度风险矩阵</h3>
+      <h3>集中度风险摘要</h3>
       <table>
         <thead>
           <tr>
-            <th>集中度维度</th>
-            <th>当前风险等级</th>
-            <th>SRI联动强度</th>
-            <th>传染放大风险</th>
-            <th>建议行动</th>
+            <th>#</th>
+            <th>风险项</th>
+            <th>维度</th>
+            <th>当前敞口</th>
+            <th>阈值位置</th>
+            <th>影响量级</th>
+            <th>触发概率</th>
+            <th>优先级</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>行业集中度</td>
-            <td><span class="tag tag-red">{行业集中度风险等级}</span></td>
-            <td><span class="tag tag-red">{行业集中度SRI联动}</span></td>
-            <td><span class="tag tag-red">{行业集中度传染放大}</span></td>
-            <td>{行业集中度行动}</td>
+            <td>1</td>
+            <td>{集中度风险1名称}</td>
+            <td>{集中度风险1维度}</td>
+            <td>{集中度风险1当前敞口}</td>
+            <td>{集中度风险1阈值位置}</td>
+            <td><span class="tag tag-red">{集中度风险1量级}</span></td>
+            <td><span class="tag tag-amber">{集中度风险1概率}</span></td>
+            <td><span class="priority-tag p0">P0</span></td>
           </tr>
           <tr>
-            <td>区域集中度</td>
-            <td><span class="tag tag-amber">{区域集中度风险等级}</span></td>
-            <td><span class="tag tag-amber">{区域集中度SRI联动}</span></td>
-            <td><span class="tag tag-amber">{区域集中度传染放大}</span></td>
-            <td>{区域集中度行动}</td>
+            <td>2</td>
+            <td>{集中度风险2名称}</td>
+            <td>{集中度风险2维度}</td>
+            <td>{集中度风险2当前敞口}</td>
+            <td>{集中度风险2阈值位置}</td>
+            <td><span class="tag tag-amber">{集中度风险2量级}</span></td>
+            <td><span class="tag tag-amber">{集中度风险2概率}</span></td>
+            <td><span class="priority-tag p1">P1</span></td>
           </tr>
           <tr>
-            <td>评级集中度</td>
-            <td><span class="tag tag-{评级集中度标签颜色}">{评级集中度风险等级}</span></td>
-            <td><span class="tag tag-{评级集中度SRI标签}">{评级集中度SRI联动}</span></td>
-            <td><span class="tag tag-{评级集中度传染标签}">{评级集中度传染放大}</span></td>
-            <td>{评级集中度行动}</td>
-          </tr>
-          <tr>
-            <td>期限集中度</td>
-            <td><span class="tag tag-{期限集中度标签颜色}">{期限集中度风险等级}</span></td>
-            <td><span class="tag tag-{期限集中度SRI标签}">{期限集中度SRI联动}</span></td>
-            <td><span class="tag tag-{期限集中度传染标签}">{期限集中度传染放大}</span></td>
-            <td>{期限集中度行动}</td>
-          </tr>
-          <tr>
-            <td>融资渠道集中度</td>
-            <td><span class="tag tag-{融资渠道标签颜色}">{融资渠道风险等级}</span></td>
-            <td><span class="tag tag-{融资渠道SRI标签}">{融资渠道SRI联动}</span></td>
-            <td><span class="tag tag-{融资渠道传染标签}">{融资渠道传染放大}</span></td>
-            <td>{融资渠道行动}</td>
+            <td>3</td>
+            <td>{集中度风险3名称}</td>
+            <td>{集中度风险3维度}</td>
+            <td>{集中度风险3当前敞口}</td>
+            <td>{集中度风险3阈值位置}</td>
+            <td><span class="tag tag-amber">{集中度风险3量级}</span></td>
+            <td><span class="tag tag-green">{集中度风险3概率}</span></td>
+            <td><span class="priority-tag p1">P1</span></td>
           </tr>
         </tbody>
       </table>
       <div class="info-box info-amber" style="margin-top:10px;">
         <strong>集中度综合评估：</strong>{集中度综合评估——在当前SRI环境下各维度的综合集中风险、维度间的叠加效应、以及SRI温度计升级时集中度框架将触发的自动调整规则（如SRI🟡关注时行业集中度权重从25%上浮至30%）。}
       </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px;">
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+        📎 本节为摘要联动视图。完整的组合集中度分析见《组合集中度评估报告》（WP-M4-01 路径产出 / template-type14.html）；多报告交付时经 report-index.html 导航。
+      </p>
     </div>
   </div>
 
@@ -1050,6 +926,7 @@
     <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
       温度计等级与传染矩阵升级因子（恐慌情绪、监管政策真空、高杠杆环境、信息不对称、时间节点效应）的联动分析。
       当温度计进入🟠或🔴时，系统性风险本身将充当全域升级因子，使传染矩阵全部链路强度+1~+2。
+      完整升级因子分析见《跨行业传染分析报告》§9（WP-M4-02 / template-type13）。
     </p>
 
     <div class="card">
@@ -1105,6 +982,12 @@
       <div class="info-box info-purple" style="margin-top:10px;">
         <strong>升级因子协同效应评估：</strong>{升级因子协同效应评估——在当前温度计{温度计等级}下，{已触发数}个升级因子处于激活状态。如果温度计升级至🟠警惕，将自动触发升级因子协同效应中的"两个及以上"规则，使得传染矩阵全部链路强度+1。当前需特别关注{最需关注的升级因子名称}的演化方向，该因子可能在{触发条件描述}时被激活。}
       </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px;">
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+        📎 本节为摘要联动视图。完整的升级因子分析见《跨行业传染分析报告》（WP-M4-02 路径产出 / template-type13.html）；多报告交付时经 report-index.html 导航。
+      </p>
     </div>
   </div>
 

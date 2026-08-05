@@ -902,18 +902,20 @@
     <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
       如果在传染发生前使用传染矩阵+集中度框架进行监测，最早何时可识别预警信号。
       回溯评估系统智能层在不同阶段的预警能力。
+      本节为摘要，SRI 温度计读数与红色行业清单见《系统性风险警报》（WP-M4-03 / template-type15）。
     </p>
 
     <div class="card card-red">
-      <h3>传染矩阵与集中度框架的回溯预警能力</h3>
+      <h3>系统智能层回溯预警摘要</h3>
       <table>
         <thead>
           <tr>
             <th>预警内容</th>
             <th>最早预警时点</th>
             <th>提前量</th>
-            <th>预警信号</th>
+            <th>可识别信号</th>
             <th>置信度</th>
+            <th>对应框架</th>
           </tr>
         </thead>
         <tbody>
@@ -923,6 +925,7 @@
             <td>{提前量描述}</td>
             <td><span class="tag tag-red">{预警信号}</span></td>
             <td><span class="text-green">高</span></td>
+            <td>传染矩阵+集中度框架</td>
           </tr>
           <tr>
             <td>{预警内容2——一级传导预警}</td>
@@ -930,6 +933,7 @@
             <td>{提前量描述}</td>
             <td><span class="tag tag-red">{预警信号}</span></td>
             <td><span class="text-green">高</span></td>
+            <td>传染矩阵+集中度框架</td>
           </tr>
           <tr>
             <td>{预警内容3——跨行业传染}</td>
@@ -937,6 +941,7 @@
             <td>{提前量描述}</td>
             <td><span class="tag tag-amber">{预警信号}</span></td>
             <td><span class="text-amber">中高</span></td>
+            <td>传染矩阵+集中度框架</td>
           </tr>
           <tr>
             <td>{预警内容4——融资冻结}</td>
@@ -944,6 +949,7 @@
             <td>{提前量描述}</td>
             <td><span class="tag tag-amber">{预警信号}</span></td>
             <td><span class="text-amber">中</span></td>
+            <td>传染矩阵+集中度框架</td>
           </tr>
           <tr>
             <td>{预警内容5——区域/系统性影响}</td>
@@ -951,6 +957,7 @@
             <td>{提前量描述}</td>
             <td><span class="tag tag-amber">{预警信号}</span></td>
             <td><span class="text-amber">中低</span></td>
+            <td>传染矩阵+集中度框架</td>
           </tr>
         </tbody>
       </table>
@@ -960,82 +967,10 @@
       </div>
     </div>
 
-    <div class="card" style="margin-top:14px;">
-      <h3>预警能力时间线回溯</h3>
-      <div class="timeline">
-        <div class="tl-item red">
-          <div class="tl-date">{预警时点1}</div>
-          <div><span class="warn-badge red">{预警级别}</span> {预警描述——红色表示确定性预警}</div>
-        </div>
-        <div class="tl-item red">
-          <div class="tl-date">{预警时点2}</div>
-          <div><span class="warn-badge red">{预警级别}</span> {预警描述}</div>
-        </div>
-        <div class="tl-item amber">
-          <div class="tl-date">{预警时点3}</div>
-          <div><span class="warn-badge amber">{预警级别}</span> {预警描述——琥珀色提示早期预警}</div>
-        </div>
-        <div class="tl-item amber">
-          <div class="tl-date">{预警时点4}</div>
-          <div><span class="warn-badge amber">{预警级别}</span> {预警描述}</div>
-        </div>
-        <div class="tl-item green">
-          <div class="tl-date">{预警时点5}</div>
-          <div><span class="warn-badge green">{预警级别}</span> {预警描述——绿色及早发现潜在信号}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card card-blue" style="margin-top:14px;">
-      <h3>传染矩阵参数优化建议</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>优化方向</th>
-            <th>当前引擎状态</th>
-            <th>改进建议</th>
-            <th>优先级</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{优化方向1}</td>
-            <td>{当前状态}</td>
-            <td>{改进建议}</td>
-            <td><span class="tag tag-red">P0</span></td>
-          </tr>
-          <tr>
-            <td>{优化方向2}</td>
-            <td>{当前状态}</td>
-            <td>{改进建议}</td>
-            <td><span class="tag tag-red">P0</span></td>
-          </tr>
-          <tr>
-            <td>{优化方向3}</td>
-            <td>{当前状态}</td>
-            <td>{改进建议}</td>
-            <td><span class="tag tag-red">P0</span></td>
-          </tr>
-          <tr>
-            <td>{优化方向4}</td>
-            <td>{当前状态}</td>
-            <td>{改进建议}</td>
-            <td><span class="tag tag-amber">P1</span></td>
-          </tr>
-          <tr>
-            <td>{优化方向5}</td>
-            <td>{当前状态}</td>
-            <td>{改进建议}</td>
-            <td><span class="tag tag-amber">P1</span></td>
-          </tr>
-          <tr>
-            <td>{优化方向6}</td>
-            <td>{当前状态}</td>
-            <td>{改进建议}</td>
-            <td><span class="tag tag-green">P2</span></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px;">
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+        📎 本节为摘要联动视图。完整的系统性风险预警分析见《系统性风险警报》（WP-M4-03 路径产出 / template-type15.html）；多报告交付时经 report-index.html 导航。
+      </p>
     </div>
   </div>
 

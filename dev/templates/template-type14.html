@@ -1031,10 +1031,11 @@
     <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
       将当前组合的集中项投射至传染矩阵中，识别集中风险在传染情景下的最差情景和蔓延路径。
       通过行业关联度矩阵计算集中项裂变后的组合损失分布。
+      本节为摘要，完整传染矩阵投射与最差情景推演见《跨行业传染分析报告》（WP-M4-02 / template-type13）。
     </p>
 
     <div class="contagion-link">
-      <h4>集中项在传染矩阵中的位置</h4>
+      <h4>集中项传染暴露摘要</h4>
       <table>
         <thead>
           <tr>
@@ -1076,92 +1077,40 @@
     </div>
 
     <div class="contagion-link" style="margin-top:12px;">
-      <h4>行业关联度传染矩阵</h4>
-      <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">
-        基于申万二级行业上下游关联度数据，构建关联度矩阵。行列交叉为行业间传染强度（0-1），
-        值越接近1表示关联度越强、传染风险越高。
-      </p>
+      <h4>最差情景速览</h4>
       <table>
         <thead>
           <tr>
-            <th>行业</th>
-            <th>{关联行业1}</th>
-            <th>{关联行业2}</th>
-            <th>{关联行业3}</th>
-            <th>{关联行业4}</th>
-            <th>{关联行业5}</th>
+            <th>情景</th>
+            <th>触发条件</th>
+            <th>波及深度</th>
+            <th>估算损失</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>{关联行业1}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度1-1}</td>
-            <td style="background:rgba(245,158,11,0.15);color:var(--amber);text-align:center;">{关联度1-2}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度1-3}</td>
-            <td style="background:rgba(239,68,68,0.15);color:var(--red);text-align:center;">{关联度1-4}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度1-5}</td>
+            <td>{最差情景1名称}</td>
+            <td>{最差情景1触发条件}</td>
+            <td>{最差情景1波及深度}</td>
+            <td class="text-red">{最差情景1估算损失}</td>
           </tr>
           <tr>
-            <td>{关联行业2}</td>
-            <td style="background:rgba(245,158,11,0.15);color:var(--amber);text-align:center;">{关联度2-1}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度2-2}</td>
-            <td style="background:rgba(239,68,68,0.15);color:var(--red);text-align:center;">{关联度2-3}</td>
-            <td style="background:rgba(245,158,11,0.15);color:var(--amber);text-align:center;">{关联度2-4}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度2-5}</td>
-          </tr>
-          <tr>
-            <td>{关联行业3}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度3-1}</td>
-            <td style="background:rgba(239,68,68,0.15);color:var(--red);text-align:center;">{关联度3-2}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度3-3}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度3-4}</td>
-            <td style="background:rgba(245,158,11,0.15);color:var(--amber);text-align:center;">{关联度3-5}</td>
-          </tr>
-          <tr>
-            <td>{关联行业4}</td>
-            <td style="background:rgba(239,68,68,0.15);color:var(--red);text-align:center;">{关联度4-1}</td>
-            <td style="background:rgba(245,158,11,0.15);color:var(--amber);text-align:center;">{关联度4-2}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度4-3}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度4-4}</td>
-            <td style="background:rgba(239,68,68,0.15);color:var(--red);text-align:center;">{关联度4-5}</td>
-          </tr>
-          <tr>
-            <td>{关联行业5}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度5-1}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度5-2}</td>
-            <td style="background:rgba(245,158,11,0.15);color:var(--amber);text-align:center;">{关联度5-3}</td>
-            <td style="background:rgba(239,68,68,0.15);color:var(--red);text-align:center;">{关联度5-4}</td>
-            <td style="background:rgba(34,197,94,0.15);color:var(--green);text-align:center;">{关联度5-5}</td>
+            <td>{最差情景2名称}</td>
+            <td>{最差情景2触发条件}</td>
+            <td>{最差情景2波及深度}</td>
+            <td class="text-amber">{最差情景2估算损失}</td>
           </tr>
         </tbody>
       </table>
-    </div>
-
-    <div class="contagion-link" style="margin-top:12px;">
-      <h4>最差传染情景推演</h4>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border-default); border-radius:8px; overflow:hidden; margin:14px 0;">
-        <div class="concentration-item" style="border-left:3px solid var(--red);">
-          <h5 style="color:var(--red);">情景一：{最差情景1名称}</h5>
-          <p style="font-size:12px;color:var(--text-secondary);line-height:1.6;">
-            <strong>触发条件：</strong>{最差情景1触发条件}<br>
-            <strong>传染路径：</strong>{最差情景1传染路径}<br>
-            <strong>波及深度：</strong>{最差情景1波及深度}<br>
-            <strong>估算损失：</strong><span class="c-stat" style="font-size:18px;">{最差情景1估算损失}</span>
-          </p>
-        </div>
-        <div class="concentration-item" style="border-left:3px solid var(--amber);">
-          <h5 style="color:var(--amber);">情景二：{最差情景2名称}</h5>
-          <p style="font-size:12px;color:var(--text-secondary);line-height:1.6;">
-            <strong>触发条件：</strong>{最差情景2触发条件}<br>
-            <strong>传染路径：</strong>{最差情景2传染路径}<br>
-            <strong>波及深度：</strong>{最差情景2波及深度}<br>
-            <strong>估算损失：</strong><span class="c-stat" style="font-size:18px;">{最差情景2估算损失}</span>
-          </p>
-        </div>
-      </div>
       <div class="info-box info-purple" style="margin-top:8px;">
         <strong>传染联动综合评估：</strong>{传染联动综合评估——集中项在传染矩阵中的风险暴露度、行业关联度对风险扩散的影响、分散化行动对传染风险的缓释效果。}
       </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px;">
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+        📎 本节为摘要联动视图。完整的跨行业传染分析见《跨行业传染分析报告》（WP-M4-02 路径产出 / template-type13.html）；多报告交付时经 report-index.html 导航。
+      </p>
     </div>
   </div>
 
