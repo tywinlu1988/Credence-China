@@ -79,7 +79,7 @@
 
 ### WP-M0-01 信贷审批单标的评级（✅ active）
 
-最核心路径：银行客户经理/信审对单一发行人做信贷审批评级。沿"行业金字塔定性评分 → 马赛克引擎信号提取与完备性评估 → 双轨交叉对撞 → 评级映射"全链路走通，交付评级+信号与数据完备性报告。已有永煤、紫光、华晨等走通案例。
+最核心路径：银行客户经理/信审对单一发行人做信贷审批评级。沿"行业金字塔定性评分 → 马赛克引擎信号提取与完备性评估 → 双轨交叉对撞 → 评级映射"全链路走通，交付评级+信号报告（Type 1 单文件，数据完备性评估为其附录）。已有永煤、紫光、华晨等走通案例。
 
 ```yaml
 id: WP-M0-01
@@ -97,7 +97,7 @@ engine_sequence:
 paradigm_selection: 六范式+LGFV（按行业映射表）
 templates:
   - dev/templates/template-type1.html
-outputs: [评级+信号, 完备性报告]
+outputs: [评级+信号+完备性附录]
 quality_gates:
   - "信号密度 (dev/engine/mosaic-engine.md §4.3)"
   - "一票否决 (dev/engine/industry-framework.md §五)"
