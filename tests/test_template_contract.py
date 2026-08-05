@@ -89,11 +89,13 @@ STYLE_BLOCK_RE = re.compile(r"<style>.*?</style>", re.DOTALL)
 # （v0.11.1 模板 marker 化后 base CSS 块坍缩为 1 行，豁免行号随真实文件行号同步平移，内容逐字未变。）
 EXEMPT: dict[str, dict[int, str]] = {
     "template-type8.html": {
-        44: "LGD1 等级定义区间（方法论，与 lgd-recovery-framework §2.1 一致）",
-        45: "LGD2 等级定义区间（同上）",
-        46: "LGD3 等级定义区间（同上）",
-        47: "LGD4 等级定义区间（同上）",
-        48: "LGD5 等级定义区间（同上）",
+        # v0.11.1 Type 9 并入 Type 8（§0 增支持结论模块、新增 §五~§十）：
+        # 以下五行内容逐字未变，行号自 44-48 平移至 55-59。
+        55: "LGD1 等级定义区间（方法论，与 lgd-recovery-framework §2.1 一致）",
+        56: "LGD2 等级定义区间（同上）",
+        57: "LGD3 等级定义区间（同上）",
+        58: "LGD4 等级定义区间（同上）",
+        59: "LGD5 等级定义区间（同上）",
     },
     "template-type14.html": {},
     "template-type15.html": {

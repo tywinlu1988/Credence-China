@@ -28,7 +28,7 @@
 | ID | 路径名 | 角色 | 调查方向 | 深度 | 模板 | 状态 |
 |---|---|---|---|---|---|---|
 | WP-M0-01 | 信贷审批单标的评级 | M0 | 行业金字塔→马赛克→双轨→评级 | L2 | Type 1 + Type 6 | ✅ active |
-| WP-M0-02 | 审贷专项附加包（LGD+外部支持） | M0 | lgd-recovery + external-support | 专项 | Type 8 + Type 9 | ✅ active |
+| WP-M0-02 | 审贷专项附加包（LGD+外部支持） | M0 | lgd-recovery + external-support | 专项 | Type 8 | ✅ active |
 | WP-M1-01 | 债券投资仪表盘 | M1 | M1 四维（相对价值/条款/流动性/事件） | L2 | Type 5 | ✅ active |
 | WP-M1-02 | 双标的前瞻对比 | M1 | 双轨对比+区分度分析 | L2 | Type 2 | ✅ active |
 | WP-M2-01 | 承销可行性评估 | M2 | 发行窗口+投资人匹配+可比定价 | 专项 | Type 16 | ✅ active |
@@ -124,7 +124,6 @@ engine_sequence:
 paradigm_selection: n/a（专项附加模块，在主体评级之上叠加，不重新选择范式）
 templates:
   - dev/templates/template-type8.html
-  - dev/templates/template-type9.html
 outputs: [LGD等级+回收率, 外部支持调整建议]
 quality_gates:
   - "LGD五级分类 (dev/engine/lgd-recovery-framework.md §二)"

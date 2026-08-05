@@ -5,8 +5,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="债项 LGD 评估报告模板 Type 8 · 优先级·抵押担保·回收路径·LGD 等级与回收率">
-<title>债项 LGD 评估 · {债项名称}</title>
+<meta name="description" content="审贷专项附加包模板 Type 8 · 债项 LGD 评估 + 外部支持专项评估 · 优先级·抵押担保·回收路径·LGD 等级·支持能力·支持意愿·支持上调·陷阱信号">
+<title>审贷专项附加包 · 债项 LGD 评估 + 外部支持专项评估 · {债项名称}</title>
 <!-- @inject-css: template-base.css -->
 <style>
 .hero { background: linear-gradient(135deg, #0f172a, #78350f, #f59e0b); }
@@ -17,13 +17,19 @@
 .lgd-cell .g-name { font-size: 16px; }
 .lgd-cell .g-range { font-size: 11px; color: var(--text-tertiary); font-weight: 400; }
 .rating-badge { display:inline-block; padding:2px 10px; border-radius:10px; font-weight:700; font-size:12px; }
+.uplift-band { display:flex; align-items:center; gap:14px; justify-content:center; margin:18px 0; font-size:15px; font-weight:700; }
+.uplift-band .arrow { color: var(--text-tertiary); font-size: 22px; }
+.uplift-band .from, .uplift-band .to { padding: 10px 22px; border-radius: 999px; }
+.uplift-band .from { background: var(--bg-tertiary); color: var(--text-secondary); }
+.uplift-band .to { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,.4); }
+.factor-table th, .factor-table td { text-align: left; padding: 8px 10px; vertical-align: top; }
 </style>
 </head>
 <body>
 <header class="hero">
-  <div class="chip">Type 8 · 债项 LGD 评估</div>
-  <h1>债项 LGD 评估报告 · {债项名称}</h1>
-  <div class="hero-sub">发行人 {主体名称} · 主体评级 {主体评级} · {报告日期}</div>
+  <div class="chip">Type 8 · 审贷专项附加包</div>
+  <h1>审贷专项附加包 · 债项 LGD 评估 + 外部支持专项评估 · {债项名称}</h1>
+  <div class="hero-sub">发行人 {主体名称} · 主体评级 {主体评级} · 支持方 {支持方} · {报告日期}</div>
 </header>
 
 <nav class="toc-nav">
@@ -32,7 +38,12 @@
   <a href="#s2">§2 抵押担保</a>
   <a href="#s3">§3 回收路径</a>
   <a href="#s4">§4 LGD 判定</a>
-  <a href="#s5">§5 数据完备性</a>
+  <a href="#s5">§5 主体与支持方</a>
+  <a href="#s6">§6 支持能力</a>
+  <a href="#s7">§7 支持意愿</a>
+  <a href="#s8">§8 支持上调</a>
+  <a href="#s9">§9 陷阱信号</a>
+  <a href="#s10">§10 数据完备性</a>
 </nav>
 
 <section id="s0">
@@ -48,6 +59,15 @@
     <div class="lgd-cell {LGD5样式}"><div class="g-name">LGD5</div><div class="g-range">&gt;80%</div></div>
   </div>
   <p class="alert green"><strong>当前定位：{当前LGD档位}</strong>（标记为引擎判定档位，非模板默认值）</p>
+  <div class="summary-card">
+    <div class="s-title">支持评估结论</div>
+    <div class="s-body">{支持结论一句话：支持方能力×意愿的综合判断与上调幅度}</div>
+  </div>
+  <div class="uplift-band">
+    <span class="from">{主体独立评级}</span>
+    <span class="arrow">→</span>
+    <span class="to">{支持后评级}（上调 {上调档位}）</span>
+  </div>
 </section>
 
 <section id="s1">
@@ -101,12 +121,71 @@
 </section>
 
 <section id="s5">
-  <h2>五、数据完备性</h2>
+  <h2>五、主体与支持方概况</h2>
+  <table>
+    <tr><th>项目</th><th>内容</th></tr>
+    <tr><td>被支持主体</td><td>{主体全称}（独立评级 {主体独立评级}）</td></tr>
+    <tr><td>支持方</td><td>{支持方全称}（{支持方性质：地方政府/集团/战投}）</td></tr>
+    <tr><td>股权/关联结构</td><td>{股权结构}</td></tr>
+    <tr><td>支持方式</td><td>{支持方式：注资/担保/资产注入/订单/协调}</td></tr>
+  </table>
+</section>
+
+<section id="s6">
+  <h2>六、支持能力评估</h2>
+  <table class="factor-table">
+    <tr><th>能力维度</th><th>数据</th><th>评估</th></tr>
+    <tr><td>支持方信用质量</td><td>{支持方信用数据}</td><td>{信用评估}</td></tr>
+    <tr><td>财政/财务实力</td><td>{财政数据}</td><td>{财政评估}</td></tr>
+    <tr><td>可调动资源</td><td>{可调动资源}</td><td>{资源评估}</td></tr>
+    <tr><td>历史支持记录</td><td>{历史支持记录}</td><td>{记录评估}</td></tr>
+  </table>
+  <p>支持能力等级：<strong>{支持能力等级}</strong>——{能力等级依据}</p>
+</section>
+
+<section id="s7">
+  <h2>七、支持意愿评估</h2>
+  <table class="factor-table">
+    <tr><th>意愿信号</th><th>证据</th><th>强度</th></tr>
+    <tr><td>战略重要性</td><td>{战略重要性证据}</td><td>{强度1}</td></tr>
+    <tr><td>公开表态/文件</td><td>{公开表态证据}</td><td>{强度2}</td></tr>
+    <tr><td>实际资源投入</td><td>{资源投入证据}</td><td>{强度3}</td></tr>
+    <tr><td>违约容忍度推断</td><td>{容忍度推断证据}</td><td>{强度4}</td></tr>
+  </table>
+  <p>支持意愿等级：<strong>{支持意愿等级}</strong>——{意愿等级依据}</p>
+</section>
+
+<section id="s8">
+  <h2>八、支持上调判定</h2>
+  <table>
+    <tr><th>判定项</th><th>结果</th><th>依据</th></tr>
+    <tr><td>独立评级</td><td>{主体独立评级}</td><td>双轨评估输出</td></tr>
+    <tr><td>支持能力</td><td>{支持能力等级}</td><td>§六</td></tr>
+    <tr><td>支持意愿</td><td>{支持意愿等级}</td><td>§七</td></tr>
+    <tr><td>上调规则适用</td><td>{上调规则适用}</td><td>external-support-framework 上调规则</td></tr>
+    <tr><td><strong>支持后评级</strong></td><td><strong>{支持后评级}</strong></td><td>上调 {上调档位}（{上调上限说明}）</td></tr>
+  </table>
+  <div class="alert amber"><strong>陷阱信号核查：</strong>{陷阱信号核查结果（支持函≠担保/关联担保同恶化/资产划转迹象）}</div>
+</section>
+
+<section id="s9">
+  <h2>九、陷阱信号与红旗</h2>
+  <ul>
+    <li>{陷阱信号1（如安慰函无法律效力）}</li>
+    <li>{陷阱信号2（如担保方与主体关联恶化）}</li>
+    <li>{陷阱信号3（如优质资产被划转迹象）}</li>
+  </ul>
+</section>
+
+<section id="s10">
+  <h2>十、数据完备性</h2>
   <table>
     <tr><th>数据项</th><th>可得性</th><th>影响</th><th>替代方案</th></tr>
     <tr><td>抵押物评估报告</td><td>{可得性1}</td><td>{影响1}</td><td>{替代方案1}</td></tr>
-    <tr><td>担保方财务数据</td><td>{可得性2}</td><td>{影响2}</td><td>{替代方案2}</td></tr>
+    <tr><td>担保方/支持方财务数据</td><td>{可得性2}</td><td>{影响2}</td><td>{替代方案2}</td></tr>
     <tr><td>历史回收案例</td><td>{可得性3}</td><td>{影响3}</td><td>{替代方案3}</td></tr>
+    <tr><td>担保法律文件</td><td>{可得性4}</td><td>{影响4}</td><td>{替代方案4}</td></tr>
+    <tr><td>历史支持执行案例</td><td>{可得性5}</td><td>{影响5}</td><td>{替代方案5}</td></tr>
   </table>
 </section>
 

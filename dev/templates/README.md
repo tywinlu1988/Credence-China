@@ -1,6 +1,6 @@
 # Credence 报告模板导航
 
-> 本目录是报告模板的**单一事实源**（`template-base.css` + Type 1–19，共 18 份模板 + 1 份共享样式（Type 12 历史留档已移至 archive/，无路径引用））。
+> 本目录是报告模板的**单一事实源**（`template-base.css` + Type 1–19，共 17 份（Type 9/12 已归档至 archive/）+ 1 份共享样式）。
 > 路径 → 模板映射以 `dev/engine/work-path-registry.md` 的 `templates` 字段为唯一权威；本页只做导航与契约说明，不复制模板内容。
 
 ## 模板总表
@@ -14,8 +14,7 @@
 | 5 | 债券投资仪表盘 | WP-M1-01 债券投资仪表盘 | [template-type5.html](template-type5.html) |
 | 6 | 马赛克完备性报告 | WP-M0-01（配套） | [template-type6.html](template-type6.html) |
 | 7 | 行业分析框架建设 | WP-X-03 行业分析框架建设 | [template-type7.html](template-type7.html) |
-| 8 | 债项 LGD 评估 | WP-M0-02 审贷专项附加包 | [template-type8.html](template-type8.html) |
-| 9 | 外部支持专项评估 | WP-M0-02 审贷专项附加包 | [template-type9.html](template-type9.html) |
+| 8 | 审贷专项附加包（LGD+外部支持） | WP-M0-02 审贷专项附加包 | [template-type8.html](template-type8.html) |
 | 10 | ESG/治理风险扫描 | WP-X-04 ESG/治理风险扫描 | [template-type10.html](template-type10.html) |
 | 11 | 组合压力测试 | WP-M4-04 组合压力测试 | [template-type11.html](template-type11.html) |
 | 13 | 跨行业传染分析 | WP-M4-02 跨行业传染分析 | [template-type13.html](template-type13.html) |
@@ -47,4 +46,4 @@
 ## 如何选择模板
 
 - **按工作路径选（默认）**：先确定 path_id，按注册表 `templates` 字段取（上表已列映射）。
-- **按报告形态选**：深度叙事（Type 1/2/4/5/7/8/9/11）、专项卡片/警报（Type 13/14/15/18/19）、验证留档（Type 3）、附加模块（Type 6/10）。
+- **按报告形态选**：深度叙事（Type 1/2/4/5/7/8/11）、专项卡片/警报（Type 13/14/15/18/19）、验证留档（Type 3）、附加模块（Type 6/10）。
