@@ -1,6 +1,7 @@
 """模板契约门禁（v0.9.0）：戳记/base.css/footer 合规 + 无未标注实例名（防幻觉铁律）。
 
 允许保留的仅"方法论案例库"语境：实例名出现的行或其最近标题行含 案例/回测/历史/示例/违约 标记。
+v0.11.1 起 base CSS 改为构建期注入：dev 源只含 @inject-css 标记，内联副本由 build_dist 装配时注入 dist。
 """
 
 import re
@@ -34,16 +35,17 @@ def test_stamps_and_base_css():
         text = f.read_text(encoding="utf-8")
         assert "<!-- @template:" in text, f"{f.name} 缺 @template 戳记"
         assert "<!-- @engine-version:" in text, f"{f.name} 缺 @engine-version 戳记"
-        assert "template-base.css" in text, f"{f.name} 未引用 template-base.css"
+        assert "<!-- @inject-css: template-base.css -->" in text, f"{f.name} 缺 @inject-css 标记"
 
 
 def test_no_external_css_link():
-    """所有模板 CSS 已内联，禁止外部 <link> 样式引用。"""
+    """dev 源模板禁止外部 <link> 样式引用，且不得再含内联 base CSS 副本
+    （副本只允许由构建期注入存在于 dist）。"""
     for f in TEMPLATE_FILES:
         text = f.read_text(encoding="utf-8")
         assert '<link rel="stylesheet"' not in text, f"{f.name} 仍含外部 CSS 链接"
         assert 'href="template-base.css"' not in text, f"{f.name} 仍引用 template-base.css"
-        assert "CREDENCE BASE STYLES" in text, f"{f.name} 缺内联 CSS 标记（CREDENCE BASE STYLES）"
+        assert "CREDENCE BASE STYLES" not in text, f"{f.name} 仍含内联 CSS 副本（CREDENCE BASE STYLES）"
 
 
 def test_footer_contract():
@@ -84,18 +86,19 @@ METHODOLOGY_CONTEXT_RE = re.compile(
 STYLE_BLOCK_RE = re.compile(r"<style>.*?</style>", re.DOTALL)
 
 # 豁免表：{文件名: {行号: 理由}}——逐条审计后登记，禁止泛化豁免。
+# （v0.11.1 模板 marker 化后 base CSS 块坍缩为 1 行，豁免行号随真实文件行号同步平移，内容逐字未变。）
 EXEMPT: dict[str, dict[int, str]] = {
     "template-type8.html": {
-        380: "LGD1 等级定义区间（方法论，与 lgd-recovery-framework §2.1 一致）",
-        381: "LGD2 等级定义区间（同上）",
-        382: "LGD3 等级定义区间（同上）",
-        383: "LGD4 等级定义区间（同上）",
-        384: "LGD5 等级定义区间（同上）",
+        44: "LGD1 等级定义区间（方法论，与 lgd-recovery-framework §2.1 一致）",
+        45: "LGD2 等级定义区间（同上）",
+        46: "LGD3 等级定义区间（同上）",
+        47: "LGD4 等级定义区间（同上）",
+        48: "LGD5 等级定义区间（同上）",
     },
     "template-type14.html": {},
     "template-type15.html": {
-        1076: "温度计标尺 UI（结构性刻度组件）",
-        1077: "温度计标尺 UI（同上）",
+        740: "温度计标尺 UI（结构性刻度组件）",
+        741: "温度计标尺 UI（同上）",
     },
 }
 

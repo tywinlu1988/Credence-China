@@ -40,6 +40,7 @@ dist/credence/
 (v) {len(CORE_DOCS)} 份 CORE_DOCS 全部在 engine/ 下；(vi) src 能在 dist 布局定位 engine/templates；
 (vii) 无任何被剔除的产物。
 (viii) 文本文件无 CRLF（LF 强制，见根 .gitattributes）。
+(ix) dist 模板含内联 base CSS 且无 @inject-css 标记残留（构建期注入完成度）。
 """
 
 import argparse
@@ -90,6 +91,26 @@ def _apply_rewrites(text: str) -> str:
     return text
 
 
+INJECT_CSS_RE = re.compile(r"^<!-- @inject-css: template-base\.css -->$", re.MULTILINE)
+
+
+def _resolve_template_includes(text: str, rel: str, log: list) -> str:
+    """构建期注入：dev 模板的 @inject-css 标记 → template-base.css 全文（<style> 包裹）。
+
+    dev 树只维护 CSS 单源；dist 交付模板保持完全自包含（v0.10.1 语义）。
+    """
+    if not INJECT_CSS_RE.search(text):
+        return text
+    css = (DEV / "templates" / "template-base.css").read_text(encoding="utf-8").strip("\n")
+    block = (
+        "<style>\n"
+        "/* === CREDENCE BASE STYLES (inline from template-base.css) === */\n"
+        + css + "\n</style>"
+    )
+    log.append(f"inject-css: {rel}")
+    return INJECT_CSS_RE.sub(lambda _: block, text)
+
+
 def _scrub(text: str, rel: str, log: list) -> str:
     """溯源指针清除：先剥行内 audits 片段，再删残留 audits//validation/ 指针行。"""
     text, n_frag = AUDIT_FRAGMENT_RE.subn("", text)
@@ -109,7 +130,7 @@ def _write_text(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8", newline="\n")
 
 
-def _copy_and_transform(src: Path, dst: Path, log: list, scrub: bool, exclude_dirs: tuple = ()) -> None:
+def _copy_and_transform(src: Path, dst: Path, log: list, scrub: bool, exclude_dirs: tuple = (), inject: bool = False) -> None:
     for f in sorted(src.rglob("*")):
         if f.is_dir():
             continue
@@ -124,6 +145,8 @@ def _copy_and_transform(src: Path, dst: Path, log: list, scrub: bool, exclude_di
         if f.suffix in TEXT_EXTS:
             text = f.read_text(encoding="utf-8")
             text = _apply_rewrites(text)
+            if inject:
+                text = _resolve_template_includes(text, str(rel), log)
             if scrub:
                 text = _scrub(text, str(rel), log)
             _write_text(out, text)
@@ -448,6 +471,15 @@ def validate(out_dir=None) -> list:
 
     # (iii) 链接
     _check_links(errors, base)
+
+    # (ix) 模板注入完成度：dist 模板含内联 base CSS、无注入标记残留
+    #      （残留判定按标记契约"独占一行"锚定；注释行内提及标记不构成残留）
+    for f in sorted((base / "templates").glob("template-type*.html")):
+        text = f.read_text(encoding="utf-8")
+        if "CREDENCE BASE STYLES" not in text:
+            errors.append(f"INJECT_MISSING: {f.name}")
+        if INJECT_CSS_RE.search(text):
+            errors.append(f"INJECT_RESIDUE: {f.name}")
     return errors
 
 
@@ -476,7 +508,7 @@ def build(out_dir=None) -> list:
             dst = out / "engine" / rel
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(f, dst)
-    _copy_and_transform(DEV / "templates", out / "templates", log, scrub=True, exclude_dirs=("archive",))
+    _copy_and_transform(DEV / "templates", out / "templates", log, scrub=True, exclude_dirs=("archive",), inject=True)
     _copy_and_transform(ROOT / "src", out / "src", log, scrub=False)
 
     v = _version()
