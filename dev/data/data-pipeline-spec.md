@@ -751,7 +751,7 @@ RenderOptions:
   # "type3" — 黑天鹅回溯验证（P1+）
   # "type4" — 多身份并行评估（P1+）
   # "type5" — 债券投资仪表盘（P0）
-  # "type6" — 马赛克完备性报告（P0）
+  # "type6" — 马赛克完备性报告（P0；v0.11.1 起并入 type1 附录，模板已移至 templates/archive/，当前无路径引用）
   # "type7" — 行业方法论页（P1+）
   # "type8" — 审贷专项附加包（债项LGD评估+外部支持专项评估）（P1+）
   # "type9" — 外部支持专项评估（P1+；v0.11.1 起并入 type8，模板已移至 templates/archive/，当前无路径引用）
@@ -901,11 +901,11 @@ TemplateSystem:
       - "template-type3.html"         # 黑天鹅回溯验证
       - "template-type4.html"         # 多身份并行评估
       - "template-type5.html"         # 债券投资仪表盘
-      - "template-type6.html"         # 马赛克完备性报告
       - "template-type7.html"         # 行业方法论页
       - "template-type8.html"         # 审贷专项附加包（债项LGD评估+外部支持专项评估）
       - "template-type10.html"        # ESG+治理风险扫描
       - "template-type11.html"        # 压力测试报告
+      - "archive/template-type6.html"   # 马赛克完备性报告（v0.11.1 起并入 type1 附录，历史留档，无路径引用）
       - "archive/template-type9.html"   # 外部支持专项评估（v0.11.1 起并入 type8，历史留档，无路径引用）
       - "archive/template-type12.html"  # 引擎验证统计（历史留档，无路径引用）
 
@@ -918,7 +918,7 @@ TemplateSystem:
     template-type3.html: "已创建"
     template-type4.html: "已创建"
     template-type5.html: "已创建"
-    template-type6.html: "已创建"
+    archive/template-type6.html: "已创建（历史留档，已归档至 archive/；v0.11.1 起并入 template-type1.html 附录）"
     template-type7.html: "已创建"
     template-type8.html: "已创建"
     archive/template-type9.html: "已创建（历史留档，已归档至 archive/；v0.11.1 起并入 template-type8.html）"

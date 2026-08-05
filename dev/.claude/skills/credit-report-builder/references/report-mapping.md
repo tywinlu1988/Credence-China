@@ -8,7 +8,7 @@
 
 | 路径 ID | 名称 | 深度 | 主分层 | 模板 |
 |---|---|---|---|---|
-| WP-M0-01 | 信贷审批单标的评级 | L2 | L2 深度报告 | template-type1 + template-type6 |
+| WP-M0-01 | 信贷审批单标的评级 | L2 | L2 深度报告 | template-type1 |
 | WP-M0-02 | 审贷专项附加包（LGD+外部支持） | 专项 | 专项（模板定义） | template-type8 |
 | WP-M1-01 | 债券投资仪表盘 | L2 | L2 深度报告 | template-type5 |
 | WP-M1-02 | 双标的前瞻对比 | L2 | L2 深度报告 | template-type2 |

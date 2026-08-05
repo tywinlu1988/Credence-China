@@ -27,7 +27,7 @@
 
 | ID | 路径名 | 角色 | 调查方向 | 深度 | 模板 | 状态 |
 |---|---|---|---|---|---|---|
-| WP-M0-01 | 信贷审批单标的评级 | M0 | 行业金字塔→马赛克→双轨→评级 | L2 | Type 1 + Type 6 | ✅ active |
+| WP-M0-01 | 信贷审批单标的评级 | M0 | 行业金字塔→马赛克→双轨→评级 | L2 | Type 1 | ✅ active |
 | WP-M0-02 | 审贷专项附加包（LGD+外部支持） | M0 | lgd-recovery + external-support | 专项 | Type 8 | ✅ active |
 | WP-M1-01 | 债券投资仪表盘 | M1 | M1 四维（相对价值/条款/流动性/事件） | L2 | Type 5 | ✅ active |
 | WP-M1-02 | 双标的前瞻对比 | M1 | 双轨对比+区分度分析 | L2 | Type 2 | ✅ active |
@@ -97,7 +97,6 @@ engine_sequence:
 paradigm_selection: 六范式+LGFV（按行业映射表）
 templates:
   - dev/templates/template-type1.html
-  - dev/templates/template-type6.html
 outputs: [评级+信号, 完备性报告]
 quality_gates:
   - "信号密度 (dev/engine/mosaic-engine.md §4.3)"
