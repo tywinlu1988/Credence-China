@@ -15,6 +15,7 @@ When this Skill is invoked:
 6. If a required threshold, weight, or mapping is missing from the engine documents, output `引擎未定义` and do not invent a value.
 7. Do not invoke Mode B or generate external-data values unless the user has explicitly provided a CSV upload, API endpoint, or MCP server. Treat Mode B fields as data gaps until then.
 8. **防漂移（结构保真）**：分析维度、评分体系、分析框架一律出自引擎文档并可引用到具体章节；禁止自造维度/框架，禁止以通用信用分析先验补位（文档未定义 → `引擎未定义`）。对话中间产物（调研总结、维度清单、过程评分表）同受此约束。
+9. **条件专题阅读（强制）**：执行任何路径时，按标的情况追加阅读——城投标的 → `dev/engine/lgfv-framework.md`（§五 政府信用定上限/平台定下限/意愿定落点）；金融债标的 → `dev/engine/financial-bond-framework.md`；控股结构标的 → `dev/engine/holding-company-framework.md`；单标的评级路径（WP-M0-01/M1-01/M1-02）定档前必经非信用风险叠加层检查 → `dev/engine/non-credit-risk-overlay.md`（§八 叠加调整规则 + 信号触及章节）。
 
 # Fixed Income Credit Analysis Engine v0.11.1-release
 

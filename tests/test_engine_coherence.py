@@ -1,6 +1,7 @@
 """Regression tests for cross-document coherence of the v0.7.0-alpha engine."""
 
 import re
+import sys
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,10 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 ENGINE_DIR = ROOT / "dev" / "engine"
 SKILL_FILE = ROOT / "dev" / ".claude" / "skills" / "fixed-income-credit-analysis" / "SKILL.md"
+CHECKER = ROOT / "scripts" / "consistency_check.py"
+REGISTRY = ENGINE_DIR / "work-path-registry.md"
+SKILLS_DIR = ROOT / "dev" / ".claude" / "skills"
+SRC_DIR = ROOT / "src"
 
 RATING_INTERVAL_RE = re.compile(
     r"\|\s*(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*\|\s*([A-D]{1,3}[+-]?)\s*\|"
@@ -158,3 +163,64 @@ def test_lgv_framework_renamed_to_lgfv():
     for path in [SKILL_FILE, ENGINE_DIR / "engine-overview.md"]:
         text = path.read_text(encoding="utf-8")
         assert retired not in text, f"{path.name} still references {retired}"
+
+
+# --- 零孤儿锁（T8） ----------------------------------------------------------
+#
+# Hub 白名单：导航/注册表/契约类文档结构性豁免——它们是"被引用方"而非路径消费
+# 对象，不要求出现在三大语料中。每条目注明豁免理由（v0.11.2 发现跑批确认这六份
+# 当前实际均可达，白名单为防御性豁免，防止未来引用形态变化误报）。
+HUB_DOC_WHITELIST = {
+    "engine-overview.md": "导航中枢：全引擎入口地图，被各文档/skills 回链引用，不被任何单一路径整体消费",
+    "work-path-registry.md": "注册表自身：engine_sequence 语料的来源，不可能出现在自身序列中",
+    "pipeline-contract.md": "链式契约：定义四技能交接协议与产物 schema，由 skills 层引用而非引擎路径消费",
+    "dimension-registry.md": "维度注册表：D1-D10 维度名单单一事实源，由评分器/维度测试间接消费",
+    "output-layered-framework.md": "输出分层契约：L0/L1/L2 分层由 report-builder 装配层消费，非分析路径",
+    "validation-methodology.md": "验证方法论：回溯验证框架，由 validation/ 资产消费而非运行期路径",
+}
+
+
+def _load_consistency_check_module():
+    """importlib-load scripts/consistency_check.py（scripts/ 非包，同 test_consistency_check 模式）。"""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("consistency_check", CHECKER)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["consistency_check"] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_no_orphan_engine_docs():
+    """零孤儿锁（v0.11.2）：每份 CORE_DOCS 必须可达——出现在 registry engine_sequence、
+    skills 引用、src 消费之一；hub 文档（导航/注册表/契约类）显式豁免。"""
+    cc = _load_consistency_check_module()
+    assert cc.CORE_DOCS, "CORE_DOCS 为空，锁失效"
+
+    from src.path_sheet import load_registry_paths
+
+    registry_paths = load_registry_paths(REGISTRY)
+    assert registry_paths, "registry 解析为空，锁失效"
+    registry_docs = {
+        Path(doc).name
+        for entry in registry_paths.values()
+        for doc in (entry.get("engine_sequence") or [])
+    }
+    skills_text = "\n".join(
+        p.read_text(encoding="utf-8") for p in sorted(SKILLS_DIR.rglob("*.md"))
+    )
+    src_text = "\n".join(
+        p.read_text(encoding="utf-8") for p in sorted(SRC_DIR.glob("*.py"))
+    )
+
+    orphans = []
+    for doc in cc.CORE_DOCS:
+        if doc in HUB_DOC_WHITELIST:
+            continue  # hub 豁免（理由见 HUB_DOC_WHITELIST 注释）
+        if doc in registry_docs or doc in skills_text or doc in src_text:
+            continue
+        orphans.append(doc)
+    assert not orphans, (
+        "CORE_DOCS 孤儿（registry engine_sequence / skills 引用 / src 消费三者均不可达）: "
+        f"{orphans}"
+    )
