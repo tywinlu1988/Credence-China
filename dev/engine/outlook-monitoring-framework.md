@@ -736,8 +736,7 @@
 | dual-track-methodology.md | 双轨评级映射（§六为18档权威表）；展望与观察名单的输出规范由本模块 §2.4/§3.3 定义 |
 | multi-stakeholder.md | 各身份角色的决策矩阵框架；展望应对策略见本模块 §6.1 |
 | validation-methodology.md | 验证方法框架；展望方向正确性验证维度见本模块 §6.2 |
-| mosaic-engine.md | 综合输出管线；含展望/观察名单的输出模板见本模块附录A |
-| mosaic-engine.md | 信源可信度分级（§3.4）——本模块的触发因子引用该文件的信息源分级（原 qualitative-analysis.md 信息源分级已归并入该节） |
+| mosaic-engine.md | 综合输出管线（展望/观察名单输出模板见本模块附录A）；信源可信度分级（§3.4）——本模块的触发因子引用该文件的信息源分级（原 qualitative-analysis.md 信息源分级已归并入该节） |
 | industry-framework.md | 行业金字塔权重决定展望信号的层级权重——触发因子矩阵的权重引用 |
 
 ### 附录D：版本历史与变更记录

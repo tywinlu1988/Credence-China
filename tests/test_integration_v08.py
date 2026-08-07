@@ -331,7 +331,7 @@ def test_t11_5_snapshot_integrity(cc, bd, tmp_path):
     for skill in FOUR_SKILLS:
         assert (SNAPSHOT / ".claude" / "skills" / skill / "SKILL.md").is_file(), skill
 
-    # engine 平铺：28 份 CORE_DOCS + 报告模板 + 可执行编排器
+    # engine 平铺：29 份 CORE_DOCS + 报告模板 + 可执行编排器
     for doc in cc.CORE_DOCS:
         assert (SNAPSHOT / "engine" / doc).is_file(), f"snapshot missing engine/{doc}"
     assert (SNAPSHOT / "templates").is_dir(), "snapshot missing templates/"

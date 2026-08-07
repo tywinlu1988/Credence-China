@@ -39,7 +39,7 @@
 - [ ] Claude Skill 包 (`dev/.claude/skills/fixed-income-credit-analysis/`) 已同步并升级到当前引擎版本。
 - [ ] Skill 包已随构建归位到 `version/<version>/.claude/skills/`（v0.8.0-release 起为包根 `.claude/skills/`，由 `scripts/build_dist.py` 生成）。
 - [ ] `scripts/consistency_check.py` 运行通过（无断裂链接、版本号一致、SRI 示例在合法范围内）。
-- [ ] `python scripts/build_dist.py` 构建 + 内置校验通过（零绝对路径、零 dev/ token、全链接可解析、4 skill 严格 frontmatter、28 份 CORE_DOCS 齐备）。
+- [ ] `python scripts/build_dist.py` 构建 + 内置校验通过（零绝对路径、零 dev/ token、全链接可解析、4 skill 严格 frontmatter、29 份 CORE_DOCS 齐备）。
 - [ ] 所有模板和报告的版本号与引擎版本对齐。
 - [ ] `dev/README.md` 的目录结构描述已随内容变化更新（版本历史行由 promote 自动追加）。
 - [ ] 压缩包 `version/<version>.zip` 已生成。
@@ -64,7 +64,7 @@ version/<version>/
 ├── AGENTS.md / CLAUDE.md / GEMINI.md / INSTALL.md / README.md   ← 生成的跨 CLI 入口与安装说明
 ├── .claude-plugin/plugin.json        ← Claude Code marketplace 清单
 ├── .claude/skills/<4 skills>/        ← 四段链技能（intake/analysis/report/qa）
-├── engine/          ← 28 份方法论文档（剔除 audits/，清除溯源指针）
+├── engine/          ← 29 份方法论文档（剔除 audits/，清除溯源指针）
 ├── templates/       ← Type 1–15 报告模板
 ├── src/             ← 可执行编排器 + 已编码引擎（pipeline.py path_sheet.py sri_calculator.py concentration_scorer.py …）
 └── adapters/codex.md ← Codex 深度适配

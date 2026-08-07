@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Credence 版本晋升脚本（建议4：版本声明单源化）。
 
-输入新版本号，按**显式规则表**改写全部版本声明点（28 份 CORE_DOCS 头、4 份
+输入新版本号，按**显式规则表**改写全部版本声明点（CORE_DOCS 头（计数以
+consistency_check.CORE_DOCS 为单源）、4 份
 SKILL.md、references 头、README/AGENTS/dev README、pyproject/package.json、
 EXPECTED_VERSION、build_dist fallback、.gitignore 反例行、VERSION-MANAGEMENT 的
 "现为"行）。只匹配声明形态——版本历史表、"自 vX 起"叙述、"v0.8.0 skill 架构"
