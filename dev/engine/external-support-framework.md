@@ -521,7 +521,7 @@
 
 ### 8.2 在定性分析框架中的集成
 
-在 qualitative-analysis.md 的政策解读方法中增加"支持能力vs支持意愿"分析框架：
+在政策解读方法（单一事实源：industry-framework.md §二A，归并自 qualitative-analysis.md §3.1-3.3，后者已归档至 dev/engine/audits/）中增加"支持能力vs支持意愿"分析框架：
 
 ```
 在政策传导链（中央→部委→地方→企业）的基础上，增加：
@@ -720,7 +720,6 @@
 
 - [引擎架构总览](engine-overview.md) — 核心理念、总体架构、设计原则
 - [行业分类与分析框架](industry-framework.md) — 十维评分、四类行业范式、七行业金字塔
-- [定性分析方法论](qualitative-analysis.md) — 信息源分级、政策解读、马赛克拼图
 - [双轨分析方法论](dual-track-methodology.md) — 轨道A+轨道B、交叉对撞、评级映射
 - [马赛克引擎](mosaic-engine.md) — 信号提取、拼图聚合、完备性评估
 - [评级机构基准审计](audits/rating-agency-benchmark-audit.md) — 外部支持评估的G3/G4缺口分析

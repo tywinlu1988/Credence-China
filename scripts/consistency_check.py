@@ -35,8 +35,6 @@ CORE_DOCS = [
     "dual-track-methodology.md",
     "industry-framework.md",
     "validation-methodology.md",
-    "qualitative-analysis.md",
-    "quantitative-analysis.md",
     "mosaic-engine.md",
     "output-layered-framework.md",
     "contagion-theory.md",

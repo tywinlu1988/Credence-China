@@ -586,4 +586,3 @@ v0.1.0 为本框架文档自身版本（当前）；下列为未排期的迭代�
 - [评级展望与持续监控框架](outlook-monitoring-framework.md) — 展望、观察名单、持续监控矩阵
 - [双轨分析方法论](dual-track-methodology.md) — 轨道A+轨道B、交叉对撞、评级映射
 - [LGD回收框架](lgd-recovery-framework.md) — 回收率评估的工具参考（城投LGD的特殊性参考本框架第七章）
-- [定性分析方法论](qualitative-analysis.md) — 信息源分级、政策解读、马赛克拼图

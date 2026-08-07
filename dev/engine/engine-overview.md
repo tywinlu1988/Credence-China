@@ -10,8 +10,6 @@
 |---|---|---|
 | **engine-overview.md** | 架构总览 · 设计原则 · 文档导航 | 首次了解引擎 |
 | **industry-framework.md** | 十维评分 · 四种行业范式 · 七行业金字塔 · 一票否决 | 需要确定分析框架 |
-| **qualitative-analysis.md** | 信息源分级 · 政策解读 · 马赛克拼图 · 叙事拆解 | 需要定性分析指导 |
-| **quantitative-analysis.md** | 利差分析 · 波动率 · 多因子 · 压力测试 · 市场隐含信号 | 需要定量分析指导 |
 | **dual-track-methodology.md** | 轨道A+B · 交叉对撞 · 评级映射 · 完整推理实例 | 需要了解双轨整合逻辑 |
 | **mosaic-engine.md** | 信号提取 · 拼图聚合 · 完备性评估 · Mode B接口 | 需要了解数据→评估的完整链路 |
 | **multi-stakeholder.md** | M0-M5六类身份 · 多视角交叉对比 | 需要多身份并行分析 |
@@ -245,8 +243,6 @@ Indicator Score = f(Raw Value, Threshold, Direction)
 | engine-overview.md | v0.11.1-release | 引擎架构总览 |
 | dual-track-methodology.md | v0.11.1-release | 双轨分析方法论 |
 | industry-framework.md | v0.11.1-release | 行业分类与分析框架 |
-| qualitative-analysis.md | v0.11.1-release | 定性分析方法论 |
-| quantitative-analysis.md | v0.11.1-release | 定量分析方法论 |
 | mosaic-engine.md | v0.11.1-release | 马赛克引擎 |
 | output-layered-framework.md | v0.11.1-release | 分层输出框架 |
 | contagion-theory.md | v0.11.1-release | 传染理论基础（系统智能层） |
