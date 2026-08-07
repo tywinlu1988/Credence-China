@@ -92,6 +92,7 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 - ~~**v0.10.3**~~（已发布）：SRI 深化——时间序列追踪、组合级 SRI（持仓权重）、SRI 压力测试、传染升级因子联动。
 - ~~**v0.11.0**~~（已发布）：硬重复清零——引擎文档副本指针化 + 4 处冲突裁决 + 施工残留清理 + Type 12 归档 + 权威表单源回归锁。
 - ~~**v0.11.1**~~（已发布）：模板装配化——CSS 构建期注入（dev 树零副本）+ 跨域嵌入降级 + Type 9/6 并入 Type 8/1（16 份模板）。
+- **v0.11.2（规划中）**：孤儿裁决——定性/定量方法论全量归并 9 文档后归档（29 份引擎文档）+ 技能级条件阅读表接线 lgfv/overlay/控股/金融债 + 零孤儿锁。
 - 版本历史与发布物见 [Releases](https://github.com/tywinlu1988/Credence-China/releases)。
 
 ### 仓库地图
@@ -175,6 +176,7 @@ Engine docs (dev/engine/) are the single source of truth; coded engines (src/) p
 - ~~**v0.10.3**~~ (released): SRI deep-dive — time-series tracking, portfolio-level SRI (holding weights), SRI stress testing, contagion-escalation linkage.
 - ~~**v0.11.0**~~ (released): hard-duplication cleanup — engine-doc pointer-ization + 4 conflict adjudications + construction-residue cleanup + Type 12 archival + single-source table locks.
 - ~~**v0.11.1**~~ (released): template assembly — build-time CSS injection (zero dev-tree copies) + cross-domain embed demotion + Type 9/6 merged into Type 8/1 (16 templates).
+- **v0.11.2 (planned)**: orphan adjudication — qualitative/quantitative fully merged into 9 live docs then archived (29 engine docs) + skill-level conditional-reads wiring + zero-orphan lock.
 - History & artifacts: [Releases](https://github.com/tywinlu1988/Credence-China/releases).
 
 ### Quickstart
