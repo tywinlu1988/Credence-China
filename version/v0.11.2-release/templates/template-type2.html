@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<!-- @template: templates/template-type2.html -->
+<!-- @engine-version: v0.11.2-release -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="双标的前瞻对比报告模板 Type 2 · 双栏对比·分层对比·共识分歧·区分度结论">
+<title>双标的前瞻对比 · {标的A} vs {标的B}</title>
+<style>
+/* === CREDENCE BASE STYLES (inline from template-base.css) === */
+/* ============================================================
+   Credence Report System — Base Template Styles
+   单一事实源：dev 树模板只含 <!-- @inject-css: template-base.css --> 标记，
+   由 scripts/build_dist.py 在装配发行包时注入本文件全文。
+   修改本文件即生效于全部模板，无需同步任何模板文件。
+   ============================================================ */
+
+/* ============================================================
+   Credence Report System — Base Template v1.0
+   12种报告类型共享的基础色板、字体、布局、组件
+   ============================================================ */
+
+/* === CSS Variables === */
+:root {
+  /* Background */
+  --bg-primary:    #0f1117;
+  --bg-secondary:  #1a1d28;
+  --bg-tertiary:   #212433;
+  --bg-hover:      #252b38;
+
+  /* Text */
+  --text-primary:   #e2e4ea;
+  --text-secondary: #9398a9;
+  --text-tertiary:  #5d6270;
+
+  /* Border */
+  --border-default: #2a2e3c;
+  --border-strong:  #3d4250;
+
+  /* Semantic */
+  --red:       #ef4444;
+  --red-bg:    rgba(239,68,68,0.08);
+  --amber:     #f59e0b;
+  --amber-bg:  rgba(245,158,11,0.08);
+  --green:     #22c55e;
+  --green-bg:  rgba(34,197,94,0.08);
+  --blue:      #6366f1;
+  --blue-bg:   rgba(99,102,241,0.08);
+  --purple:    #a855f7;
+  --purple-bg: rgba(168,85,247,0.08);
+
+  /* Layout */
+  --radius: 8px;
+  --radius-sm: 4px;
+  --max-w: 960px;
+}
+
+/* === Reset === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* === Body === */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* === Container === */
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+/* === Hero === */
+.hero {
+  text-align: center;
+  padding: 56px 0 40px;
+}
+.hero .chip {
+  display: inline-block;
+  background: var(--purple-bg);
+  color: var(--purple);
+  border: 1px solid rgba(168,85,247,0.25);
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+}
+.hero h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 10px; }
+.hero .subtitle { font-size: 14px; color: var(--text-secondary); max-width: 680px; margin: 0 auto; line-height: 1.7; }
+.hero .meta {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  flex-wrap: wrap;
+}
+.hero .meta span {
+  padding: 5px 14px;
+  background: var(--bg-secondary);
+  border-radius: 20px;
+  border: 1px solid var(--border-default);
+}
+
+/* === Section === */
+.section { margin: 44px 0; }
+.section-title {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-default);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* === Card === */
+.card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 14px 0;
+  border: 1px solid var(--border-default);
+}
+.card h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+.card-red   { border-left: 4px solid var(--red); }
+.card-amber { border-left: 4px solid var(--amber); }
+.card-green { border-left: 4px solid var(--green); }
+.card-blue  { border-left: 4px solid var(--blue); }
+.card-purple{ border-left: 4px solid var(--purple); }
+
+/* === Strip === */
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border-default);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 0 40px;
+}
+.strip.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.strip.cols-5 { grid-template-columns: repeat(5, 1fr); }
+.strip.cols-6 { grid-template-columns: repeat(6, 1fr); }
+.strip-item {
+  background: var(--bg-secondary);
+  padding: 20px 16px;
+  text-align: center;
+}
+.strip-item .slabel { font-size: 10px; color: var(--text-secondary); letter-spacing: 0.5px; margin-bottom: 4px; text-transform: uppercase; }
+.strip-item .sval   { font-size: 22px; font-weight: 800; }
+.strip-item .ssub   { font-size: 10px; color: var(--text-tertiary); margin-top: 3px; }
+
+/* === Table === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead th {
+  background: var(--bg-tertiary);
+  padding: 9px 13px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-default);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+tbody td {
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--border-default);
+  vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--bg-hover); }
+td.ct { text-align: center; }
+td.rt { text-align: right; }
+
+/* === Metric Grid === */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.metric {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  text-align: center;
+  border: 1px solid var(--border-default);
+}
+.metric .m-num   { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+.metric .m-label { font-size: 12px; color: var(--text-secondary); }
+
+/* === Timeline === */
+.timeline { position: relative; padding-left: 28px; margin: 16px 0; }
+.timeline::before { content: ''; position: absolute; left: 12px; top: 4px; bottom: 4px; width: 2px; background: var(--border-default); }
+.tl-item { position: relative; padding: 8px 0 8px 20px; font-size: 13px; }
+.tl-item::before { content: ''; position: absolute; left: -20px; top: 12px; width: 12px; height: 12px; border-radius: 50%; }
+.tl-item.red::before   { background: var(--red); }
+.tl-item.amber::before { background: var(--amber); }
+.tl-item.green::before { background: var(--green); }
+.tl-date { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+
+/* === Text Colors === */
+.text-red    { color: var(--red); font-weight: 600; }
+.text-amber  { color: var(--amber); font-weight: 600; }
+.text-green  { color: var(--green); font-weight: 600; }
+.text-blue   { color: var(--blue); font-weight: 600; }
+.text-purple { color: var(--purple); font-weight: 600; }
+
+/* === Score Colors === */
+.score-good { color: var(--green); font-weight: 600; }
+.score-ok   { color: var(--blue); font-weight: 600; }
+.score-warn { color: var(--amber); font-weight: 600; }
+.score-bad  { color: var(--red); font-weight: 600; }
+
+/* === Tags / Badges === */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.tag-red    { background: var(--red-bg);    color: var(--red); }
+.tag-amber  { background: var(--amber-bg);  color: var(--amber); }
+.tag-green  { background: var(--green-bg);  color: var(--green); }
+.tag-blue   { background: var(--blue-bg);   color: var(--blue); }
+.tag-purple { background: var(--purple-bg); color: var(--purple); }
+
+.rating-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* === Signal === */
+.signal {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.signal-red   { background: var(--red); }
+.signal-amber { background: var(--amber); }
+.signal-green { background: var(--green); }
+
+/* === Grid helpers === */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+/* === Info Box === */
+.info-box {
+  padding: 15px 20px;
+  border-radius: var(--radius);
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.info-red    { background: var(--red-bg);    border-left: 3px solid var(--red); }
+.info-amber  { background: var(--amber-bg);  border-left: 3px solid var(--amber); }
+.info-green  { background: var(--green-bg);  border-left: 3px solid var(--green); }
+.info-blue   { background: var(--blue-bg);   border-left: 3px solid var(--blue); }
+.info-purple { background: var(--purple-bg); border-left: 3px solid var(--purple); }
+
+/* === Divider === */
+.divider { height: 1px; background: var(--border-default); margin: 32px 0; }
+
+/* === Footer === */
+.footer {
+  text-align: center;
+  padding: 28px 0 36px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  border-top: 1px solid var(--border-default);
+}
+.footer p { margin-top: 4px; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 22px; }
+  .strip, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .strip.cols-3, .strip.cols-5, .strip.cols-6 { grid-template-columns: repeat(2, 1fr); }
+  table { font-size: 12px; }
+  thead th, tbody td { padding: 7px 9px; }
+}
+
+/* ============================================================
+   v0.9.0 基座扩容：打印样式 · 响应式 · 组件库
+   ============================================================ */
+
+/* === 打印样式：白底、去渐变与阴影 === */
+@media print {
+  body { background: #fff; color: #111; }
+  .hero, .toc-nav { background: #fff !important; color: #111 !important; }
+  .card, .signal-card, .metric-box, .summary-card, .watchlist-card { border: 1px solid #999 !important; background: #fff !important; color: #111 !important; box-shadow: none !important; }
+  a { color: #111; text-decoration: none; }
+}
+
+/* === 响应式：窄屏适配 === */
+@media (max-width: 640px) {
+  .container { padding: 0 12px; }
+  .hero { padding: 32px 0 24px; }
+  .metric-row { flex-direction: column; gap: 10px; }
+  .strip { grid-template-columns: repeat(2, 1fr); }
+  table { font-size: 12px; }
+  .toc-nav { position: static; }
+}
+
+/* === 组件库 === */
+/* 目录导航（吸顶） */
+.toc-nav { position: sticky; top: 0; z-index: 10; background: var(--bg-primary); border-bottom: 1px solid var(--border-default); padding: 10px 0; margin-bottom: 24px; font-size: 12px; }
+.toc-nav a { color: var(--text-secondary); text-decoration: none; margin-right: 14px; }
+.toc-nav a:hover { color: var(--text-primary); }
+/* 执行摘要卡 */
+.summary-card { background: var(--bg-secondary); border: 1px solid var(--border-strong); border-left: 4px solid var(--blue); border-radius: var(--radius); padding: 20px 24px; margin: 20px 0; }
+.summary-card .s-title { font-size: 13px; font-weight: 700; color: var(--text-tertiary); letter-spacing: 1px; margin-bottom: 8px; }
+.summary-card .s-body { font-size: 15px; line-height: 1.8; }
+/* 指标盒 */
+.metric-box { text-align: center; min-width: 120px; }
+.metric-box .val { font-size: 26px; font-weight: 800; }
+.metric-box .lbl { font-size: 12px; color: var(--text-tertiary); }
+/* 警示条 */
+.alert { border-radius: var(--radius); padding: 14px 18px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
+.alert.red { background: var(--red-bg); border-left: 4px solid var(--red); }
+.alert.amber { background: var(--amber-bg); border-left: 4px solid var(--amber); }
+.alert.green { background: var(--green-bg); border-left: 4px solid var(--green); }
+/* 时间线 */
+.timeline { border-left: 2px solid var(--border-strong); margin: 16px 0 16px 8px; padding-left: 20px; }
+.timeline .t-item { position: relative; margin-bottom: 14px; font-size: 13px; }
+.timeline .t-item::before { content: ""; position: absolute; left: -26px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+.timeline .t-date { color: var(--text-tertiary); font-size: 11px; margin-right: 8px; }
+/* 术语表 */
+.glossary dt { font-weight: 700; margin-top: 10px; }
+.glossary dd { color: var(--text-secondary); font-size: 13px; margin: 2px 0 8px 0; }
+</style>
+<style>
+.hero { background: linear-gradient(135deg, #0f172a, #1e3a5f, #2563eb); }
+.hero .chip { background: rgba(37,99,235,0.22); color: #bfdbfe; border-color: rgba(37,99,235,0.4); }
+.vs-badge { display:inline-flex; align-items:center; gap:18px; font-size:24px; font-weight:800; }
+.vs-badge .vs { font-size:16px; color:var(--text-tertiary); border:1px solid var(--border-strong); border-radius:50%; padding:6px 10px; }
+.cmp-table th.cola, .cmp-table td.cola { border-left: 2px solid var(--blue); }
+.cmp-table th.colb, .cmp-table td.colb { border-left: 2px solid var(--purple); }
+.cmp-table th, .cmp-table td { padding: 8px 12px; vertical-align: top; text-align: left; }
+.duo-col { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.duo-card { background: var(--bg-secondary); border-radius: var(--radius); padding: 16px 20px; border: 1px solid var(--border-default); }
+.duo-card.a { border-top: 3px solid var(--blue); }
+.duo-card.b { border-top: 3px solid var(--purple); }
+.duo-card h4 { font-size: 14px; margin-bottom: 8px; }
+.winner { color: var(--green); font-weight: 800; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="chip">Type 2 · 双标的前瞻对比</div>
+  <h1><span class="vs-badge">{标的A}<span class="vs">VS</span>{标的B}</span></h1>
+  <div class="hero-sub">{行业/场景} · {报告日期}</div>
+</header>
+
+<nav class="toc-nav">
+  <a href="#s0">§0 结论</a>
+  <a href="#s1">§1 总览对比</a>
+  <a href="#s2">§2 分层对比</a>
+  <a href="#s3">§3 共识分歧</a>
+  <a href="#s4">§4 区分度结论</a>
+  <a href="#s5">§5 数据完备性</a>
+  <a href="#s6">§6 方法论引用</a>
+</nav>
+
+<section id="s0">
+  <div class="summary-card">
+    <div class="s-title">执行摘要</div>
+    <div class="s-body">首选标的：<span class="winner">{首选标的}</span>——{一句话理由}</div>
+  </div>
+</section>
+
+<section id="s1">
+  <h2>一、总览对比</h2>
+  <table class="cmp-table">
+    <tr><th>维度</th><th class="cola">{标的A}</th><th class="colb">{标的B}</th><th>优势方</th></tr>
+    <tr><td>综合评级</td><td class="cola">{A评级}</td><td class="colb">{B评级}</td><td>{评级优势方}</td></tr>
+    <tr><td>展望</td><td class="cola">{A展望}</td><td class="colb">{B展望}</td><td>{展望优势方}</td></tr>
+    <tr><td>行业范式</td><td class="cola">{A范式}</td><td class="colb">{B范式}</td><td>—</td></tr>
+    <tr><td>复合评分</td><td class="cola">{A复合分}</td><td class="colb">{B复合分}</td><td>{评分优势方}</td></tr>
+    <tr><td>数据完备性</td><td class="cola">{A完备性}</td><td class="colb">{B完备性}</td><td>{完备性优势方}</td></tr>
+  </table>
+</section>
+
+<section id="s2">
+  <h2>二、分层对比（金字塔）</h2>
+  <div class="duo-col">
+    <div class="duo-card a">
+      <h4>{标的A}</h4>
+      <table class="cmp-table">
+        <tr><th>层</th><th>得分</th><th>关键发现</th></tr>
+        <tr><td>L1 {A_L1层名}</td><td>{A_L1得分}</td><td>{A_L1关键发现}</td></tr>
+        <tr><td>L2 {A_L2层名}</td><td>{A_L2得分}</td><td>{A_L2关键发现}</td></tr>
+        <tr><td>L3 {A_L3层名}</td><td>{A_L3得分}</td><td>{A_L3关键发现}</td></tr>
+        <tr><td>L4 {A_L4层名}</td><td>{A_L4得分}</td><td>{A_L4关键发现}</td></tr>
+      </table>
+    </div>
+    <div class="duo-card b">
+      <h4>{标的B}</h4>
+      <table class="cmp-table">
+        <tr><th>层</th><th>得分</th><th>关键发现</th></tr>
+        <tr><td>L1 {B_L1层名}</td><td>{B_L1得分}</td><td>{B_L1关键发现}</td></tr>
+        <tr><td>L2 {B_L2层名}</td><td>{B_L2得分}</td><td>{B_L2关键发现}</td></tr>
+        <tr><td>L3 {B_L3层名}</td><td>{B_L3得分}</td><td>{B_L3关键发现}</td></tr>
+        <tr><td>L4 {B_L4层名}</td><td>{B_L4得分}</td><td>{B_L4关键发现}</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="s3">
+  <h2>三、共识与分歧</h2>
+  <div class="alert green"><strong>共识：</strong>{两标的共识要点}</div>
+  <div class="alert amber"><strong>核心分歧：</strong>{核心分歧点}——分歧根源与各自依据</div>
+  <div class="alert red"><strong>独有红旗：</strong>{标的A独有红旗} / {标的B独有红旗}</div>
+</section>
+
+<section id="s4">
+  <h2>四、区分度结论</h2>
+  <div class="metric-row">
+    <div class="metric-box"><div class="val">{区分度评分}</div><div class="lbl">区分度</div></div>
+    <div class="metric-box"><div class="val">{首选标的}</div><div class="lbl">首选</div></div>
+  </div>
+  <p>{选择建议：不同决策场景下的选择逻辑（保守/平衡/进取）}</p>
+  <p>{适用情景说明}</p>
+</section>
+
+<section id="s5">
+  <h2>五、数据完备性</h2>
+  <table class="cmp-table">
+    <tr><th>主体</th><th>完备性</th><th>主要缺口</th></tr>
+    <tr><td>{标的A}</td><td>{A完备性}</td><td>{A主要缺口}</td></tr>
+    <tr><td>{标的B}</td><td>{B完备性}</td><td>{B主要缺口}</td></tr>
+  </table>
+</section>
+
+<section id="s6">
+  <h2>六、方法论引用</h2>
+  <ul class="ref-list">
+    <li>双轨对比：<code>{引用双轨方法论文档}</code></li>
+    <li>前瞻对比与区分度：<code>{引用验证方法论文档}</code></li>
+  </ul>
+</section>
+
+<footer>
+  <p>报告编号 T2-{报告编号} · 版本 v0.11.2-release · 生成于 {生成日期} · 仅供内部风险评估使用</p>
+  <p>基于 Credence 引擎 v0.11.2-release · 所有分析均为内部推演，不构成投资建议</p>
+</footer>
+</body>
+</html>
