@@ -1,4 +1,4 @@
-"""WP-M0-02 → lgd-recovery-framework.md 的 LGD 引擎（T1 解析层 + T2 五路 Δ 分量）。
+"""WP-M0-02 → lgd-recovery-framework.md 的 LGD 引擎（T1 解析层 + T2 五路 Δ 分量 + T3 顶层合成）。
 
 单一事实源：§2.1 LGD 五级定义表、§5.1 中国信用债品种优先级表、§7.2 担保类型
 表、§8.2 行业 Δ 表、§11.4 统计不确定区间表均运行时解析，解析失败即 raise（不
@@ -556,3 +556,135 @@ def delta_legal(province: str, evasion: EvasionFlags) -> DeltaItem:
         note += f"；合计 {raw:.4g}pp 已 clamp 至 legal 区间 [{lo:.4g},{hi:.4g}]"
     confidence = "中" if (triggers or region_val != 0.0) else "低"
     return DeltaItem("Δ_Legal", val, confidence, note)
+
+
+# ================= T3：compute_lgd 顶层合成 =================
+
+
+@dataclass(frozen=True)
+class LgdResult:
+    """compute_lgd 输出（对应 §13.1 单一债券 LGD 评估输出模板）。
+
+    lgd_pct:        合成损失率 %（Base + ΣΔ 后 clamp [0,100]；D6 加法式）。
+                    §2.2 PD 约束只钳制等级、不回改本值——合成原值保留可见。
+    lgd_level:      五级等级（§2.1 运行时 levels 左闭右开映射 + §2.2 PD 约束钳制后）。
+    recovery_range: 该等级预期回收率区间 (低, 高) %（§2.1 levels）。
+    breakdown:      (Base_LGD, 五路 Δ[, PD约束钳制]) DeltaItem 审计链。
+    ci_range:       §11.4 中国调整后回收率范围 (低, 高) %。
+    prior_check:    {"expected_range": (LGD低, LGD高)|None,
+                     "within_prior": bool|None}（§5.1 品种先验交叉；
+                     品种未覆盖时两端均 None）。
+    data_gaps:      低置信 Δ 分量缺口清单（"name: note"，对应 §13.1
+                    「数据缺口与不确定性」）。
+    out_of_scope:   框架覆盖外输入清单（note 标「未覆盖」的 Δ 分量 +
+                    §5.1 未收录债券品种）。
+    """
+
+    lgd_pct: float
+    lgd_level: str
+    recovery_range: tuple
+    breakdown: tuple
+    ci_range: tuple
+    prior_check: dict
+    data_gaps: tuple
+    out_of_scope: tuple
+
+
+def _level_num(level: str) -> int:
+    """"LGD3" → 3。"""
+    return int(level[-1])
+
+
+def _level_for_pct(pct: float, levels: tuple) -> str:
+    """§2.1 损失率区间映射，左闭右开（40% → LGD3）；右端 100% 闭合落 LGD5。"""
+    for name, loss_low, loss_high, _, _ in levels:
+        if loss_low <= pct < loss_high:
+            return name
+    return levels[-1][0]
+
+
+def compute_lgd(
+    seniority: str,
+    collateral: CollateralInput,
+    guarantee: GuaranteeInput,
+    industry_key: str,
+    recovery_scenario: str,
+    province: str,
+    evasion: EvasionFlags,
+    pd_rating: str,
+    bond_type: str,
+    tables: LgdTables = None,
+) -> LgdResult:
+    """顶层合成：Base + ΣΔ（D6 加法式）→ clamp [0,100] → 五级映射
+    → §2.2 PD 约束钳制等级 → §11.4 CI / §5.1 先验交叉 / 缺口清单装配。"""
+    tables = tables if tables is not None else load_lgd_tables()
+    if seniority not in SENIORITY_BASE:
+        raise ValueError(
+            f"未知优先级 {seniority!r}（允许值：{tuple(SENIORITY_BASE)}）"
+        )
+    base = SENIORITY_BASE[seniority]
+    items = [
+        DeltaItem(
+            "Base_LGD", base, "高",
+            f"§3.2「{seniority}」基准（基于全球基准，未经中国市场历史数据校准）",
+        ),
+        delta_collateral(collateral),
+        delta_guarantee(guarantee, tables),
+        delta_industry(industry_key, tables),
+        delta_recovery_path(recovery_scenario),
+        delta_legal(province, evasion),
+    ]
+    pct = clamp(base + sum(i.value for i in items[1:]), 0.0, 100.0)
+    level = _level_for_pct(pct, tables.levels)
+    # §2.2 PD 约束：只钳制等级，不回改 lgd_pct（合成原值保留可见，钳制留痕）
+    lo_b, hi_b = pd_lgd_bounds(pd_rating)
+    n = _level_num(level)
+    clamped = int(clamp(
+        n,
+        _level_num(lo_b) if lo_b else 1,
+        _level_num(hi_b) if hi_b else 5,
+    ))
+    if clamped != n:
+        side, bound = ("下限", lo_b) if clamped > n else ("上限", hi_b)
+        new_level = f"LGD{clamped}"
+        items.append(DeltaItem(
+            "PD约束钳制", 0.0, "高",
+            f"§2.2 PD 评级 {pd_rating.strip().upper()} {side} {bound}："
+            f"合成等级 {level} 已钳制至 {new_level}"
+            f"（lgd_pct 保留合成原值 {pct:.4g}%）",
+        ))
+        level = new_level
+    row = next(r for r in tables.levels if r[0] == level)
+    # §5.1 品种先验交叉
+    prior = tables.bond_priors.get(bond_type)
+    if prior is None:
+        prior_check = {"expected_range": None, "within_prior": None}
+    else:
+        prior_check = {
+            "expected_range": prior,
+            "within_prior": _level_num(prior[0]) <= _level_num(level) <= _level_num(prior[1]),
+        }
+    # 缺口 / 覆盖外清单（PD约束钳制项置信度恒为高，天然不入列）
+    data_gaps = []
+    out_of_scope = []
+    for it in items[1:]:
+        if it.confidence != "低":
+            continue
+        entry = f"{it.name}: {it.note}"
+        data_gaps.append(entry)
+        if "未覆盖" in it.note:
+            out_of_scope.append(entry)
+    if prior is None:
+        out_of_scope.append(
+            f"§5.1 品种先验表未覆盖债券品种 {bond_type!r}，先验交叉不可用"
+        )
+    return LgdResult(
+        lgd_pct=pct,
+        lgd_level=level,
+        recovery_range=(row[3], row[4]),
+        breakdown=tuple(items),
+        ci_range=tables.ci_ranges[level],
+        prior_check=prior_check,
+        data_gaps=tuple(data_gaps),
+        out_of_scope=tuple(out_of_scope),
+    )

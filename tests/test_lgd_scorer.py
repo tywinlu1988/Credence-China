@@ -14,7 +14,9 @@ from src.lgd_scorer import (
     CollateralInput,
     EvasionFlags,
     GuaranteeInput,
+    LgdResult,
     clamp,
+    compute_lgd,
     delta_collateral,
     delta_guarantee,
     delta_industry,
@@ -409,3 +411,172 @@ def test_legal_region_parity():
         "- 其他：0pp",
     ):
         assert anchor in text
+
+
+# ================= T3：compute_lgd 顶层合成 =================
+#
+# 合成公式（D6 裁决）：LGD = Base + ΣΔ（加法式，Δ 带符号，负值降低 LGD）。
+# 管线：Base + ΣΔ → clamp [0,100] → 五级映射（§2.1 运行时 levels，左闭右开）
+# → §2.2 PD 约束钳制等级（不回改 lgd_pct 合成原值）→ CI/先验交叉/缺口清单。
+
+def _base_kwargs(**kw):
+    """中性默认：无抵押/无担保/高端装备(0pp)/重整-空心化(0pp)/湖北(其他 0pp)/
+    无逃废债/A 评级(§2.2 无约束)/公司债（普通）(先验 LGD3-4)。"""
+    d = dict(
+        seniority="无担保优先",
+        collateral=CollateralInput(kind="none"),
+        guarantee=GuaranteeInput("无"),
+        industry_key="高端装备",
+        recovery_scenario="重整-空心化",
+        province="湖北",
+        evasion=_NO_EVASION,
+        pd_rating="A",
+        bond_type="公司债（普通）",
+    )
+    d.update(kw)
+    return d
+
+
+def test_compute_lgd_unsecured_with_cbci_guarantee():
+    """brief 算例 1：无担保优先 60 + 中债增担保 -15 = 45% → LGD3，
+    落在保证担保先验 LGD2-4 内。"""
+    r = compute_lgd(**_base_kwargs(
+        guarantee=GuaranteeInput("中债信用增进公司"),
+        bond_type="有担保公司债（保证担保）",
+    ))
+    assert isinstance(r, LgdResult)
+    assert r.lgd_pct == 45.0
+    assert r.lgd_level == "LGD3"
+    assert r.recovery_range == (40.0, 60.0)
+    assert r.ci_range == (25.0, 65.0)
+    assert r.prior_check == {"expected_range": ("LGD2", "LGD4"), "within_prior": True}
+
+
+def test_compute_lgd_secured_equity_pledge_lgd1():
+    """brief 算例 2：有担保优先 45 + 股权质押优质档 -20 + Foundry -5
+    + 上海 -5 = 15% → LGD1。"""
+    r = compute_lgd(**_base_kwargs(
+        seniority="有担保优先",
+        collateral=CollateralInput(
+            kind="equity_pledge",
+            pledge_ratio=45, volatility_30d=20, turnover_rate=2,
+        ),
+        industry_key="半导体-Foundry",
+        province="上海",
+        bond_type="有担保公司债（抵押/质押）",
+    ))
+    assert r.lgd_pct == 15.0
+    assert r.lgd_level == "LGD1"
+    assert r.recovery_range == (80.0, 100.0)
+    assert r.ci_range == (65.0, 98.0)
+    assert r.prior_check["within_prior"] is True
+
+
+def test_compute_lgd_pd_floor_ccc():
+    """brief 算例 3：合成 LGD2（25%）但 CCC 评级下限 LGD3 → 等级钳制至 LGD3，
+    lgd_pct 保留合成原值（钳制留痕于 breakdown）。"""
+    r = compute_lgd(**_base_kwargs(
+        seniority="有担保优先",
+        collateral=CollateralInput(kind="cash_or_treasury"),
+        pd_rating="CCC",
+        bond_type="有担保公司债（抵押/质押）",
+    ))
+    assert r.lgd_pct == 25.0
+    assert r.lgd_level == "LGD3"
+    assert r.recovery_range == (40.0, 60.0)
+    pd_items = [i for i in r.breakdown if i.name == "PD约束钳制"]
+    assert len(pd_items) == 1
+    assert "CCC" in pd_items[0].note and "LGD3" in pd_items[0].note
+
+
+def test_compute_lgd_subordinated_liquidation_liaoning():
+    """brief 算例 4：次级 75 + 清算 +5 + 辽宁 +5 = 85% → LGD5。"""
+    r = compute_lgd(**_base_kwargs(
+        seniority="次级",
+        recovery_scenario="清算",
+        province="辽宁",
+        pd_rating="B",
+        bond_type="次级债券/二级资本债",
+    ))
+    assert r.lgd_pct == 85.0
+    assert r.lgd_level == "LGD5"
+    assert r.recovery_range == (0.0, 20.0)
+    assert r.ci_range == (2.0, 15.0)
+    assert r.prior_check == {"expected_range": ("LGD4", "LGD5"), "within_prior": True}
+
+
+def test_compute_lgd_prior_out_of_range():
+    """prior_check 越界：LGD5 落在保证担保先验 LGD2-4 之外 → within_prior False。"""
+    r = compute_lgd(**_base_kwargs(
+        seniority="次级", recovery_scenario="清算", province="辽宁",
+        pd_rating="B", bond_type="有担保公司债（保证担保）",
+    ))
+    assert r.lgd_level == "LGD5"
+    assert r.prior_check == {"expected_range": ("LGD2", "LGD4"), "within_prior": False}
+
+
+def test_compute_lgd_breakdown_structure():
+    """breakdown = Base_LGD + 五路 Δ（全中性输入 → 60% → 边界 60 左闭 → LGD4）。"""
+    r = compute_lgd(**_base_kwargs())
+    names = [i.name for i in r.breakdown]
+    assert names == [
+        "Base_LGD", "Δ_Collateral", "Δ_Guarantee",
+        "Δ_Industry", "Δ_RecoveryPath", "Δ_Legal",
+    ]
+    assert r.breakdown[0].value == 60.0
+    assert r.lgd_pct == 60.0 and r.lgd_level == "LGD4"
+
+
+def test_compute_lgd_level_boundary_left_closed():
+    """五级映射左闭右开：40% → LGD3（非 LGD2）。"""
+    r = compute_lgd(**_base_kwargs(
+        collateral=CollateralInput(kind="cash_or_treasury"),  # 60 - 20 = 40
+    ))
+    assert r.lgd_pct == 40.0 and r.lgd_level == "LGD3"
+
+
+def test_compute_lgd_pd_cap_aaa():
+    """AAA 上限 LGD4：合成 85%（LGD5）钳制至 LGD4（仍落次级先验 LGD4-5 内）。"""
+    r = compute_lgd(**_base_kwargs(
+        seniority="次级", recovery_scenario="清算", province="辽宁",
+        pd_rating="AAA", bond_type="次级债券/二级资本债",
+    ))
+    assert r.lgd_pct == 85.0
+    assert r.lgd_level == "LGD4"
+    assert r.prior_check["within_prior"] is True
+
+
+def test_compute_lgd_clamp_upper_100():
+    """劣后 90 + 新能源汽车 +10 + 清算 +5 = 105 → clamp 100 → LGD5。"""
+    r = compute_lgd(**_base_kwargs(
+        seniority="劣后", industry_key="新能源汽车", recovery_scenario="清算",
+        pd_rating="B", bond_type="资产支持证券次级/劣后",
+    ))
+    assert r.lgd_pct == 100.0 and r.lgd_level == "LGD5"
+    assert r.prior_check == {"expected_range": ("LGD5", "LGD5"), "within_prior": True}
+
+
+def test_compute_lgd_out_of_scope_and_data_gaps():
+    """覆盖外输入 → out_of_scope；缺输入 → data_gaps。"""
+    r = compute_lgd(**_base_kwargs(industry_key="钢铁", bond_type="某未收录品种"))
+    assert any("Δ_Industry" in e for e in r.out_of_scope)
+    assert any("某未收录品种" in e for e in r.out_of_scope)
+    assert r.prior_check == {"expected_range": None, "within_prior": None}
+    # 房地产缺 LTV → 低置信缺口入 data_gaps
+    r2 = compute_lgd(**_base_kwargs(
+        collateral=CollateralInput(kind="real_estate", city_tier="一线"),
+    ))
+    assert any("Δ_Collateral" in e for e in r2.data_gaps)
+
+
+def test_compute_lgd_unknown_seniority():
+    with pytest.raises(ValueError):
+        compute_lgd(**_base_kwargs(seniority="超级优先"))
+
+
+def test_formula_sign_parity():
+    """§3.2 公式为加法式（D6 裁决修正减号笔误）+ 修正注记在档。"""
+    text = DOC.read_text(encoding="utf-8")
+    assert "LGD估计值 = Base_LGD  +  Adjustments" in text
+    assert "LGD估计值 = Base_LGD  -  Adjustments" not in text
+    assert "修正原文减号笔误，与 Δ 语义及 §5.1 先验对齐" in text
