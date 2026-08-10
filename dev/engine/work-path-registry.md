@@ -108,6 +108,11 @@ quality_gates:
 
 审贷的专项加深包：在 WP-M0-01 主体评级之上，追加违约损失率（LGD）与外部支持两个专项模块，用于债项评级、增信评估与支持上调判断。两个引擎文档齐备，已接编码引擎（lgd_scorer + external_support_scorer，pipeline EXECUTABLE_ENGINES 接线，mode="code"）。
 
+**编码引擎 inputs 契约**（`src/pipeline.py` `_run_m002` 适配器）：inputs 为双子字典 `{"lgd": {...}, "support": {...}}`。
+`lgd` 子字典键即 `compute_lgd` 入参字段名：`seniority`、`collateral`（CollateralInput 字段：kind/pledge_ratio/ltv/city_tier 等）、`guarantee`（GuaranteeInput 字段：guarantee_type/relation/executability_confirmed）、`industry_key`、`recovery_scenario`、`province`、`evasion`（EvasionFlags 字段，可缺省）、`pd_rating`、`bond_type`；
+`support` 子字典键即 SupportInput 字段名：`support_type`、`indicators`、`willingness_signals`、`signal_level`、`standalone_rating`（trap/supporter 等字段可缺省）。
+子字典在适配器内展开为关键字构造（SupportInput 字段序与文档序不同，严禁位置调用）；返回 `{"lgd": asdict(LgdResult), "support": asdict(SupportResult)}`。
+
 ```yaml
 id: WP-M0-02
 name: 审贷专项附加包（LGD+外部支持）

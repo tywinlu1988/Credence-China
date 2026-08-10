@@ -5,9 +5,10 @@ release, not any single component:
 
 - T11.1: every one of the 11 active work paths yields a valid 4-stage plan (S1..S4,
   non-empty names/skills) via the thin orchestrator.
-- T11.2: the 5 wired paths (WP-M0-01 composite, WP-M4-01 concentration, WP-M4-02
-  contagion, WP-M4-03 SRI, WP-X-05 outlook) execute code at the analysis stage; the
-  other 6 active paths produce a complete LLM-orchestrated plan.
+- T11.2: the 6 wired paths (WP-M0-01 composite, WP-M0-02 LGD + external support,
+  WP-M4-01 concentration, WP-M4-02 contagion, WP-M4-03 SRI, WP-X-05 outlook)
+  execute code at the analysis stage; the other 6 active paths (of the 11-path
+  v0.8.0 anchor set) produce a complete LLM-orchestrated plan.
 - T11.3: the end-to-end walkthrough record exists and literally names all active path ids.
 - T11.4: version promotion is consistent (EXPECTED_VERSION well-formed and aligned with
   pyproject/package.json; every CORE_DOCS doc + skill declares it), mirroring
