@@ -352,5 +352,6 @@ def test_code_uplift_map_matches_doc():
     assert tables.uplift_map["非常高"] == (2, 3)
     assert tables.uplift_map["高"] == (1, 2)
     assert tables.uplift_map["低/无"] == (0, 0)
-    r = compute_support(_support_input())
+    # standalone 取 A+ 避开 AAA 梯顶截断（终审 I-1 后 uplift_notches 为实际变动）
+    r = compute_support(_support_input(standalone_rating="A+"))
     assert r.uplift_notches == 3  # D4：意愿高 → 区间上限

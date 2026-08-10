@@ -64,6 +64,38 @@ def test_pd_bounds():
         pd_lgd_bounds("ZZZ")
 
 
+def test_pd_lgd_buckets_parity():
+    """终审 I-2：§2.2 四桶文档锚点回读 + 代码行为一致（防静默漂移）。"""
+    text = DOC.read_text(encoding="utf-8")
+    assert "### 2.2 LGD等级与PD评级的交互约束" in text
+    # §2.2 约束表四行锚点仍在（文档漂移时本测试先红）
+    for row in (
+        "| AAA - AA | LGD1 - LGD4 |",
+        "| A - BBB | LGD1 - LGD5 |",
+        "| BB - B | LGD2 - LGD5 |",
+        "| CCC - D | LGD3 - LGD5 |",
+    ):
+        assert row in text
+    # 代码行为与文档行逐桶一致（含 "B-" 前缀落 BB-B 桶，见 M-5 注释依据）
+    assert pd_lgd_bounds("AAA") == (None, "LGD4")
+    assert pd_lgd_bounds("AA-") == (None, "LGD4")
+    assert pd_lgd_bounds("A") == (None, None)
+    assert pd_lgd_bounds("BBB-") == (None, None)
+    assert pd_lgd_bounds("BB+") == ("LGD2", None)
+    assert pd_lgd_bounds("B-") == ("LGD2", None)
+    assert pd_lgd_bounds("CCC") == ("LGD3", None)
+    assert pd_lgd_bounds("D") == ("LGD3", None)
+
+
+def test_delta_ranges_minus5_plus10_parity():
+    """终审 I-2：§3.2 "-5pp 至 +10pp" 锚定 industry/recovery_path/legal 三路同值。"""
+    text = DOC.read_text(encoding="utf-8")
+    assert "-5pp 至 +10pp" in text
+    assert DELTA_RANGES["industry"] == (-5.0, 10.0)
+    assert DELTA_RANGES["recovery_path"] == (-5.0, 10.0)
+    assert DELTA_RANGES["legal"] == (-5.0, 10.0)
+
+
 # ---------------- §3.2 硬编码锚点 parity ----------------
 
 def test_seniority_base_parity():
@@ -203,11 +235,24 @@ def test_equity_pledge_first_match_order():
 
 
 def test_equity_pledge_uncovered():
-    """输入缺失/树覆盖外 → 0 + 低置信注记（留 LLM 判断）。"""
+    """输入缺失/树未覆盖 → 0 + 低置信注记（留 LLM 判断）。"""
     item = delta_collateral(_equity())
     assert item.value == 0.0
     assert item.confidence == "低"
     assert item.note
+
+
+def test_equity_pledge_out_of_tree_scope():
+    """终审 M-2：全输入齐备但落树外 → 注记"未覆盖" → compute_lgd 入 out_of_scope。"""
+    c = _equity(
+        pledge_ratio=55, volatility_30d=45, turnover_rate=2,
+        maintenance_ratio=150, concentration=30,
+    )
+    item = delta_collateral(c)
+    assert item.value == 0.0 and item.confidence == "低"
+    assert "未覆盖" in item.note
+    r = compute_lgd(**_base_kwargs(collateral=c))
+    assert any("Δ_Collateral" in e for e in r.out_of_scope)
 
 
 def test_real_estate_formula_d2():
@@ -337,9 +382,22 @@ def test_legal_region_west_boundary():
         item = delta_legal(prov, _NO_EVASION)
         assert item.value == 0.0, prov
         assert "留 LLM 判断" in item.note, prov
+        assert item.confidence == "低", prov  # 终审 M-1：留 LLM 判断分支保留低置信
     # 收窄后五省区仍取 +5
     for prov in ("甘肃", "青海", "新疆", "宁夏", "西藏"):
         assert delta_legal(prov, _NO_EVASION).value == 5.0, prov
+
+
+def test_legal_other_region_mid_confidence():
+    """终审 M-1：文档明列「其他：0pp」档（如湖北）属文档内档位 → "中"置信，
+    中性输入不入 data_gaps（"低"仅留山西/西部边界等留 LLM 判断分支）。"""
+    item = delta_legal("湖北省", _NO_EVASION)
+    assert item.value == 0.0 and item.confidence == "中"
+    assert "留 LLM 判断" not in item.note
+    # 山西（§10.3 未列名）仍为低置信
+    assert delta_legal("山西", _NO_EVASION).confidence == "低"
+    r = compute_lgd(**_base_kwargs(province="湖北"))
+    assert not any("Δ_Legal" in e for e in r.data_gaps)
 
 
 def test_legal_evasion_stacking_and_clamp():

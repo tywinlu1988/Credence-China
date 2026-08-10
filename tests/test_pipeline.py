@@ -410,7 +410,7 @@ def _m002_inputs() -> dict:
             },
             "willingness_signals": {"战略地位": "强", "历史救助": "强"},
             "signal_level": "L5",
-            "standalone_rating": "AA",
+            "standalone_rating": "A+",
             "supporter_is_central_gov": True,
         },
     }
@@ -431,6 +431,7 @@ def test_t9_11_m002_dual_engine_wired_and_runs(contract, registry_paths):
     assert lgd["breakdown"][0]["name"] == "Base_LGD"
     assert lgd["prior_check"]["within_prior"] is True
     # 支持子结果：能力强 × 意愿高 → 非常高 → +3 子级（上限取 hi）
+    # （standalone 取 A+ 避开 AAA 梯顶截断——终审 I-1 后 uplift_notches 为实际变动）
     sup = out["support"]
     assert sup["strength"] == "非常高" and sup["uplift_notches"] == 3
-    assert sup["final_rating"] == "AAA"
+    assert sup["final_rating"] == "AA+"

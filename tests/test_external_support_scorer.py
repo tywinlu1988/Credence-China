@@ -444,18 +444,34 @@ def test_gate_strength(tables):
 # ---------------- 支持方上限（§6.3） ----------------
 
 def test_supporter_cap(tables):
-    # standalone AA- +2 子级 = AA+（D3：0.5 分/子级 × 18 档步进），支持方 AA- → 压回 AA-
+    # standalone AA- +2 子级 = AA+（D3：0.5 分/子级 × 18 档步进），支持方 AA- → 压回 AA-；
+    # 终审 I-1：uplift_notches 重算为 standalone→final 真实子级数（压回 standalone → 0）
     r = compute_support(_inp(
         willingness_signals=_signals(strong=1, mid=14),
         standalone_rating="AA-", supporter_is_central_gov=False, supporter_rating="AA-",
     ), tables)
-    assert r.uplift_notches == 2
+    assert r.uplift_notches == 0
     assert r.final_rating == "AA-" and r.capped
     # 中央政府例外：上限 = 主权评级 AAA → 不封顶
     r2 = compute_support(_inp(
         willingness_signals=_signals(strong=1, mid=14), standalone_rating="AA-",
     ), tables)
     assert r2.final_rating == "AA+" and not r2.capped
+
+
+def test_supporter_cap_below_standalone(tables):
+    """终审 I-1：支持方评级低于独立评级时，final 不得被上限压破 standalone。"""
+    # standalone AA + 非常高（+2~3 取上限 3）→ 原可至 AAA，支持方 A- 低于 AA：
+    # 上限钳制被独立评级下限截断 → final=AA、实际变动 0 子级、cap_note 留痕
+    r = compute_support(_inp(
+        standalone_rating="AA",
+        supporter_is_central_gov=False, supporter_rating="A-",
+    ), tables)
+    assert r.strength == "非常高" and r.capped
+    assert r.final_rating == "AA" and r.uplift_notches == 0
+    assert "独立评级下限截断" in r.disclaimer["cap_note"]
+    # 终审 M-3：粗矩阵归区与精矩阵方向不同时的优先口径在 disclaimer 注明
+    assert "精矩阵" in r.disclaimer["matrix_precedence"]
 
 
 def test_supporter_missing_note(tables):

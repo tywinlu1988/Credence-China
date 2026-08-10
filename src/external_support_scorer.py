@@ -681,6 +681,17 @@ def compute_support(inp: SupportInput, tables: SupportTables = None) -> SupportR
         if cap_idx is not None and final_idx < cap_idx:
             final_idx = cap_idx
             capped = True
+            if final_idx > sa_idx:
+                # 终审 I-1：支持方评级低于独立评级时，上限钳制不得把 final 压到
+                # standalone 之下——final 档序位以 standalone 为下限并留注记。
+                final_idx = sa_idx
+                cap_note = (
+                    f"支持方评级 {inp.supporter_rating} 低于独立评级 "
+                    f"{inp.standalone_rating}：§6.3 上限钳制被独立评级下限截断，"
+                    "final 不低于 standalone"
+                )
+        # 终审 I-1：uplift_notches 重算为 standalone→final 的真实子级数
+        uplift = sa_idx - final_idx
     final_rating = _LADDER[final_idx]
 
     # --- §3.2 区域标签 + 置信度（二维矩阵按生效档位归区：强/高 为"强"侧） ---
@@ -715,6 +726,11 @@ def compute_support(inp: SupportInput, tables: SupportTables = None) -> SupportR
         "willingness": willingness,
         "standalone_rating": inp.standalone_rating,
         "cap_note": cap_note,
+        # 终审 M-3：§3.2 粗矩阵归区方向与 §6.1/§6.2 精矩阵上调幅度可能不一致
+        "matrix_precedence": (
+            "区域归区（§3.2 粗矩阵）与上调幅度（§6.1/§6.2 精矩阵）方向不同时，"
+            "以精矩阵为准"
+        ),
     }
     return SupportResult(
         capacity=capacity,

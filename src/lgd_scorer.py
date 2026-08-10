@@ -35,6 +35,7 @@ DELTA_RANGES = {
 
 # §2.2 PD 评级 → LGD 可达区间约束（硬编码 + parity；档位前缀按 18 档单源归桶）。
 #   AAA-AA → 上限 LGD4；A-BBB → 无约束；BB-B → 下限 LGD2；CCC-D → 下限 LGD3。
+#   前缀归桶依据：如 "B-" 经 startswith("B") 落 BB-B 桶——§2.2 表 "BB - B" 行覆盖 B-。
 _PD_LGD_BUCKETS = (
     (("AAA", "AA"), (None, "LGD4")),
     (("A", "BBB"), (None, None)),
@@ -323,7 +324,7 @@ def _delta_equity_pledge(c: CollateralInput) -> DeltaItem:
     else:
         return DeltaItem(
             "Δ_Collateral", 0.0, "低",
-            "§6.1.3 决策树未命中任何分支（输入缺失或落在树覆盖外），取 0 留 LLM 判断",
+            "§6.1.3 决策树未命中任何分支（输入缺失或落在树未覆盖分支），取 0 留 LLM 判断",
         )
     lo, hi = DELTA_RANGES["collateral"]
     return DeltaItem(
@@ -554,7 +555,10 @@ def delta_legal(province: str, evasion: EvasionFlags) -> DeltaItem:
         note += "（定性判断指标组合，仅作风险提示）"
     if val != raw:
         note += f"；合计 {raw:.4g}pp 已 clamp 至 legal 区间 [{lo:.4g},{hi:.4g}]"
-    confidence = "中" if (triggers or region_val != 0.0) else "低"
+    # 终审 M-1 口径：文档明列的「其他：0pp」档属文档内档位 → "中"置信（非数据
+    # 缺口）；"低"置信仅留给带"留 LLM 判断"注记的分支（山西 / 西部边界七省区）。
+    llm_defer = region_val == 0.0 and "留 LLM 判断" in region_note
+    confidence = "低" if (llm_defer and not triggers) else "中"
     return DeltaItem("Δ_Legal", val, confidence, note)
 
 
