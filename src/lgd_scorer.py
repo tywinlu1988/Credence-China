@@ -39,6 +39,10 @@ _PD_LGD_BUCKETS = (
 
 _KNOWN_RATINGS = {r for _, _, r in CANONICAL_RATING_INTERVALS}
 
+# §5.1 品种先验表当前 11 行；下界校验防"行首加粗丢失 → 正则静默丢行"
+# （解析失败即 raise 纪律要求丢失可观测，而非容忍稀疏结果）。
+_BOND_PRIOR_MIN_ROWS = 8
+
 
 @dataclass(frozen=True)
 class LgdTables:
@@ -76,16 +80,21 @@ def _read(path) -> str:
     return p.read_text(encoding="utf-8")
 
 
-def _section(text: str, anchor: str) -> str:
-    sec = re.search(anchor + r"\s.*?(?=\n### |\n## |\Z)", text, re.DOTALL)
+def _section(text: str, num: str) -> str:
+    """按节号切片。``^### `` 行首锁防正文提及误锚；``(?!\\d)`` 节号边界防
+    ``### 2.10`` 之类的前缀误锚（锚点须为独立小节标题行）。"""
+    sec = re.search(
+        rf"^### {re.escape(num)}(?!\d)\s.*?(?=\n### |\n## |\Z)",
+        text, re.MULTILINE | re.DOTALL,
+    )
     if not sec:
-        raise ValueError(f"{anchor} 段落缺失")
+        raise ValueError(f"§{num} 段落缺失")
     return sec.group(0)
 
 
 def _parse_levels(text: str) -> tuple:
     """§2.1 → ((name, loss_low, loss_high, rec_low, rec_high), ...)（5 行，%）。"""
-    sec = _section(text, r"### 2\.1")
+    sec = _section(text, "2.1")
     rows = []
     for m in re.finditer(
         r"^\|\s*(LGD\d)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|", sec, re.MULTILINE
@@ -114,7 +123,7 @@ def _parse_pct_range(cell: str) -> tuple:
 
 def _parse_bond_priors(text: str) -> dict:
     """§5.1 → {品种: (LGD 下限, LGD 上限)}（单档区间如 "LGD5" 两端相同）。"""
-    sec = _section(text, r"### 5\.1")
+    sec = _section(text, "5.1")
     priors = {}
     for m in re.finditer(
         r"^\|\s*\*\*(.+?)\*\*\s*\|[^|]*\|\s*(LGD\d)(?:\s*-\s*(LGD\d))?\s*\|",
@@ -122,14 +131,17 @@ def _parse_bond_priors(text: str) -> dict:
     ):
         lo, hi = m.group(2), m.group(3) or m.group(2)
         priors[m.group(1).strip()] = (lo, hi)
-    if not priors:
-        raise ValueError("§5.1 品种先验表解析为空")
+    if len(priors) < _BOND_PRIOR_MIN_ROWS:
+        raise ValueError(
+            f"§5.1 品种先验表至少应有 {_BOND_PRIOR_MIN_ROWS} 行，实际 {len(priors)}"
+            "（疑似加粗标记丢失致静默丢行）"
+        )
     return priors
 
 
 def _parse_ci_ranges(text: str) -> dict:
     """§11.4 → {LGD 等级: (中国调整后回收率低, 高)}（第 4 列 "65% - 98%（…）"）。"""
-    sec = _section(text, r"### 11\.4")
+    sec = _section(text, "11.4")
     ranges = {}
     for m in re.finditer(
         r"^\|\s*(LGD\d)\s*\|\s*\d+%\s*\|\s*\d+%\s*-\s*\d+%\s*\|"

@@ -77,3 +77,52 @@ def test_clamp():
     assert clamp(5.0, 0.0, 10.0) == 5.0
     assert clamp(-1.0, 0.0, 10.0) == 0.0
     assert clamp(99.0, 0.0, 10.0) == 10.0
+
+
+# ---------------- 解析层加固（伪造文档负例） ----------------
+
+_FAKE_LEVELS = """### 2.1 LGD等级定义
+| LGD1 | <20% | >80% | a |
+| LGD2 | 20% - 40% | 60% - 80% | a |
+| LGD3 | 40% - 60% | 40% - 60% | a |
+| LGD4 | 60% - 80% | 20% - 40% | a |
+| LGD5 | >80% | <20% | a |
+"""
+
+_FAKE_CI = """### 11.4 CI
+| LGD1 | 85% | 70% - 98% | 65% - 98%（x） |
+| LGD2 | 70% | 50% - 85% | 45% - 80%（x） |
+| LGD3 | 50% | 30% - 70% | 25% - 65%（x） |
+| LGD4 | 25% | 10% - 45% | 10% - 40%（x） |
+| LGD5 | 8% | 2% - 20% | 2% - 15%（x） |
+"""
+
+
+def test_bond_priors_row_floor(tmp_path):
+    """§5.1 行首加粗丢失 → 解析行数低于下界即 raise（不容忍静默丢行）。"""
+    fake = tmp_path / "fake.md"
+    fake.write_text(
+        _FAKE_LEVELS
+        + "### 5.1 品种\n"
+        + "\n".join(
+            f"| **品种{i}** | x | LGD1 - LGD3 | a |" for i in range(5)  # 仅 5 行 < 下界 8
+        )
+        + "\n"
+        + _FAKE_CI,
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="§5.1"):
+        load_lgd_tables(fake)
+
+
+def test_section_anchor_boundary(tmp_path):
+    """节号前缀相邻（### 2.10）与正文提及（非行首 ### 2.1）均不得误锚。"""
+    fake = tmp_path / "fake.md"
+    fake.write_text(
+        "### 2.10 诱饵章节（无前缀边界时会被 ### 2\\.1 误锚）\n"
+        "| LGD1 | <20% | >80% | a |\n"
+        "正文提及 ### 2.1 字样（无行首锁时会被误锚）\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="§2.1 段落缺失"):
+        load_lgd_tables(fake)
