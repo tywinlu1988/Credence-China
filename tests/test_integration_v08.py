@@ -67,7 +67,7 @@ ACTIVE_PATHS = [
     "WP-M0-01", "WP-M1-01", "WP-M2-01", "WP-M4-01", "WP-M4-02",
     "WP-M4-03", "WP-M5-01", "WP-X-01", "WP-X-02", "WP-X-03", "WP-X-05",
 ]
-WIRED_PATHS = ["WP-M0-01", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-X-05"]
+WIRED_PATHS = ["WP-M0-01", "WP-M0-02", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-X-05"]
 UNWIRED_ACTIVE = [p for p in ACTIVE_PATHS if p not in WIRED_PATHS]
 
 FOUR_SKILLS = (
@@ -199,9 +199,38 @@ def _composite_inputs():
     }
 
 
+def _m002_inputs():
+    """WP-M0-02 dual-engine fixture (mirrors tests/test_pipeline.py::_m002_inputs)."""
+    return {
+        "lgd": {
+            "seniority": "无担保优先",
+            "collateral": {"kind": "none"},
+            "guarantee": {"guarantee_type": "无"},
+            "industry_key": "光伏制造",
+            "recovery_scenario": "重整-资产尚可",
+            "province": "江苏",
+            "evasion": {},
+            "pd_rating": "AA",
+            "bond_type": "中期票据（MTN）",
+        },
+        "support": {
+            "support_type": "政府支持",
+            "indicators": {
+                "一般公共预算收入": 4000, "财政自给率": 85, "政府显性债务率": 70,
+                "GDP增速": 7, "人口趋势": "持续净流入", "转移支付依赖度": 15,
+            },
+            "willingness_signals": {"战略地位": "强", "历史救助": "强"},
+            "signal_level": "L5",
+            "standalone_rating": "AA",
+            "supporter_is_central_gov": True,
+        },
+    }
+
+
 def _wired_inputs(path_id):
     return {
         "WP-M0-01": _composite_inputs,
+        "WP-M0-02": _m002_inputs,
         "WP-M4-01": _concentration_inputs,
         "WP-M4-02": _contagion_inputs,
         "WP-M4-03": _sri_inputs,
@@ -235,11 +264,12 @@ def test_t11_1_all_active_paths_yield_valid_four_stage_plan(contract, registry_p
 
 
 # --------------------------------------------------------------------------
-# T11.2 — 3 wired paths execute code; the other 5 are LLM-orchestrated
+# T11.2 — wired paths execute code; the other active paths are LLM-orchestrated
 # --------------------------------------------------------------------------
 
 EXPECTED_OUTPUT_KEYS = {
     "WP-M0-01": {"paradigm", "composite", "rating", "veto_capped", "conflict", "out_of_scope"},
+    "WP-M0-02": {"lgd", "support"},
     "WP-M4-03": {"sri", "thermometer"},
     "WP-M4-01": {"score", "adjustment", "levels", "bb_cap_triggered"},
     "WP-M4-02": {"exposure", "links", "factors_applied"},
@@ -262,6 +292,8 @@ def test_t11_2_wired_execute_code_others_llm_orchestrated(contract, registry_pat
         assert set(analysis["outputs"]) == EXPECTED_OUTPUT_KEYS[pid]
 
     # unwired: complete plan, analysis not executable, every stage llm-orchestrated
+    # （ACTIVE_PATHS 锚定 v0.8.0 walkthrough 的 11 路径名单；WP-M0-02 后激活未入列，
+    #   在 WIRED_PATHS 但不在 ACTIVE_PATHS，故 unwired 计数仍为 6）
     assert len(UNWIRED_ACTIVE) == 6
     for pid in UNWIRED_ACTIVE:
         assert pid not in EXECUTABLE_ENGINES

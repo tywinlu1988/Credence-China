@@ -10,7 +10,8 @@
   `dev/engine/pipeline-contract.md` 的阶段总览表解析而来（见 load_contract）。链式边
   （chaining_edges）同样从该契约的 yaml 块读取，供端点引用完整性校验复用。
 - **不新编码任何引擎**：引擎文档是规范源，`src/sri_calculator.py`、`src/concentration_scorer.py`、
-  `src/contagion_engine.py`、`src/outlook_engine.py` 与 `src/composite_scorer.py` 是其
+  `src/contagion_engine.py`、`src/outlook_engine.py`、`src/composite_scorer.py`、
+  `src/lgd_scorer.py` 与 `src/external_support_scorer.py` 是其
   **可执行实现**。编排器只在路径已接线时调用它们（EXECUTABLE_ENGINES），不复制任何
   阈值/权重/档位语义。
 - **复用 path_sheet.py**：路径单校验、registry 解析、planned 判定与"待开发"提示一律
@@ -18,7 +19,7 @@
 """
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import yaml
@@ -30,6 +31,13 @@ from src.contagion_engine import (
     high_intensity_links,
     load_matrix,
     portfolio_exposure,
+)
+from src.external_support_scorer import SupportInput, compute_support
+from src.lgd_scorer import (
+    CollateralInput,
+    EvasionFlags,
+    GuaranteeInput,
+    compute_lgd,
 )
 from src.outlook_engine import (
     migration_range,
@@ -291,11 +299,35 @@ def _run_outlook(inputs: dict) -> dict:
     }
 
 
+def _run_m002(inputs: dict) -> dict:
+    """WP-M0-02 → lgd-recovery + external-support 双引擎（LGD 合成 + 外部支持上调）。
+
+    inputs 形如 ``{"lgd": {seniority, collateral, guarantee, industry_key, …},
+    "support": {support_type, indicators, …}}``——子字典键即两引擎入参的字段名，
+    在此展开为关键字构造（SupportInput 字段序与文档序不同，严禁位置调用）。
+    """
+    lg = inputs["lgd"]
+    lgd = compute_lgd(
+        seniority=lg["seniority"],
+        collateral=CollateralInput(**lg["collateral"]),
+        guarantee=GuaranteeInput(**lg["guarantee"]),
+        industry_key=lg["industry_key"],
+        recovery_scenario=lg["recovery_scenario"],
+        province=lg["province"],
+        evasion=EvasionFlags(**lg.get("evasion", {})),
+        pd_rating=lg["pd_rating"],
+        bond_type=lg["bond_type"],
+    )
+    support = compute_support(SupportInput(**inputs["support"]))
+    return {"lgd": asdict(lgd), "support": asdict(support)}
+
+
 # 已接线（wired）编码引擎登记表：path_id → 运行该路径编码引擎的可调用对象。
-# 保持显式且极小——本系列接入 WP-M0-01(旗舰聚合)、WP-M4-01(集中度)、WP-M4-02(传染矩阵)、
-# WP-M4-03(SRI)、WP-X-05(展望监控)。
+# 保持显式且极小——本系列接入 WP-M0-01(旗舰聚合)、WP-M0-02(LGD+外部支持双引擎)、
+# WP-M4-01(集中度)、WP-M4-02(传染矩阵)、WP-M4-03(SRI)、WP-X-05(展望监控)。
 EXECUTABLE_ENGINES = {
     "WP-M0-01": _run_composite,
+    "WP-M0-02": _run_m002,
     "WP-M4-03": _run_sri,
     "WP-M4-01": _run_concentration,
     "WP-M4-02": _run_contagion,

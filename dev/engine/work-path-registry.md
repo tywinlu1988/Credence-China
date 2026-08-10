@@ -106,7 +106,7 @@ quality_gates:
 
 ### WP-M0-02 审贷专项附加包（LGD+外部支持）（✅ active）
 
-审贷的专项加深包：在 WP-M0-01 主体评级之上，追加违约损失率（LGD）与外部支持两个专项模块，用于债项评级、增信评估与支持上调判断。两个引擎文档齐备，已激活（v0.10.2）。
+审贷的专项加深包：在 WP-M0-01 主体评级之上，追加违约损失率（LGD）与外部支持两个专项模块，用于债项评级、增信评估与支持上调判断。两个引擎文档齐备，已接编码引擎（lgd_scorer + external_support_scorer，pipeline EXECUTABLE_ENGINES 接线，mode="code"）。
 
 ```yaml
 id: WP-M0-02

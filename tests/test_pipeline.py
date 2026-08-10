@@ -97,6 +97,19 @@ def _sheet(path_id, **overrides) -> dict:
             "quality_gates": ["一票否决 (dev/engine/industry-framework.md §五)"],
             "notes": "",
         },
+        "WP-M0-02": {
+            "role": "M0",
+            "object": "single-issuer",
+            "depth": "专项",
+            "mode": "A",
+            "path_id": "WP-M0-02",
+            "engine_reading_order": [
+                "dev/engine/lgd-recovery-framework.md",
+                "dev/engine/external-support-framework.md",
+            ],
+            "quality_gates": ["LGD五级分类 (dev/engine/lgd-recovery-framework.md §二)"],
+            "notes": "",
+        },
         "WP-M1-01": {
             "role": "M1",
             "object": "single-issuer",
@@ -369,3 +382,55 @@ def test_t9_10_composite_wired_and_runs(contract, registry_paths):
     })
     out2 = next(s for s in manifest2["stages"] if s["name"] == "analysis")["outputs"]
     assert out2["out_of_scope"] and out2["composite"] is None
+
+
+# --------------------------------------------------------------------------
+# T9.11 — WP-M0-02 wired: dual engines (LGD + external support) at analysis stage
+# --------------------------------------------------------------------------
+
+def _m002_inputs() -> dict:
+    """WP-M0-02 fixture：光伏无担保优先中票（江苏）+ 政府支持全强。"""
+    return {
+        "lgd": {
+            "seniority": "无担保优先",
+            "collateral": {"kind": "none"},
+            "guarantee": {"guarantee_type": "无"},
+            "industry_key": "光伏制造",
+            "recovery_scenario": "重整-资产尚可",
+            "province": "江苏",
+            "evasion": {},
+            "pd_rating": "AA",
+            "bond_type": "中期票据（MTN）",
+        },
+        "support": {
+            "support_type": "政府支持",
+            "indicators": {
+                "一般公共预算收入": 4000, "财政自给率": 85, "政府显性债务率": 70,
+                "GDP增速": 7, "人口趋势": "持续净流入", "转移支付依赖度": 15,
+            },
+            "willingness_signals": {"战略地位": "强", "历史救助": "强"},
+            "signal_level": "L5",
+            "standalone_rating": "AA",
+            "supporter_is_central_gov": True,
+        },
+    }
+
+
+def test_t9_11_m002_dual_engine_wired_and_runs(contract, registry_paths):
+    assert "WP-M0-02" in EXECUTABLE_ENGINES
+    plan = load_stage_plan(_sheet("WP-M0-02"), registry_paths, contract)
+    assert plan[1].executable is True
+    manifest = run_executable_stages(plan, _m002_inputs())
+    analysis = next(s for s in manifest["stages"] if s["name"] == "analysis")
+    assert analysis["mode"] == "code"
+    out = analysis["outputs"]
+    assert set(out) == {"lgd", "support"}
+    # LGD 子结果：Base 60 + 光伏 +5 + 重整尚可 -5 + 江苏 -5 = 55 → LGD3
+    lgd = out["lgd"]
+    assert lgd["lgd_pct"] == 55.0 and lgd["lgd_level"] == "LGD3"
+    assert lgd["breakdown"][0]["name"] == "Base_LGD"
+    assert lgd["prior_check"]["within_prior"] is True
+    # 支持子结果：能力强 × 意愿高 → 非常高 → +3 子级（上限取 hi）
+    sup = out["support"]
+    assert sup["strength"] == "非常高" and sup["uplift_notches"] == 3
+    assert sup["final_rating"] == "AAA"

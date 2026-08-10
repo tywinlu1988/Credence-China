@@ -17,6 +17,19 @@ from src.concentration_scorer import (
     concentration_risk_score,
     rating_adjustment,
 )
+from src.external_support_scorer import (
+    SupportInput,
+    compute_support,
+    load_support_tables,
+)
+from src.lgd_scorer import (
+    CollateralInput,
+    EvasionFlags,
+    GuaranteeInput,
+    compute_lgd,
+    delta_guarantee,
+    load_lgd_tables,
+)
 from src.sri_calculator import (
     IndustryInput,
     Outlook,
@@ -30,6 +43,12 @@ SRI_DOC = (ROOT / "dev" / "engine" / "systemic-warning-framework.md").read_text(
     encoding="utf-8"
 )
 CONC_DOC = (ROOT / "dev" / "engine" / "concentration-framework.md").read_text(
+    encoding="utf-8"
+)
+LGD_DOC = (ROOT / "dev" / "engine" / "lgd-recovery-framework.md").read_text(
+    encoding="utf-8"
+)
+SUPPORT_DOC = (ROOT / "dev" / "engine" / "external-support-framework.md").read_text(
     encoding="utf-8"
 )
 
@@ -234,3 +253,104 @@ def test_sri_linked_escalation_parity():
     assert "sri" in base and "sri" in stressed
     assert "thermometer" in base and "thermometer" in stressed
     assert isinstance(delta, float)
+
+
+# --------------------------------------------------------------------------
+# WP-M0-02 dual engines: LGD (lgd-recovery-framework) + external support
+# (external-support-framework) — doc-text anchors + code-behaviour parity
+# --------------------------------------------------------------------------
+
+_SUPPORT_ALL_STRONG = {  # §4.1 全 3 分 → capacity 3.0（强档）
+    "一般公共预算收入": 4000, "财政自给率": 85, "政府显性债务率": 70,
+    "GDP增速": 7, "人口趋势": "持续净流入", "转移支付依赖度": 15,
+}
+
+
+def _support_input(**kw):
+    base = dict(
+        support_type="政府支持",
+        indicators=_SUPPORT_ALL_STRONG,
+        willingness_signals={"战略地位": "强"},
+        signal_level="L5",
+        standalone_rating="AA",
+        supporter_is_central_gov=True,
+    )
+    base.update(kw)
+    return SupportInput(**base)
+
+
+def test_doc_states_lgd_seniority_base():
+    """lgd §3.2 公式块 states the four seniority Base_LGD values."""
+    sec = _section(LGD_DOC, "3.2")
+    for token in ("Base_LGD = 45%", "Base_LGD = 60%", "Base_LGD = 75%", "Base_LGD = 90%"):
+        assert token in sec, f"§3.2 missing Base_LGD anchor {token!r}"
+
+
+def test_code_lgd_seniority_base_matches_doc():
+    """compute_lgd with all Δ neutral yields exactly the documented Base_LGD."""
+    for seniority, base in (
+        ("有担保优先", 45.0), ("无担保优先", 60.0), ("次级", 75.0), ("劣后", 90.0),
+    ):
+        r = compute_lgd(
+            seniority,
+            CollateralInput(kind="none"),
+            GuaranteeInput(guarantee_type="无"),
+            "高端装备",        # §8.2 0pp 行业（覆盖内、Δ=0）
+            "重整-空心化",     # §9.4 Δ=0 情景
+            "湖北",            # §10.3「其他」档 Δ=0
+            EvasionFlags(),
+            "A",               # §2.2 A-BBB 无约束桶
+            "中期票据（MTN）",
+        )
+        assert r.lgd_pct == base
+        assert r.breakdown[0].name == "Base_LGD" and r.breakdown[0].value == base
+
+
+def test_doc_states_guarantee_table():
+    """lgd §7.2 担保类型表 states 中债增 Δ=-15pp and 专业担保 Δ=-10pp to -15pp."""
+    sec = _section(LGD_DOC, "7.2")
+    assert "中债信用增进公司" in sec and "Δ=-15pp" in sec
+    assert "中投保/中证增等专业担保" in sec and "Δ=-10pp to -15pp" in sec
+
+
+def test_code_guarantee_deltas_match_doc():
+    """§7.2 parsed deltas and delta_guarantee behaviour honour the documented values."""
+    tables = load_lgd_tables()
+    assert tables.guarantee_deltas["中债信用增进公司"] == (-15.0, -15.0)
+    assert tables.guarantee_deltas["中投保/中证增等专业担保"] == (-10.0, -15.0)
+    item = delta_guarantee(GuaranteeInput(guarantee_type="中债信用增进公司"), tables)
+    assert item.value == -15.0
+
+
+def test_doc_states_strength_matrix():
+    """support §6.1 states the 3×3 支持强度判定矩阵 (意愿 × 能力)."""
+    sec = _section(SUPPORT_DOC, "6.1")
+    assert "支持意愿 ↓ 支持能力 →" in sec
+    assert "非常高" in sec
+
+
+def test_code_strength_matrix_matches_doc():
+    """§6.1 matrix: 意愿高 × 能力强 → 非常高 (table and compute_support agree)."""
+    tables = load_support_tables()
+    assert tables.strength_matrix["高"]["强"] == "非常高"
+    assert tables.strength_matrix["低"]["弱"] == "低/无"
+    r = compute_support(_support_input())
+    assert r.capacity_band == "强" and r.willingness_band == "高"
+    assert r.strength == "非常高"
+
+
+def test_doc_states_uplift_map():
+    """support §6.2 states the 上调幅度映射 (+2~3子级 / +1~2子级 / 0)."""
+    sec = _section(SUPPORT_DOC, "6.2")
+    for token in ("+2~3子级", "+1~2子级"):
+        assert token in sec, f"§6.2 missing uplift anchor {token!r}"
+
+
+def test_code_uplift_map_matches_doc():
+    """§6.2 uplift ranges parsed correctly; 非常高 × 意愿高 takes the range upper end."""
+    tables = load_support_tables()
+    assert tables.uplift_map["非常高"] == (2, 3)
+    assert tables.uplift_map["高"] == (1, 2)
+    assert tables.uplift_map["低/无"] == (0, 0)
+    r = compute_support(_support_input())
+    assert r.uplift_notches == 3  # D4：意愿高 → 区间上限
