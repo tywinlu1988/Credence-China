@@ -811,3 +811,64 @@ def test_strategic_duplicate_row(tmp_path):
     )
     with pytest.raises(ValueError, match="重复出现"):
         load_support_tables(fake)
+
+
+# ---------------- v0.12.1 fix：support_type 透传 compute_support 全链 ----------------
+#
+# 设计意图：capacity_score 按 SupportInput.support_type 分派指标集（§2.1 文档原文
+# 三类型 → government/group/strategic），集团/战投 capacity 不再落回 §4.1 政府口径
+# （T8 观察还债：集团/战投 capacity 半定性 → §4.3/§4.4 四档量化驱动）。
+
+GROUP_FULL = {  # §4.3 五指标：3,2,2,2,3 → capacity 2.4（中档；政府口径无此键集）
+    "parent_credit": "AA+", "unpledged_ratio": 1.5,
+    "funding_channels": "中", "operating_cf_coverage": 0.5, "asset_liquidity": "强",
+}
+STRATEGIC_FULL = {  # §4.4 四指标：2,2,1,2 → capacity 1.75（中档）
+    "investor_credit": "AA", "investment_share": 0.10,
+    "commitment": "弱", "lockup_years": 2.5,
+}
+
+
+def _inp_typed(support_type, indicators, **kw):
+    """集团/战投全链输入：能力中档 × 意愿高档 + L5 + 支持方 AAA + standalone A+。
+
+    强度 高 → +1~2 子级取上限 2 → A+ +2 = AA（支持方 AAA 不封顶）。
+    """
+    base = dict(
+        support_type=support_type,
+        indicators=indicators,
+        willingness_signals=_signals(strong=3),
+        signal_level="L5",
+        standalone_rating="A+",
+        supporter_is_central_gov=False,
+        supporter_rating="AAA",
+    )
+    base.update(kw)
+    return SupportInput(**base)
+
+
+def test_compute_support_group_dispatch(tables):
+    r = compute_support(_inp_typed("集团支持", GROUP_FULL), tables)
+    # capacity 来自 §4.3 分档（2.4），与 §4.1 政府口径（同信号组合 ALL_STRONG=3.0）不同值
+    assert r.capacity == pytest.approx(2.4) and r.capacity != pytest.approx(3.0)
+    assert r.capacity_band == "中"  # 2.4 ∈ [1.5,2.5)（D5 左闭右开）
+    assert r.strength == "高"       # 意愿高 × 能力中
+    assert r.uplift_notches == 2 and r.final_rating == "AA"
+    assert r.disclaimer["capacity"] == pytest.approx(2.4)
+
+
+def test_compute_support_strategic_dispatch(tables):
+    r = compute_support(_inp_typed("战略投资者支持", STRATEGIC_FULL), tables)
+    assert r.capacity == pytest.approx(1.75)
+    assert r.capacity_band == "中"
+    assert r.strength == "高"
+    assert r.uplift_notches == 2 and r.final_rating == "AA"
+
+
+def test_compute_support_group_indicator_set_enforced(tables):
+    # 集团口径下 §4.1 键集为未知指标 → raise（指标集随 support_type 切换，不混用）
+    with pytest.raises(ValueError):
+        compute_support(_inp_typed("集团支持", ALL_STRONG), tables)
+    # 集团口径全缺输入 → capacity 不可判定（同政府口径纪律）
+    with pytest.raises(ValueError):
+        compute_support(_inp_typed("集团支持", {}), tables)

@@ -787,12 +787,22 @@ _LADDER = [label for _, _, label in CANONICAL_RATING_INTERVALS]
 _RATING_INDEX = {label: i for i, label in enumerate(_LADDER)}
 
 
+# §2.1 三类型（SupportInput.support_type 文档原文）→ capacity_score 分派键
+# （v0.12.1 fix：support_type 透传全链，集团/战投 capacity 由 §4.3/§4.4 驱动）。
+_SUPPORT_TYPE_DISPATCH = {
+    "政府支持": "government",
+    "集团支持": "group",
+    "战略投资者支持": "strategic",
+}
+
+
 @dataclass(frozen=True)
 class SupportInput:
     """compute_support 输入（字段对齐 SDD brief；后七项带默认值故排序在后）。"""
 
     support_type: str                # §2.1 三类型之一
-    indicators: dict                 # §4.1 六指标子集 → capacity_score
+    indicators: dict                 # 能力指标子集 → capacity_score（口径随 support_type：
+                                     # 政府=§4.1 六指标 / 集团=§4.3 五指标 / 战投=§4.4 四指标）
     willingness_signals: dict        # {维度: 强/中/弱}（D1 等权）
     signal_level: str                # §5.1 信号等级 L1-L5
     standalone_rating: str           # 剔除外部支持后的独立信用等级（18 档）
@@ -879,11 +889,15 @@ def compute_support(inp: SupportInput, tables: SupportTables = None) -> SupportR
     if inp.red_traps < 0 or inp.orange_traps < 0:
         raise ValueError("陷阱信号计数不得为负")
 
-    cap = capacity_score(inp.indicators, tables=tables)  # SupportInput.indicators 为 §4.1 政府口径
+    # v0.12.1 fix：support_type 透传 capacity_score——集团/战投指标集由
+    # §4.3/§4.4 四档量化表分档（不再落回 §4.1 政府口径；T8 观察还债）。
+    capacity_type = _SUPPORT_TYPE_DISPATCH[inp.support_type]
+    cap = capacity_score(inp.indicators, support_type=capacity_type, tables=tables)
     capacity = cap["capacity"]
     if capacity is None:
         raise ValueError(
-            "支持能力六指标全缺输入，capacity 无法合成（§4.1）——不做上调判定"
+            f"支持能力指标全缺输入，capacity 无法合成"
+            f"（{inp.support_type} → {capacity_type} 口径）——不做上调判定"
         )
     willingness = willingness_score(inp.willingness_signals)
     capacity_band = _capacity_band(capacity)
