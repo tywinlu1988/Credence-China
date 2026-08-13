@@ -21,7 +21,12 @@
 | **governance-fraud-risk.md** | 20+欺诈信号 · 逃废债检测 · 资产负债质量异常 · 治理评估 | 需要检测财务欺诈 |
 | **lgfv-framework.md** | 城投债双轨(政府+平台) · 四级分类 · 六大预警 | 需要分析城投债 |
 | **non-credit-risk-overlay.md** | 市场/操作/声誉/战略/流动性风险叠加层 | 需要非信用风险评估 |
-| [false-positive-negative-testing.md](../../validation/docs/false-positive-negative-testing.md) | 假阳性/假阴性测试方法 · 测试执行记录（存档于 validation/docs/，非项目本体） | 需要验证引擎准确性 |
+| [false-positive-negative-testing.md](../../validation/docs/false-positive-negative-testing.md) | 假阳性/假阴性测试方法与多案例实测执行记录（存档于 validation/docs/，非项目本体） | 需要验证引擎准确性 |
+| [v0.8.0-end-to-end-walkthroughs.md](../../validation/docs/v0.8.0-end-to-end-walkthroughs.md) | v0.8.0 集成发布 11 条 active 工作路径端到端走查记录（存档于 validation/docs/，非项目本体） | 需要回溯端到端走查记录 |
+| [v0.10.2-wp-m0-02-walkthrough.md](../../validation/docs/v0.10.2-wp-m0-02-walkthrough.md) | v0.10.2 WP-M0-02 审贷专项附加包走查（LGD 五级分类 + 外部支持评估；存档于 validation/docs/） | 需要回溯审贷专项走查记录 |
+| [v0.10.2-wp-m1-02-walkthrough.md](../../validation/docs/v0.10.2-wp-m1-02-walkthrough.md) | v0.10.2 WP-M1-02 双标的前瞻对比走查（两标的双轨对比 + 区分度；存档于 validation/docs/） | 需要回溯前瞻对比走查记录 |
+| [v0.10.2-wp-m4-04-walkthrough.md](../../validation/docs/v0.10.2-wp-m4-04-walkthrough.md) | v0.10.2 WP-M4-04 组合压力测试走查（假想组合五维压力；存档于 validation/docs/） | 需要回溯组合压力走查记录 |
+| [v0.10.2-wp-x-04-walkthrough.md](../../validation/docs/v0.10.2-wp-x-04-walkthrough.md) | v0.10.2 WP-X-04 ESG/治理风险扫描走查（ESG 扫描 + 治理红旗；存档于 validation/docs/） | 需要回溯 ESG 扫描走查记录 |
 | **output-layered-framework.md** | L0信号卡+L1快照+L2深度 · 三层输出 · 工作流嵌入 | 需要产品输出规范 |
 | **contagion-matrix.md** | 13×13行业传染矩阵 · 传导强度 · 行业聚类 · 升级因子 | 需要评估跨行业传染风险 |
 | **concentration-framework.md** | 五维集中度分析 · 阈值体系 · 评级调整映射 · 压力测试 | 需要评估组合集中度风险 |
