@@ -13,7 +13,7 @@
 
 ## 中文
 
-**13 行业 · 16 工作路径 · 7 编码引擎 · 29 引擎文档 · 19 报告模板**
+**13 行业 · 16 工作路径 · 7 编码引擎 · 29 引擎文档 · 16 报告模板**
 
 ### 能力亮点
 
@@ -137,7 +137,7 @@ Credence packages the methodology of a seasoned China fixed-income credit analys
 
 **Core principle**: traditional financial analysis fails systematically in policy-driven, tech-barrier, and asset-lease industries; the heaviest credit factors rarely appear on the balance sheet; external ratings lag real credit deterioration by 17+ months on average.
 
-**13 industries · 16 work paths · 7 coded engines · 29 engine docs · 19 report templates**
+**13 industries · 16 work paths · 7 coded engines · 29 engine docs · 16 report templates**
 
 ### Highlights
 
