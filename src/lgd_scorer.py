@@ -578,8 +578,9 @@ class LgdResult:
     prior_check:    {"expected_range": (LGD低, LGD高)|None,
                      "within_prior": bool|None}（§5.1 品种先验交叉；
                      品种未覆盖时两端均 None）。
-    data_gaps:      低置信 Δ 分量缺口清单（"name: note"，对应 §13.1
-                    「数据缺口与不确定性」）。
+    data_gaps:      真未覆盖缺口清单（"name: note"，note 含「未覆盖」的 Δ 分量，
+                    对应 §13.1「数据缺口与不确定性」；低置信但属文档内档位/
+                    留 LLM 判断分支的分量不入列）。
     out_of_scope:   框架覆盖外输入清单（note 标「未覆盖」的 Δ 分量 +
                     §5.1 未收录债券品种）。
     """
@@ -668,16 +669,17 @@ def compute_lgd(
             "expected_range": prior,
             "within_prior": _level_num(prior[0]) <= _level_num(level) <= _level_num(prior[1]),
         }
-    # 缺口 / 覆盖外清单（PD约束钳制项置信度恒为高，天然不入列）
+    # 缺口 / 覆盖外清单（PD约束钳制项置信度恒为高、note 无「未覆盖」，天然不入列）
+    # data_gaps 收窄口径：仅收 note 含「未覆盖」的真缺口；低置信但属文档内档位
+    # 或留 LLM 判断分支（如缺 LTV 输入、山西/西部边界省份）不再入列。
     data_gaps = []
     out_of_scope = []
     for it in items[1:]:
-        if it.confidence != "低":
-            continue
         entry = f"{it.name}: {it.note}"
-        data_gaps.append(entry)
         if "未覆盖" in it.note:
-            out_of_scope.append(entry)
+            data_gaps.append(entry)
+            if it.confidence == "低":
+                out_of_scope.append(entry)
     if prior is None:
         out_of_scope.append(
             f"§5.1 品种先验表未覆盖债券品种 {bond_type!r}，先验交叉不可用"

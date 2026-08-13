@@ -615,16 +615,18 @@ def test_compute_lgd_clamp_upper_100():
 
 
 def test_compute_lgd_out_of_scope_and_data_gaps():
-    """覆盖外输入 → out_of_scope；缺输入 → data_gaps。"""
+    """覆盖外输入 → out_of_scope；真未覆盖缺口 → data_gaps（收窄口径）。"""
     r = compute_lgd(**_base_kwargs(industry_key="钢铁", bond_type="某未收录品种"))
     assert any("Δ_Industry" in e for e in r.out_of_scope)
     assert any("某未收录品种" in e for e in r.out_of_scope)
     assert r.prior_check == {"expected_range": None, "within_prior": None}
-    # 房地产缺 LTV → 低置信缺口入 data_gaps
+    # 收窄口径：note 含「未覆盖」的真缺口入 data_gaps
+    assert any("Δ_Industry" in e for e in r.data_gaps)
+    # 房地产缺 LTV 属低置信留 LLM 判断分支（note 无「未覆盖」）→ 不再入 data_gaps
     r2 = compute_lgd(**_base_kwargs(
         collateral=CollateralInput(kind="real_estate", city_tier="一线"),
     ))
-    assert any("Δ_Collateral" in e for e in r2.data_gaps)
+    assert not any("Δ_Collateral" in e for e in r2.data_gaps)
 
 
 def test_compute_lgd_unknown_seniority():
