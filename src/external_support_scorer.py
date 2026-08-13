@@ -1,12 +1,15 @@
 """WP-M0-02 → external-support-framework.md 的外部支持引擎（T4 能力侧 + T5 全链）。
 
-单一事实源：§4.1「关键指标阈值参考」表（6 指标 × 4 档）、§3.2 矩阵使用规则、
-§6.1 支持强度判定矩阵、§6.2 上调幅度映射、§7.3 陷阱信号行动规则、§8.2 政策
-信号映射均运行时解析，解析失败即 raise（不裸复制数值副本）。
+单一事实源：§4.1「关键指标阈值参考」表（6 指标 × 4 档）、§4.3 集团/母公司
+四档量化表（5 指标 × 4 档）、§4.4 战略投资者四档量化表（4 指标 × 4 档）、
+§3.2 矩阵使用规则、§6.1 支持强度判定矩阵、§6.2 上调幅度映射、§7.3 陷阱信号
+行动规则、§8.2 政策信号映射均运行时解析，解析失败即 raise（不裸复制数值副本）。
 
 边界语义（全引擎统一，文档档位文本直译）：">X" / "<X" 为开区间端点
 （3000亿 → 中等档），"X-Y" 为闭区间；GDP 增速极弱档 "<2%或负增长" 解析数值
-部分（"或负增长"为文本修饰，负增长值天然落入 "<2%" 开区间）。
+部分（"或负增长"为文本修饰，负增长值天然落入 "<2%" 开区间）。§4.3/§4.4
+四档量化表（v0.12.1 裁决表）语义独立：数值档 "≥X" 左闭、"<X" 开、
+"[lo,hi)" 左闭右开；评级档 "X及以下" 沿 18 档序展开到底。
 
 已裁决设计决策（SDD 2026-08-10-wp-m0-02，注释处标注）：
 - D1 意愿等权：逐信号 强=3 / 中=1.5 / 弱=0，均值 ∈ [0,3]。
@@ -15,6 +18,12 @@
 - D4 落点：意愿档 高→区间上限；中→中位（round，银行家舍入已认可）；低→下限
   （意愿档界与 D5 分档完全对齐：高 [2.5,3.0]、中 [1.5,2.5)、低 [0,1.5)）。
 - D5 矩阵分档边界：左闭右开（§6.1 表端点重叠的处理）。
+
+v0.12.1 裁决补充（SDD 2026-08-13-v0.12.1-debt-repayment Task 1）：
+- §4.3/§4.4 四档量化表为裁决扩展（强弱锚点为原文，中间档为裁决扩展），
+  capacity_score 按 support_type ∈ {government, group, strategic} 分派：
+  group 消费 §4.3 五指标、strategic 消费 §4.4 四指标，等权均值（无 F 维度）。
+- §4.3 经营活动现金流 3 档「持续为正且覆盖利息」操作化为 coverage≥1（左闭）。
 """
 
 import re
@@ -41,6 +50,28 @@ INDICATOR_TO_FACTOR = {
 
 _FACTORS = ("F1", "F2", "F3", "F4")
 
+# §4.3 集团/母公司四档量化表（:251-262）指标行 → (输入键, 档位类型)
+# （硬编码 + parity 锚定：tests/test_external_support_scorer.py 回读行名）。
+# 档位类型：rating=18 档评级带 / numeric=数值区间 / enum=强中弱极弱标签。
+GROUP_INDICATORS = {
+    "母公司独立信用质量": ("parent_credit", "rating"),
+    "未质押资产规模": ("unpledged_ratio", "numeric"),
+    "融资渠道多样性": ("funding_channels", "enum"),
+    "经营活动现金流": ("operating_cf_coverage", "numeric"),
+    "资产流动性": ("asset_liquidity", "enum"),
+}
+
+# §4.4 战略投资者四档量化表（:264-274）指标行 → (输入键, 档位类型)。
+STRATEGIC_INDICATORS = {
+    "战投自身信用评级": ("investor_credit", "rating"),
+    "投资金额vs战投资产规模": ("investment_share", "numeric"),
+    "投资承诺的法律约束力": ("commitment", "enum"),
+    "锁定期/退出安排": ("lockup_years", "numeric"),
+}
+
+# capacity_score 支持类型分派（v0.12.1）；未知类型 raise。
+_CAPACITY_TYPES = ("government", "group", "strategic")
+
 
 @dataclass(frozen=True)
 class ThresholdTier:
@@ -62,10 +93,37 @@ class ThresholdTier:
 
 
 @dataclass(frozen=True)
+class CapacityTier:
+    """§4.3/§4.4 四档量化表单一档（v0.12.1 裁决表）。
+
+    kind ∈ {"numeric", "rating", "enum"}：
+    - numeric：lo/hi 为区间端点（None = 该侧无界）；"≥X" 左闭（lo_open=False）、
+      "<X" 开（hi_open=True）、"[lo,hi)" 左闭右开（hi_open=True）。
+    - rating：ratings 为该档覆盖的 18 档标签集合（"X及以下" 沿档序展开到底）。
+    - enum：enum_label ∈ {强, 中, 弱, 极弱}，输入标签等值匹配。
+    label 恒为文档单元格原文（审计留痕；数值档允许尾部全角括注锚点）。
+    """
+
+    score: int
+    label: str
+    kind: str
+    lo: float = None
+    hi: float = None
+    lo_open: bool = False
+    hi_open: bool = False
+    ratings: frozenset = None
+    enum_label: str = None
+
+
+@dataclass(frozen=True)
 class SupportTables:
     """external-support-framework.md 可解析表的运行时解析结果。
 
     thresholds:     §4.1 阈值分档表 → {指标: (ThresholdTier ×4, 按 3→0 降序)}。
+    group_thresholds: §4.3 集团/母公司四档量化表 → {输入键: (CapacityTier ×4,
+                    3→0 降序)}（5 指标；v0.12.1）。
+    strategic_thresholds: §4.4 战略投资者四档量化表 → {输入键: (CapacityTier ×4,
+                    3→0 降序)}（4 指标；v0.12.1）。
     matrix_rules:   §3.2 矩阵使用规则表 → {区域("A"-"D"): {uplift_text,
                     confidence, annotation}}（文本均为文档单元格原文）。
     strength_matrix: §6.1 支持强度判定 3×3 矩阵 → {意愿档("高/中/低"):
@@ -83,6 +141,8 @@ class SupportTables:
     uplift_map: dict = None
     trap_actions: tuple = None
     policy_map: dict = None
+    group_thresholds: dict = None
+    strategic_thresholds: dict = None
 
 
 def _read(path) -> str:
@@ -174,6 +234,126 @@ def _parse_thresholds(text: str) -> dict:
             f"（实际解析 {len(thresholds)} 行，疑似表格漂移致静默丢行）"
         )
     return thresholds
+
+
+# §4.3/§4.4 四档量化表表头锚点（7 列；档位列名漂移 → 解析即 raise）。
+_FOURTIER_HEADER_RE = re.compile(
+    r"^\|\s*指标\s*\|\s*评估方法\s*\|\s*数据来源\s*\|\s*强（3分）\s*"
+    r"\|\s*中等（2分）\s*\|\s*弱（1分）\s*\|\s*极弱（0分）\s*\|",
+    re.MULTILINE,
+)
+
+# §4.3/§4.4 单元格语法（v0.12.1 裁决表）：
+# 数值档 "≥X"（左闭）/ "<X"（开）/ "[lo,hi)"（左闭右开），允许尾部全角括注锚点
+# （如 "≥2（充裕覆盖子公司债务的2x+）"——强弱锚点原文留痕，解析前剥离）；
+# 评级档 "AAA/AA+" 精确带 ∪ "X及以下（或无评级）"（沿 18 档序展开到底）；
+# 枚举档 "标签：描述原文"，标签 ∈ {强, 中, 弱, 极弱} 且与分值 3/2/1/0 对齐。
+_CT_GE = re.compile(r"≥(\d+(?:\.\d+)?)")
+_CT_LT = re.compile(r"<(\d+(?:\.\d+)?)")
+_CT_INTERVAL = re.compile(r"\[\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*\)")
+_CT_BELOW = re.compile(r"(.+?)及以下(?:或无评级)?")
+_TRAILING_NOTE = re.compile(r"（[^）]*）\s*$")
+_ENUM_LABEL_BY_SCORE = {3: "强", 2: "中", 1: "弱", 0: "极弱"}
+
+
+def _parse_capacity_cell(kind: str, score: int, cell: str, sec: str) -> CapacityTier:
+    """§4.3/§4.4 单元格 → CapacityTier；语法不符即 raise（不静默落档）。"""
+    label = cell.strip()
+    if kind == "numeric":
+        text = _TRAILING_NOTE.sub("", label)  # 尾部锚点括注不入数值解析
+        m = _CT_GE.fullmatch(text)
+        if m:
+            return CapacityTier(score, label, "numeric", lo=float(m.group(1)))
+        m = _CT_INTERVAL.fullmatch(text)
+        if m:
+            return CapacityTier(
+                score, label, "numeric",
+                lo=float(m.group(1)), hi=float(m.group(2)), hi_open=True,
+            )
+        m = _CT_LT.fullmatch(text)
+        if m:
+            return CapacityTier(score, label, "numeric", hi=float(m.group(1)), hi_open=True)
+        raise ValueError(f"{sec} 数值档单元格无法解析: {label!r}")
+    if kind == "rating":
+        ratings = set()
+        for tok in label.split("/"):
+            tok = tok.strip()
+            if not tok or tok == "或无评级":
+                continue  # "或无评级" 为文本修饰（无评级主体天然落入最低档语义）
+            m = _CT_BELOW.fullmatch(tok)
+            if m:
+                base = m.group(1).strip()
+                if base not in _RATING_INDEX:
+                    raise ValueError(
+                        f"{sec} 评级档基准 {base!r} 不在 18 档档序内: {label!r}"
+                    )
+                ratings.update(_LADDER[_RATING_INDEX[base]:])  # 及以下 → 展开到底
+            elif tok in _RATING_INDEX:
+                ratings.add(tok)
+            else:
+                raise ValueError(f"{sec} 评级档单元格无法解析: {label!r}")
+        return CapacityTier(score, label, "rating", ratings=frozenset(ratings))
+    # enum
+    enum_label = label.split("：")[0].strip()
+    if enum_label not in _ENUM_LABEL_BY_SCORE.values():
+        raise ValueError(
+            f"{sec} 枚举档单元格标签非法: {label!r}"
+            f"（允许值：{tuple(_ENUM_LABEL_BY_SCORE.values())}）"
+        )
+    return CapacityTier(score, label, "enum", enum_label=enum_label)
+
+
+def _validate_capacity_row(sec: str, name: str, kind: str, tiers: tuple) -> None:
+    """行内一致性：枚举档标签与分值对齐；评级档各带不得重叠（疑似表格错位）。"""
+    if kind == "enum":
+        for t in tiers:
+            if t.enum_label != _ENUM_LABEL_BY_SCORE[t.score]:
+                raise ValueError(
+                    f"{sec} 指标 {name!r} 枚举标签与分值错位"
+                    f"（{t.score} 分档应为 {_ENUM_LABEL_BY_SCORE[t.score]!r}，"
+                    f"实际 {t.enum_label!r}）"
+                )
+    if kind == "rating":
+        seen = set()
+        for t in tiers:
+            overlap = seen & t.ratings
+            if overlap:
+                raise ValueError(f"{sec} 指标 {name!r} 评级带重叠 {sorted(overlap)}")
+            seen |= t.ratings
+
+
+def _parse_capacity_quads(text: str, num: str, indicator_map: dict) -> dict:
+    """§4.3/§4.4 四档量化表 → {输入键: (CapacityTier ×4, 3→0 降序)}。
+
+    行数下界 = 指标映射全量（缺行/重行即 raise，同 §4.1/§8.2 先例）；
+    行名 → 输入键/档位类型为硬编码结构归属（parity 锚定见 tests）。
+    """
+    desc = f"§{num} 四档量化表"
+    sec = _section(text, num)
+    _, rows = _table_rows(sec, _FOURTIER_HEADER_RE, desc)
+    out = {}
+    for cells in rows:
+        if len(cells) < 7:
+            raise ValueError(f"{desc} 行列数不足: {cells!r}")
+        name = cells[0]
+        if name not in indicator_map:
+            continue  # 杂行不入（行名漂移由行数下界兜底）
+        key, kind = indicator_map[name]
+        if key in out:
+            raise ValueError(f"{desc} 指标 {name!r} 重复出现")
+        tiers = tuple(
+            _parse_capacity_cell(kind, score, cells[col], f"§{num}")
+            for score, col in ((3, 3), (2, 4), (1, 5), (0, 6))
+        )
+        _validate_capacity_row(f"§{num}", name, kind, tiers)
+        out[key] = tiers
+    missing = [k for k, _ in indicator_map.values() if k not in out]
+    if missing:
+        raise ValueError(
+            f"{desc} 应有 {len(indicator_map)} 指标行，缺 {missing}"
+            f"（实际解析 {len(out)} 行，疑似表格漂移致静默丢行）"
+        )
+    return out
 
 
 def _table_rows(sec: str, header_re: re.Pattern, header_desc: str):
@@ -378,10 +558,12 @@ def _parse_policy_map(text: str) -> dict:
 
 
 def load_support_tables(path=None) -> SupportTables:
-    """运行时解析 §4.1/§3.2/§6.1/§6.2/§7.3/§8.2 六表；任一解析失败即 raise。"""
+    """运行时解析 §4.1/§4.3/§4.4/§3.2/§6.1/§6.2/§7.3/§8.2 八表；任一解析失败即 raise。"""
     text = _read(path)
     return SupportTables(
         thresholds=_parse_thresholds(text),
+        group_thresholds=_parse_capacity_quads(text, "4.3", GROUP_INDICATORS),
+        strategic_thresholds=_parse_capacity_quads(text, "4.4", STRATEGIC_INDICATORS),
         matrix_rules=_parse_matrix_rules(text),
         strength_matrix=_parse_strength_matrix(text),
         uplift_map=_parse_uplift_map(text),
@@ -401,14 +583,69 @@ def _tier_hit(tier: ThresholdTier, v: float) -> bool:
     return True
 
 
-def score_indicator(name: str, value, tables: SupportTables = None) -> int:
-    """§4.1 阈值分档：指标值 → 0-3 分。
+def _score_capacity_indicator(name: str, value, thresholds: dict, sec: str) -> int:
+    """§4.3/§4.4 四档量化表分档：数值档按文档阈值区间（3→0 降序首条命中）、
+    评级档按档位带、枚举档按 强/中/弱/极弱 标签。未知指标、类型不符、
+    非法标签均 raise（不静默落档）。
+    """
+    tiers = thresholds.get(name)
+    if tiers is None:
+        raise ValueError(
+            f"{sec} 四档量化表未覆盖指标 {name!r}（允许值：{tuple(thresholds)}）"
+        )
+    kind = tiers[0].kind
+    if kind == "numeric":
+        if isinstance(value, str) or not isinstance(value, (int, float)):
+            raise ValueError(f"指标 {name!r} 为数值档，值须为数值，实际 {value!r}")
+        for t in tiers:
+            if _tier_hit(t, float(value)):
+                return t.score
+        raise ValueError(  # 防御：档位并集应覆盖全域，命中失败即表格漂移
+            f"指标 {name!r} 值 {value} 未落入 {sec} 任何档位（疑似表格区间断裂）"
+        )
+    if kind == "rating":
+        if not isinstance(value, str) or value.strip() not in _RATING_INDEX:
+            raise ValueError(
+                f"指标 {name!r} 为评级档，值须为 18 档评级字符串，实际 {value!r}"
+            )
+        v = value.strip()
+        for t in tiers:
+            if v in t.ratings:
+                return t.score
+        raise ValueError(  # 防御：评级带并集应覆盖 18 档全域
+            f"指标 {name!r} 评级 {value!r} 未落入 {sec} 任何档位带（疑似档位带断裂）"
+        )
+    # enum
+    if not isinstance(value, str):
+        raise ValueError(f"指标 {name!r} 为枚举档，值须为字符串标签，实际 {value!r}")
+    v = value.strip()
+    for t in tiers:
+        if t.enum_label == v:
+            return t.score
+    raise ValueError(
+        f"指标 {name!r} 未知档位标签 {value!r}"
+        f"（允许值：{tuple(_ENUM_LABEL_BY_SCORE.values())}）"
+    )
 
-    数值档按 3→0 降序首条命中（反向指标如债务率/依赖度由文档档位方向天然
-    处理）；枚举档（人口趋势）按 label 等值匹配。未知指标、类型不符、未知
-    枚举值均 raise（不静默落档）。
+
+def score_indicator(name: str, value, tables: SupportTables = None,
+                    support_type: str = "government") -> int:
+    """阈值分档：指标值 → 0-3 分。
+
+    support_type="government" → §4.1 阈值分档表（数值档按 3→0 降序首条命中，
+    枚举档如人口趋势按 label 等值匹配）；"group" → §4.3 五指标四档量化表、
+    "strategic" → §4.4 四指标四档量化表（v0.12.1 类型分派）。未知指标、
+    未知支持类型、类型不符、未知枚举值均 raise（不静默落档）。
     """
     tables = tables if tables is not None else load_support_tables()
+    if support_type == "group":
+        return _score_capacity_indicator(name, value, tables.group_thresholds, "§4.3")
+    if support_type == "strategic":
+        return _score_capacity_indicator(name, value, tables.strategic_thresholds, "§4.4")
+    if support_type != "government":
+        raise ValueError(
+            f"未知支持类型 {support_type!r}（允许值：{_CAPACITY_TYPES}）"
+        )
     tiers = tables.thresholds.get(name)
     if tiers is None:
         raise ValueError(
@@ -436,15 +673,14 @@ def score_indicator(name: str, value, tables: SupportTables = None) -> int:
     )
 
 
-def capacity_score(indicators: dict, tables: SupportTables = None) -> dict:
-    """能力侧合成：六指标 → F1-F4 维度均值 → capacity 均值（§6.1 公式口径：
+def _capacity_government(indicators: dict, tables: SupportTables) -> dict:
+    """§4.1 政府口径：六指标 → F1-F4 维度均值 → capacity 均值（§6.1 公式口径：
     支持能力综合评分 = (F1 + F2 + F3 + F4) / 4）。
 
     返回 {F1: …, F2: …, F3: …, F4: …, capacity: …, per_indicator: [...]}。
     缺输入指标不计入维度均值（score=None + 「缺输入」注记，不静默填补）；
     整维度缺输入时该 F 为 None 且不计入 capacity 均值。未知指标键 raise。
     """
-    tables = tables if tables is not None else load_support_tables()
     unknown = [k for k in indicators if k not in INDICATOR_TO_FACTOR]
     if unknown:
         raise ValueError(
@@ -476,6 +712,58 @@ def capacity_score(indicators: dict, tables: SupportTables = None) -> dict:
     result["capacity"] = sum(available) / len(available) if available else None
     result["per_indicator"] = per_indicator
     return result
+
+
+def _capacity_quads(indicators: dict, support_type: str, tables: SupportTables) -> dict:
+    """§4.3 集团 / §4.4 战投口径：指标等权均值 → capacity（v0.12.1 裁决：
+    两表无 F 维度结构，逐指标 0-3 分直接等权）。
+
+    返回 {support_type, capacity, per_indicator}。缺输入指标不计入均值
+    （score=None + 「缺输入」注记，口径沿用 §4.1）；全缺输入 capacity=None；
+    未知指标键 raise。
+    """
+    indicator_map = GROUP_INDICATORS if support_type == "group" else STRATEGIC_INDICATORS
+    sec = "§4.3" if support_type == "group" else "§4.4"
+    keys = tuple(k for k, _ in indicator_map.values())
+    unknown = [k for k in indicators if k not in keys]
+    if unknown:
+        raise ValueError(f"未知指标 {unknown}（{sec} 四档量化表允许值：{keys}）")
+    per_indicator = []
+    scores = []
+    for key, _ in indicator_map.values():
+        if key in indicators:
+            s = score_indicator(key, indicators[key], tables, support_type=support_type)
+            per_indicator.append({"indicator": key, "score": s, "note": ""})
+            scores.append(s)
+        else:
+            per_indicator.append({
+                "indicator": key,
+                "score": None,
+                "note": "缺输入，未计入均值（留 LLM 判断）",
+            })
+    return {
+        "support_type": support_type,
+        "capacity": sum(scores) / len(scores) if scores else None,
+        "per_indicator": per_indicator,
+    }
+
+
+def capacity_score(indicators: dict, support_type: str = "government",
+                   tables: SupportTables = None) -> dict:
+    """能力侧合成（v0.12.1 类型分派）。
+
+    support_type="government" → §4.1 六指标 F1-F4 维度均值口径；
+    "group" → §4.3 五指标等权均值；"strategic" → §4.4 四指标等权均值。
+    未知 support_type、未知指标键均 raise；缺输入不静默填补（None + 注记）。
+    """
+    tables = tables if tables is not None else load_support_tables()
+    if support_type not in _CAPACITY_TYPES:
+        raise ValueError(
+            f"未知支持类型 {support_type!r}（允许值：{_CAPACITY_TYPES}）"
+        )
+    if support_type == "government":
+        return _capacity_government(indicators, tables)
+    return _capacity_quads(indicators, support_type, tables)
 
 
 # ================= 意愿评分与上调全链（T5） =================
@@ -591,7 +879,7 @@ def compute_support(inp: SupportInput, tables: SupportTables = None) -> SupportR
     if inp.red_traps < 0 or inp.orange_traps < 0:
         raise ValueError("陷阱信号计数不得为负")
 
-    cap = capacity_score(inp.indicators, tables)
+    cap = capacity_score(inp.indicators, tables=tables)  # SupportInput.indicators 为 §4.1 政府口径
     capacity = cap["capacity"]
     if capacity is None:
         raise ValueError(

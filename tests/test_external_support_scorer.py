@@ -17,7 +17,9 @@ import re
 import pytest
 
 from src.external_support_scorer import (
+    GROUP_INDICATORS,
     INDICATOR_TO_FACTOR,
+    STRATEGIC_INDICATORS,
     SupportInput,
     SupportResult,
     SupportTables,
@@ -173,7 +175,7 @@ def test_capacity_score_full(tables):
         "GDP增速": 5,               # 2
         "人口趋势": "持续净流入",   # 3 → F3 = 2.5
         "转移支付依赖度": 15,       # 3 → F4 = 3.0
-    }, tables)
+    }, tables=tables)
     assert result["F1"] == pytest.approx(2.5)
     assert result["F2"] == pytest.approx(2.0)
     assert result["F3"] == pytest.approx(2.5)
@@ -187,7 +189,7 @@ def test_capacity_score_full(tables):
 
 def test_capacity_score_partial(tables):
     # 缺输入：F 均值按已提供指标计算，缺项 score=None 且注记（不静默填补）
-    result = capacity_score({"一般公共预算收入": 4000}, tables)
+    result = capacity_score({"一般公共预算收入": 4000}, tables=tables)
     assert result["F1"] == pytest.approx(3.0)
     assert result["F2"] is None and result["F3"] is None and result["F4"] is None
     assert result["capacity"] == pytest.approx(3.0)  # 仅 F1 可用
@@ -195,7 +197,7 @@ def test_capacity_score_partial(tables):
     assert per["财政自给率"]["score"] is None
     assert "缺输入" in per["财政自给率"]["note"]
     with pytest.raises(ValueError):
-        capacity_score({"人均GDP": 10}, tables)
+        capacity_score({"人均GDP": 10}, tables=tables)
 
 
 # ---------------- 解析层加固（伪造文档负例） ----------------
@@ -557,3 +559,255 @@ def test_input_validation(tables):
         compute_support(_inp(support_type="亲友支持"), tables)  # §2.1 三类型之外
     with pytest.raises(ValueError):
         compute_support(_inp(indicators={}), tables)  # capacity 全缺输入 → 不可判定
+
+
+# ================= v0.12.1：§4.3/§4.4 四档量化表 + capacity 类型分派 =================
+#
+# 断言数值全部来自 external-support-framework.md §4.3/§4.4 四档量化表当前内容
+# （v0.12.1 裁决补充，强弱锚点为原文），版本无关。分档语义：数值档 "≥X" 左闭、
+# "<X" 开、"[lo,hi)" 左闭右开；评级档按档位带（"X及以下" 沿 18 档序展开）；
+# 枚举档接受 强/中/弱/极弱 标签 → 3/2/1/0。
+
+def test_group_thresholds_parse(tables):
+    g = tables.group_thresholds
+    assert set(g) == {k for k, _ in GROUP_INDICATORS.values()}
+    assert len(g) == 5  # §4.3 五指标
+    for tiers in g.values():
+        assert len(tiers) == 4
+        assert [t.score for t in tiers] == [3, 2, 1, 0]
+    # 数值档 unpledged_ratio：≥2 / [1,2) / [0.5,1) / <0.5
+    up = {t.score: t for t in g["unpledged_ratio"]}
+    assert up[3].lo == 2.0 and not up[3].lo_open and up[3].hi is None
+    assert (up[2].lo, up[2].hi) == (1.0, 2.0) and up[2].hi_open
+    assert (up[1].lo, up[1].hi) == (0.5, 1.0) and up[1].hi_open
+    assert up[0].hi == 0.5 and up[0].hi_open and up[0].lo is None
+    assert "2x+" in up[3].label and "核心资产均已质押" in up[0].label  # 强弱锚点原文留痕
+    # 评级带 parent_credit：AAA|AA+→3 / AA|AA-|A+→2 / A|BBB+|BBB→1 / BBB-及以下→0
+    pc = {t.score: t for t in g["parent_credit"]}
+    assert pc[3].ratings == {"AAA", "AA+"}
+    assert pc[2].ratings == {"AA", "AA-", "A+"}
+    assert pc[1].ratings == {"A", "BBB+", "BBB"}
+    assert "BBB-" in pc[0].ratings and "D" in pc[0].ratings  # "及以下" 沿 18 档序展开到底
+    # 枚举档标签与分值对齐 强/中/弱/极弱 → 3/2/1/0
+    assert [t.enum_label for t in g["funding_channels"]] == ["强", "中", "弱", "极弱"]
+    assert [t.enum_label for t in g["asset_liquidity"]] == ["强", "中", "弱", "极弱"]
+    assert "3种以上活跃渠道" in g["funding_channels"][0].label  # 强锚点原文
+
+
+def test_strategic_thresholds_parse(tables):
+    s = tables.strategic_thresholds
+    assert set(s) == {k for k, _ in STRATEGIC_INDICATORS.values()}
+    assert len(s) == 4  # §4.4 四指标
+    # 评级带 investor_credit：1 档 A|BBB+、0 档 BBB及以下（§4.4 与 §4.3 的裁决分叉）
+    ic = {t.score: t for t in s["investor_credit"]}
+    assert ic[3].ratings == {"AAA", "AA+"}
+    assert ic[2].ratings == {"AA", "AA-", "A+"}
+    assert ic[1].ratings == {"A", "BBB+"}
+    assert "BBB" in ic[0].ratings and "BBB-" in ic[0].ratings
+    # 反向指标 investment_share：<0.05→3 / [0.05,0.15)→2 / [0.15,0.30)→1 / ≥0.30→0
+    sh = {t.score: t for t in s["investment_share"]}
+    assert sh[3].hi == 0.05 and sh[3].hi_open and sh[3].lo is None
+    assert (sh[2].lo, sh[2].hi) == (0.05, 0.15) and sh[2].hi_open
+    assert sh[0].lo == 0.30 and not sh[0].lo_open and sh[0].hi is None
+    # lockup_years：≥3 / [2,3) / [1,2) / <1
+    lk = {t.score: t for t in s["lockup_years"]}
+    assert lk[3].lo == 3.0 and lk[0].hi == 1.0 and lk[0].hi_open
+    assert [t.enum_label for t in s["commitment"]] == ["强", "中", "弱", "极弱"]
+
+
+def test_group_strategic_indicator_parity():
+    # §4.3/§4.4 指标行名硬编码锚点（文档漂移时本测试先红）
+    text = DOC.read_text(encoding="utf-8")
+    for name in GROUP_INDICATORS:
+        assert f"| {name} |" in text, f"§4.3 指标行 {name!r} 缺失"
+    for name in STRATEGIC_INDICATORS:
+        assert f"| {name} |" in text, f"§4.4 指标行 {name!r} 缺失"
+    # v0.12.1 裁决补充注记锚点
+    assert text.count("编码引擎 external_support_scorer 运行时解析本表") >= 2
+    assert "四档分值为 v0.12.1 裁决补充" in text
+
+
+# ---------------- 类型分派（group 五指标 / strategic 四指标等权均值） ----------------
+
+def test_capacity_type_dispatch(tables):
+    group_full = {
+        "parent_credit": "AA+",          # 3
+        "unpledged_ratio": 1.5,          # 2
+        "funding_channels": "中",        # 2
+        "operating_cf_coverage": 0.5,    # 2
+        "asset_liquidity": "强",         # 3
+    }
+    r = capacity_score(group_full, support_type="group", tables=tables)
+    assert r["capacity"] == pytest.approx(2.4)  # (3+2+2+2+3)/5
+    assert len(r["per_indicator"]) == 5
+    strat_full = {
+        "investor_credit": "AA",   # 2
+        "investment_share": 0.10,  # 2
+        "commitment": "弱",        # 1
+        "lockup_years": 2.5,       # 2
+    }
+    r2 = capacity_score(strat_full, support_type="strategic", tables=tables)
+    assert r2["capacity"] == pytest.approx(1.75)  # (2+2+1+2)/4
+    assert len(r2["per_indicator"]) == 4
+    with pytest.raises(ValueError):
+        capacity_score(group_full, support_type="sovereign", tables=tables)  # 未知类型
+    with pytest.raises(ValueError):
+        capacity_score({"人均GDP": 10}, support_type="group", tables=tables)  # 未知指标键
+
+
+def test_capacity_group_partial(tables):
+    # 缺输入：均值按已提供指标计算，缺项 score=None 且注记（沿用 §4.1 口径）
+    r = capacity_score({"unpledged_ratio": 2.5}, support_type="group", tables=tables)
+    assert r["capacity"] == pytest.approx(3.0)
+    per = {e["indicator"]: e for e in r["per_indicator"]}
+    assert per["parent_credit"]["score"] is None
+    assert "缺输入" in per["parent_credit"]["note"]
+    assert capacity_score({}, support_type="group", tables=tables)["capacity"] is None
+
+
+# ---------------- 数值分档（文档阈值，边界左闭右开） ----------------
+
+def test_score_unpledged_ratio(tables):
+    for v, s in ((2.5, 3), (1.5, 2), (0.7, 1), (0.3, 0)):
+        assert score_indicator("unpledged_ratio", v, tables, support_type="group") == s
+    # 边界：≥2 左闭、区间右开
+    assert score_indicator("unpledged_ratio", 2, tables, support_type="group") == 3
+    assert score_indicator("unpledged_ratio", 1, tables, support_type="group") == 2
+    assert score_indicator("unpledged_ratio", 0.5, tables, support_type="group") == 1
+
+
+def test_score_investment_share(tables):
+    for v, s in ((0.03, 3), (0.10, 2), (0.20, 1), (0.35, 0)):
+        assert score_indicator("investment_share", v, tables, support_type="strategic") == s
+    assert score_indicator("investment_share", 0.30, tables, support_type="strategic") == 0  # ≥0.30 左闭
+
+
+def test_score_lockup_years(tables):
+    for v, s in ((4, 3), (2.5, 2), (1.5, 1), (0.5, 0)):
+        assert score_indicator("lockup_years", v, tables, support_type="strategic") == s
+    assert score_indicator("lockup_years", 3, tables, support_type="strategic") == 3
+
+
+def test_score_operating_cf_coverage(tables):
+    for v, s in ((1.2, 3), (0.5, 2), (0.1, 1), (-0.2, 0)):
+        assert score_indicator("operating_cf_coverage", v, tables, support_type="group") == s
+    # 3 档「持续为正且覆盖利息」操作化为 coverage≥1（左闭）
+    assert score_indicator("operating_cf_coverage", 1, tables, support_type="group") == 3
+    with pytest.raises(ValueError):
+        score_indicator("unpledged_ratio", "高", tables, support_type="group")  # 数值档不收字符串
+
+
+# ---------------- 评级分档（18 档字符串 → 档位带） ----------------
+
+def test_score_rating_bands(tables):
+    assert score_indicator("parent_credit", "AA+", tables, support_type="group") == 3
+    assert score_indicator("parent_credit", "AA-", tables, support_type="group") == 2
+    assert score_indicator("parent_credit", "BBB+", tables, support_type="group") == 1
+    assert score_indicator("parent_credit", "BBB", tables, support_type="group") == 1
+    assert score_indicator("parent_credit", "BBB-", tables, support_type="group") == 0
+    assert score_indicator("parent_credit", "CCC", tables, support_type="group") == 0
+    # §4.4 分叉：BBB 在战投口径落入 0 档
+    assert score_indicator("investor_credit", "A", tables, support_type="strategic") == 1
+    assert score_indicator("investor_credit", "BBB", tables, support_type="strategic") == 0
+    assert score_indicator("investor_credit", "BBB-", tables, support_type="strategic") == 0
+    with pytest.raises(ValueError):
+        score_indicator("parent_credit", "AA++", tables, support_type="group")  # 非 18 档
+    with pytest.raises(ValueError):
+        score_indicator("investor_credit", 3, tables, support_type="strategic")  # 评级档不收数值
+
+
+# ---------------- 枚举标签（强/中/弱/极弱 → 3/2/1/0） ----------------
+
+def test_score_enum_labels(tables):
+    assert score_indicator("funding_channels", "强", tables, support_type="group") == 3
+    assert score_indicator("funding_channels", "中", tables, support_type="group") == 2
+    assert score_indicator("funding_channels", "弱", tables, support_type="group") == 1
+    assert score_indicator("funding_channels", "极弱", tables, support_type="group") == 0
+    assert score_indicator("asset_liquidity", "强", tables, support_type="group") == 3
+    assert score_indicator("commitment", "强", tables, support_type="strategic") == 3
+    assert score_indicator("commitment", "极弱", tables, support_type="strategic") == 0
+    with pytest.raises(ValueError):
+        score_indicator("funding_channels", "超高", tables, support_type="group")  # 非法标签
+    with pytest.raises(ValueError):
+        score_indicator("commitment", 3, tables, support_type="strategic")  # 枚举档不收数值
+
+
+# ---------------- 解析层加固（伪造文档负例：缺行/重行/表头漂移） ----------------
+
+_FAKE_41_FULL = _FAKE_SECTION + "| 人口趋势 | 持续净流入 | 波动平衡 | 持续净流出 | 大幅净流出 |\n"
+
+_FAKE_43 = """### 4.3 集团/母公司支持能力评估
+
+| 指标 | 评估方法 | 数据来源 | 强（3分） | 中等（2分） | 弱（1分） | 极弱（0分） |
+|------|---------|---------|----------|------------|----------|------------|
+| 母公司独立信用质量 | x | x | AAA/AA+ | AA/AA-/A+ | A/BBB+/BBB | BBB-及以下或无评级 |
+| 未质押资产规模 | x | x | ≥2 | [1,2) | [0.5,1) | <0.5 |
+| 融资渠道多样性 | x | x | 强：a | 中：b | 弱：c | 极弱：d |
+| 经营活动现金流 | x | x | ≥1 | [0.3,1) | [0,0.3) | <0 |
+| 资产流动性 | x | x | 强：a | 中：b | 弱：c | 极弱：d |
+"""
+
+_FAKE_44 = """### 4.4 战略投资者支持能力评估
+
+| 指标 | 评估方法 | 数据来源 | 强（3分） | 中等（2分） | 弱（1分） | 极弱（0分） |
+|------|---------|---------|----------|------------|----------|------------|
+| 战投自身信用评级 | x | x | AAA/AA+ | AA/AA-/A+ | A/BBB+ | BBB及以下 |
+| 投资金额vs战投资产规模 | x | x | <0.05 | [0.05,0.15) | [0.15,0.30) | ≥0.30 |
+| 投资承诺的法律约束力 | x | x | 强：a | 中：b | 弱：c | 极弱：d |
+| 锁定期/退出安排 | x | x | ≥3 | [2,3) | [1,2) | <1 |
+"""
+
+_43_ROW_ASSET = "| 资产流动性 | x | x | 强：a | 中：b | 弱：c | 极弱：d |\n"
+
+
+def test_group_row_floor(tmp_path):
+    """§4.3 四档量化表缺行（资产流动性丢失，4 行 < 下界 5）→ 解析即 raise。"""
+    fake = tmp_path / "fake.md"
+    fake.write_text(_FAKE_41_FULL + _FAKE_43.replace(_43_ROW_ASSET, ""), encoding="utf-8")
+    with pytest.raises(ValueError, match="4.3"):
+        load_support_tables(fake)
+
+
+def test_group_duplicate_row(tmp_path):
+    """§4.3 四档量化表重行（融资渠道多样性出现两次）→ 解析即 raise。"""
+    fake = tmp_path / "fake.md"
+    fake.write_text(
+        _FAKE_41_FULL + _FAKE_43 + "| 融资渠道多样性 | x | x | 强：a | 中：b | 弱：c | 极弱：d |\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="重复出现"):
+        load_support_tables(fake)
+
+
+def test_group_header_missing(tmp_path):
+    """§4.3 表头漂移（档位列名改动）→ 解析即 raise。"""
+    fake = tmp_path / "fake.md"
+    fake.write_text(
+        _FAKE_41_FULL + _FAKE_43.replace("中等（2分）", "中（2分）"),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="表头"):
+        load_support_tables(fake)
+
+
+def test_strategic_row_floor(tmp_path):
+    """§4.4 四档量化表缺行（锁定期丢失，3 行 < 下界 4）→ 解析即 raise。"""
+    fake = tmp_path / "fake.md"
+    fake.write_text(
+        _FAKE_41_FULL + _FAKE_43 + _FAKE_44.replace("| 锁定期/退出安排 | x | x | ≥3 | [2,3) | [1,2) | <1 |\n", ""),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="4.4"):
+        load_support_tables(fake)
+
+
+def test_strategic_duplicate_row(tmp_path):
+    """§4.4 四档量化表重行（战投自身信用评级出现两次）→ 解析即 raise。"""
+    fake = tmp_path / "fake.md"
+    fake.write_text(
+        _FAKE_41_FULL + _FAKE_43 + _FAKE_44
+        + "| 战投自身信用评级 | x | x | AAA/AA+ | AA/AA-/A+ | A/BBB+ | BBB及以下 |\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="重复出现"):
+        load_support_tables(fake)
