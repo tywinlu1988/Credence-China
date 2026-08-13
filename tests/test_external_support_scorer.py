@@ -30,8 +30,11 @@ from src.external_support_scorer import (
     willingness_score,
 )
 from src.path_sheet import engine_dir
+from src.rating_map import CANONICAL_RATING_INTERVALS
 
 DOC = engine_dir() / "external-support-framework.md"
+
+_RATING_LADDER = {label for _, _, label in CANONICAL_RATING_INTERVALS}  # 18 档梯
 
 
 @pytest.fixture(scope="module")
@@ -582,12 +585,15 @@ def test_group_thresholds_parse(tables):
     assert (up[1].lo, up[1].hi) == (0.5, 1.0) and up[1].hi_open
     assert up[0].hi == 0.5 and up[0].hi_open and up[0].lo is None
     assert "2x+" in up[3].label and "核心资产均已质押" in up[0].label  # 强弱锚点原文留痕
-    # 评级带 parent_credit：AAA|AA+→3 / AA|AA-|A+→2 / A|BBB+|BBB→1 / BBB-及以下→0
+    # 评级带 parent_credit：AAA|AA+→3 / AA|AA-|A+→2 / A|A-|BBB+|BBB→1 / BBB-及以下→0
     pc = {t.score: t for t in g["parent_credit"]}
     assert pc[3].ratings == {"AAA", "AA+"}
     assert pc[2].ratings == {"AA", "AA-", "A+"}
-    assert pc[1].ratings == {"A", "BBB+", "BBB"}
+    assert pc[1].ratings == {"A", "A-", "BBB+", "BBB"}
     assert "BBB-" in pc[0].ratings and "D" in pc[0].ratings  # "及以下" 沿 18 档序展开到底
+    # 全覆盖核验：18 档梯 AAA→D 每档落带唯一（fix round 2 裁决：A- 归入 1 档）
+    union = [r for t in g["parent_credit"] for r in t.ratings]
+    assert sorted(union) == sorted(_RATING_LADDER) and len(union) == len(set(union))
     # 枚举档标签与分值对齐 强/中/弱/极弱 → 3/2/1/0
     assert [t.enum_label for t in g["funding_channels"]] == ["强", "中", "弱", "极弱"]
     assert [t.enum_label for t in g["asset_liquidity"]] == ["强", "中", "弱", "极弱"]
@@ -598,12 +604,15 @@ def test_strategic_thresholds_parse(tables):
     s = tables.strategic_thresholds
     assert set(s) == {k for k, _ in STRATEGIC_INDICATORS.values()}
     assert len(s) == 4  # §4.4 四指标
-    # 评级带 investor_credit：1 档 A|BBB+、0 档 BBB及以下（§4.4 与 §4.3 的裁决分叉）
+    # 评级带 investor_credit：1 档 A|A-|BBB+、0 档 BBB及以下（§4.4 与 §4.3 的裁决分叉）
     ic = {t.score: t for t in s["investor_credit"]}
     assert ic[3].ratings == {"AAA", "AA+"}
     assert ic[2].ratings == {"AA", "AA-", "A+"}
-    assert ic[1].ratings == {"A", "BBB+"}
+    assert ic[1].ratings == {"A", "A-", "BBB+"}
     assert "BBB" in ic[0].ratings and "BBB-" in ic[0].ratings
+    # 全覆盖核验：18 档梯每档落带唯一
+    union = [r for t in s["investor_credit"] for r in t.ratings]
+    assert sorted(union) == sorted(_RATING_LADDER) and len(union) == len(set(union))
     # 反向指标 investment_share：<0.05→3 / [0.05,0.15)→2 / [0.15,0.30)→1 / ≥0.30→0
     sh = {t.score: t for t in s["investment_share"]}
     assert sh[3].hi == 0.05 and sh[3].hi_open and sh[3].lo is None
@@ -702,12 +711,14 @@ def test_score_operating_cf_coverage(tables):
 def test_score_rating_bands(tables):
     assert score_indicator("parent_credit", "AA+", tables, support_type="group") == 3
     assert score_indicator("parent_credit", "AA-", tables, support_type="group") == 2
+    assert score_indicator("parent_credit", "A-", tables, support_type="group") == 1  # fix round 2：A- 归 1 档
     assert score_indicator("parent_credit", "BBB+", tables, support_type="group") == 1
     assert score_indicator("parent_credit", "BBB", tables, support_type="group") == 1
     assert score_indicator("parent_credit", "BBB-", tables, support_type="group") == 0
     assert score_indicator("parent_credit", "CCC", tables, support_type="group") == 0
-    # §4.4 分叉：BBB 在战投口径落入 0 档
+    # §4.4 分叉：BBB 在战投口径落入 0 档；A- 归 1 档（fix round 2）
     assert score_indicator("investor_credit", "A", tables, support_type="strategic") == 1
+    assert score_indicator("investor_credit", "A-", tables, support_type="strategic") == 1
     assert score_indicator("investor_credit", "BBB", tables, support_type="strategic") == 0
     assert score_indicator("investor_credit", "BBB-", tables, support_type="strategic") == 0
     with pytest.raises(ValueError):
