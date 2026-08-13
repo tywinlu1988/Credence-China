@@ -331,13 +331,13 @@ dev/
     ├── template-type3.html      黑天鹅回溯验证
     ├── template-type4.html      多身份并行评估
     ├── template-type5.html      债券投资仪表盘
-    ├── template-type6.html      马赛克完备性报告
+    ├── template-type6.html      马赛克完备性报告（已归档 v0.11.1）
     ├── template-type7.html      行业方法论页
     ├── template-type8.html      债项LGD评估
-    ├── template-type9.html      外部支持专项评估
+    ├── template-type9.html      外部支持专项评估（已归档 v0.11.1）
     ├── template-type10.html     ESG+治理风险扫描
     ├── template-type11.html     压力测试报告
-    ├── template-type12.html     引擎验证统计
+    ├── template-type12.html     引擎验证统计（已归档 v0.11.1）
     ├── template-type13.html     传染分析报告
     ├── template-type14.html     组合集中度报告
     └── template-type15.html     系统性风险警报
