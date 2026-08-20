@@ -15,16 +15,23 @@ from src.governance_scorer import (
     ALTMAN_Z_HIGH_RISK_THRESHOLD,
     BENEISH_M_MANIPULATION_THRESHOLD,
     CORE_EARNINGS_SUSPICION_THRESHOLD,
+    DATA_DENSITY,
     DATA_NOTE_PREFIX,
     DEFAULT_DEMAND_DEPOSIT_RATE,
+    JUDGMENT_EVENTS,
     RULES,
+    VETO_RULES,
+    GovernanceResult,
     RedFlag,
+    StackResult,
     Strength,
     altman_z,
     beneish_m,
+    compute_governance,
     core_earnings,
     evaluate_signals,
     repayment_willingness,
+    stack_severity,
 )
 
 DOC_PATH = (
@@ -406,3 +413,307 @@ def test_evaluate_signals_bool_and_enum_rules():
     })
     assert hits == {"GOV-03", "GOV-06", "GOV-07", "REL-07"}
     assert isinstance(flags, list)
+
+
+# ==========================================================================
+# T2 — 叠加合成 + 一票否决（§6.2 :318-338 / §6.3 :340-349 / §2.4 :128 / §10.3 :708-719）
+# ==========================================================================
+
+def _flag(strength, note="SYN 命中（合成测试）"):
+    return RedFlag(
+        name="合成测试旗", strength=strength, evidence="", source="test", note=note
+    )
+
+
+# 逐条 parity 锚点：veto id → 文档该行必须包含的锚点文本。
+VETO_ANCHORS = {
+    "v1": "被证监会/监管机构立案调查且涉及财务造假",     # §6.3-1 :344
+    "v2": "否定意见或无法表示意见",                       # §6.3-2 :345
+    "v3": "跌破平仓线",                                  # §6.3-3 :346
+    "v4": "核心资产剥离已实质性启动",                     # §6.3-4 :347
+    "v5": "超过净资产30%",                               # §6.3-5 :348
+    "v6": "逃废债三件套",                                # §6.3-6 :349
+    "v7": "净资产为负",                                  # §2.4 :128
+    "v8": "实控人失联/被调查/被采取强制措施",              # §10.3-7 :714
+    "v9": "超过72小时",                                  # §10.3-8 :715
+    "v10": "严重数据安全风险",                            # §10.3-9 :716
+    "v11": "反垄断处罚",                                 # §10.3-10 :717
+}
+
+
+# --------------------------------------------------------------------------
+# VETO_RULES 结构 + 逐条 parity 锚点
+# --------------------------------------------------------------------------
+
+def test_veto_rules_count_and_unique_keys():
+    assert len(VETO_RULES) == 11  # §6.3 六条 + §2.4 一条 + §10.3 四条
+    assert [r.id for r in VETO_RULES] == [f"v{i}" for i in range(1, 12)]
+    keys = [r.event_key for r in VETO_RULES]
+    assert len(set(keys)) == len(keys)
+    assert set(VETO_ANCHORS) == {r.id for r in VETO_RULES}, "否决集与锚点表不一致"
+
+
+def test_veto_rules_doc_anchor_parity():
+    """每条否决规则的 doc_anchor 行必须包含文档锚点文本（条件漂移即失败）。"""
+    for rule in VETO_RULES:
+        assert VETO_ANCHORS[rule.id] in _anchor_line(rule), (
+            f"{rule.id} 锚点 {VETO_ANCHORS[rule.id]!r} 不在 {rule.doc_anchor}: "
+            f"{_anchor_line(rule)!r}"
+        )
+
+
+def test_doc_states_stack_anchors():
+    """§6.2 矩阵三档 + 通用红旗叠加双口径 + §10.3 取最严 行级锚点。"""
+    assert "L4财务层评分上限从10分降至7分" in DOC_LINES[320]   # :321 关注
+    assert "评级上限锁定为B" in DOC_LINES[321]                 # :322 高
+    assert "综合评级上限锁定为CCC" in DOC_LINES[322]           # :323 严重
+    assert "两个以上通用红旗同时出现" in DOC_LINES[327]         # :328 升一级
+    assert "三个以上通用红旗同时出现" in DOC_LINES[328]         # :329 cap B
+    assert "并行适用" in DOC_LINES[337]                        # :338 双口径
+    assert "取评级上限最低者" in DOC_LINES[718]                # :719 取最严
+
+
+# --------------------------------------------------------------------------
+# stack_severity：计数升级 + §6.2 矩阵 + data_note 过滤
+# --------------------------------------------------------------------------
+
+def test_stack_filters_data_note_placeholders():
+    """T1 带入项：data_note 占位条目（strength=LOW）不计入红旗面数/严重度。"""
+    flags = [
+        _flag(Strength.LOW, note=f"{DATA_NOTE_PREFIX}规则 FIN-01 缺输入指标，跳过"),
+        _flag(Strength.LOW, note=f"{DATA_NOTE_PREFIX}规则 FIN-02 缺输入指标，跳过"),
+        _flag(Strength.LOW, note=f"{DATA_NOTE_PREFIX}规则 FIN-03 缺输入指标，跳过"),
+        _flag(Strength.MID),
+    ]
+    res = stack_severity(flags)
+    assert isinstance(res, StackResult)
+    assert res.counted_flags == 1          # 3 条占位不计
+    assert res.risk_grade == "正常"         # 仅 1 面 MID → 无影响（:320）
+    assert res.rating_cap is None
+    assert res.l4_cap == 10
+    assert res.outlook_flag is False
+
+
+def test_count_overlay_two_flags_upgrade_one_level():
+    """① 计数叠加：2 面通用红旗（strength≥MID）→ 严重度升一级（:328）。
+    2 MID 的矩阵档为关注 → 升级后为高；矩阵效果（l4_cap 7+flag）保留。"""
+    res = stack_severity([_flag(Strength.MID), _flag(Strength.MID)])
+    assert res.risk_grade == "高"
+    assert res.severity_upgraded is True
+    assert res.rating_cap is None          # 未达 3 面，无 cap B
+    assert res.l4_cap == 7                 # §6.2 关注档矩阵效果
+    assert res.outlook_flag is True
+
+
+def test_count_overlay_three_flags_cap_b():
+    """① 计数叠加：3 面通用红旗 → 综合评级上限降至 B（:329）。"""
+    res = stack_severity([_flag(Strength.MID)] * 3)
+    assert res.rating_cap == "B"
+    assert res.risk_grade == "高"          # 关注升一级
+    assert res.l4_cap == 7
+
+
+def test_matrix_three_tiers():
+    """② §6.2 矩阵三档：2 中 → l4_cap 7+flag；4 中 → cap B+l4_cap 4；1 强 → cap B。"""
+    # 2 中 → 关注档：L4 上限 10→7，评级前置减半档（D4 → outlook_flag）
+    res2 = stack_severity([_flag(Strength.MID)] * 2)
+    assert res2.l4_cap == 7
+    assert res2.outlook_flag is True
+    # 4 中（>3）→ 高档：l4_cap 4 + cap B
+    res4 = stack_severity([_flag(Strength.MID)] * 4)
+    assert res4.risk_grade == "高"
+    assert res4.rating_cap == "B"
+    assert res4.l4_cap == 4
+    # 1 强 → 高档：cap B + l4_cap 4（单面不触发计数升级）
+    res1 = stack_severity([_flag(Strength.HIGH)])
+    assert res1.risk_grade == "高"
+    assert res1.rating_cap == "B"
+    assert res1.l4_cap == 4
+    assert res1.severity_upgraded is False
+
+
+def test_veto_flag_caps_ccc():
+    """③ 否决：任一 VETO 强度旗 → 严重 + cap CCC，所有层评分上限锁定。"""
+    res = stack_severity([_flag(Strength.VETO)])
+    assert res.risk_grade == "严重"
+    assert res.rating_cap == "CCC"
+    assert res.l4_cap is None              # 所有层锁定，单一 L4 上限不适用
+    assert res.veto_triggered is True
+
+
+def test_strictest_wins_cap_b_and_veto_coexist():
+    """取最严（D5/:719）：cap B 与 CCC 并存 → CCC。"""
+    res = stack_severity([_flag(Strength.MID)] * 3 + [_flag(Strength.VETO)])
+    assert res.rating_cap == "CCC"
+    assert res.risk_grade == "严重"
+
+
+def test_low_mid_judgment_flags_not_counted():
+    """D6 判断项（🟠 关注 → LOW_MID）不计入通用红旗面数（strength≥MID 才计）。"""
+    res = stack_severity([_flag(Strength.LOW_MID)] * 3)
+    assert res.counted_flags == 0
+    assert res.risk_grade == "正常"
+    assert res.rating_cap is None
+
+
+# --------------------------------------------------------------------------
+# compute_governance：否决各路径 + 取最严 + D6 注记 + data_density
+# --------------------------------------------------------------------------
+
+def test_compute_governance_clean_inputs_normal():
+    res = compute_governance({}, {})
+    assert isinstance(res, GovernanceResult)
+    assert res.risk_grade == "正常"
+    assert res.rating_cap is None
+    assert res.l4_cap == 10
+    assert res.veto_triggers == []
+    # 空 measured → 33 条规则全留 data_note，合成层过滤后不计数
+    assert sum(1 for f in res.red_flags if f.note.startswith(DATA_NOTE_PREFIX)) == 33
+    assert any("data_note" in n for n in res.notes)
+
+
+def test_each_veto_event_triggers_ccc():
+    """11 条否决各经 events[event_key] 触发 → cap CCC + veto_triggers 含 id。"""
+    for rule in VETO_RULES:
+        res = compute_governance({}, {rule.event_key: True})
+        assert res.rating_cap == "CCC", f"{rule.id} 未触发 CCC"
+        assert rule.id in res.veto_triggers
+        assert res.risk_grade == "严重"
+        flag = next(f for f in res.red_flags if f.strength == Strength.VETO)
+        assert rule.doc_anchor in flag.note
+
+
+def test_veto_v1_csrc_fraud_investigation():
+    res = compute_governance(
+        {}, {"v1_csrc_fraud_investigation": "证监会立案告知书（涉财务造假）"}
+    )
+    assert res.rating_cap == "CCC"
+    assert res.veto_triggers == ["v1"]
+    flag = next(f for f in res.red_flags if f.strength == Strength.VETO)
+    assert "证监会立案告知书" in flag.evidence  # 文本证据留痕
+
+
+def test_veto_v5_related_funds_occupation_mechanical():
+    """v5 机械轨：关联资金占用 > 净资产 30%（§6.3-5 :348，严格大于）。"""
+    hit = compute_governance(
+        {"related_funds_occupation": 0.31, "net_assets": 1.0}, {}
+    )
+    assert "v5" in hit.veto_triggers
+    assert hit.rating_cap == "CCC"
+    boundary = compute_governance(
+        {"related_funds_occupation": 0.30, "net_assets": 1.0}, {}
+    )
+    assert "v5" not in boundary.veto_triggers
+    assert boundary.rating_cap is None
+    # 事件轨并行：measured 不足时 events 证据同样触发
+    via_event = compute_governance({}, {"v5_related_funds_occupation": True})
+    assert "v5" in via_event.veto_triggers
+
+
+def test_veto_v7_negative_net_assets_mechanical():
+    """v7 机械轨：年报净资产为负（§2.4 :128）。"""
+    res = compute_governance({"net_assets": -5.0}, {})
+    assert "v7" in res.veto_triggers
+    assert res.rating_cap == "CCC"
+    zero = compute_governance({"net_assets": 0.0}, {})
+    assert "v7" not in zero.veto_triggers
+
+
+def test_veto_v8_controller_missing_event():
+    res = compute_governance({}, {"v8_controller_missing_or_investigated": "实控人被留置"})
+    assert res.rating_cap == "CCC"
+    assert "v8" in res.veto_triggers
+
+
+def test_veto_v6_debt_evasion_trio_event():
+    """v6 三件套全确认（调用方聚合三要素后布尔输入，:209 机械项 DEBT-01 仅为其中之一）。"""
+    res = compute_governance({"parent_debt_ratio": 0.95}, {"v6_debt_evasion_trio": True})
+    assert "v6" in res.veto_triggers
+    assert res.rating_cap == "CCC"
+    # 仅 DEBT-01 机械命中（无 events 确认）→ 不是否决，只是 HIGH 红旗
+    no_trio = compute_governance({"parent_debt_ratio": 0.95}, {})
+    assert "v6" not in no_trio.veto_triggers
+    assert no_trio.rating_cap == "B"       # 1 面 HIGH → §6.2 高档
+    assert no_trio.risk_grade == "高"
+
+
+def test_strictest_wins_end_to_end():
+    """取最严端到端：3 面 MID（cap B）+ v8 否决（CCC）→ CCC。"""
+    measured = {
+        "q4_revenue_share": 0.41,          # FIN-03 MID
+        "goodwill_to_net_assets": 0.31,    # FIN-11 MID
+        "annual_report_delay_days": 31,    # DEBT-02 MID
+    }
+    res = compute_governance(measured, {"v8_controller_missing_or_investigated": True})
+    assert res.rating_cap == "CCC"
+    assert res.risk_grade == "严重"
+    assert "v8" in res.veto_triggers
+
+
+def test_count_upgrade_end_to_end():
+    """端到端：2 面 MID → 升一级（关注→高）+ l4_cap 7+flag；3 面 MID → cap B。"""
+    two = compute_governance(
+        {"q4_revenue_share": 0.41, "annual_report_delay_days": 31}, {}
+    )
+    assert two.risk_grade == "高"
+    assert two.rating_cap is None
+    assert two.l4_cap == 7
+    assert two.outlook_flag is True
+    three = compute_governance(
+        {
+            "q4_revenue_share": 0.41,
+            "annual_report_delay_days": 31,
+            "goodwill_to_net_assets": 0.31,
+        },
+        {},
+    )
+    assert three.rating_cap == "B"
+    assert three.risk_grade == "高"
+
+
+def test_d6_judgment_event_counted_with_note():
+    """D6 注记项："诉讼频率骤增"为 LLM 判断输入，按事件计入 red_flags 并带注记，
+    但不计入通用红旗面数（🟠 关注 → LOW_MID < MID）。"""
+    res = compute_governance(
+        {}, {"litigation_surge": "裁判文书网显示被诉频率骤增"}
+    )
+    judged = [f for f in res.red_flags if "litigation_surge" in f.note]
+    assert len(judged) == 1
+    assert judged[0].strength == Strength.LOW_MID
+    assert "注记" in judged[0].note and "LLM" in judged[0].note
+    assert "governance-fraud-risk.md:127" in judged[0].note
+    assert "裁判文书网" in judged[0].evidence
+    # 不计数：即使叠加交易所问询两件判断事件，评级面无影响
+    res2 = compute_governance(
+        {}, {"litigation_surge": True, "exchange_inquiry": True}
+    )
+    assert res2.risk_grade == "正常"
+    assert res2.rating_cap is None
+    keys = {k for k, _, _ in JUDGMENT_EVENTS}
+    assert keys == {"litigation_surge", "exchange_inquiry"}
+
+
+def test_data_density_field():
+    """data_density 为 §10.4 可观测比例参数表（:723-731）。"""
+    res = compute_governance({}, {})
+    assert res.data_density == DATA_DENSITY
+    assert res.data_density["合规违规"] == "70-80%"
+    assert res.data_density["系统故障"] == "30-40%"
+    assert len(res.data_density) == 7
+    # parity：文档 §10.4 表含各比例
+    sec = "\n".join(DOC_LINES[722:731])
+    for token in ("60-70%", "50-60%", "30-40%", "70-80%"):
+        assert token in sec, f"§10.4 missing density anchor {token!r}"
+
+
+def test_willingness_integration():
+    """events["willingness"] 子dict → §4.3 评分；缺省 → None + 注记。"""
+    res = compute_governance(
+        {}, {"willingness": {"transfer": 1, "gov_support": 1, "hollowing": 0, "history": 1}}
+    )
+    assert res.repayment_willingness == (-75, "🟠 中高度嫌疑")
+    absent = compute_governance({}, {})
+    assert absent.repayment_willingness is None
+    assert any("还款意愿" in n for n in absent.notes)
+    with pytest.raises(ValueError):
+        compute_governance({}, {"willingness": {"transfer": 1}})

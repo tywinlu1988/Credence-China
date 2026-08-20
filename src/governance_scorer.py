@@ -10,6 +10,10 @@
   信号（非标审计意见/核心资产划转/政府态度转变等）经 T2 events 输入，
   不在本规则库内。
 
+T2（本文件下半部）：叠加合成 stack_severity（§6.2 矩阵 :318-323 + 通用
+红旗计数叠加 :325-338，双口径并行、D5 取最严）+ 11 条一票否决 VETO_RULES
+（§6.3 :344-349、§2.4 :128、§10.3 :714-717）+ compute_governance 合成入口。
+
 边界语义（文档文本直译）：">" / "<" 为严格开区间（恰等不命中），
 "≥" 为闭区间。两档规则（质押 60%/80%、关联收入 20%/50%、担保 50%/100%）
 各自独立成条，高档命中时低档同中（档位语义叠加，与文档两行并列一致）。
@@ -450,3 +454,345 @@ def repayment_willingness(
     else:
         label = "🟢 还款意愿正常"
     return score, label
+
+
+# --------------------------------------------------------------------------
+# T2：一票否决规则库（§6.3 :344-349 / §2.4 :128 / §10.3 :714-717）
+# --------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class VetoRule:
+    """一票否决规则：触发后综合评级上限锁定 CCC（§6.2 :323 / §6.3 :342）。
+
+    双轨判定（取并集，任一轨命中即触发）：
+    - 事件轨：events[event_key] 为 truthy（布尔或文本证据）——11 条全有，
+      不可机械判定项（立案调查/失联/灾难中断等）仅此轨；
+    - 机械轨：check 非空且 measured 输入齐备时按阈值判定（v5/v7 两条；
+      required 键缺失或 None 时跳过并留 notes，不静默按 0 处理）。
+    """
+
+    id: str
+    doc_anchor: str          # "governance-fraud-risk.md:<行号>"（parity 锚点）
+    name: str
+    event_key: str           # events 输入键（布尔/文本证据）
+    check: object = None     # callable[[dict], bool] | None（机械轨，可空）
+    required: tuple = ()
+
+
+def _check_v5(m: dict) -> bool:
+    # :348 关联方资金占用金额超过净资产 30%（"超过"→ 严格大于）
+    return m["related_funds_occupation"] > 0.30 * m["net_assets"]
+
+
+def _check_v7(m: dict) -> bool:
+    # :128 年报净资产为负（事实上的 D 级状态）
+    return m["net_assets"] < 0
+
+
+VETO_RULES: tuple = (
+    VetoRule(  # §6.3-1 :344
+        "v1", "governance-fraud-risk.md:344",
+        "被证监会/监管机构立案调查且涉及财务造假",
+        "v1_csrc_fraud_investigation",
+    ),
+    VetoRule(  # §6.3-2 :345
+        "v2", "governance-fraud-risk.md:345",
+        "审计机构对持续经营能力出具否定意见或无法表示意见",
+        "v2_going_concern_adverse",
+    ),
+    VetoRule(  # §6.3-3 :346
+        "v3", "governance-fraud-risk.md:346",
+        "实控人高比例质押 + 股价持续跌破平仓线且无补充质押物",
+        "v3_pledge_liquidation_no_supplement",
+    ),
+    VetoRule(  # §6.3-4 :347
+        "v4", "governance-fraud-risk.md:347",
+        "核心资产剥离已实质性启动且无合理解释",
+        "v4_core_asset_divestiture",
+    ),
+    VetoRule(  # §6.3-5 :348（机械轨 + 事件轨）
+        "v5", "governance-fraud-risk.md:348",
+        "关联方资金占用金额超过净资产 30%",
+        "v5_related_funds_occupation",
+        _check_v5, ("related_funds_occupation", "net_assets"),
+    ),
+    VetoRule(  # §6.3-6 :349（三件套由调用方聚合确认后布尔输入；
+        # 其中"母公司负债率>90%"机械项见 DEBT-01 :209，单中不构成否决）
+        "v6", "governance-fraud-risk.md:349",
+        "逃废债三件套全部确认同时出现（AAA + 负债率>90% + 核心主体切割）",
+        "v6_debt_evasion_trio",
+    ),
+    VetoRule(  # §2.4 :128（机械轨 + 事件轨）
+        "v7", "governance-fraud-risk.md:128",
+        "净资产为负/资不抵债",
+        "v7_negative_net_assets",
+        _check_v7, ("net_assets",),
+    ),
+    VetoRule(  # §10.3-7 :714
+        "v8", "governance-fraud-risk.md:714",
+        "实控人失联/被调查/被采取强制措施",
+        "v8_controller_missing_or_investigated",
+    ),
+    VetoRule(  # §10.3-8 :715
+        "v9", "governance-fraud-risk.md:715",
+        "核心系统灾难性故障致核心业务完全中断超过 72 小时",
+        "v9_core_system_outage_over_72h",
+    ),
+    VetoRule(  # §10.3-9 :716
+        "v10", "governance-fraud-risk.md:716",
+        "被网信办认定严重数据安全风险并责令业务整改",
+        "v10_cac_data_security_rectification",
+    ),
+    VetoRule(  # §10.3-10 :717
+        "v11", "governance-fraud-risk.md:717",
+        "反垄断处罚致核心业务被迫拆分或结构性调整",
+        "v11_antitrust_business_split",
+    ),
+)
+
+
+# --------------------------------------------------------------------------
+# T2：D6 判断型事件（无阈值不新造——LLM 判断输入 + 注记，🟠 关注 → LOW_MID）
+# --------------------------------------------------------------------------
+
+# (event_key, 名称, doc_anchor)；🟠 关注介于 🟡 中与低强度之间 → LOW_MID，
+# 计入 red_flags 但不计入通用红旗面数（面数口径 strength≥MID，见 §6.2 :338）。
+JUDGMENT_EVENTS: tuple = (
+    ("exchange_inquiry", "交易所问询函/监管关注", "governance-fraud-risk.md:126"),
+    ("litigation_surge", "被申请仲裁/诉讼频率骤增", "governance-fraud-risk.md:127"),
+)
+
+
+# --------------------------------------------------------------------------
+# T2：§10.4 数据可得性参数表（:723-731）
+# --------------------------------------------------------------------------
+
+DATA_DENSITY: dict = {
+    "财务欺诈": "60-70%",    # :725
+    "管理层治理": "60-70%",  # :726
+    "关联交易": "50-60%",    # :727
+    "逃废债": "60-70%",      # :728
+    "系统故障": "30-40%",    # :729
+    "合规违规": "70-80%",    # :730
+    "关键人员": "50-60%",    # :731
+}
+
+
+# --------------------------------------------------------------------------
+# T2：叠加合成（§6.2 矩阵 :318-323 + 通用红旗计数叠加 :325-338，D5 取最严）
+# --------------------------------------------------------------------------
+
+_GRADES = ("正常", "关注", "高", "严重")  # §6.2 :320-323 四档有序
+
+
+@dataclass(frozen=True)
+class StackResult:
+    """stack_severity 输出。
+
+    l4_cap：L4 财务层评分上限（10 无影响 / 7 关注档 / 4 高档）；否决时
+    「所有层评分上限锁定」（:323），单一 L4 上限不适用 → None。
+    """
+
+    risk_grade: str          # 正常 / 关注 / 高 / 严重
+    rating_cap: object       # None | "B" | "CCC"
+    l4_cap: object           # int | None（否决锁定）
+    outlook_flag: bool       # 关注档「评级前置减半档」（:321，D4 → flag）
+    counted_flags: int       # 通用红旗面数（strength≥MID，data_note 已过滤）
+    mid_count: int
+    high_count: int
+    severity_upgraded: bool  # 计数叠加 ≥2 面升一级（:328）
+    veto_triggered: bool
+    notes: tuple = ()
+
+
+def stack_severity(flags: list) -> StackResult:
+    """D5 合成顺序（§6.2 :338 双口径并行适用 + §10.3 :719 取最严）：
+
+    ① 通用红旗计数（strength≥MID 计 1 面，:328-329）：≥3 → rating_cap=B；
+      ≥2 → 严重度升一级（非否决路径上限为「高」——「严重」仅由否决触发，:323）；
+    ② §6.2 矩阵（:320-323）：MID 计数 2-3 → 关注（l4_cap=7 + outlook_flag）；
+      MID>3 或 HIGH≥1 → 高（l4_cap=4 + cap B）；
+    ③ 一票否决（VETO 强度旗）→ 严重 + cap CCC + 全层锁定（l4_cap=None）。
+
+    T1 带入项：note 以 DATA_NOTE_PREFIX 开头的占位条目一律过滤，
+    不计入任何计数/分级。
+    """
+    effective = [f for f in flags if not f.note.startswith(DATA_NOTE_PREFIX)]
+    vetoes = [f for f in effective if f.strength >= Strength.VETO]
+    counted = [f for f in effective if Strength.MID <= f.strength < Strength.VETO]
+    mid_n = sum(1 for f in counted if f.strength == Strength.MID)
+    high_n = sum(1 for f in counted if f.strength >= Strength.HIGH)
+    n = len(counted)
+
+    # ③ 否决优先判定（:323 🔴 严重 → CCC + 所有层评分上限锁定）
+    if vetoes:
+        return StackResult(
+            risk_grade="严重",
+            rating_cap="CCC",
+            l4_cap=None,
+            outlook_flag=False,
+            counted_flags=n,
+            mid_count=mid_n,
+            high_count=high_n,
+            severity_upgraded=False,
+            veto_triggered=True,
+            notes=(
+                f"一票否决触发（{len(vetoes)} 条，§6.2 :323）→ 综合评级上限锁定 "
+                "CCC，所有层评分上限锁定（l4_cap 不适用）",
+            ),
+        )
+
+    # ② §6.2 矩阵（取最严：高档条件优先于关注档）
+    if mid_n > 3 or high_n >= 1:
+        grade, l4_cap, cap, outlook = "高", 4, "B", False
+        matrix_note = "§6.2 高档（:322）：中强度 >3 或高强度 ≥1 → L4 上限 4 + 评级上限 B"
+    elif 2 <= mid_n <= 3:
+        grade, l4_cap, cap, outlook = "关注", 7, None, True
+        matrix_note = "§6.2 关注档（:321）：2-3 个中强度信号 → L4 上限 7 + 评级前置减半档"
+    else:
+        grade, l4_cap, cap, outlook = "正常", 10, None, False
+        matrix_note = "§6.2 正常档（:320）：无红旗或仅个别低强度信号 → 无影响"
+
+    # ① 通用红旗计数叠加（与矩阵并行适用，:338；效果取最严）
+    upgraded = n >= 2
+    if n >= 3:
+        cap = "B"
+    if n >= 2 and grade != "高":
+        grade = _GRADES[_GRADES.index(grade) + 1]  # 升一级；高档已为非否决上限
+    overlay_note = (
+        f"通用红旗 {n} 面（:328-329）："
+        + ("≥3 → 评级上限 B；" if n >= 3 else "")
+        + ("≥2 → 严重度升一级" if n >= 2 else "未达升级线")
+    )
+
+    return StackResult(
+        risk_grade=grade,
+        rating_cap=cap,
+        l4_cap=l4_cap,
+        outlook_flag=outlook,
+        counted_flags=n,
+        mid_count=mid_n,
+        high_count=high_n,
+        severity_upgraded=upgraded,
+        veto_triggered=False,
+        notes=(matrix_note, overlay_note),
+    )
+
+
+# --------------------------------------------------------------------------
+# T2：合成入口
+# --------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class GovernanceResult:
+    """compute_governance 输出（字段口径见 stack_severity/compute docstring）。"""
+
+    risk_grade: str
+    rating_cap: object           # None | "B" | "CCC"
+    l4_cap: object               # int | None
+    outlook_flag: bool
+    red_flags: list              # evaluate_signals 全部条目 + 否决/判断事件旗
+    veto_triggers: list          # 触发的否决规则 id（"v1"-"v11"）
+    repayment_willingness: object  # (score, label) | None（未提供信号时）
+    data_density: dict           # §10.4 可观测比例参数表（DATA_DENSITY）
+    notes: list
+
+
+def compute_governance(measured: dict, events: dict) -> GovernanceResult:
+    """合成入口：信号评估 → 否决检测 → D6 判断事件 → 叠加合成。
+
+    measured 契约：机械指标的预聚合单值字典——"连续 8 季""且持续"等
+    持续性修饰语由调用方预聚合为单值输入（T4 适配器 docstring 引用本口径）。
+
+    events 契约：事件型输入——
+    - 否决证据：VETO_RULES 各 event_key → 布尔或文本证据（truthy 触发）；
+      v5/v7 另有机械轨，与事件轨并行取并集；
+    - D6 判断项：JUDGMENT_EVENTS 各键 → LLM 判断输入（truthy 计入
+      red_flags 并带注记，不计入通用红旗面数）；
+    - willingness（可选）：§4.3 四项 0/1 信号子 dict
+      {"transfer","gov_support","hollowing","history"}——四键缺一即
+      raise（失败可观测）；整体缺省 → repayment_willingness=None + 注记。
+    """
+    notes = []
+    flags = list(evaluate_signals(measured))
+    missing_n = sum(1 for f in flags if f.note.startswith(DATA_NOTE_PREFIX))
+    if missing_n:
+        notes.append(
+            f"{missing_n} 条信号规则缺输入留 data_note（前缀过滤，不计入计数/分级）"
+        )
+
+    # 否决检测：事件轨 ∪ 机械轨
+    veto_triggers = []
+    for rule in VETO_RULES:
+        evidences = []
+        event_val = events.get(rule.event_key)
+        if event_val:
+            evidences.append(f"{rule.event_key}={event_val!r}")
+        if rule.check is not None:
+            missing = [
+                k for k in rule.required
+                if k not in measured or measured[k] is None
+            ]
+            if missing:
+                notes.append(
+                    f"否决规则 {rule.id} 机械轨缺输入 {missing}，"
+                    f"仅依 events[{rule.event_key!r}] 判定（不静默按 0 处理）"
+                )
+            elif rule.check(measured):
+                evidences.append(
+                    "; ".join(f"{k}={measured[k]!r}" for k in rule.required)
+                )
+        if evidences:
+            veto_triggers.append(rule.id)
+            flags.append(RedFlag(
+                name=rule.name,
+                strength=Strength.VETO,
+                evidence=" | ".join(evidences),
+                source="events/measured（一票否决）",
+                note=f"{rule.id} 一票否决命中（{rule.doc_anchor}）",
+            ))
+
+    # D6 判断型事件：LLM 判断输入计入 red_flags + 注记（不计入面数）
+    for key, name, anchor in JUDGMENT_EVENTS:
+        val = events.get(key)
+        if val:
+            flags.append(RedFlag(
+                name=name,
+                strength=Strength.LOW_MID,  # 🟠 关注（介于中与低之间）
+                evidence=f"{key}={val!r}",
+                source="LLM 判断输入（events）",
+                note=(
+                    f"{key} 判断事件计入（{anchor}）——D6 注记：无阈值不新造，"
+                    "LLM 判断输入按事件计入，不计入通用红旗面数"
+                ),
+            ))
+
+    # §4.3 还款意愿（可选子 dict；四键缺一即 raise）
+    w = events.get("willingness")
+    if w is None:
+        willingness = None
+        notes.append("未提供还款意愿信号（§4.3），repayment_willingness=None")
+    else:
+        required_w = ("transfer", "gov_support", "hollowing", "history")
+        missing_w = [k for k in required_w if k not in w]
+        if missing_w:
+            raise ValueError(
+                f"willingness 子 dict 缺键 {missing_w}（§4.3 四项信号须齐备，"
+                "不静默按 0 处理）"
+            )
+        willingness = repayment_willingness(*(w[k] for k in required_w))
+
+    stack = stack_severity(flags)
+    notes.extend(stack.notes)
+
+    return GovernanceResult(
+        risk_grade=stack.risk_grade,
+        rating_cap=stack.rating_cap,
+        l4_cap=stack.l4_cap,
+        outlook_flag=stack.outlook_flag,
+        red_flags=flags,
+        veto_triggers=veto_triggers,
+        repayment_willingness=willingness,
+        data_density=DATA_DENSITY,
+        notes=notes,
+    )
