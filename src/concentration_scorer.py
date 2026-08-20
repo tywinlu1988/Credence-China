@@ -25,8 +25,50 @@ class ConcentrationMetrics:
     top_channel_is_contracting: bool = False
 
 
+# 五维加权默认权重（concentration-framework.md §8.2）：
+# 行业 25% / 区域 20% / 评级 20% / 期限 20% / 渠道 15%。
+DEFAULT_WEIGHTS = (0.25, 0.20, 0.20, 0.20, 0.15)
+
+# 五维默认阈值（硬编码 + 文档出处；WP-M4-04 T3 阈值注入扩展的默认值）。
+# 每指标三元组 = (关注下界, 警示下界, 危险下界)，闭区间（>= 归属本档）：
+#   value < 关注下界 → 正常档代表分；≥ 关注下界 → 关注；≥ 警示下界 → 警示；
+#   ≥ 危险下界 → 危险（D₁ 行业例外：MAX1 越危险界 → 9，其余指标 → 8，见
+#   industry_score 原实现，档位语义与 §2.2.4 危险档 8-10 一致）。
+DEFAULT_THRESHOLDS = {
+    "industry": {
+        "max1": (0.25, 0.40, 0.60),        # §2.2.4 MAX1
+        "cr3": (0.50, 0.65, 0.80),         # §2.2.2 CR3
+        "cr5": (0.70, 0.80, 0.90),         # §2.2.3 CR5
+        "hhi": (1000.0, 1500.0, 2500.0),   # §2.2.1 HHI
+    },
+    "region": {
+        "single_province_share": (0.20, 0.35, 0.50),  # §3.3.1 单一省份占比
+        "weak_region_share": (0.10, 0.20, 0.35),      # §3.3.2 弱区域合计占比
+    },
+    "rating": {
+        "aaa_share": (0.30, 0.50, 0.70),                # §4.3.1 外部AAA占比
+        "pseudo_high_rating_share": (0.05, 0.15, 0.30),  # §4.3.2 伪高评级占比
+    },
+    "maturity": {
+        "maturity_12m_share": (0.30, 0.50, 0.70),  # §5.3.1 未来12个月到期占比
+        "single_month_peak": (0.10, 0.20, 0.30),   # §5.3.4 单月到期峰值
+    },
+    "channel": {
+        "top_channel_share": (0.50, 0.70, 0.90),  # §6.2.1 单一渠道占比
+    },
+}
+
+
 def _clamp(value: float, low: float, high: float) -> float:
     return max(low, min(high, value))
+
+
+def _resolve_thresholds(dim: str, thresholds: dict | None) -> dict:
+    """维度阈值解析：None → 该维默认阈值（旧行为零变化）；部分覆盖时与
+    该维默认值合并（调用方校验见 concentration_risk_score._merge_thresholds）。"""
+    if thresholds is None:
+        return DEFAULT_THRESHOLDS[dim]
+    return {**DEFAULT_THRESHOLDS[dim], **thresholds}
 
 
 def _rating_band(value: float, normal_max: float, watch_max: float, alert_max: float) -> int:
@@ -47,43 +89,62 @@ def _rating_band(value: float, normal_max: float, watch_max: float, alert_max: f
     return 2
 
 
-def industry_score(metrics: ConcentrationMetrics) -> int:
+def industry_score(metrics: ConcentrationMetrics, thresholds: dict | None = None) -> int:
     """D1: Industry concentration (HHI/CR3/CR5/MAX1)."""
-    if metrics.max1 >= 0.60:
+    t = _resolve_thresholds("industry", thresholds)
+    if metrics.max1 >= t["max1"][2]:
         return 9
-    if metrics.cr3 >= 0.80 or metrics.cr5 >= 0.90 or metrics.hhi >= 2500:
+    if (
+        metrics.cr3 >= t["cr3"][2]
+        or metrics.cr5 >= t["cr5"][2]
+        or metrics.hhi >= t["hhi"][2]
+    ):
         return 8
-    if metrics.max1 >= 0.40 or metrics.cr3 >= 0.65 or metrics.cr5 >= 0.80 or metrics.hhi >= 1500:
+    if (
+        metrics.max1 >= t["max1"][1]
+        or metrics.cr3 >= t["cr3"][1]
+        or metrics.cr5 >= t["cr5"][1]
+        or metrics.hhi >= t["hhi"][1]
+    ):
         return 6
-    if metrics.max1 >= 0.25 or metrics.cr3 >= 0.50 or metrics.cr5 >= 0.70 or metrics.hhi >= 1000:
+    if (
+        metrics.max1 >= t["max1"][0]
+        or metrics.cr3 >= t["cr3"][0]
+        or metrics.cr5 >= t["cr5"][0]
+        or metrics.hhi >= t["hhi"][0]
+    ):
         return 4
     return 2
 
 
-def region_score(metrics: ConcentrationMetrics) -> int:
+def region_score(metrics: ConcentrationMetrics, thresholds: dict | None = None) -> int:
     """D2: Regional concentration (single province + weak region share)."""
-    province = _rating_band(metrics.single_province_share, 0.20, 0.35, 0.50)
-    weak = _rating_band(metrics.weak_region_share, 0.10, 0.20, 0.35)
+    t = _resolve_thresholds("region", thresholds)
+    province = _rating_band(metrics.single_province_share, *t["single_province_share"])
+    weak = _rating_band(metrics.weak_region_share, *t["weak_region_share"])
     return max(province, weak)
 
 
-def rating_score(metrics: ConcentrationMetrics) -> int:
+def rating_score(metrics: ConcentrationMetrics, thresholds: dict | None = None) -> int:
     """D3: Rating concentration (external AAA + pseudo-high-rating share)."""
-    aaa = _rating_band(metrics.aaa_share, 0.30, 0.50, 0.70)
-    pseudo = _rating_band(metrics.pseudo_high_rating_share, 0.05, 0.15, 0.30)
+    t = _resolve_thresholds("rating", thresholds)
+    aaa = _rating_band(metrics.aaa_share, *t["aaa_share"])
+    pseudo = _rating_band(metrics.pseudo_high_rating_share, *t["pseudo_high_rating_share"])
     return max(aaa, pseudo)
 
 
-def maturity_score(metrics: ConcentrationMetrics) -> int:
+def maturity_score(metrics: ConcentrationMetrics, thresholds: dict | None = None) -> int:
     """D4: Maturity concentration (12-month share + single-month peak)."""
-    m12 = _rating_band(metrics.maturity_12m_share, 0.30, 0.50, 0.70)
-    peak = _rating_band(metrics.single_month_peak, 0.10, 0.20, 0.30)
+    t = _resolve_thresholds("maturity", thresholds)
+    m12 = _rating_band(metrics.maturity_12m_share, *t["maturity_12m_share"])
+    peak = _rating_band(metrics.single_month_peak, *t["single_month_peak"])
     return max(m12, peak)
 
 
-def channel_score(metrics: ConcentrationMetrics) -> int:
+def channel_score(metrics: ConcentrationMetrics, thresholds: dict | None = None) -> int:
     """D5: Financing-channel concentration (top channel share + contraction flag)."""
-    base = _rating_band(metrics.top_channel_share, 0.50, 0.70, 0.90)
+    t = _resolve_thresholds("channel", thresholds)
+    base = _rating_band(metrics.top_channel_share, *t["top_channel_share"])
     if metrics.top_channel_is_contracting and base < 9:
         base += 2
     return int(_clamp(base, 2, 10))
@@ -172,25 +233,53 @@ def rating_adjustment(metrics: ConcentrationMetrics) -> dict:
     }
 
 
+def _merge_thresholds(override: dict | None) -> dict:
+    """thresholds_override 并入默认值（按维度按指标部分覆盖）。
+
+    结构：{维度: {指标: (关注下界, 警示下界, 危险下界)}}；未知维度/指标、
+    非三元组或非升序阈值 → raise（失败可观测纪律）。
+    """
+    merged = {dim: dict(bounds) for dim, bounds in DEFAULT_THRESHOLDS.items()}
+    for dim, metrics_override in (override or {}).items():
+        if dim not in merged:
+            raise ValueError(f"thresholds_override 未知维度: {dim!r}")
+        for key, bounds in metrics_override.items():
+            if key not in merged[dim]:
+                raise ValueError(f"thresholds_override 未知指标: {dim}.{key}")
+            bounds = tuple(bounds)
+            if len(bounds) != 3 or not bounds[0] <= bounds[1] <= bounds[2]:
+                raise ValueError(
+                    f"thresholds_override {dim}.{key} 阈值须为升序三元组: {bounds!r}"
+                )
+            merged[dim][key] = bounds
+    return merged
+
+
 def concentration_risk_score(
     metrics: ConcentrationMetrics,
-    weights: tuple[float, float, float, float, float] = (0.25, 0.20, 0.20, 0.20, 0.15),
+    weights: tuple[float, float, float, float, float] = DEFAULT_WEIGHTS,
+    thresholds_override: dict | None = None,
 ) -> float:
     """Five-dimensional weighted concentration risk score (1-10 scale).
 
     Default weights follow dev/engine/concentration-framework.md §8.2:
     industry 25%, region 20%, rating 20%, maturity 20%, channel 15%.
+
+    thresholds_override（WP-M4-04 T3 扩展）：{维度: {指标: (关注, 警示, 危险)}}
+    按维度按指标部分覆盖默认阈值重算档位；默认 None 时行为与扩展前完全一致
+    （parity 锚点见 tests/test_concentration_scorer.py）。
     """
     if len(weights) != 5:
         raise ValueError("weights must contain exactly 5 values")
     if abs(sum(weights) - 1.0) > 1e-6:
         raise ValueError("weights must sum to 1.0")
 
+    t = _merge_thresholds(thresholds_override)
     scores = (
-        industry_score(metrics),
-        region_score(metrics),
-        rating_score(metrics),
-        maturity_score(metrics),
-        channel_score(metrics),
+        industry_score(metrics, t["industry"]),
+        region_score(metrics, t["region"]),
+        rating_score(metrics, t["rating"]),
+        maturity_score(metrics, t["maturity"]),
+        channel_score(metrics, t["channel"]),
     )
     return sum(s * w for s, w in zip(scores, weights))

@@ -12,11 +12,14 @@ import pytest
 from dataclasses import replace
 
 from src.path_sheet import engine_dir
+from src.concentration_scorer import ConcentrationMetrics
 from src.stress_scorer import (
     IssuerFinancials,
     ScenarioResult,
     StressTables,
     TAIL_RISK_WARNING,
+    bond_mv_stress,
+    concentration_stress,
     load_stress_tables,
     normalize_industry,
     resolve_severe_params,
@@ -538,3 +541,187 @@ def test_reverse_stress_funding_bp_e9_semantics(fin, tables):
     out = reverse_stress(fin, tables.scenario_params["Bear"])
     assert out["critical_funding_cost_rise_bp"] == pytest.approx(32500.0)
     assert "回退口径" in out["note"]
+
+
+# ================= T3：§九 压力传导（concentration_stress） =================
+
+_DIMS = ("industry", "region", "rating", "maturity", "channel")
+
+
+def _low_metrics(**overrides):
+    """全绿基准组合（五维评分均 2）。"""
+    base = dict(
+        hhi=500, cr3=0.30, cr5=0.50, max1=0.15,
+        single_province_share=0.10, weak_region_share=0.02,
+        aaa_share=0.20, pseudo_high_rating_share=0.01,
+        maturity_12m_share=0.20, single_month_peak=0.05,
+        top_channel_share=0.30,
+    )
+    return ConcentrationMetrics(**(base | overrides))
+
+
+def test_concentration_stress_market_panic_shifts_all_dimensions(tables):
+    """市场恐慌：全维度档位上移一级（不重算阈值）→ 五维全绿跳全黄。"""
+    out = concentration_stress(_low_metrics(), "市场恐慌(VIX>30)", tables)
+    assert out["normal_levels"] == {d: "green" for d in _DIMS}
+    assert out["stressed_levels"] == {d: "yellow" for d in _DIMS}
+    assert len(out["jumps"]) == 5
+    assert all(j["from"] == "green" and j["to"] == "yellow" for j in out["jumps"])
+    assert out["composite_normal"] == pytest.approx(2.0)
+    assert out["composite_stressed"] == pytest.approx(4.0)
+    assert out["triple_concentration"] is False
+
+
+def test_concentration_stress_market_panic_red_clamped(tables):
+    """市场恐慌：🔴封顶——已红维度保持红、不计跳档，综合分不变。"""
+    m = _low_metrics(
+        hhi=2600, cr3=0.85, cr5=0.92, max1=0.65,
+        single_province_share=0.50, weak_region_share=0.35,
+        aaa_share=0.75, pseudo_high_rating_share=0.35,
+        maturity_12m_share=0.75, single_month_peak=0.35,
+        top_channel_share=0.80, top_channel_is_contracting=True,
+    )
+    out = concentration_stress(m, "市场恐慌(VIX>30)", tables)
+    assert out["normal_levels"] == {d: "red" for d in _DIMS}
+    assert out["stressed_levels"] == {d: "red" for d in _DIMS}
+    assert out["jumps"] == []
+    assert out["composite_stressed"] == pytest.approx(out["composite_normal"])
+    assert out["triple_concentration"] is True  # 五维皆🔴 ≥3
+
+
+def test_concentration_stress_lgfv_tightens_weak_region(tables):
+    """城投展期潮：D₂ 弱区域阈值 10%/20%/35% → 5%/15%/25% 重算（0.18 跳档）。"""
+    out = concentration_stress(
+        _low_metrics(weak_region_share=0.18), "区域性城投展期潮", tables
+    )
+    # 默认：0.18 ∈ [0.10,0.20) → 3（绿）；收紧后：≥0.15 → 7（橙）
+    assert out["normal_levels"]["region"] == "green"
+    assert out["stressed_levels"]["region"] == "orange"
+    assert out["jumps"] == [{"dim": "region", "from": "green", "to": "orange"}]
+    assert out["composite_normal"] == pytest.approx(2.2)   # region 3
+    assert out["composite_stressed"] == pytest.approx(3.0)  # region 7
+    assert out["triple_concentration"] is False
+
+
+def test_concentration_stress_rating_bubble_triple_concentration(tables):
+    """评级泡沫破裂：伪高评级 5%/15%/30% → 3%/10%/20%；三重集中触发/不触发。"""
+    # 触发：压力前 2 橙（区域/期限），评级跳橙 → 3 橙 → 三重集中
+    m = _low_metrics(
+        weak_region_share=0.25, pseudo_high_rating_share=0.12,
+        maturity_12m_share=0.60,
+    )
+    out = concentration_stress(m, "评级泡沫破裂", tables)
+    assert out["normal_levels"]["rating"] == "green"
+    assert out["stressed_levels"]["rating"] == "orange"
+    assert out["jumps"] == [{"dim": "rating", "from": "green", "to": "orange"}]
+    assert out["triple_concentration"] is True
+    # 不触发：仅评级一维跳橙
+    out = concentration_stress(
+        _low_metrics(pseudo_high_rating_share=0.12), "评级泡沫破裂", tables
+    )
+    assert out["stressed_levels"]["rating"] == "orange"
+    assert out["triple_concentration"] is False
+
+
+def test_concentration_stress_window_freeze(tables):
+    """市场窗口冻结：D₄ 12个月到期 30%/50%/70% → 20%/40%/60%；
+    D₅ 债券渠道>50%即触发警示（警示下界收紧至 50%）。"""
+    m = _low_metrics(maturity_12m_share=0.45, top_channel_share=0.55)
+    out = concentration_stress(m, "市场窗口冻结", tables)
+    # 期限：默认 [0.30,0.50) → 3（绿）；收紧后 ≥0.40 → 7（橙）
+    assert out["normal_levels"]["maturity"] == "green"
+    assert out["stressed_levels"]["maturity"] == "orange"
+    # 渠道：默认 [0.50,0.70) → 3（绿）；收紧后 ≥0.50 → 7（橙）
+    assert out["normal_levels"]["channel"] == "green"
+    assert out["stressed_levels"]["channel"] == "orange"
+    assert {j["dim"] for j in out["jumps"]} == {"maturity", "channel"}
+    assert out["triple_concentration"] is False
+
+
+def test_concentration_stress_contagion_max1_and_llm_passthrough(tables):
+    """传染链路激活：D₁ MAX1 上限 20%→15%（操作化为关注下界 25%→15%）；
+    「集群A总敞口上限25%」无对应指标 → 注记留 LLM 判断并透传规则原文。"""
+    out = concentration_stress(_low_metrics(max1=0.18), "传染矩阵高传染链路激活", tables)
+    assert out["normal_levels"]["industry"] == "green"
+    assert out["stressed_levels"]["industry"] == "yellow"
+    assert out["jumps"] == [{"dim": "industry", "from": "green", "to": "yellow"}]
+    assert any("集群A" in n and "留 LLM 判断" in n for n in out["notes"])
+    assert any("收紧至15%" in n for n in out["notes"])  # 规则原文透传
+
+
+def test_concentration_stress_unknown_scenario_raises(tables):
+    with pytest.raises(ValueError):
+        concentration_stress(_low_metrics(), "不存在的情景", tables)
+
+
+def test_concentration_stress_anchor_drift_raises(tables):
+    """parity 锚点：文档 §9.2 规则文本变更（不含锚点片段）→ 映射失锚即 raise。"""
+    bad = replace(tables, threshold_jumps={
+        **tables.threshold_jumps,
+        "区域性城投展期潮": {"dimensions": "D₂区域", "rule": "规则文本已被改写"},
+    })
+    with pytest.raises(ValueError):
+        concentration_stress(
+            _low_metrics(weak_region_share=0.18), "区域性城投展期潮", bad
+        )
+
+
+# ================= T3：E.10 债券市值维度（bond_mv_stress） =================
+
+def test_bond_mv_stress_standard_scenarios(tables):
+    """E.10 算例复算：3 年期 YTM=3.5% → D≈2.90；轻度/中度/严重/极端四档 ΔP
+    与概率加权总影响（:517 定量估算示例锚点）。"""
+    out = bond_mv_stress(3.0, 0.035, tables, None)
+    d = 3.0 / 1.035
+    assert out["d_approx"] == pytest.approx(d)
+    by = {s["name"]: s for s in out["scenarios"]}
+    assert set(by) == {"轻度承压", "中度承压", "严重承压", "极端尾部"}
+    # ΔYTM = 无风险利率 + 信用利差合计
+    assert by["轻度承压"]["delta_ytm"] == pytest.approx(0.01)
+    assert by["极端尾部"]["delta_ytm"] == pytest.approx(0.07)
+    # ΔP = -D × ΔYTM（精确公式复算）
+    assert by["轻度承压"]["delta_p"] == pytest.approx(-d * 0.01)
+    assert by["中度承压"]["delta_p"] == pytest.approx(-d * 0.02)
+    assert by["严重承压"]["delta_p"] == pytest.approx(-d * 0.04)
+    assert by["极端尾部"]["delta_p"] == pytest.approx(-d * 0.07)
+    # :517 定量估算示例锚点（文档按 D≈2.90 取整：-2.90%/-5.80%/-11.60%/-20.30%）
+    assert by["轻度承压"]["delta_p"] * 100 == pytest.approx(-2.90, abs=0.02)
+    assert by["中度承压"]["delta_p"] * 100 == pytest.approx(-5.80, abs=0.02)
+    assert by["严重承压"]["delta_p"] * 100 == pytest.approx(-11.60, abs=0.02)
+    assert by["极端尾部"]["delta_p"] * 100 == pytest.approx(-20.30, abs=0.02)
+    # 概率与加权
+    assert by["轻度承压"]["probability"] == pytest.approx(0.20)
+    assert by["极端尾部"]["probability"] == pytest.approx(0.01)
+    assert by["轻度承压"]["weighted"] == pytest.approx(-d * 0.01 * 0.20)
+    total = -(d * 0.01 * 0.20 + d * 0.02 * 0.10 + d * 0.04 * 0.03 + d * 0.07 * 0.01)
+    assert out["weighted_total"] == pytest.approx(total)
+    # D4 附注（E.10.2 原文）
+    assert "独立假设可能低估总影响，误差约10-20%" in out["note"]
+    assert out["custom_scenarios"] == []
+
+
+def test_bond_mv_stress_custom_shocks(tables):
+    """自定义冲击：dict 形（含概率→并入加权）与数值形（纯信息不并入）。"""
+    out = bond_mv_stress(3.0, 0.035, tables, {
+        "自定义冲击": {"delta_ytm_bp": 150.0, "probability_pct": 5.0},
+        "纯信息冲击": 250.0,
+    })
+    d = 3.0 / 1.035
+    custom = {s["name"]: s for s in out["custom_scenarios"]}
+    assert custom["自定义冲击"]["delta_ytm"] == pytest.approx(0.015)
+    assert custom["自定义冲击"]["delta_p"] == pytest.approx(-d * 0.015)
+    assert custom["自定义冲击"]["weighted"] == pytest.approx(-d * 0.015 * 0.05)
+    assert custom["纯信息冲击"]["delta_p"] == pytest.approx(-d * 0.025)
+    assert custom["纯信息冲击"]["probability"] is None
+    assert custom["纯信息冲击"]["weighted"] is None
+    base_total = -(d * 0.01 * 0.20 + d * 0.02 * 0.10 + d * 0.04 * 0.03 + d * 0.07 * 0.01)
+    assert out["weighted_total"] == pytest.approx(base_total - d * 0.015 * 0.05)
+
+
+def test_bond_mv_stress_validation(tables):
+    with pytest.raises(ValueError):
+        bond_mv_stress(0.0, 0.035, tables, None)
+    with pytest.raises(ValueError):
+        bond_mv_stress(3.0, -1.0, tables, None)
+    with pytest.raises(ValueError):
+        bond_mv_stress(3.0, 0.035, tables, {"坏冲击": {"probability_pct": 5.0}})

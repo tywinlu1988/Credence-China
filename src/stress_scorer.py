@@ -1,11 +1,13 @@
-"""WP-M4-04 → 组合压力测试引擎（T1 解析层 + T2 §E 三场景矩阵计算）。
+"""WP-M4-04 → 组合压力测试引擎（T1 解析层 + T2 §E 三场景矩阵计算 +
+T3 §九 压力传导 + E.10 债券市值维度）。
 
 单一事实源：financial-deep-dive.md E.1 三场景参数表（:216-220）与七行业
 Severe 校准锚表（:231-239）、E.5 安全边际四档表（:294-299）、E.8 分行业
 偏离因子表（:352-363）、E.10.2 标准情景模板（:508-513），以及
 concentration-framework.md §9.2 阈值跳升表（:777-783）均运行时解析，解析
 失败即 raise（不裸复制数值副本）。E.3 线性链/E.6 临界值/E.7 二阶效应的公式
-与规则为硬编码 + parity 锚点（惯例），注释处标注节出处。
+与规则、§9.2 五情景的操作化映射为硬编码 + parity 锚点（惯例；§9.2 映射另加
+运行时锚点校验——规则文本不含锚点片段即 raise），注释处标注节出处。
 
 已裁决设计决策（SDD 2026-08-20-wp-m4-04-stress-engine，注释处标注）：
 - D1 Severe 参数裁决（resolve_severe_params）：E.1 校准锚表命中行业 → 锚值
@@ -31,6 +33,17 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from src.concentration_scorer import (
+    DEFAULT_WEIGHTS,
+    ConcentrationMetrics,
+    _risk_level,
+    channel_score,
+    concentration_risk_score,
+    industry_score,
+    maturity_score,
+    rating_score,
+    region_score,
+)
 from src.path_sheet import engine_dir
 
 _DEEP_DIVE_DOC = "financial-deep-dive.md"
@@ -829,4 +842,248 @@ def reverse_stress(fin: IssuerFinancials, params: dict) -> dict:
             + ("；" + rate_note if rate_note else "")
             + ("；" + "；".join(notes) if notes else "")
         ),
+    }
+
+
+# ================= T3：§九 压力传导（concentration-framework.md §9） =================
+
+_DIM_SCORERS = {
+    "industry": industry_score,
+    "region": region_score,
+    "rating": rating_score,
+    "maturity": maturity_score,
+    "channel": channel_score,
+}
+
+_LEVEL_SEVERITY = {"green": 0, "yellow": 1, "orange": 2, "red": 3}
+
+# §9.2 五情景操作化映射（:777-783；硬编码 + 运行时 parity 锚点——anchor 片段
+# 须出现在运行时解析的规则原文中，文档规则文本变更即 raise 失锚，防陈旧硬编码
+# 静默生效）：
+# - 市场恐慌：「每个维度的阈值上移一个等级」——操作化为档位上移一级（不重算
+#   阈值，🔴封顶；综合分按次档代表分即档位下界重算，见 _shift_score_up）。
+# - 城投展期潮/评级泡沫破裂/市场窗口冻结：按表格给出的新阈值经
+#   concentration_scorer 阈值注入扩展重算对应维度。
+# - 传染链路激活：「MAX1阈值从20%收紧至15%」——§2.2.4 MAX1 正常档上限 25%、
+#   超级传染者例外下调至 20%（:152）、§2.3 调整表 ≤20%（:158-172），故
+#   「MAX1阈值」= 关注档下界（占比上限），操作化为 25%→15%（40%/60% 档界文档
+#   未提及，保持不变）；「集群A总敞口上限设为25%」无对应组合指标，无法机械
+#   映射，注记留 LLM 判断并以规则原文透传。
+_JUMP_OPS = {
+    "市场恐慌(VIX>30)": {
+        "anchor": "上移一个等级",
+        "mode": "shift",
+        "overrides": {},
+        "note": "§9.2：每个维度的阈值上移一个等级——操作化为档位上移一级"
+                "（不重算阈值，🔴封顶；综合分按次档代表分重算）",
+    },
+    "区域性城投展期潮": {
+        "anchor": "收紧至5%/15%/25%",
+        "mode": "override",
+        "overrides": {"region": {"weak_region_share": (0.05, 0.15, 0.25)}},
+        "note": "§9.2：弱区域占比阈值 10%/20%/35% → 5%/15%/25%（D₂区域重算）",
+    },
+    "评级泡沫破裂": {
+        "anchor": "收紧至3%/10%/20%",
+        "mode": "override",
+        "overrides": {"rating": {"pseudo_high_rating_share": (0.03, 0.10, 0.20)}},
+        "note": "§9.2：伪高评级阈值 5%/15%/30% → 3%/10%/20%（D₃评级重算）",
+    },
+    "市场窗口冻结": {
+        "anchor": "收紧至20%/40%/60%",
+        "mode": "override",
+        "overrides": {
+            "maturity": {"maturity_12m_share": (0.20, 0.40, 0.60)},
+            "channel": {"top_channel_share": (0.50, 0.50, 0.90)},
+        },
+        "note": "§9.2：12个月内到期阈值 30%/50%/70% → 20%/40%/60%（D₄期限重算）；"
+                "「债券渠道>50%即触发警示」→ D₅渠道警示下界收紧至 50%（关注档退化为"
+                "空；引擎档位边界为 >= 闭区间，与文档其他阈值口径一致）",
+    },
+    "传染矩阵高传染链路激活": {
+        "anchor": "收紧至15%",
+        "mode": "override",
+        "overrides": {"industry": {"max1": (0.15, 0.40, 0.60)}},
+        "note": "§9.2：超级传染者行业 MAX1 阈值（§2.2.4 例外下调至 20% 的占比上限）"
+                "收紧至 15% → max1 关注档下界 25%→15%（40%/60% 档界文档未提及，保持"
+                "不变）；「集群A总敞口上限设为25%」无对应组合指标，无法机械映射，"
+                "留 LLM 判断",
+    },
+}
+
+
+def _shift_score_up(score: int) -> int:
+    """市场恐慌操作化：档位上移一级 → 次档代表分（次档下界）；🔴封顶不变。
+
+    绿(1-3)→4（黄下界）、黄(4-5)→6（橙下界）、橙(6-7)→8（红下界）、红(8-10)
+    →保持原分（clamp）。
+    """
+    if score >= 8:
+        return score
+    if score >= 6:
+        return 8
+    if score >= 4:
+        return 6
+    return 4
+
+
+def concentration_stress(
+    metrics: ConcentrationMetrics, scenario: str, tables: StressTables
+) -> dict:
+    """§9.1 五维压力传导：§9.2 跳升映射 → 重算五维档位与综合分 → 跳档诊断
+    + 三重集中标记。
+
+    scenario 须为 §9.2 阈值跳升表登记的情景名（运行时解析自
+    tables.threshold_jumps）；操作化映射（_JUMP_OPS）以 anchor 片段对规则原文
+    做运行时 parity 校验，文档规则文本变更即 raise。输出：
+    {scenario, normal_levels, stressed_levels, jumps: [{dim, from, to}],
+     composite_normal, composite_stressed, triple_concentration, notes}；
+    三重集中 = 压力后 ≥3 维度 🟠/🔴（orange/red）。jumps 仅记录恶化跳档
+    （档位文字为 concentration_scorer 口径 green/yellow/orange/red）。
+    """
+    if scenario not in tables.threshold_jumps:
+        raise ValueError(
+            f"§9.2 阈值跳升表未登记压力场景: {scenario!r}"
+            f"（已登记：{sorted(tables.threshold_jumps)}）"
+        )
+    rule_text = tables.threshold_jumps[scenario]["rule"]
+    op = _JUMP_OPS.get(scenario)
+    if op is None:
+        raise ValueError(f"§9.2 情景「{scenario}」无操作化映射（_JUMP_OPS 未覆盖）")
+    if op["anchor"] not in rule_text:
+        raise ValueError(
+            f"§9.2「{scenario}」规则原文不含锚点片段 {op['anchor']!r}，"
+            "操作化映射失锚（文档规则文本已变更，需重新裁决映射）"
+        )
+
+    normal_scores = {dim: fn(metrics) for dim, fn in _DIM_SCORERS.items()}
+    normal_levels = {dim: _risk_level(s) for dim, s in normal_scores.items()}
+    composite_normal = concentration_risk_score(metrics)
+
+    if op["mode"] == "shift":
+        stressed_scores = {
+            dim: _shift_score_up(s) for dim, s in normal_scores.items()
+        }
+        composite_stressed = sum(
+            s * w for s, w in zip(stressed_scores.values(), DEFAULT_WEIGHTS)
+        )
+    else:
+        stressed_scores = {
+            dim: fn(metrics, op["overrides"].get(dim))
+            for dim, fn in _DIM_SCORERS.items()
+        }
+        composite_stressed = concentration_risk_score(
+            metrics, thresholds_override=op["overrides"]
+        )
+    stressed_levels = {dim: _risk_level(s) for dim, s in stressed_scores.items()}
+
+    jumps = [
+        {"dim": dim, "from": normal_levels[dim], "to": stressed_levels[dim]}
+        for dim in _DIM_SCORERS
+        if _LEVEL_SEVERITY[stressed_levels[dim]] > _LEVEL_SEVERITY[normal_levels[dim]]
+    ]
+    triple = (
+        sum(1 for lvl in stressed_levels.values() if lvl in ("orange", "red")) >= 3
+    )
+    return {
+        "scenario": scenario,
+        "normal_levels": normal_levels,
+        "stressed_levels": stressed_levels,
+        "jumps": jumps,
+        "composite_normal": composite_normal,
+        "composite_stressed": composite_stressed,
+        "triple_concentration": triple,
+        "notes": [op["note"], f"§9.2 规则原文透传：{rule_text}"],
+    }
+
+
+# ================= T3：E.10 债券市值维度（bond_mv_stress） =================
+
+# D4 裁决（E.10.2 :506 原文）：加权总影响输出时固定附注。
+D4_INDEPENDENCE_NOTE = "独立假设可能低估总影响，误差约10-20%"
+
+
+def bond_mv_stress(
+    years: float,
+    ytm: float,
+    tables: StressTables,
+    custom_shocks: dict | None = None,
+) -> dict:
+    """E.10 债券市值压力：D_approx = 待偿年数/(1+YTM)；ΔP ≈ -D × ΔYTM
+    （:481-485，简化版——固定利率、无含权、非零息）。
+
+    四档标准情景（E.10.2 :510-515，运行时解析自 tables.mv_scenarios）的
+    ΔYTM = 无风险利率 + 信用利差合计，逐档 ΔP 与概率加权；加权总影响
+    Σ(ΔP_i × S_i)（E.10.2 情景加权法，概率为各情景独立历史概率，非归一）
+    附 D4 独立假设注记。custom_shocks：{名称: ΔYTM(bp) 数值}（纯信息，
+    不并入加权）或 {名称: {"delta_ytm_bp": bp, "probability_pct": 概率%}}
+    （并入加权）。输出：{d_approx, scenarios: [{name, delta_ytm, delta_p,
+    probability, weighted, rating, liquidity}], custom_scenarios: [...],
+    weighted_total, note}；金额口径为小数比率（-0.029 = -2.9%）。
+    """
+    if years <= 0:
+        raise ValueError(f"待偿年数须为正: {years!r}")
+    if ytm <= -1:
+        raise ValueError(f"YTM 须大于 -100%: {ytm!r}")
+    d_approx = years / (1 + ytm)
+
+    def _scenario(name, delta_ytm, probability, rating=None, liquidity=None):
+        delta_p = -d_approx * delta_ytm
+        weighted = delta_p * probability if probability is not None else None
+        entry = {
+            "name": name,
+            "delta_ytm": delta_ytm,
+            "delta_p": delta_p,
+            "probability": probability,
+            "weighted": weighted,
+        }
+        if rating is not None:
+            entry["rating"] = rating
+            entry["liquidity"] = liquidity
+        return entry
+
+    scenarios = []
+    weighted_total = 0.0
+    for s in tables.mv_scenarios:
+        probability = s["probability_pct"] / 100
+        entry = _scenario(
+            s["name"],
+            (s["risk_free_bp"] + s["spread_bp"]) / 10000,
+            probability,
+            rating=s["rating"],
+            liquidity=s["liquidity"],
+        )
+        weighted_total += entry["weighted"]
+        scenarios.append(entry)
+
+    custom = []
+    for name, shock in (custom_shocks or {}).items():
+        if isinstance(shock, dict):
+            if "delta_ytm_bp" not in shock:
+                raise ValueError(f"自定义冲击「{name}」缺 delta_ytm_bp: {shock!r}")
+            bp = shock["delta_ytm_bp"]
+            prob_pct = shock.get("probability_pct")
+        else:
+            bp = shock
+            prob_pct = None
+        probability = prob_pct / 100 if prob_pct is not None else None
+        entry = _scenario(name, bp / 10000, probability)
+        if entry["weighted"] is not None:
+            weighted_total += entry["weighted"]
+        custom.append(entry)
+
+    note = (
+        f"E.10 近似久期 D_approx = 待偿年数/(1+YTM) = {years:.4g}/(1+{ytm:.4g}) "
+        f"= {d_approx:.4f}；ΔP ≈ -D×ΔYTM 为线性近似，不含凸性修正（利率变化越"
+        "大误差越大），含权债不适用（E.10.1 局限标注）；概率加权总影响 "
+        f"{weighted_total:.4%}——{D4_INDEPENDENCE_NOTE}（D4，E.10.2 原文）"
+    )
+    if custom:
+        note += "；含自定义冲击（无概率的纯信息冲击不并入加权）"
+    return {
+        "d_approx": d_approx,
+        "scenarios": scenarios,
+        "custom_scenarios": custom,
+        "weighted_total": weighted_total,
+        "note": note,
     }

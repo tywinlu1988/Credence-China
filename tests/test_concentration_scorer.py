@@ -389,3 +389,52 @@ def test_bb_cap_pseudo_high_rating_boundary():
     )
     assert rating_adjustment(at_cap)["bb_cap_triggered"] is True
     assert rating_adjustment(below_cap)["bb_cap_triggered"] is False
+
+
+# ================= WP-M4-04 T3：阈值注入扩展（默认 None=旧行为） =================
+
+def _mid_metrics():
+    return ConcentrationMetrics(
+        hhi=1200, cr3=0.55, cr5=0.72, max1=0.30,
+        single_province_share=0.25, weak_region_share=0.15,
+        aaa_share=0.40, pseudo_high_rating_share=0.10,
+        maturity_12m_share=0.40, single_month_peak=0.15,
+        top_channel_share=0.60,
+    )
+
+
+def test_concentration_risk_score_default_override_parity():
+    """thresholds_override 默认 None / 空 dict 时行为与现状完全一致（parity 锚点）。"""
+    m = _mid_metrics()
+    expected = (
+        industry_score(m) * 0.25 + region_score(m) * 0.20 + rating_score(m) * 0.20
+        + maturity_score(m) * 0.20 + channel_score(m) * 0.15
+    )
+    assert concentration_risk_score(m) == pytest.approx(expected)
+    assert concentration_risk_score(m, thresholds_override=None) == pytest.approx(expected)
+    assert concentration_risk_score(m, thresholds_override={}) == pytest.approx(expected)
+
+
+def test_concentration_risk_score_thresholds_override_recomputes():
+    """注入阈值按新阈值重算档位；未注入维度不受影响。"""
+    m = _mid_metrics()  # weak_region_share=0.15
+    base = concentration_risk_score(m)
+    # 默认 (0.10,0.20,0.35)：0.15 ∈ [0.10,0.20) → 3；收紧 (0.05,0.15,0.25)：≥0.15 → 7
+    stressed = concentration_risk_score(
+        m, thresholds_override={"region": {"weak_region_share": (0.05, 0.15, 0.25)}}
+    )
+    assert stressed == pytest.approx(base + (7 - 3) * 0.20)
+    assert stressed != base
+
+
+def test_concentration_risk_score_override_validation():
+    """未知维度/未知指标/非升序阈值 → raise（失败可观测纪律）。"""
+    m = _mid_metrics()
+    with pytest.raises(ValueError):
+        concentration_risk_score(m, thresholds_override={"sector": {}})
+    with pytest.raises(ValueError):
+        concentration_risk_score(m, thresholds_override={"region": {"foo": (0.1, 0.2, 0.3)}})
+    with pytest.raises(ValueError):
+        concentration_risk_score(
+            m, thresholds_override={"region": {"weak_region_share": (0.2, 0.1, 0.3)}}
+        )
