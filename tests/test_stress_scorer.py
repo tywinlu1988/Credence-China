@@ -12,9 +12,17 @@ import pytest
 from src.path_sheet import engine_dir
 from src.stress_scorer import (
     IssuerFinancials,
+    ScenarioResult,
     StressTables,
+    TAIL_RISK_WARNING,
     load_stress_tables,
+    normalize_industry,
     resolve_severe_params,
+    reverse_stress,
+    run_scenario,
+    safety_verdict,
+    second_order,
+    tail_risk_flag,
 )
 
 DEEP_DIVE = engine_dir() / "financial-deep-dive.md"
@@ -210,3 +218,268 @@ def test_issuer_financials_fields():
     )
     assert fin.revenue == 100.0
     assert fin.dio_days == 45.0
+
+
+# ================= T2：D5 行业名归一 =================
+
+def test_normalize_industry_key_mapping():
+    """D5 映射层：别名 → E.1/E.8 表键；同名行业直取无注记。"""
+    assert normalize_industry("新能源车—OEM") == (
+        "新能源汽车—OEM", "D5：「新能源车—OEM」归一至表键「新能源汽车—OEM」"
+    )
+    assert normalize_industry("光伏/储能") == ("光伏/储能", None)
+    assert normalize_industry("高端装备/工业母机")[0] == "高端装备/机床"
+    assert normalize_industry("数据中心/算力基建")[0] == "数据中心"
+
+
+def test_normalize_nev_alias_parity(tables):
+    """D5 parity 锚点：E.1「新能源汽车—OEM」与 E.8「新能源车—OEM」（文档原文
+    两种拼写）归一后产出一致参数；canonical「新能源汽车」同口径。"""
+    a = resolve_severe_params("新能源汽车—OEM", tables)
+    b = resolve_severe_params("新能源车—OEM", tables)
+    c = resolve_severe_params("新能源汽车", tables)
+    for params in (a, b, c):
+        assert params["source"] == "E.1锚"
+        assert params["revenue_change"] == -30.0
+        assert params["margin_change_pp"] == -15.0
+    # 归一路径留痕
+    assert "归一" in b["note"]
+    assert "归一" in c["note"]
+
+
+def test_normalize_semiconductor_bare_and_subtype(tables):
+    """D5：半导体裸名 → E.1 锚裸键「半导体/IC」+ 子类型注记；子类型键直取
+    （锚表无子类型键 → D1 因子分支）。"""
+    bare = resolve_severe_params("半导体/集成电路", tables)
+    assert bare["source"] == "E.1锚"
+    assert bare["revenue_change"] == -25.0
+    assert bare["margin_change_pp"] == -12.0
+    assert "子类型" in bare["note"]
+    foundry = resolve_severe_params("半导体—Foundry", tables)
+    assert foundry["source"] == "E.8因子"
+    # -30% × 1.1 = -33%；-15pp × 1.1 = -16.5pp
+    assert foundry["revenue_change"] == pytest.approx(-33.0)
+    assert foundry["margin_change_pp"] == pytest.approx(-16.5)
+
+
+def test_normalize_bio_bare_default(tables):
+    """D5：生物医药裸名（无 E.1/E.8 裸键）→ D1 默认分支 + 子类型注记。"""
+    bare = resolve_severe_params("生物医药/创新药", tables)
+    assert bare["source"] == "默认"
+    assert bare["revenue_change"] == -30.0
+    assert "子类型" in bare["note"]
+
+
+def test_normalize_canonical_aliases(tables):
+    """D5：canonical 13 行业别名 → 锚表键（高端装备/工业母机、数据中心/算力基建）。"""
+    equip = resolve_severe_params("高端装备/工业母机", tables)
+    assert equip["source"] == "E.1锚"
+    assert equip["revenue_change"] == -25.0
+    assert equip["margin_change_pp"] == -10.0
+    idc = resolve_severe_params("数据中心/算力基建", tables)
+    assert idc["source"] == "E.1锚"
+    assert idc["revenue_change"] == -15.0
+
+
+# ================= T2：E.3 线性传导链 =================
+
+@pytest.fixture
+def fin():
+    """E.3 算例基准（brief T2 Step 1）：收入 100 亿/毛利率 20%/费用 8 亿/
+    税率 25%/D&A 3 亿/Capex 4 亿/利息 2 亿/现金 10 亿。"""
+    return IssuerFinancials(
+        revenue=100.0,
+        gross_margin=0.20,
+        period_expenses=8.0,
+        tax_rate=0.25,
+        da=3.0,
+        capex=4.0,
+        interest_expense=2.0,
+        cash=10.0,
+        unused_credit=5.0,
+        inventory=20.0,
+        dso_days=60.0,
+        dio_days=45.0,
+    )
+
+
+def test_run_scenario_base_passthrough(fin, tables):
+    """Base 行「基准」（None）= 零冲击：链上各值即基准推导值。"""
+    r = run_scenario(fin, tables.scenario_params["Base"], "光伏/储能", tables)
+    assert r.revenue == pytest.approx(100.0)
+    assert r.gross_profit == pytest.approx(20.0)
+    assert r.net_profit == pytest.approx(9.0)        # (20-8) × 0.75
+    assert r.cfo == pytest.approx(12.0)
+    assert r.fcf == pytest.approx(8.0)
+    assert r.interest_coverage == pytest.approx(7.5)  # (20-8+3) / 2
+    assert r.second_order_effects == ()
+
+
+def test_run_scenario_bear_chain(fin, tables):
+    """E.3（:264-273）Bear 链（-10%/-5pp/+100bp）逐值复算。"""
+    r = run_scenario(fin, tables.scenario_params["Bear"], "光伏/储能", tables)
+    assert r.revenue == pytest.approx(90.0)
+    assert r.gross_profit == pytest.approx(13.5)      # 90 × (0.20-0.05)
+    assert r.ebitda == pytest.approx(8.5)             # 13.5 - 8 + 3
+    assert r.net_profit == pytest.approx(4.125)       # (13.5-8) × 0.75
+    assert r.cfo == pytest.approx(7.125)              # 4.125 + 3
+    assert r.fcf == pytest.approx(3.125)              # 7.125 - 4
+    # E.3:271 变动后利息 = 基准 × (1+融资成本变动)，bp→比率直译 ×1.01
+    assert r.interest == pytest.approx(2.02)
+    assert r.interest_coverage == pytest.approx(8.5 / 2.02)
+    assert r.fcf_interest == pytest.approx(3.125 / 2.02)
+    assert r.cash_runway_months == 999.0              # D2：fcf≥0 → 999
+    assert r.second_order_effects == ()               # 非 Severe 不启用二阶
+
+
+def test_run_scenario_severe_second_order(fin, tables):
+    """Severe（纯默认 -30%/-15pp/+200bp，D1 默认分支）叠加 E.7 二阶修正终值。"""
+    params = resolve_severe_params("纺织服装", tables)
+    r = run_scenario(fin, params, "纺织服装", tables, severe=True)
+    # 线性基链值
+    assert r.revenue == pytest.approx(70.0)
+    assert r.gross_profit == pytest.approx(3.5)       # 70 × (0.20-0.15)
+    assert r.ebitda == pytest.approx(-1.5)            # 3.5 - 8 + 3
+    # 二阶效应（E.7 :340-346）
+    effects = {e.name: e for e in r.second_order_effects}
+    assert effects["存货跌价"].triggered
+    assert effects["存货跌价"].amount == pytest.approx(2.0)       # 存货20 × 10%
+    wc = 70 / 365 * 20 + 66.5 / 365 * 30                         # 变动后成本=70-3.5
+    assert effects["营运资金冻结"].triggered
+    assert effects["营运资金冻结"].amount == pytest.approx(wc)
+    assert effects["融资成本二阶"].triggered
+    assert effects["融资成本二阶"].amount == pytest.approx(0.01)  # 2 × 50bp（D3）
+    # 中间 fcf=-15.676、跑道≈7.65<12 → Capex 削减 50%
+    assert effects["Capex削减"].triggered
+    assert effects["Capex削减"].amount == pytest.approx(2.0)
+    assert effects["资产减值注记"].triggered                       # 场景净利<0
+    # 二阶修正后终值
+    assert r.net_profit == pytest.approx(-5.375)                  # -3.375 - 2
+    assert r.cfo == pytest.approx(-0.375 - 2.0 - wc)
+    fcf = -0.375 - 2.0 - wc - 4.0 + 2.0
+    assert r.fcf == pytest.approx(fcf)
+    assert r.interest == pytest.approx(2.05)                      # 2 × 1.025
+    assert r.interest_coverage == pytest.approx(-1.5 / 2.05)
+    assert r.fcf_interest == pytest.approx(fcf / 2.05)
+    assert r.cash_runway_months == pytest.approx(10 / (-fcf / 12))  # D2
+
+
+# ================= T2：E.7 二阶效应规则 =================
+
+def _params(rev, margin, bp=200.0):
+    return {
+        "revenue_change": rev,
+        "margin_change_pp": margin,
+        "funding_cost_change_bp": bp,
+    }
+
+
+def test_second_order_writedown_trigger_strictness(fin, tables):
+    """存货跌价：收入降幅>20% 且毛利率压缩>10pp（严格大于，E.7:342）。"""
+    # 恰降 20%（非 >20%）不触发，即使毛利率压缩 15pp
+    params = _params(-20.0, -15.0)
+    base = run_scenario(fin, params, "x", tables)
+    eff = {e.name: e for e in second_order(fin, params, base)}
+    assert not eff["存货跌价"].triggered
+    # 收入 -25% 但毛利率仅压缩 5pp（非 >10pp）不触发
+    params = _params(-25.0, -5.0)
+    base = run_scenario(fin, params, "x", tables)
+    eff = {e.name: e for e in second_order(fin, params, base)}
+    assert not eff["存货跌价"].triggered
+
+
+def test_second_order_freeze_strictness_and_amount(fin, tables):
+    """营运资金冻结：收入降幅>25% 严格大于；占用 = 收入/365×20 + 成本/365×30。"""
+    params = _params(-25.0, -5.0)  # 恰 25% 不触发
+    base = run_scenario(fin, params, "x", tables)
+    eff = {e.name: e for e in second_order(fin, params, base)}
+    assert not eff["营运资金冻结"].triggered
+    params = _params(-26.0, -5.0)  # -26% 触发
+    base = run_scenario(fin, params, "x", tables)
+    eff = {e.name: e for e in second_order(fin, params, base)}
+    assert eff["营运资金冻结"].triggered
+    # 变动后收入 74、变动后成本 = 74 - 74×0.15 = 62.9
+    assert eff["营运资金冻结"].amount == pytest.approx(74 / 365 * 20 + 62.9 / 365 * 30)
+
+
+def test_second_order_capex_cut_requires_both_conditions(fin, tables):
+    """Capex 削减：FCF<0 且跑道<12 个月双条件（E.7:345）。FCF<0 但跑道充裕不触发。"""
+    params = _params(-15.0, -10.0)
+    base = run_scenario(fin, params, "x", tables)
+    # 线性链：毛利 8.5、净利 0.375、CFO 3.375、FCF -0.625（<0）
+    assert base.fcf == pytest.approx(-0.625)
+    eff = {e.name: e for e in second_order(fin, params, base)}
+    # 跑道 = 10/(0.625/12) = 192 个月 ≥12 → 不触发
+    assert not eff["Capex削减"].triggered
+    assert not eff["存货跌价"].triggered        # -15% 非 >20%
+    assert not eff["资产减值注记"].triggered     # 净利 0.375 > 0
+    assert eff["融资成本二阶"].triggered         # D3：Severe 恒触发 +50bp
+    assert eff["融资成本二阶"].amount == pytest.approx(0.01)
+
+
+# ================= T2：E.5 安全边际判定 =================
+
+def _result(coverage, fcf_int, runway):
+    return ScenarioResult(
+        scenario="Bear",
+        industry="测试",
+        revenue=0.0,
+        gross_profit=0.0,
+        ebitda=0.0,
+        net_profit=0.0,
+        cfo=0.0,
+        capex=0.0,
+        fcf=0.0,
+        interest=1.0,
+        interest_coverage=coverage,
+        fcf_interest=fcf_int,
+        cash_runway_months=runway,
+    )
+
+
+def test_safety_verdict_band_boundaries(tables):
+    """E.5 四档边界（:294-299）：">X" 开区间、"X-Y" 闭区间直译。"""
+    # 闭区间下界归属本档：3.0x/2.0x/18月 → 全 🟡
+    v = safety_verdict(_result(3.0, 2.0, 18.0), tables)
+    assert v["interest_coverage"]["emoji"] == "🟡"
+    assert v["fcf_interest"]["emoji"] == "🟡"
+    assert v["cash_runway_months"]["emoji"] == "🟡"
+    assert v["overall"]["emoji"] == "🟡"
+    # 严格大于下界 → 全 🟢
+    assert safety_verdict(_result(3.01, 2.01, 18.01), tables)["overall"]["emoji"] == "🟢"
+    # 1.0x/0.5x/6月 → 全 🟠（闭区间下界）
+    assert safety_verdict(_result(1.0, 0.5, 6.0), tables)["overall"]["emoji"] == "🟠"
+    # 低于 🟠 下界 → 全 🔴
+    assert safety_verdict(_result(0.99, 0.49, 5.99), tables)["overall"]["emoji"] == "🔴"
+
+
+def test_safety_verdict_overall_is_worst(tables):
+    """综合档取三指标最差。"""
+    v = safety_verdict(_result(4.0, 3.0, 5.0), tables)  # 🟢/🟢/🔴
+    assert v["overall"]["emoji"] == "🔴"
+    v = safety_verdict(_result(4.0, 1.2, 20.0), tables)  # 🟢/🟡/🟢
+    assert v["overall"]["emoji"] == "🟡"
+
+
+def test_tail_risk_flag(tables):
+    """E.5 补充判定（:301）：Severe 任一指标🔴 → True（警告不降级）。"""
+    assert tail_risk_flag(_result(-6.7, -6.0, 4.4), tables) is True   # E.9.6 隆基式全🔴
+    assert tail_risk_flag(_result(4.0, 3.0, 5.0), tables) is True     # 单一指标🔴即触发
+    assert tail_risk_flag(_result(2.0, 1.5, 15.0), tables) is False
+    assert "尾部风险警告" in TAIL_RISK_WARNING
+    assert "不自动降级" in TAIL_RISK_WARNING
+
+
+# ================= T2：E.6 逆向压力测试 =================
+
+def test_reverse_stress(fin, tables):
+    """E.6 三临界值代数验证（其他参数取 Bear 档；EBITDA 口径同 E.3/E.9）。"""
+    out = reverse_stress(fin, tables.scenario_params["Bear"])
+    # 临界收入降幅：变动后利息 2.02、Bear 毛利率 0.15
+    # 临界收入 = (2.02+8-3)/0.15 = 46.8 → 可承受降幅 53.2%
+    assert out["critical_revenue_drop_pct"] == pytest.approx(53.2)
+    # 临界毛利率：Bear 收入 90 → 临界毛利率 = 7.02/90 = 7.8% → 压缩 12.2pp
+    assert out["critical_margin_compression_pp"] == pytest.approx(12.2)
+    # 临界融资成本升幅：Bear EBITDA 8.5 → x = 8.5/2 - 1 = 3.25
+    assert out["critical_funding_cost_rise"] == pytest.approx(3.25)
+    assert out["critical_funding_cost_rise_bp"] == pytest.approx(32500.0)
