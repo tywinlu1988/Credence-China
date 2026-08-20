@@ -13,12 +13,12 @@
 
 ## 中文
 
-**13 行业 · 16 工作路径 · 7 编码引擎 · 29 引擎文档 · 16 报告模板**
+**13 行业 · 16 工作路径 · 8 编码引擎 · 29 引擎文档 · 16 报告模板**
 
 ### 能力亮点
 
 - **四段链技能**：路由 → 分析 → 报告 → 质检，意图确认后才执行，不脑补。
-- **6 条可复算编码引擎路径**（WP-M0-01 旗舰聚合 / WP-M0-02 LGD+外部支持 / WP-M4-01 集中度 / WP-M4-02 传染矩阵 / WP-M4-03 SRI / WP-X-05 展望监控）：评级、LGD、传染、SRI、展望等数值由 Python 确定性计算，非 LLM 即兴。
+- **7 条可复算编码引擎路径**（WP-M0-01 旗舰聚合 / WP-M0-02 LGD+外部支持 / WP-M4-01 集中度 / WP-M4-02 传染矩阵 / WP-M4-03 SRI / WP-M4-04 组合压力测试 / WP-X-05 展望监控）：评级、LGD、传染、SRI、展望等数值由 Python 确定性计算，非 LLM 即兴。
 - **系统智能层**：13×13 传染图谱 · 五维集中度 · SRI 预警温度计。
 - **双轨交叉验证**：基本面金字塔 × 市场定价信号，分歧即洞察。
 - **马赛克公开数据引擎**：零内部/付费数据，碎片信号拼图 + 完备性报告。
@@ -32,7 +32,7 @@ Credence 把"资深固收信用分析师的方法论"打包成 agent 能直接�
 | **核心资产 = 领域方法论** | 十维评分 · 双轨对撞 · 18 档评级映射 · LGD · 外部支持 · 系统智能层（29 份文档） | `dev/engine/` |
 | **交付形态 = Agent Skills 包** | 四段链技能：路由 → 分析 → 报告 → 质检 | `dev/.claude/skills/` |
 | **运行方式 = 嵌入现有 agent CLI** | 模型与循环借宿主的，Credence 只供给领域专长 | — |
-| **辅助件** | 报告模板（Type 1–19，Type 6/9/12 已归档）+ 可执行编排器（接 7 个编码引擎） | `dev/templates/` · `src/` |
+| **辅助件** | 报告模板（Type 1–19，Type 6/9/12 已归档）+ 可执行编排器（接 8 个编码引擎） | `dev/templates/` · `src/` |
 
 **核心原则**：传统财务分析在政策驱动型、技术壁垒型、资产租约型行业中系统性失效；最重的信用因子很少出现在资产负债表上；外部评级平均滞后真实信用恶化 17 个月以上。
 
@@ -77,7 +77,7 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 
 ```
 用户需求 → [路由: 四问 + 意图确认] → 《工作路径单》
-        → [分析: 引擎文档 + 7 编码引擎] → [报告: 16 模板] → [质检: 质量门]
+        → [分析: 引擎文档 + 8 编码引擎] → [报告: 16 模板] → [质检: 质量门]
 引擎文档（dev/engine/）是唯一事实源；编码引擎（src/）运行时解析同一文档，不复制阈值。
 ```
 
@@ -95,15 +95,16 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 - ~~**v0.11.2**~~（已发布）：孤儿裁决——定性/定量方法论全量归并 9 文档后归档（29 份引擎文档）+ 技能级条件阅读表接线 lgfv/overlay/控股/金融债 + 零孤儿锁。
 - ~~**v0.12.0**~~（已发布）：编码引擎扩线首波——WP-M0-02 双引擎（LGD 评估 + 外部支持评估）接线，确定性+可审计。
 - ~~**v0.12.1**~~（已发布）：还债版——集团/战投 capacity 四档量化表补建（引擎类型分派）+ 技术债清零（文档漂移/冻结区/引擎打磨/仓库卫生）。
+- **v0.12.2（规划中）**：WP-M4-04 压力测试引擎——§九 压力传导+§E 场景矩阵+E.10 债券市值，M4 组合风控集群全编码化。
 - 版本历史与发布物见 [Releases](https://github.com/tywinlu1988/Credence-China/releases)。
 
 ### 仓库地图
 
 ```
 dev/          方法论与技能的开发源（engine/ 29 份 · .claude/skills/ 四段链 · templates/ 16 模板）
-src/          可执行编排器 + 7 个编码引擎（pipeline.py · lgd_scorer.py · external_support_scorer.py 等）
+src/          可执行编排器 + 8 个编码引擎（pipeline.py · lgd_scorer.py · external_support_scorer.py 等）
 scripts/      build_dist.py（dev/ → 发行包组装器）· consistency_check.py（一致性校验）
-tests/        回归测试（363 项）
+tests/        回归测试（422 项）
 version/      当前可安装发行包 version/v0.12.1-release/（历史快照见 git 标签）
 validation/   能力验证证据（验证方法论 + 16 条端到端走查 + 2 份行业方法论参照）
 docs/         版本管理策略 · Codex 深度适配
@@ -134,16 +135,16 @@ Credence packages the methodology of a seasoned China fixed-income credit analys
 | **Core asset = domain methodology** | 10-dimension scoring · dual-track cross-validation · 18-notch rating map · LGD · external support · system-intelligence layer (29 docs) | `dev/engine/` |
 | **Delivery = Agent Skills pack** | 4-stage skill chain: route → analyze → report → QA | `dev/.claude/skills/` |
 | **Runtime = inside existing agent CLIs** | the model and loop come from the host; Credence supplies the domain expertise | — |
-| **Extras** | report templates (Type 1–19, Type 6/9/12 archived) + executable orchestrator (7 coded engines) | `dev/templates/` · `src/` |
+| **Extras** | report templates (Type 1–19, Type 6/9/12 archived) + executable orchestrator (8 coded engines) | `dev/templates/` · `src/` |
 
 **Core principle**: traditional financial analysis fails systematically in policy-driven, tech-barrier, and asset-lease industries; the heaviest credit factors rarely appear on the balance sheet; external ratings lag real credit deterioration by 17+ months on average.
 
-**13 industries · 16 work paths · 7 coded engines · 29 engine docs · 16 report templates**
+**13 industries · 16 work paths · 8 coded engines · 29 engine docs · 16 report templates**
 
 ### Highlights
 
 - **Four-stage skill chain**: route → analyze → report → QA, with a mandatory intent-confirmation gate before execution.
-- **6 reproducible coded-engine paths** (WP-M0-01 composite rating / WP-M0-02 LGD + external support / WP-M4-01 concentration / WP-M4-02 contagion / WP-M4-03 SRI / WP-X-05 outlook): deterministic Python numbers, not LLM improvisation.
+- **7 reproducible coded-engine paths** (WP-M0-01 composite rating / WP-M0-02 LGD + external support / WP-M4-01 concentration / WP-M4-02 contagion / WP-M4-03 SRI / WP-M4-04 portfolio stress / WP-X-05 outlook): deterministic Python numbers, not LLM improvisation.
 - **System-intelligence layer**: 13×13 contagion matrix · 5-dim concentration · SRI thermometer.
 - **Dual-track cross-validation**: fundamentals pyramid × market-pricing signals.
 - **Mosaic public-data engine**: zero private/paid data; fragment signals → completeness report.
@@ -163,7 +164,7 @@ Install (3 options below), open the package root as a project, then just ask:
 
 ```
 Request → [Router: 4 questions + intent confirmation] → Path Sheet
-        → [Analysis: engine docs + 7 coded engines] → [Report: 16 templates] → [QA gates]
+        → [Analysis: engine docs + 8 coded engines] → [Report: 16 templates] → [QA gates]
 Engine docs (dev/engine/) are the single source of truth; coded engines (src/) parse them at runtime.
 ```
 
@@ -181,6 +182,7 @@ Engine docs (dev/engine/) are the single source of truth; coded engines (src/) p
 - ~~**v0.11.2**~~ (released): orphan adjudication — qualitative/quantitative fully merged into 9 live docs then archived (29 engine docs) + skill-level conditional-reads wiring + zero-orphan lock.
 - ~~**v0.12.0**~~ (released): coded-engine expansion wave 1 — WP-M0-02 dual engines (LGD + external support), deterministic and auditable.
 - ~~**v0.12.1**~~ (released): debt repayment — group/strategic capacity threshold tables (engine type dispatch) + technical-debt clearance.
+- **v0.12.2 (planned)**: WP-M4-04 stress engine — concentration stress + scenario matrix + bond MV; full M4 cluster coded.
 - History & artifacts: [Releases](https://github.com/tywinlu1988/Credence-China/releases).
 
 ### Quickstart
@@ -213,9 +215,9 @@ The installable package is at `version/v0.12.1-release/` (browse/copy and use; s
 
 ```
 dev/          methodology & skill source (engine/ 29 docs · .claude/skills/ 4-stage chain · templates/ 16)
-src/          executable orchestrator + 7 coded engines (pipeline.py · lgd_scorer.py · external_support_scorer.py et al.)
+src/          executable orchestrator + 8 coded engines (pipeline.py · lgd_scorer.py · external_support_scorer.py et al.)
 scripts/      build_dist.py (dev/ → release-package assembler) · consistency_check.py
-tests/        regression tests (363)
+tests/        regression tests (422)
 version/      current installable package version/v0.12.1-release/ (history via git tags)
 validation/   capability evidence (validation methodology + 16 end-to-end walkthroughs + 2 industry references)
 docs/         versioning strategy · Codex deep-dive adapter
