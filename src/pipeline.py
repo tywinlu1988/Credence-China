@@ -370,13 +370,13 @@ def _run_m004(inputs: dict) -> dict:
       {行业: 权重}, "scenario"?: PREDEFINED_SCENARIOS 键（默认 "moderate"）或
       ShockScenario 字段 dict}`` → 复用 sri_calculator.portfolio_sri + stress_test
       （不重写；传染系数取自 contagion_engine.load_matrix，与 WP-M4-02 同源）。
-      缺省 → sri_stress=None。两处 sri_calculator 存量约束（按"不重写"纪律不在
-      本适配器修复，留主会话裁决）：① PREDEFINED_SCENARIOS 的 severe/extreme
-      情景 contagion_escalation（信用事件/流动性危机/政策突变）不在
-      contagion_engine.ESCALATION_FACTORS 内，随矩阵施加会 raise；② stress_test
-      的矩阵升级路径按全市场组合重算系数——情景含 contagion_escalation 时
-      holdings 须覆盖传染矩阵全部行业，子集组合请以 industry_shocks/
-      outlook_shifts 表达冲击（本适配器对此前置 raise，见下）。
+      缺省 → sri_stress=None。两处 sri_calculator 存量注记：① PREDEFINED_SCENARIOS
+      的 severe/extreme 升级因子原为非法枚举名（信用事件/流动性危机/政策突变），
+      Fix R1 已按语义 1:1 映射为合法因子（详见 src/sri_calculator.py 注释与
+      systemic-warning-framework §13.1 注记）；② stress_test 的矩阵升级路径
+      按全市场组合重算系数——情景含 contagion_escalation 时 holdings 须覆盖
+      传染矩阵全部行业，子集组合请以 industry_shocks/outlook_shifts 表达冲击
+      （本适配器对此前置 raise，见下；sri 侧深修留下一版）。
 
     返回 ``{"concentration", "scenarios", "bond_mv", "sri_stress"}``——四键恒在，
     缺输入的维度为 None。

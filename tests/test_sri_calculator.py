@@ -210,6 +210,48 @@ def test_stress_test_predefined_scenarios():
         # Shock values filled in Task 3; structure is verified here
 
 
+def test_predefined_scenario_factors_are_legal():
+    """Fix R1：PREDEFINED_SCENARIOS 的 contagion_escalation 全部落在
+    contagion_engine.ESCALATION_FACTORS 枚举内（原 信用事件/流动性危机/政策突变
+    为非法名，severe/extreme 经矩阵路径必 raise——v0.10.3 遗留）。"""
+    from src.contagion_engine import ESCALATION_FACTORS
+    for name, s in PREDEFINED_SCENARIOS.items():
+        illegal = set(s.contagion_escalation) - set(ESCALATION_FACTORS)
+        assert not illegal, f"{name}: 非法升级因子 {illegal}"
+    # 语义 1:1 映射锚点（Fix R1 裁决）
+    assert PREDEFINED_SCENARIOS["severe"].contagion_escalation == ["市场恐慌"]
+    assert PREDEFINED_SCENARIOS["extreme"].contagion_escalation == [
+        "市场恐慌", "高杠杆", "监管真空",
+    ]
+
+
+def test_predefined_severe_extreme_run_via_matrix_path():
+    """Fix R1：severe/extreme 经 stress_test 矩阵升级路径不再 raise。
+
+    stress_test 的矩阵路径要求组合覆盖传染矩阵全部行业（存量约束），故以
+    全 13 行业等权组合验证；各行业 track_a 评分拉开梯度，使升级因子引起的
+    权重重排可观测（severe：市场恐慌 → 系数变化 → stressed ≠ baseline）。
+    """
+    from src.contagion_engine import contagion_coefficients, load_matrix
+    matrix = load_matrix()
+    coeffs = contagion_coefficients(matrix)
+    names = sorted(coeffs)
+    industries = [
+        IndustryInput(n, 3.0 + i * 0.5, TrackBLevel.GREEN, Outlook.STABLE)
+        for i, n in enumerate(names)
+    ]
+    holdings = {n: 1.0 for n in names}
+    base = portfolio_sri(holdings, industries, dict(coeffs))
+    for name in ("moderate", "severe", "extreme"):
+        out = stress_test(base, PREDEFINED_SCENARIOS[name], matrix=matrix)
+        assert set(out) == {
+            "baseline_sri", "stressed_sri", "delta",
+            "thermometer_before", "thermometer_after", "industry_deltas",
+        }
+    severe = stress_test(base, PREDEFINED_SCENARIOS["severe"], matrix=matrix)
+    assert severe["stressed_sri"] != severe["baseline_sri"]  # 升级因子生效可观测
+
+
 # ── v0.10.3 T2: 时间序列 + 传染联动 ──
 
 

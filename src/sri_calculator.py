@@ -145,6 +145,13 @@ def portfolio_sri(holdings: dict[str, float], industries: list[IndustryInput],
 
 
 # 预定义压力情景（行业名用 13 行业真实名，值参考 systemic §X+2）
+# Fix R1（WP-M4-04 T4 审查发现，主会话裁决）：原 contagion_escalation 因子名
+# （信用事件/流动性危机/政策突变）均不在 contagion_engine.ESCALATION_FACTORS
+# （市场恐慌/监管真空/高杠杆/信息不对称/年末效应）内，severe/extreme 经
+# stress_test 矩阵路径必 raise（v0.10.3 遗留）。按语义 1:1 映射为合法枚举：
+# 信用事件→市场恐慌（信心崩塌 S 型传染的代表因子）；流动性危机→高杠杆
+# （流动性挤兑 L 型）；政策突变→监管真空。systemic-warning-framework §13.1
+# 表下的映射注记与本文互锚。
 PREDEFINED_SCENARIOS = {
     "moderate": ShockScenario(
         name="温和冲击",
@@ -157,14 +164,14 @@ PREDEFINED_SCENARIOS = {
         name="中度冲击",
         description="红色行业 track_a -2，对应升级因子生效",
         industry_shocks={},
-        contagion_escalation=["信用事件"],
+        contagion_escalation=["市场恐慌"],
         outlook_shifts={},
     ),
     "extreme": ShockScenario(
         name="极端冲击",
         description="全部红色行业 track_a -3，全量升级因子，展望全负面",
         industry_shocks={},
-        contagion_escalation=["信用事件", "流动性危机", "政策突变"],
+        contagion_escalation=["市场恐慌", "高杠杆", "监管真空"],
         outlook_shifts={},
     ),
 }
