@@ -309,7 +309,7 @@ quality_gates:
 
 ### WP-M4-04 组合压力测试（✅ active）
 
-组合风控视角：对组合施加压力情景（五维阈值跳升 + 财务深潜压力节），评估极端情景下的损失。concentration-framework 压力节与 financial-deep-dive 场景敏感性矩阵齐备，已激活（v0.10.2）。
+组合风控视角：对组合施加压力情景（五维阈值跳升 + 财务深潜压力节），评估极端情景下的损失。concentration-framework 压力节与 financial-deep-dive 场景敏感性矩阵齐备，已激活（v0.10.2）。已接编码引擎（stress_scorer，pipeline EXECUTABLE_ENGINES 接线，mode="code"）。
 
 ```yaml
 id: WP-M4-04

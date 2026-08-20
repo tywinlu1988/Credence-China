@@ -110,6 +110,22 @@ def _sheet(path_id, **overrides) -> dict:
             "quality_gates": ["LGD五级分类 (dev/engine/lgd-recovery-framework.md §二)"],
             "notes": "",
         },
+        "WP-M4-04": {
+            "role": "M4",
+            "object": "portfolio",
+            "depth": "专项",
+            "mode": "A",
+            "path_id": "WP-M4-04",
+            "engine_reading_order": [
+                "dev/engine/concentration-framework.md",
+                "dev/engine/financial-deep-dive.md",
+            ],
+            "quality_gates": [
+                "压力测试 (dev/engine/concentration-framework.md §九)",
+                "场景敏感性 (dev/engine/financial-deep-dive.md §E)",
+            ],
+            "notes": "",
+        },
         "WP-M1-01": {
             "role": "M1",
             "object": "single-issuer",
@@ -435,3 +451,139 @@ def test_t9_11_m002_dual_engine_wired_and_runs(contract, registry_paths):
     sup = out["support"]
     assert sup["strength"] == "非常高" and sup["uplift_notches"] == 3
     assert sup["final_rating"] == "AA+"
+
+
+# --------------------------------------------------------------------------
+# T9.12 — WP-M4-04 wired: stress engine (§E + §九 + E.10 + SRI 复用) at analysis stage
+# --------------------------------------------------------------------------
+
+def _m004_inputs() -> dict:
+    """WP-M4-04 fixture：2 标的小型组合（光伏 E.1 锚命中 + 数据中心 E.1 锚），
+    附 §九 集中度、E.10 债券、SRI 复用三类可选输入（键序同 _run_m004 契约）。"""
+    return {
+        "financials": {
+            "IssuerA": {  # 光伏/储能：E.1 校准锚 -35%/-20pp
+                "industry": "光伏/储能",
+                "revenue": 1000.0, "gross_margin": 0.30, "period_expenses": 150.0,
+                "tax_rate": 0.25, "da": 50.0, "capex": 80.0,
+                "interest_expense": 40.0, "cash": 500.0, "unused_credit": 100.0,
+                "inventory": 150.0, "dso_days": 60.0, "dio_days": 60.0,
+                "base_funding_rate": 0.04,
+            },
+            "IssuerB": {  # 数据中心：E.1 校准锚 -15%/-10pp
+                "industry": "数据中心",
+                "revenue": 500.0, "gross_margin": 0.40, "period_expenses": 120.0,
+                "tax_rate": 0.25, "da": 30.0, "capex": 60.0,
+                "interest_expense": 20.0, "cash": 200.0, "unused_credit": 50.0,
+                "inventory": 30.0, "dso_days": 45.0, "dio_days": 30.0,
+                "base_funding_rate": 0.05,
+            },
+        },
+        "concentration_metrics": {
+            "hhi": 500, "cr3": 0.30, "cr5": 0.50, "max1": 0.15,
+            "single_province_share": 0.10, "weak_region_share": 0.18,
+            "aaa_share": 0.20, "pseudo_high_rating_share": 0.01,
+            "maturity_12m_share": 0.20, "single_month_peak": 0.05,
+            "top_channel_share": 0.30,
+        },
+        "scenario": "区域性城投展期潮",
+        "bonds": {"IssuerA": {"years": 3.0, "ytm": 0.035}},
+        "sri": {
+            "industries": [
+                {"name": "光伏/储能", "track_a_score": 5.0,
+                 "track_b_level": "yellow", "outlook": "stable"},
+                {"name": "半导体/集成电路", "track_a_score": 7.5,
+                 "track_b_level": "green", "outlook": "stable"},
+            ],
+            "holdings": {"光伏/储能": 0.6, "半导体/集成电路": 0.4},
+            # 自定义 ShockScenario（子集组合不能用 contagion_escalation——
+            # stress_test 矩阵升级路径按全市场组合重算系数，见 _run_m004 docstring）
+            "scenario": {
+                "name": "光伏下调",
+                "description": "光伏 track_a -1 冲击",
+                "industry_shocks": {"光伏/储能": 1.0},
+                "contagion_escalation": [],
+                "outlook_shifts": {},
+            },
+        },
+    }
+
+
+def test_t9_12_m004_stress_wired_and_runs(contract, registry_paths):
+    assert "WP-M4-04" in EXECUTABLE_ENGINES
+    plan = load_stage_plan(_sheet("WP-M4-04"), registry_paths, contract)
+    assert plan[1].executable is True
+    manifest = run_executable_stages(plan, _m004_inputs())
+    analysis = next(s for s in manifest["stages"] if s["name"] == "analysis")
+    assert analysis["mode"] == "code"
+    out = analysis["outputs"]
+    assert set(out) == {"concentration", "scenarios", "bond_mv", "sri_stress"}
+
+    # §E 场景矩阵复算（IssuerA：Bear -10%/-5pp/+100bp，基准利率 4% → 利息 ×1.25）
+    a = out["scenarios"]["IssuerA"]
+    assert set(a) == {
+        "bear", "severe", "safety", "tail_risk", "tail_risk_warning", "reverse",
+    }
+    assert a["bear"]["revenue"] == pytest.approx(900.0)          # 1000 × (1-10%)
+    assert a["bear"]["interest"] == pytest.approx(50.0)          # 40 × (1+100bp/4%)
+    assert a["bear"]["interest_coverage"] == pytest.approx(2.5)  # (225-150+50)/50
+    assert a["safety"]["overall"]["emoji"] == "🟠"               # FCF/利息 0.525 ∈ [0.5,1.0]
+    # Severe：E.1 锚 -35%/-20pp + 二阶融资 +50bp → 40×1.5 + 40×0.125 = 65
+    assert a["severe"]["interest"] == pytest.approx(65.0)
+    assert a["tail_risk"] is True                                # Severe FCF/利息 <0 → 🔴
+    assert "尾部风险警告" in a["tail_risk_warning"]
+    assert a["reverse"]["critical_revenue_drop_pct"] is not None
+    # IssuerB：E.1 锚（数据中心 -15%/-10pp）对 Severe 生效
+    b = out["scenarios"]["IssuerB"]
+    assert b["bear"]["revenue"] == pytest.approx(450.0)          # 500 × 0.9
+    assert b["severe"]["revenue"] == pytest.approx(425.0)        # 500 × (1-15%)
+
+    # §九 压力传导复算（城投展期潮：弱区域 0.18 绿跳橙，综合分 2.2→3.0）
+    conc = out["concentration"]
+    assert conc["jumps"] == [{"dim": "region", "from": "green", "to": "orange"}]
+    assert conc["composite_normal"] == pytest.approx(2.2)
+    assert conc["composite_stressed"] == pytest.approx(3.0)
+
+    # E.10 债券市值复算（3 年 / YTM 3.5% → D≈2.8986；轻度承压 +100bp → ≈-2.90%）
+    mv = out["bond_mv"]["IssuerA"]
+    assert mv["d_approx"] == pytest.approx(3.0 / 1.035)
+    first = mv["scenarios"][0]
+    assert first["delta_ytm"] == pytest.approx(0.01)
+    assert first["delta_p"] == pytest.approx(-0.029, abs=1e-3)
+
+    # SRI 复用（sri_calculator.stress_test 输出原样透传，不重写）
+    sri_out = out["sri_stress"]
+    assert set(sri_out) == {
+        "baseline_sri", "stressed_sri", "delta",
+        "thermometer_before", "thermometer_after", "industry_deltas",
+    }
+    # 光伏 track_a 5.0→4.0（跨 5.0 档界）：行业分 1.5→2.5，组合 SRI 严格上行
+    assert sri_out["industry_deltas"]["光伏/储能"] == pytest.approx(1.0)
+    assert sri_out["delta"] > 0
+
+
+def test_t9_12b_m004_optional_dimensions_none():
+    """缺可选输入时四键恒在、对应维度为 None（financials 为唯一必选）。"""
+    from src.pipeline import _run_m004
+
+    out = _run_m004({"financials": _m004_inputs()["financials"]})
+    assert set(out) == {"concentration", "scenarios", "bond_mv", "sri_stress"}
+    assert out["concentration"] is None
+    assert out["bond_mv"] is None
+    assert out["sri_stress"] is None
+    assert set(out["scenarios"]) == {"IssuerA", "IssuerB"}
+    # concentration_metrics 与 scenario 须成对：半套输入即 raise（不静默降级）
+    with pytest.raises(ValueError):
+        _run_m004({**_m004_inputs(), "scenario": None})
+    with pytest.raises(ValueError):
+        _run_m004({**_m004_inputs(), "concentration_metrics": None})
+    # sri 子集组合 + contagion_escalation → 前置 raise（stress_test 存量约束，
+    # 不静默吞掉升级因子）
+    bad = _m004_inputs()
+    bad["sri"] = {**bad["sri"], "scenario": {
+        "name": "恐慌", "description": "升级",
+        "industry_shocks": {}, "contagion_escalation": ["市场恐慌"],
+        "outlook_shifts": {},
+    }}
+    with pytest.raises(ValueError, match="全市场组合|覆盖传染矩阵全部"):
+        _run_m004(bad)

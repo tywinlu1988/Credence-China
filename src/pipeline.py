@@ -11,7 +11,7 @@
   （chaining_edges）同样从该契约的 yaml 块读取，供端点引用完整性校验复用。
 - **不新编码任何引擎**：引擎文档是规范源，`src/sri_calculator.py`、`src/concentration_scorer.py`、
   `src/contagion_engine.py`、`src/outlook_engine.py`、`src/composite_scorer.py`、
-  `src/lgd_scorer.py` 与 `src/external_support_scorer.py` 是其
+  `src/lgd_scorer.py`、`src/external_support_scorer.py` 与 `src/stress_scorer.py` 是其
   **可执行实现**。编排器只在路径已接线时调用它们（EXECUTABLE_ENGINES），不复制任何
   阈值/权重/档位语义。
 - **复用 path_sheet.py**：路径单校验、registry 解析、planned 判定与"待开发"提示一律
@@ -25,9 +25,14 @@ from pathlib import Path
 import yaml
 
 from src.composite_scorer import rate
-from src.concentration_scorer import concentration_risk_score, rating_adjustment
+from src.concentration_scorer import (
+    ConcentrationMetrics,
+    concentration_risk_score,
+    rating_adjustment,
+)
 from src.contagion_engine import (
     apply_escalation,
+    contagion_coefficients,
     high_intensity_links,
     load_matrix,
     portfolio_exposure,
@@ -50,7 +55,29 @@ from src.path_sheet import (
     sheet_notice,
     validate_path_sheet,
 )
-from src.sri_calculator import sri, thermometer_level
+from src.sri_calculator import (
+    IndustryInput,
+    Outlook,
+    PREDEFINED_SCENARIOS,
+    ShockScenario,
+    TrackBLevel,
+    portfolio_sri,
+    sri,
+    stress_test,
+    thermometer_level,
+)
+from src.stress_scorer import (
+    IssuerFinancials,
+    TAIL_RISK_WARNING,
+    bond_mv_stress,
+    concentration_stress,
+    load_stress_tables,
+    resolve_severe_params,
+    reverse_stress,
+    run_scenario,
+    safety_verdict,
+    tail_risk_flag,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -322,14 +349,127 @@ def _run_m002(inputs: dict) -> dict:
     return {"lgd": asdict(lgd), "support": asdict(support)}
 
 
+def _run_m004(inputs: dict) -> dict:
+    """WP-M4-04 → 组合压力测试的可执行实现（stress_scorer 三件套 + SRI 复用）。
+
+    inputs 契约（子字典键即引擎入参字段名，在此展开构造，严禁位置调用）：
+
+    - ``"financials"``（必）：``{标的: {"industry": 行业名, <IssuerFinancials 字段>…}}``
+      ——``industry`` 键弹出，其余展开为 ``IssuerFinancials(**fields)``。每标的产出
+      ``{"bear", "severe", "safety", "tail_risk", "tail_risk_warning", "reverse"}``：
+      bear = E.3 线性链（E.1 Bear 参数）；severe = D1 裁决参数 + E.7 二阶修正；
+      safety = E.5 四档判定（对 bear）；tail_risk = E.5 补充判定（对 severe，
+      True 时 tail_risk_warning 附 TAIL_RISK_WARNING 文本，否则 None）；reverse =
+      E.6 三临界值（其他参数取 Bear 档）。
+    - ``"concentration_metrics"`` + ``"scenario"``（可选，须成对）：§9.1 五维压力
+      传导（concentration_stress）；scenario 为 §9.2 登记情景名。只给一侧即 raise
+      （半套输入是配置错误，不静默降级）；两侧均缺 → concentration=None。
+    - ``"bonds"``（可选）：``{标的: {"years", "ytm", "custom_shocks"?}}`` → 每标的
+      E.10 bond_mv_stress；缺省 → bond_mv=None。
+    - ``"sri"``（可选）：``{"industries": [<IndustryInput 字段 dict>], "holdings":
+      {行业: 权重}, "scenario"?: PREDEFINED_SCENARIOS 键（默认 "moderate"）或
+      ShockScenario 字段 dict}`` → 复用 sri_calculator.portfolio_sri + stress_test
+      （不重写；传染系数取自 contagion_engine.load_matrix，与 WP-M4-02 同源）。
+      缺省 → sri_stress=None。两处 sri_calculator 存量约束（按"不重写"纪律不在
+      本适配器修复，留主会话裁决）：① PREDEFINED_SCENARIOS 的 severe/extreme
+      情景 contagion_escalation（信用事件/流动性危机/政策突变）不在
+      contagion_engine.ESCALATION_FACTORS 内，随矩阵施加会 raise；② stress_test
+      的矩阵升级路径按全市场组合重算系数——情景含 contagion_escalation 时
+      holdings 须覆盖传染矩阵全部行业，子集组合请以 industry_shocks/
+      outlook_shifts 表达冲击（本适配器对此前置 raise，见下）。
+
+    返回 ``{"concentration", "scenarios", "bond_mv", "sri_stress"}``——四键恒在，
+    缺输入的维度为 None。
+    """
+    tables = load_stress_tables()
+    bear_params = tables.scenario_params["Bear"]
+
+    scenarios = {}
+    for name, fields in inputs["financials"].items():
+        fields = dict(fields)
+        industry = fields.pop("industry")
+        fin = IssuerFinancials(**fields)
+        severe_params = resolve_severe_params(industry, tables)
+        bear = run_scenario(fin, bear_params, industry, tables, scenario="Bear")
+        severe = run_scenario(fin, severe_params, industry, tables, severe=True)
+        tail = tail_risk_flag(severe, tables)
+        scenarios[name] = {
+            "bear": asdict(bear),
+            "severe": asdict(severe),
+            "safety": safety_verdict(bear, tables),
+            "tail_risk": tail,
+            "tail_risk_warning": TAIL_RISK_WARNING if tail else None,
+            "reverse": reverse_stress(fin, bear_params),
+        }
+
+    metrics_d = inputs.get("concentration_metrics")
+    scenario_name = inputs.get("scenario")
+    if (metrics_d is None) != (not scenario_name):
+        raise ValueError(
+            "concentration_metrics 与 scenario 须成对提供（§9.1 五维压力传导）"
+        )
+    concentration = None
+    if metrics_d is not None:
+        concentration = concentration_stress(
+            ConcentrationMetrics(**metrics_d), scenario_name, tables
+        )
+
+    bond_mv = None
+    if inputs.get("bonds"):
+        bond_mv = {
+            name: bond_mv_stress(
+                b["years"], b["ytm"], tables,
+                custom_shocks=b.get("custom_shocks"),
+            )
+            for name, b in inputs["bonds"].items()
+        }
+
+    sri_stress = None
+    sri_in = inputs.get("sri")
+    if sri_in:
+        industries = []
+        for d in sri_in["industries"]:
+            d = dict(d)
+            d["track_b_level"] = TrackBLevel(d["track_b_level"])
+            d["outlook"] = Outlook(d["outlook"])
+            industries.append(IndustryInput(**d))
+        matrix = load_matrix()
+        coeffs = contagion_coefficients(matrix)
+        holdings = sri_in["holdings"]
+        base = portfolio_sri(holdings, industries, {k: coeffs[k] for k in holdings})
+        scenario_spec = sri_in.get("scenario", "moderate")
+        if isinstance(scenario_spec, dict):
+            scenario_spec = ShockScenario(**scenario_spec)
+        else:
+            scenario_spec = PREDEFINED_SCENARIOS[scenario_spec]
+        if scenario_spec.contagion_escalation and set(holdings) != set(coeffs):
+            raise ValueError(
+                "sri 情景含 contagion_escalation 时 holdings 须覆盖传染矩阵全部"
+                f"行业（{len(coeffs)} 个）——sri_calculator.stress_test 的矩阵升级"
+                "路径按全市场组合重算系数（存量约束），子集组合会以"
+                "「行业集不一致」失败；子集组合请改用 industry_shocks/"
+                "outlook_shifts 表达冲击"
+            )
+        sri_stress = stress_test(base, scenario_spec, matrix=matrix)
+
+    return {
+        "concentration": concentration,
+        "scenarios": scenarios,
+        "bond_mv": bond_mv,
+        "sri_stress": sri_stress,
+    }
+
+
 # 已接线（wired）编码引擎登记表：path_id → 运行该路径编码引擎的可调用对象。
 # 保持显式且极小——本系列接入 WP-M0-01(旗舰聚合)、WP-M0-02(LGD+外部支持双引擎)、
-# WP-M4-01(集中度)、WP-M4-02(传染矩阵)、WP-M4-03(SRI)、WP-X-05(展望监控)。
+# WP-M4-01(集中度)、WP-M4-02(传染矩阵)、WP-M4-03(SRI)、WP-M4-04(组合压力测试)、
+# WP-X-05(展望监控)。
 EXECUTABLE_ENGINES = {
     "WP-M0-01": _run_composite,
     "WP-M0-02": _run_m002,
     "WP-M4-03": _run_sri,
     "WP-M4-01": _run_concentration,
     "WP-M4-02": _run_contagion,
+    "WP-M4-04": _run_m004,
     "WP-X-05": _run_outlook,
 }

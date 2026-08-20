@@ -68,7 +68,10 @@ ACTIVE_PATHS = [
     "WP-M0-01", "WP-M1-01", "WP-M2-01", "WP-M4-01", "WP-M4-02",
     "WP-M4-03", "WP-M5-01", "WP-X-01", "WP-X-02", "WP-X-03", "WP-X-05",
 ]
-WIRED_PATHS = ["WP-M0-01", "WP-M0-02", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-X-05"]
+WIRED_PATHS = [
+    "WP-M0-01", "WP-M0-02", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-M4-04",
+    "WP-X-05",
+]
 UNWIRED_ACTIVE = [p for p in ACTIVE_PATHS if p not in WIRED_PATHS]
 
 FOUR_SKILLS = (
@@ -228,6 +231,55 @@ def _m002_inputs():
     }
 
 
+def _m004_inputs():
+    """WP-M4-04 stress fixture (mirrors tests/test_pipeline.py::_m004_inputs)."""
+    return {
+        "financials": {
+            "IssuerA": {
+                "industry": "光伏/储能",
+                "revenue": 1000.0, "gross_margin": 0.30, "period_expenses": 150.0,
+                "tax_rate": 0.25, "da": 50.0, "capex": 80.0,
+                "interest_expense": 40.0, "cash": 500.0, "unused_credit": 100.0,
+                "inventory": 150.0, "dso_days": 60.0, "dio_days": 60.0,
+                "base_funding_rate": 0.04,
+            },
+            "IssuerB": {
+                "industry": "数据中心",
+                "revenue": 500.0, "gross_margin": 0.40, "period_expenses": 120.0,
+                "tax_rate": 0.25, "da": 30.0, "capex": 60.0,
+                "interest_expense": 20.0, "cash": 200.0, "unused_credit": 50.0,
+                "inventory": 30.0, "dso_days": 45.0, "dio_days": 30.0,
+                "base_funding_rate": 0.05,
+            },
+        },
+        "concentration_metrics": {
+            "hhi": 500, "cr3": 0.30, "cr5": 0.50, "max1": 0.15,
+            "single_province_share": 0.10, "weak_region_share": 0.18,
+            "aaa_share": 0.20, "pseudo_high_rating_share": 0.01,
+            "maturity_12m_share": 0.20, "single_month_peak": 0.05,
+            "top_channel_share": 0.30,
+        },
+        "scenario": "区域性城投展期潮",
+        "bonds": {"IssuerA": {"years": 3.0, "ytm": 0.035}},
+        "sri": {
+            "industries": [
+                {"name": "光伏/储能", "track_a_score": 5.0,
+                 "track_b_level": "yellow", "outlook": "stable"},
+                {"name": "半导体/集成电路", "track_a_score": 7.5,
+                 "track_b_level": "green", "outlook": "stable"},
+            ],
+            "holdings": {"光伏/储能": 0.6, "半导体/集成电路": 0.4},
+            "scenario": {
+                "name": "光伏下调",
+                "description": "光伏 track_a -1 冲击",
+                "industry_shocks": {"光伏/储能": 1.0},
+                "contagion_escalation": [],
+                "outlook_shifts": {},
+            },
+        },
+    }
+
+
 def _wired_inputs(path_id):
     return {
         "WP-M0-01": _composite_inputs,
@@ -235,6 +287,7 @@ def _wired_inputs(path_id):
         "WP-M4-01": _concentration_inputs,
         "WP-M4-02": _contagion_inputs,
         "WP-M4-03": _sri_inputs,
+        "WP-M4-04": _m004_inputs,
         "WP-X-05": _outlook_inputs,
     }[path_id]()
 
@@ -274,6 +327,7 @@ EXPECTED_OUTPUT_KEYS = {
     "WP-M4-03": {"sri", "thermometer"},
     "WP-M4-01": {"score", "adjustment", "levels", "bb_cap_triggered"},
     "WP-M4-02": {"exposure", "links", "factors_applied"},
+    "WP-M4-04": {"concentration", "scenarios", "bond_mv", "sri_stress"},
     "WP-X-05": {"outlook", "confidence", "net_score", "watchlist", "migration"},
 }
 
@@ -293,8 +347,8 @@ def test_t11_2_wired_execute_code_others_llm_orchestrated(contract, registry_pat
         assert set(analysis["outputs"]) == EXPECTED_OUTPUT_KEYS[pid]
 
     # unwired: complete plan, analysis not executable, every stage llm-orchestrated
-    # （ACTIVE_PATHS 锚定 v0.8.0 walkthrough 的 11 路径名单；WP-M0-02 后激活未入列，
-    #   在 WIRED_PATHS 但不在 ACTIVE_PATHS，故 unwired 计数仍为 6）
+    # （ACTIVE_PATHS 锚定 v0.8.0 walkthrough 的 11 路径名单；WP-M0-02/WP-M4-04 后激活
+    #   未入列，在 WIRED_PATHS 但不在 ACTIVE_PATHS，故 unwired 计数仍为 6）
     assert len(UNWIRED_ACTIVE) == 6
     for pid in UNWIRED_ACTIVE:
         assert pid not in EXECUTABLE_ENGINES

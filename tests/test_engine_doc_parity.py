@@ -10,7 +10,10 @@ threshold drift fails.
 """
 
 import re
+from dataclasses import replace
 from pathlib import Path
+
+import pytest
 
 from src.concentration_scorer import (
     ConcentrationMetrics,
@@ -37,6 +40,14 @@ from src.sri_calculator import (
     industry_risk_score,
     thermometer_level,
 )
+from src.stress_scorer import (
+    ScenarioResult,
+    bond_mv_stress,
+    concentration_stress,
+    load_stress_tables,
+    resolve_severe_params,
+    safety_verdict,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 SRI_DOC = (ROOT / "dev" / "engine" / "systemic-warning-framework.md").read_text(
@@ -49,6 +60,9 @@ LGD_DOC = (ROOT / "dev" / "engine" / "lgd-recovery-framework.md").read_text(
     encoding="utf-8"
 )
 SUPPORT_DOC = (ROOT / "dev" / "engine" / "external-support-framework.md").read_text(
+    encoding="utf-8"
+)
+DD_DOC = (ROOT / "dev" / "engine" / "financial-deep-dive.md").read_text(
     encoding="utf-8"
 )
 
@@ -355,3 +369,124 @@ def test_code_uplift_map_matches_doc():
     # standalone 取 A+ 避开 AAA 梯顶截断（终审 I-1 后 uplift_notches 为实际变动）
     r = compute_support(_support_input(standalone_rating="A+"))
     assert r.uplift_notches == 3  # D4：意愿高 → 区间上限
+
+
+# --------------------------------------------------------------------------
+# WP-M4-04 stress engine: financial-deep-dive §E + concentration §9.2
+# doc-text anchors + code-behaviour parity
+# --------------------------------------------------------------------------
+
+def _bear_result(interest_coverage=5.0, fcf_interest=3.0, cash_runway_months=24.0):
+    """Minimal ScenarioResult for E.5 band-boundary probes (safety_verdict
+    only reads the three safety metrics)."""
+    return ScenarioResult(
+        scenario="Bear", industry="parity-probe",
+        revenue=0, gross_profit=0, ebitda=0, net_profit=0, cfo=0, capex=0,
+        fcf=0, interest=0,
+        interest_coverage=interest_coverage, fcf_interest=fcf_interest,
+        cash_runway_months=cash_runway_months,
+    )
+
+
+# ---- E.1 校准锚（financial-deep-dive :231-239） ----
+
+def test_doc_states_severe_anchor_pv():
+    """E.1 校准锚表 states 光伏/储能 收入最大降幅 -35%、毛利率最大压缩 -20pp。"""
+    sec = _section(DD_DOC, "E.1 三场景参数设定")
+    assert any(
+        "光伏/储能" in line and "-35%" in line and "-20pp" in line
+        for line in sec.splitlines()
+    ), "E.1 校准锚表 missing 光伏/储能 -35%/-20pp row"
+
+
+def test_code_severe_anchor_pv_matches_doc():
+    """resolve_severe_params 命中 E.1 锚：光伏/储能 → -35%/-20pp（不再乘 E.8 因子）。"""
+    tables = load_stress_tables()
+    assert tables.severe_anchors["光伏/储能"] == {
+        "revenue_change": -35.0,
+        "margin_change_pp": -20.0,
+    }
+    p = resolve_severe_params("光伏/储能", tables)
+    assert p["source"] == "E.1锚"
+    assert p["revenue_change"] == -35.0 and p["margin_change_pp"] == -20.0
+
+
+# ---- E.8 分行业偏离因子（financial-deep-dive :352-363） ----
+
+def test_doc_states_deviation_factor_nev_supply_chain():
+    """E.8 因子表 states 新能源车—供应链 Severe 收入偏离度 1.3x。"""
+    sec = _section(DD_DOC, "E.8 场景分行业校准说明")
+    assert any(
+        "新能源车—供应链" in line and "1.3x" in line for line in sec.splitlines()
+    ), "E.8 missing 新能源车—供应链 1.3x row"
+
+
+def test_code_deviation_factor_matches_doc():
+    """E.1 锚未命中 → 默认 Severe × E.8 因子：收入 -30%×1.3=-39%、毛利率 -15pp×1.1。"""
+    tables = load_stress_tables()
+    assert tables.deviation_factors["新能源车—供应链"]["severe_revenue"] == 1.3
+    p = resolve_severe_params("新能源车—供应链", tables)
+    assert p["source"] == "E.8因子"
+    assert p["revenue_change"] == pytest.approx(-39.0)    # -30 × 1.3
+    assert p["margin_change_pp"] == pytest.approx(-16.5)  # -15 × 1.1
+
+
+# ---- §9.2 阈值跳升表（concentration-framework :777-783） ----
+
+def test_doc_states_threshold_jump_lgfv():
+    """§9.2 states 城投展期潮：弱区域占比阈值从 10%/20%/35% 收紧至 5%/15%/25%。"""
+    sec = _section(CONC_DOC, "9.2 压力场景下的阈值跳升")
+    assert any(
+        "区域性城投展期潮" in line and "收紧至5%/15%/25%" in line
+        for line in sec.splitlines()
+    ), "§9.2 missing 区域性城投展期潮 jump row"
+
+
+def test_code_threshold_jump_lgfv_matches_doc():
+    """弱区域占比 0.18：默认档（10%/20%/35%）为绿；收紧后（5%/15%/25%）跳橙。"""
+    tables = load_stress_tables()
+    m = replace(_all_green_metrics(), weak_region_share=0.18)
+    out = concentration_stress(m, "区域性城投展期潮", tables)
+    assert out["jumps"] == [{"dim": "region", "from": "green", "to": "orange"}]
+    assert out["composite_normal"] == pytest.approx(2.2)
+    assert out["composite_stressed"] == pytest.approx(3.0)
+
+
+# ---- E.5 安全边际阈值（financial-deep-dive :294-299） ----
+
+def test_doc_states_safety_band_edges():
+    """E.5 states the 🟢/🔴 open edges (>3.0x / <1.0x) and the 🟠 closed band 1.0-1.5x."""
+    sec = _section(DD_DOC, "E.5 安全边际判定标准")
+    for token in (">3.0x", "<1.0x", "1.0-1.5x"):
+        assert token in sec, f"E.5 missing band edge {token!r}"
+
+
+def test_code_safety_band_boundaries_match_doc():
+    """开/闭区间直译：恰 3.0x → 🟡（>3.0 开区间不归属🟢）；恰 1.0x → 🟠。"""
+    tables = load_stress_tables()
+    v = safety_verdict(_bear_result(interest_coverage=3.0), tables)
+    assert v["interest_coverage"]["emoji"] == "🟡"
+    v = safety_verdict(_bear_result(interest_coverage=1.0), tables)
+    assert v["interest_coverage"]["emoji"] == "🟠"
+
+
+# ---- E.10.2 情景概率（financial-deep-dive :508-517） ----
+
+def test_doc_states_mv_scenario_probabilities():
+    """E.10.2 标准情景模板 states 四档历史概率 20%/10%/3%/1%（附 -2.90% 定量示例）。"""
+    sec = _section(DD_DOC, "E.10.2")
+    for token in ("历史概率约20%", "历史概率约10%", "历史概率约3%", "历史概率约1%"):
+        assert token in sec, f"E.10.2 missing probability {token!r}"
+    assert "-2.90%" in sec  # 定量估算示例（3年期中票、YTM=3.5%）轻度承压 ΔP
+
+
+def test_code_mv_probabilities_and_weighting_match_doc():
+    """四档概率运行时解析；轻度承压 ΔP≈-2.90%（文档示例复算）；weighted = ΔP×S。"""
+    tables = load_stress_tables()
+    assert [s["probability_pct"] for s in tables.mv_scenarios] == [20.0, 10.0, 3.0, 1.0]
+    out = bond_mv_stress(3.0, 0.035, tables)
+    first = out["scenarios"][0]
+    assert first["name"] == "轻度承压"
+    assert first["delta_ytm"] == pytest.approx(0.01)        # +50bp 无风险 +50bp 利差
+    assert first["delta_p"] == pytest.approx(-0.029, abs=1e-3)  # 文档示例 -2.90%
+    assert first["weighted"] == pytest.approx(first["delta_p"] * 0.20)

@@ -177,14 +177,14 @@ def test_t12_7_deterministic_rebuild(builder, tmp_path):
     assert not diff, f"non-deterministic outputs: {diff[:5]}"
 
 
-# T12.8 — (m) dist 布局下编排器可导入：src.pipeline 顶层链式导入全部 7 引擎，
+# T12.8 — (m) dist 布局下编排器可导入：src.pipeline 顶层链式导入全部 8 引擎，
 #          不依赖包外的 scripts/（回归锁：composite_scorer 曾 sys.path 注入 ../scripts
 #          import consistency_check，导致发行包内 pipeline 整体 ModuleNotFoundError）。
 def test_t12_8_pipeline_importable_in_dist(dist):
     code = (
         "import sys; sys.path.insert(0, sys.argv[1]);"
         "import src.pipeline as p;"
-        "assert len(p.EXECUTABLE_ENGINES) == 6;"
+        "assert len(p.EXECUTABLE_ENGINES) == 7;"
         "print('PIPELINE_OK')"
     )
     r = subprocess.run(
