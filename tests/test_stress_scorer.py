@@ -9,6 +9,8 @@ concentration-framework.md。测试断言解析结果与文档锚点一致；任
 
 import pytest
 
+from dataclasses import replace
+
 from src.path_sheet import engine_dir
 from src.stress_scorer import (
     IssuerFinancials,
@@ -281,6 +283,20 @@ def test_normalize_canonical_aliases(tables):
     assert idc["revenue_change"] == -15.0
 
 
+def test_normalize_supply_chain_alias(tables):
+    """Fix R2：「新能源汽车—供应链」→ E.8 键「新能源车—供应链」（与 OEM 不同行，
+    归一后仍区分）。"""
+    sc = resolve_severe_params("新能源汽车—供应链", tables)
+    direct = resolve_severe_params("新能源车—供应链", tables)
+    assert sc["source"] == "E.8因子"
+    assert sc["revenue_change"] == pytest.approx(-39.0)   # -30% × 1.3
+    assert sc["margin_change_pp"] == pytest.approx(-16.5)  # -15pp × 1.1
+    assert "归一" in sc["note"]
+    assert sc["revenue_change"] == direct["revenue_change"]
+    # OEM（E.1 锚 -30%）与供应链（E.8 因子 -39%）为不同行，归一不混淆
+    assert sc["revenue_change"] != resolve_severe_params("新能源汽车", tables)["revenue_change"]
+
+
 # ================= T2：E.3 线性传导链 =================
 
 @pytest.fixture
@@ -365,6 +381,30 @@ def test_run_scenario_severe_second_order(fin, tables):
 
 
 # ================= T2：E.7 二阶效应规则 =================
+
+def test_run_scenario_funding_rate_e9_semantics(fin, tables):
+    """Fix R1：E.9 口径——基准利率 4% 时 +100bp → ×1.25、+200bp → ×1.5。"""
+    fin_r = replace(fin, base_funding_rate=0.04)
+    r = run_scenario(fin_r, tables.scenario_params["Bear"], "光伏/储能", tables)
+    assert r.interest == pytest.approx(2.5)   # 2 × (1 + 0.01/0.04)
+    assert r.note == ""                        # 利率提供 → 无回退注记
+    params = resolve_severe_params("纺织服装", tables)
+    r = run_scenario(fin_r, params, "纺织服装", tables, severe=True)
+    # 一阶 2 × 1.5 = 3.0；二阶 +50bp → 2 × 0.005/0.04 = 0.25 → 3.25
+    assert r.interest == pytest.approx(3.25)
+    eff = {e.name: e for e in r.second_order_effects}
+    assert eff["融资成本二阶"].amount == pytest.approx(0.25)
+
+
+def test_run_scenario_funding_rate_fallback_note(fin, tables):
+    """Fix R1：基准利率缺失 → 回退 E.3 字面口径（×1.01）+ 注记留 LLM 判断。"""
+    r = run_scenario(fin, tables.scenario_params["Bear"], "光伏/储能", tables)
+    assert r.interest == pytest.approx(2.02)
+    assert "基准融资利率缺失" in r.note
+    assert "低估冲击" in r.note
+    out = reverse_stress(fin, tables.scenario_params["Bear"])
+    assert "基准融资利率缺失" in out["note"]
+
 
 def _params(rev, margin, bp=200.0):
     return {

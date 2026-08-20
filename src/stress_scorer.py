@@ -14,6 +14,11 @@ concentration-framework.md §9.2 阈值跳升表（:777-783）均运行时解析
 - D2 现金跑道操作化（文档未定义公式）：fcf < 0 → 现金 / (-fcf/12)；
   否则 999（"无限"哨兵）；unused_credit 单独报告不并入。
 - D3 E.7 融资成本二阶上浮：文档区间 50-100bp 取保守端 +50bp 并注记。
+- 融资成本口径（主会话 Fix R1 裁决，E.9 语义为准）：融资成本变动为利率
+  加点（bp），利息支出放大系数 = 1 + 加点/基准融资利率（E.9 :412，6亿 ×
+  (1+200bp/4%) = 9亿）；E.3:271 字面式 ×(1+加点) 与 E.1 参数表 bp 利率
+  单位不自洽（简化笔误）。IssuerFinancials.base_funding_rate 缺失时回退
+  E.3 字面口径（低估冲击）并于输出注记留 LLM 判断。
 - D5 行业名归一（normalize_industry）：canonical 13 行业名/别名 → E.1/E.8
   表键（E.1 锚表「新能源汽车—OEM」与 E.8 因子表「新能源车—OEM」为同一
   行业两种拼写，T1 审查发现），归一后再走 D1 三级链。
@@ -78,7 +83,9 @@ class IssuerFinancials:
 
     revenue/period_expenses/da/capex/interest_expense/cash/unused_credit/
     inventory 为金额（同币种同单位）；gross_margin/tax_rate 为小数比率
-    （0.20 = 20%）；dso_days/dio_days 为天数。
+    （0.20 = 20%）；dso_days/dio_days 为天数。base_funding_rate 为基准融资
+    利率（小数比率，0.04 = 4%；可选）——提供时利息放大按 E.9 加点口径，
+    缺失时回退 E.3 字面口径并注记（主会话 Fix R1 裁决）。
     """
 
     revenue: float
@@ -93,6 +100,7 @@ class IssuerFinancials:
     inventory: float
     dso_days: float
     dio_days: float
+    base_funding_rate: float | None = None
 
 
 def _read(path, default_name: str) -> str:
@@ -343,6 +351,7 @@ def load_stress_tables(deep_dive_path=None, concentration_path=None) -> StressTa
 _INDUSTRY_KEY_MAP = {
     "新能源汽车": "新能源汽车—OEM",      # canonical 行6 → E.1 锚键（OEM 整车口径）
     "新能源车—OEM": "新能源汽车—OEM",    # E.8 拼法 → E.1 拼法（同一行业）
+    "新能源汽车—供应链": "新能源车—供应链",  # E.8 键（:362，与 OEM 不同行，Fix R2 补）
     "高端装备/工业母机": "高端装备/机床",  # canonical 行3 → E.1/E.8 键（:235/:357）
     "数据中心/算力基建": "数据中心",      # canonical 行7 → E.1/E.8 键（:239/:363）
 }
@@ -497,6 +506,7 @@ class ScenarioResult:
     金额单位与 IssuerFinancials 一致；interest_coverage/fcf_interest 为倍数；
     cash_runway_months 为月数（D2：fcf≥0 → 999 哨兵）。capex 为场景值
     （Capex 削减触发后 = 基准 × 50%）。second_order_effects 非 Severe 为空。
+    note 为口径注记（如基准融资利率缺失的 E.3 字面口径回退，Fix R1）。
     """
 
     scenario: str
@@ -513,6 +523,7 @@ class ScenarioResult:
     fcf_interest: float
     cash_runway_months: float
     second_order_effects: tuple = ()
+    note: str = ""
 
 
 def _ratio(num: float, den: float) -> float:
@@ -528,6 +539,26 @@ def _param(params: dict, key: str) -> float:
     return value if value is not None else 0.0
 
 
+def _stress_interest(fin: IssuerFinancials, funding_bp: float) -> tuple:
+    """变动后利息支出（E.9 语义为准，主会话 Fix R1 裁决）。
+
+    E.9 实演练口径：融资成本变动为利率加点（bp），放大系数 =
+    1 + 加点/基准融资利率（:412，6亿 × (1+200bp/4%) = 9亿）；E.3:271 字面式
+    ×(1+加点) 与 E.1 参数表 bp 利率单位不自洽（简化笔误）。
+    base_funding_rate 缺失时回退 E.3 字面口径（低估冲击）→ 注记留 LLM 判断。
+    返回 (变动后利息, 注记|None)。
+    """
+    if fin.base_funding_rate:
+        return (
+            fin.interest_expense * (1 + funding_bp / 10000 / fin.base_funding_rate),
+            None,
+        )
+    return fin.interest_expense * (1 + funding_bp / 10000), (
+        "基准融资利率缺失，按 E.3 字面口径 ×(1+加点) 计算变动后利息"
+        "（低估冲击，留 LLM 判断）"
+    )
+
+
 def run_scenario(
     fin: IssuerFinancials,
     params: dict,
@@ -540,9 +571,9 @@ def run_scenario(
 
     params 为 E.1 场景参数 dict（revenue_change %、margin_change_pp pp、
     funding_cost_change_bp bp；可含 resolve_severe_params 的 source/note，
-    计算时忽略）。利息口径：E.3:271「基准利息 × (1+融资成本变动)」按
-    bp→比率直译（+100bp = ×1.01）；E.9 案例的 ×(1+200bp/4%) 需基准融资
-    利率，IssuerFinancials 无此字段，通用引擎不采用该口径（注记留痕）。
+    计算时忽略）。利息口径（Fix R1，E.9 语义为准）：base_funding_rate 提供时
+    放大系数 = 1 + 加点/基准融资利率；缺失时回退 E.3:271 字面式 ×(1+加点)
+    并于 note 注记（低估冲击，留 LLM 判断）。
     EBITDA = 变动后毛利 - 期间费用 + D&A（:272 与 E.9.3 口径一致）。
     tables 保留在签名内（T3 消费；本函数数值链不依赖表值）。
     """
@@ -556,7 +587,7 @@ def run_scenario(
     cfo = net + fin.da
     capex = fin.capex
     fcf = cfo - capex
-    interest = fin.interest_expense * (1 + funding_bp / 10000)
+    interest, rate_note = _stress_interest(fin, funding_bp)
     effects = ()
     if severe:
         base = ScenarioResult(
@@ -606,6 +637,7 @@ def run_scenario(
         fcf_interest=_ratio(fcf, interest),
         cash_runway_months=runway,
         second_order_effects=effects,
+        note=rate_note or "",
     )
 
 
@@ -649,12 +681,13 @@ def second_order(
     ))
 
     # 规则三：融资成本二阶上升（D3：50-100bp 取保守端 +50bp；Severe 恒触发，:344）
-    amount = fin.interest_expense * _SO_FUNDING_EXTRA_BP / 10000
+    extra_bp_interest, _ = _stress_interest(fin, _SO_FUNDING_EXTRA_BP)
+    amount = extra_bp_interest - fin.interest_expense
     effects.append(SecondOrderEffect(
         "融资成本二阶", True, "interest", amount,
         f"Severe 场景假设评级下调 1-2 档，融资成本在一阶基础上再上浮 50bp"
-        f"（D3：文档区间 50-100bp 取保守端）；额外利息 = 基准利息 "
-        f"{fin.interest_expense:.4g} × 50bp = {amount:.4g}",
+        f"（D3：文档区间 50-100bp 取保守端）；额外利息 = {amount:.4g}"
+        f"（口径同一阶：{'加点/基准融资利率' if fin.base_funding_rate else 'E.3 字面 ×(1+加点)，基准利率缺失'}）",
     ))
 
     # 中间状态（应用规则 1-3 后），供规则四/五判定
@@ -750,7 +783,7 @@ def reverse_stress(fin: IssuerFinancials, params: dict) -> dict:
     Bear 档毛利率 ≤0 或变动后收入 ≤0 时对应临界值无意义 → None + 注记。
     """
     funding_bp = _param(params, "funding_cost_change_bp")
-    interest_b = fin.interest_expense * (1 + funding_bp / 10000)
+    interest_b, rate_note = _stress_interest(fin, funding_bp)
     margin_b = fin.gross_margin + _param(params, "margin_change_pp") / 100
     revenue_b = fin.revenue * (1 + _param(params, "revenue_change") / 100)
     notes = []
@@ -779,6 +812,7 @@ def reverse_stress(fin: IssuerFinancials, params: dict) -> dict:
             f"（变动后利息 {interest_b:.4g}、Bear 收入 {revenue_b:.4g}、Bear 毛利率 "
             f"{margin_b:.4g}、Bear EBITDA {ebitda_b:.4g}）；EBITDA 口径同 E.3/E.9"
             "（毛利-期间费用+D&A），非 E.6 正文未扣 D&A 的简化内联公式"
+            + ("；" + rate_note if rate_note else "")
             + ("；" + "；".join(notes) if notes else "")
         ),
     }
