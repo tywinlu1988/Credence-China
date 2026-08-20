@@ -523,3 +523,18 @@ def test_reverse_stress(fin, tables):
     # 临界融资成本升幅：Bear EBITDA 8.5 → x = 8.5/2 - 1 = 3.25
     assert out["critical_funding_cost_rise"] == pytest.approx(3.25)
     assert out["critical_funding_cost_rise_bp"] == pytest.approx(32500.0)
+
+
+def test_reverse_stress_funding_bp_e9_semantics(fin, tables):
+    """Fix R2：E.9 加点口径下临界加点 = rise × 基准融资利率 × 10000；
+    缺省回退口径 = rise × 10000（与利息口径自洽）。"""
+    fin_r = replace(fin, base_funding_rate=0.04)
+    out = reverse_stress(fin_r, tables.scenario_params["Bear"])
+    assert out["critical_funding_cost_rise"] == pytest.approx(3.25)
+    # E.9 自洽：达成 4.25× 利息放大所需加点 = 3.25 × 4% = 13% = 1300bp
+    assert out["critical_funding_cost_rise_bp"] == pytest.approx(1300.0)
+    assert "加点口径" in out["note"]
+    # 缺省（无基准利率）→ 回退口径
+    out = reverse_stress(fin, tables.scenario_params["Bear"])
+    assert out["critical_funding_cost_rise_bp"] == pytest.approx(32500.0)
+    assert "回退口径" in out["note"]

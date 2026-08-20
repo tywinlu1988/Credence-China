@@ -779,7 +779,9 @@ def reverse_stress(fin: IssuerFinancials, params: dict) -> dict:
     EBITDA 定义不一致，引擎采用 E.3 口径（注记留痕）。
 
     临界融资成本升幅 x = 变动后EBITDA/基准利息 - 1（利息 × (1+x) = EBITDA
-    的代数解），bp 口径 = x × 10000（与 E.3 利息 bp→比率直译口径一致）。
+    的代数解）。bp 换算随利息口径分支（Fix R2）：提供基准融资利率时输出
+    加点口径 x × base_funding_rate × 10000（E.9 语义——加点/基准利率 =
+    相对放大 x）；缺失时 x × 10000（与 E.3 字面回退口径一致）。
     Bear 档毛利率 ≤0 或变动后收入 ≤0 时对应临界值无意义 → None + 注记。
     """
     funding_bp = _param(params, "funding_cost_change_bp")
@@ -802,16 +804,28 @@ def reverse_stress(fin: IssuerFinancials, params: dict) -> dict:
         notes.append(f"Bear 档变动后收入 {revenue_b:.4g}≤0，毛利率临界值无意义")
     ebitda_b = revenue_b * margin_b - fin.period_expenses + fin.da
     rise = ebitda_b / fin.interest_expense - 1
+    # Fix R2：bp 换算随利息口径分支——E.9 加点口径下达成相对放大 rise 所需
+    # 加点 = rise × 基准融资利率；字面回退口径下 = rise × 10000。
+    if fin.base_funding_rate:
+        rise_bp = rise * fin.base_funding_rate * 10000
+        bp_note = (
+            f"临界加点 {rise_bp:.4g}bp = x × 基准融资利率 {fin.base_funding_rate:.4g}"
+            " × 10000（E.9 加点口径）"
+        )
+    else:
+        rise_bp = rise * 10000
+        bp_note = "临界升幅 bp = x × 10000（E.3 字面回退口径）"
     return {
         "critical_revenue_drop_pct": drop_pct,
         "critical_margin_compression_pp": compression_pp,
         "critical_funding_cost_rise": rise,
-        "critical_funding_cost_rise_bp": rise * 10000,
+        "critical_funding_cost_rise_bp": rise_bp,
         "note": (
             "E.6 逆向压力测试：解 变动后EBITDA/变动后利息=1.0x，其他参数取 Bear 档"
             f"（变动后利息 {interest_b:.4g}、Bear 收入 {revenue_b:.4g}、Bear 毛利率 "
             f"{margin_b:.4g}、Bear EBITDA {ebitda_b:.4g}）；EBITDA 口径同 E.3/E.9"
             "（毛利-期间费用+D&A），非 E.6 正文未扣 D&A 的简化内联公式"
+            f"；{bp_note}"
             + ("；" + rate_note if rate_note else "")
             + ("；" + "；".join(notes) if notes else "")
         ),
