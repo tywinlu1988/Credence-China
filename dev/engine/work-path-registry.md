@@ -431,7 +431,7 @@ quality_gates:
 
 ### WP-X-04 ESG/治理风险扫描（✅ active）
 
-专项路径：对发行人做 ESG（环境/社会/治理）与财务欺诈/治理风险扫描，输出 ESG 叠加调整与治理红旗清单。esg-framework 与 governance-fraud-risk 齐备，已激活（v0.10.2）。
+专项路径：对发行人做 ESG（环境/社会/治理）与财务欺诈/治理风险扫描，输出 ESG 叠加调整与治理红旗清单。esg-framework 与 governance-fraud-risk 齐备，已激活（v0.10.2）。已接编码引擎（governance_scorer + esg_scorer，pipeline EXECUTABLE_ENGINES 接线，mode="code"）。
 
 ```yaml
 id: WP-X-04

@@ -25,6 +25,13 @@ from src.external_support_scorer import (
     compute_support,
     load_support_tables,
 )
+from src.esg_scorer import (
+    _QUICK_BANDS,
+    EsgEvent,
+    compute_esg,
+    load_esg_tables,
+)
+from src.governance_scorer import compute_governance
 from src.lgd_scorer import (
     CollateralInput,
     EvasionFlags,
@@ -63,6 +70,12 @@ SUPPORT_DOC = (ROOT / "dev" / "engine" / "external-support-framework.md").read_t
     encoding="utf-8"
 )
 DD_DOC = (ROOT / "dev" / "engine" / "financial-deep-dive.md").read_text(
+    encoding="utf-8"
+)
+GOV_DOC = (ROOT / "dev" / "engine" / "governance-fraud-risk.md").read_text(
+    encoding="utf-8"
+)
+ESG_DOC = (ROOT / "dev" / "engine" / "esg-framework.md").read_text(
     encoding="utf-8"
 )
 
@@ -490,3 +503,119 @@ def test_code_mv_probabilities_and_weighting_match_doc():
     assert first["delta_ytm"] == pytest.approx(0.01)        # +50bp 无风险 +50bp 利差
     assert first["delta_p"] == pytest.approx(-0.029, abs=1e-3)  # 文档示例 -2.90%
     assert first["weighted"] == pytest.approx(first["delta_p"] * 0.20)
+
+
+# --------------------------------------------------------------------------
+# WP-X-04 dual engines: governance (governance-fraud-risk §6.2/§6.3) +
+# ESG (esg-framework §5.1/§5.3) — doc-text anchors + code-behaviour parity
+# --------------------------------------------------------------------------
+
+# ---- gov §6.2 评分衔接规则矩阵行（:320-323） ----
+
+def test_doc_states_gov_matrix_rows():
+    """gov §6.2 states 关注档 L4 上限 7 + 评级前置减半档；高档 L4 上限 4 + 评级上限 B。"""
+    sec = _section(GOV_DOC, "6.2 评分衔接规则")
+    assert any(
+        "2-3个中强度信号" in line and "L4财务层评分上限从10分降至7分" in line
+        for line in sec.splitlines()
+    ), "§6.2 missing 关注档矩阵行"
+    assert any(
+        "L4财务层评分上限锁定为4分" in line and "评级上限锁定为B" in line
+        for line in sec.splitlines()
+    ), "§6.2 missing 高档矩阵行"
+
+
+def test_code_gov_matrix_rows_match_doc():
+    """2 中强度信号 → 关注档（l4_cap 7 + outlook_flag）；1 高强度 → 高档（l4_cap 4 + cap B）。
+
+    T2 序列化口径：(risk_grade, l4_cap, rating_cap, outlook_flag) 是通用红旗
+    计数叠加与 §6.2 矩阵两条并行规则的独立输出——2 中强度信号时 grade 经
+    计数叠加（≥2 面升一级）升为「高」，不得以 grade 反查矩阵行。
+    """
+    r = compute_governance(
+        {"q4_revenue_share": 0.45, "impairment": 40, "prior_3y_profit_sum": 100},
+        {},
+    )
+    assert r.l4_cap == 7 and r.rating_cap is None and r.outlook_flag is True
+    assert r.risk_grade == "高"          # 计数叠加独立输出，非矩阵行反查
+    r1 = compute_governance({"non_recurring_to_net_profit": 0.6}, {})
+    assert (r1.risk_grade, r1.l4_cap, r1.rating_cap, r1.outlook_flag) == (
+        "高", 4, "B", False,
+    )
+
+
+# ---- gov §6.3 一票否决行（:344-349） ----
+
+def test_doc_states_gov_veto_rows():
+    """gov §6.3 states 一票否决 → 综合评级上限锁定为CCC（含立案调查财务造假行）。"""
+    sec = _section(GOV_DOC, "6.3 一票否决条件")
+    assert "综合评级上限锁定为CCC" in sec
+    assert "被证监会/监管机构立案调查且涉及财务造假" in sec
+
+
+def test_code_gov_veto_matches_doc():
+    """事件轨触发 v1 → 严重 + CCC；l4_cap=None 原样直传（不得默认填数值）。"""
+    r = compute_governance(
+        {}, {"v1_csrc_fraud_investigation": "立案告知书（财务造假）"},
+    )
+    assert r.veto_triggers == ["v1"]
+    assert r.risk_grade == "严重" and r.rating_cap == "CCC"
+    assert r.l4_cap is None and r.outlook_flag is False
+
+
+# ---- esg §5.1 核心映射行（:419-432） ----
+
+def test_doc_states_esg_mapping_row():
+    """esg §5.1 states 重大环保处罚（责令停产）→ -0.5~-1子级。"""
+    sec = _section(ESG_DOC, "5.1 核心映射关系")
+    assert any(
+        "重大环保处罚（责令停产）" in line and "-0.5~-1子级" in line
+        for line in sec.splitlines()
+    ), "§5.1 missing 重大环保处罚映射行"
+
+
+def test_code_esg_mapping_row_matches_doc():
+    """§5.1 运行时解析：env_shutdown 基值区间 (-1.0, -0.5)（数值轴有序）+ 单元格原文留痕。"""
+    tables = load_esg_tables()
+    row = tables.mapping["env_shutdown"]
+    assert (row.lo, row.hi) == (-1.0, -0.5)
+    assert "-0.5~-1子级" in row.adjust_text
+
+
+# ---- esg §5.3 调整规则速查行（:458-464） ----
+
+def test_doc_states_esg_quick_rows():
+    """esg §5.3 states 中等信号 -0.5子级 与 强信号 -0.5~-1子级。"""
+    sec = _section(ESG_DOC, "5.3 调整规则速查表")
+    assert any(
+        "中等信号" in line and "-0.5子级" in line for line in sec.splitlines()
+    ), "§5.3 missing 中等信号速查行"
+    assert any(
+        "强信号" in line and "-0.5~-1子级" in line for line in sec.splitlines()
+    ), "§5.3 missing 强信号速查行"
+
+
+def test_code_esg_quick_bands_match_doc():
+    """_QUICK_BANDS ↔ §5.3 速查行回读（T3 ⚠️1：强信号带硬编码副本 parity）。
+
+    强信号带为硬编码副本（无运行时解析回读），此处断言速查表强信号行
+    adjustment 原文 ↔ _QUICK_BANDS["强信号"] 一致——文档带漂移即测试失败。
+    """
+    tables = load_esg_tables()
+    quick = {r["strength"]: r for r in tables.quick_ref}
+    assert quick["中等信号"]["adjustment"] == "-0.5子级"
+    assert _QUICK_BANDS["中等信号"] == (-0.5, -0.5)
+    assert quick["强信号"]["adjustment"] == "-0.5~-1子级"
+    assert _QUICK_BANDS["强信号"] == (-1.0, -0.5)
+    # 行为面：单事件 II 级 → 中等信号，累计 -0.5 落于速查带内（无带外 advisory）
+    r = compute_esg(
+        [EsgEvent(
+            dimension="G", category="disclosure_violation", severity="II",
+            evidence="纪律处分", source="交易所公告",
+        )],
+        {"interest_coverage": 1.5, "cash_runway_months": 3},
+        "城投",
+    )
+    assert r.signal_strength == "中等信号"
+    assert r.per_dimension["G"]["score"] == -0.5
+    assert not any("带外" in n for n in r.notes)

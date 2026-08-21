@@ -5,8 +5,9 @@ release, not any single component:
 
 - T11.1: every one of the 11 active work paths yields a valid 4-stage plan (S1..S4,
   non-empty names/skills) via the thin orchestrator.
-- T11.2: the 6 wired paths (WP-M0-01 composite, WP-M0-02 LGD + external support,
-  WP-M4-01 concentration, WP-M4-02 contagion, WP-M4-03 SRI, WP-X-05 outlook)
+- T11.2: the 8 wired paths (WP-M0-01 composite, WP-M0-02 LGD + external support,
+  WP-M4-01 concentration, WP-M4-02 contagion, WP-M4-03 SRI, WP-M4-04 stress,
+  WP-X-04 governance + ESG, WP-X-05 outlook)
   execute code at the analysis stage; the other 6 active paths (of the 11-path
   v0.8.0 anchor set) produce a complete LLM-orchestrated plan.
 - T11.3: the end-to-end walkthrough record exists and literally names all active path ids.
@@ -70,7 +71,7 @@ ACTIVE_PATHS = [
 ]
 WIRED_PATHS = [
     "WP-M0-01", "WP-M0-02", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-M4-04",
-    "WP-X-05",
+    "WP-X-04", "WP-X-05",
 ]
 UNWIRED_ACTIVE = [p for p in ACTIVE_PATHS if p not in WIRED_PATHS]
 
@@ -280,6 +281,26 @@ def _m004_inputs():
     }
 
 
+def _x004_inputs():
+    """WP-X-04 dual-engine fixture (mirrors tests/test_pipeline.py::_x004_inputs)."""
+    return {
+        "measured": {"non_recurring_to_net_profit": 0.6},
+        "gov_events": {},
+        "esg_events": [
+            {
+                "dimension": "G",
+                "category": "disclosure_violation",
+                "severity": "II",
+                "evidence": "定期报告更正被交易所纪律处分",
+                "source": "交易所公告",
+                "event_id": "esg-2026-001",
+            },
+        ],
+        "elasticity": {"interest_coverage": 1.5, "cash_runway_months": 3},
+        "industry": "城投",
+    }
+
+
 def _wired_inputs(path_id):
     return {
         "WP-M0-01": _composite_inputs,
@@ -288,6 +309,7 @@ def _wired_inputs(path_id):
         "WP-M4-02": _contagion_inputs,
         "WP-M4-03": _sri_inputs,
         "WP-M4-04": _m004_inputs,
+        "WP-X-04": _x004_inputs,
         "WP-X-05": _outlook_inputs,
     }[path_id]()
 
@@ -328,6 +350,7 @@ EXPECTED_OUTPUT_KEYS = {
     "WP-M4-01": {"score", "adjustment", "levels", "bb_cap_triggered"},
     "WP-M4-02": {"exposure", "links", "factors_applied"},
     "WP-M4-04": {"concentration", "scenarios", "bond_mv", "sri_stress"},
+    "WP-X-04": {"governance", "esg"},
     "WP-X-05": {"outlook", "confidence", "net_score", "watchlist", "migration"},
 }
 
@@ -347,8 +370,8 @@ def test_t11_2_wired_execute_code_others_llm_orchestrated(contract, registry_pat
         assert set(analysis["outputs"]) == EXPECTED_OUTPUT_KEYS[pid]
 
     # unwired: complete plan, analysis not executable, every stage llm-orchestrated
-    # （ACTIVE_PATHS 锚定 v0.8.0 walkthrough 的 11 路径名单；WP-M0-02/WP-M4-04 后激活
-    #   未入列，在 WIRED_PATHS 但不在 ACTIVE_PATHS，故 unwired 计数仍为 6）
+    # （ACTIVE_PATHS 锚定 v0.8.0 walkthrough 的 11 路径名单；WP-M0-02/WP-M4-04/
+    #   WP-X-04 后激活未入列，在 WIRED_PATHS 但不在 ACTIVE_PATHS，故 unwired 计数仍为 6）
     assert len(UNWIRED_ACTIVE) == 6
     for pid in UNWIRED_ACTIVE:
         assert pid not in EXECUTABLE_ENGINES

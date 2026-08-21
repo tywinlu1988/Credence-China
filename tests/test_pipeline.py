@@ -126,6 +126,19 @@ def _sheet(path_id, **overrides) -> dict:
             ],
             "notes": "",
         },
+        "WP-X-04": {
+            "role": "meta",
+            "object": "single-issuer",
+            "depth": "专项",
+            "mode": "A",
+            "path_id": "WP-X-04",
+            "engine_reading_order": [
+                "dev/engine/esg-framework.md",
+                "dev/engine/governance-fraud-risk.md",
+            ],
+            "quality_gates": ["ESG (dev/engine/esg-framework.md §一)"],
+            "notes": "",
+        },
         "WP-M1-01": {
             "role": "M1",
             "object": "single-issuer",
@@ -587,3 +600,67 @@ def test_t9_12b_m004_optional_dimensions_none():
     }}
     with pytest.raises(ValueError, match="全市场组合|覆盖传染矩阵全部"):
         _run_m004(bad)
+
+
+# --------------------------------------------------------------------------
+# T9.13 — WP-X-04 wired: dual engines (governance + ESG) at analysis stage
+# --------------------------------------------------------------------------
+
+def _x004_inputs() -> dict:
+    """WP-X-04 最小复算 fixture：1 面高强度治理红旗（FIN-05 非经常性损益占比
+    0.6 > 50%，§1 :39）+ 1 个 ESG 事件（信披违规 II 级，弹性弱，城投 G 中敏感）。"""
+    return {
+        "measured": {"non_recurring_to_net_profit": 0.6},
+        "gov_events": {},
+        "esg_events": [
+            {
+                "dimension": "G",
+                "category": "disclosure_violation",
+                "severity": "II",
+                "evidence": "定期报告更正被交易所纪律处分",
+                "source": "交易所公告",
+                "event_id": "esg-2026-001",
+            },
+        ],
+        "elasticity": {"interest_coverage": 1.5, "cash_runway_months": 3},
+        "industry": "城投",
+    }
+
+
+def test_t9_13_x004_dual_engine_wired_and_runs(contract, registry_paths):
+    assert "WP-X-04" in EXECUTABLE_ENGINES
+    plan = load_stage_plan(_sheet("WP-X-04"), registry_paths, contract)
+    assert plan[1].executable is True
+    manifest = run_executable_stages(plan, _x004_inputs())
+    analysis = next(s for s in manifest["stages"] if s["name"] == "analysis")
+    assert analysis["mode"] == "code"
+    out = analysis["outputs"]
+    assert set(out) == {"governance", "esg"}
+
+    # 治理子结果复算：1 面 HIGH 红旗 → §6.2 高档（l4_cap 4 + 评级上限 B）；
+    # 通用红旗 1 面未达 ≥2 升级线；无否决
+    gov = out["governance"]
+    assert gov["risk_grade"] == "高"
+    assert gov["l4_cap"] == 4 and gov["rating_cap"] == "B"
+    assert gov["outlook_flag"] is False and gov["veto_triggers"] == []
+    assert any(f["note"].startswith("FIN-05 命中") for f in gov["red_flags"])
+
+    # ESG 子结果复算：II 级 ∩ §5.1 信披违规 -0.5子级 → -0.5；弹性弱取最重端；
+    # 城投 G 中敏感不 ×1.5；D4 落地 0 + negative_flag；单事件 II → 中等信号
+    esg = out["esg"]
+    assert esg["notch_adjustment"] == 0 and esg["flags"] == ["negative_flag"]
+    assert esg["signal_strength"] == "中等信号"
+    assert esg["per_dimension"]["G"]["score"] == -0.5
+    assert esg["trigger_events"][0]["event_id"] == "esg-2026-001"
+
+
+def test_t9_13b_x004_veto_none_passthrough():
+    """否决下 l4_cap=None 原样直传（T2 序列化口径：不得默认填数值）。"""
+    from src.pipeline import _run_x004
+
+    inputs = _x004_inputs()
+    inputs["gov_events"] = {"v1_csrc_fraud_investigation": "立案告知书（财务造假）"}
+    gov = _run_x004(inputs)["governance"]
+    assert gov["veto_triggers"] == ["v1"]
+    assert gov["risk_grade"] == "严重" and gov["rating_cap"] == "CCC"
+    assert gov["l4_cap"] is None

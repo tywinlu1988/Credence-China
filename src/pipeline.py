@@ -11,7 +11,8 @@
   （chaining_edges）同样从该契约的 yaml 块读取，供端点引用完整性校验复用。
 - **不新编码任何引擎**：引擎文档是规范源，`src/sri_calculator.py`、`src/concentration_scorer.py`、
   `src/contagion_engine.py`、`src/outlook_engine.py`、`src/composite_scorer.py`、
-  `src/lgd_scorer.py`、`src/external_support_scorer.py` 与 `src/stress_scorer.py` 是其
+  `src/lgd_scorer.py`、`src/external_support_scorer.py`、`src/stress_scorer.py`、
+  `src/governance_scorer.py` 与 `src/esg_scorer.py` 是其
   **可执行实现**。编排器只在路径已接线时调用它们（EXECUTABLE_ENGINES），不复制任何
   阈值/权重/档位语义。
 - **复用 path_sheet.py**：路径单校验、registry 解析、planned 判定与"待开发"提示一律
@@ -38,6 +39,8 @@ from src.contagion_engine import (
     portfolio_exposure,
 )
 from src.external_support_scorer import SupportInput, compute_support
+from src.esg_scorer import EsgEvent, compute_esg, load_esg_tables
+from src.governance_scorer import compute_governance
 from src.lgd_scorer import (
     CollateralInput,
     EvasionFlags,
@@ -460,10 +463,48 @@ def _run_m004(inputs: dict) -> dict:
     }
 
 
+def _run_x004(inputs: dict) -> dict:
+    """WP-X-04 → governance-fraud-risk + esg-framework 双引擎（治理红旗 + ESG 事件映射）。
+
+    inputs 契约（子字典键即两引擎入参字段名，在此展开构造，严禁位置调用）：
+
+    - ``"measured"``（必）：governance 机械指标的**预聚合单值**字典——
+      "连续 8 季""且持续"等持续性修饰语由调用方预聚合为单值输入
+      （与 compute_governance measured 契约同口径）；缺键的规则留
+      data_note（不静默按 0 处理）。
+    - ``"gov_events"``（可选，默认 {}）：治理事件型输入——VETO_RULES 各
+      event_key → 布尔/文本证据（truthy 触发否决）；JUDGMENT_EVENTS 各键 →
+      LLM 判断输入；可选 ``"willingness"`` 子 dict（§4.3 四键缺一即 raise）。
+    - ``"esg_events"``（可选，默认 []）：EsgEvent 字段 dict 列表
+      （dimension/category/severity/evidence/source 必，llm_judged/event_id
+      可选）——**应尽量提供 event_id**：它是互斥归并键（§6.3 同一事件只
+      触发一次调整）；缺省退化为 (维度, 类别, 证据) 三元组，同一事件
+      措辞不同的重复上报会记为两个事件。
+    - ``"elasticity"``（可选，默认 {}）：``{"interest_coverage": x 倍,
+      "cash_runway_months": 月}``；缺键 → 未知带（默认区间最轻端 + 注记）。
+    - ``"industry"``（可选，默认 ""）：附录A 行业名原文（如 "城投"）；
+      未收录 → 行业敏感性修正（×1.5）不适用 + 注记（不 raise）。
+
+    返回 ``{"governance", "esg"}``——两引擎输出 asdict 直传。序列化口径
+    （T2 带入项）：GovernanceResult 的 (risk_grade, l4_cap, rating_cap,
+    outlook_flag) 是通用红旗计数叠加与 §6.2 矩阵**两条并行规则的独立输出**，
+    调用方不得以 risk_grade 反查矩阵行；一票否决触发时 l4_cap=None
+    原样直传（不得默认填数值）。
+    """
+    gov = compute_governance(inputs["measured"], inputs.get("gov_events") or {})
+    esg = compute_esg(
+        [EsgEvent(**e) for e in inputs.get("esg_events") or []],
+        inputs.get("elasticity") or {},
+        inputs.get("industry") or "",
+        tables=load_esg_tables(),
+    )
+    return {"governance": asdict(gov), "esg": asdict(esg)}
+
+
 # 已接线（wired）编码引擎登记表：path_id → 运行该路径编码引擎的可调用对象。
 # 保持显式且极小——本系列接入 WP-M0-01(旗舰聚合)、WP-M0-02(LGD+外部支持双引擎)、
 # WP-M4-01(集中度)、WP-M4-02(传染矩阵)、WP-M4-03(SRI)、WP-M4-04(组合压力测试)、
-# WP-X-05(展望监控)。
+# WP-X-04(治理+ESG双引擎)、WP-X-05(展望监控)。
 EXECUTABLE_ENGINES = {
     "WP-M0-01": _run_composite,
     "WP-M0-02": _run_m002,
@@ -471,5 +512,6 @@ EXECUTABLE_ENGINES = {
     "WP-M4-01": _run_concentration,
     "WP-M4-02": _run_contagion,
     "WP-M4-04": _run_m004,
+    "WP-X-04": _run_x004,
     "WP-X-05": _run_outlook,
 }
