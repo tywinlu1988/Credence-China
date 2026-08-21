@@ -194,8 +194,9 @@ def test_t12_8_pipeline_importable_in_dist(dist):
     assert r.returncode == 0 and "PIPELINE_OK" in r.stdout, r.stderr
 
 
-# T12.9 — (n) 生成的 AGENTS.md 保真：含防漂移铁律与编码引擎清单（口径区分：8 = 引擎模块数、
-#          7 = wired 路径数——WP-M0-02 一路径接 lgd_scorer+external_support_scorer 双引擎），
+# T12.9 — (n) 生成的 AGENTS.md 保真：含防漂移铁律与编码引擎清单（口径区分：10 = 引擎模块数、
+#          8 = wired 路径数——WP-M0-02 接 lgd_scorer+external_support_scorer、
+#          WP-X-04 接 governance_scorer+esg_scorer，两路径各双引擎），
 #          路径计数/模板数与注册表真值一致（回归锁：生成器模板曾自带 Type 1–15、2 引擎、8/6/2
 #          过期声明，根 AGENTS.md 修正从未触达发行包用户）。模板区间断言版本无关：由 dist/templates
 #          实际模板文件推导编号族最大号 + 在役份数（归档缺口下不作连续区间伪装），
@@ -214,14 +215,14 @@ def test_t12_9_generated_agents_md_fidelity(dist, builder):
     assert "Type 1–15" not in agents
     # 生成 README.md 同类保真锁：引擎计数曾与 AGENTS.md 同步漂移（v0.8.2 残留"2 个"）
     readme = (dist / "README.md").read_text(encoding="utf-8")
-    assert "8 个编码引擎" in readme, "generated README.md engine count stale"
+    assert "10 个编码引擎" in readme, "generated README.md engine count stale"
     assert "2 个编码引擎" not in readme
     # 生成 README.md 引擎文档计数保真锁（v0.10.3 审计发现 28 份 残留）
     expected_docs = f"{len(builder.CORE_DOCS)} 份方法论文档"
     assert expected_docs in readme, (
         f"generated README.md engine count stale, expect {expected_docs!r}"
     )
-    for pid in ("WP-M0-01", "WP-M0-02", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-M4-04", "WP-X-05"):
+    for pid in ("WP-M0-01", "WP-M0-02", "WP-M4-01", "WP-M4-02", "WP-M4-03", "WP-M4-04", "WP-X-04", "WP-X-05"):
         assert pid in agents, f"generated AGENTS.md missing wired engine {pid}"
     reg = load_registry_paths(dist / "engine" / "work-path-registry.md")
     counts = {"active": 0, "partial": 0, "planned": 0}

@@ -37,7 +37,7 @@
 | **work-path-registry.md** | 工作路径注册表 · 角色×方向×深度×报告的路径定义 | 需要确认走哪条路径时查阅 |
 | **dimension-registry.md** | 维度注册表 · 6范式+LGFV 与 M0-M5 角色的可寻址索引（单源指针层） | 需要按维度路由/检索时查阅 |
 | **pipeline-contract.md** | 四段链 I/O 契约 · 四份产物 schema · 链式边（机器可读） | 需要确认阶段间传递什么产物时查阅 |
-| [pipeline.py](../../src/pipeline.py) | 四段链可执行编排器（v0.7.8）：解析阶段计划、接 WP-M0-01/WP-M0-02/WP-M4-01/-02/-03/-04/WP-X-05 七条路径、八个编码引擎 | 需要以代码驱动四段链、对接已编码引擎时查阅 |
+| [pipeline.py](../../src/pipeline.py) | 四段链可执行编排器（v0.7.8）：解析阶段计划、接 WP-M0-01/WP-M0-02/WP-M4-01/-02/-03/-04/WP-X-04/WP-X-05 八条路径、十个编码引擎 | 需要以代码驱动四段链、对接已编码引擎时查阅 |
 | **audits/financial-analysis-audit.md** | 财务层10项标准差距审查 | 审查记录 |
 | **audits/quantitative-audit.md** | 定量模块统计严谨性审查 | 审查记录 |
 | **audits/rating-agency-benchmark-audit.md** | 评级机构方法论对标 | 审查记录 |

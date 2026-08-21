@@ -55,7 +55,7 @@ skills 实体存放在 `dev/.claude/skills/`。不同 CLI 的发现机制不同�
 
 四段产物（工作路径单 / 分析产物 / 交付单 / 质检裁决）的字段形状与链式边的单一事实源为 `dev/engine/pipeline-contract.md`。
 
-**可执行编排器（v0.7.8）**：`src/pipeline.py` 现以代码驱动上述四段链。它从 `pipeline-contract.md` 读取阶段定义（不硬编码阶段名/边），复用 `src/path_sheet.py` 校验路径单，并仅对已接线路径调用编码引擎——**WP-M0-01 → 旗舰聚合（`src/composite_scorer.py`）、WP-M0-02 → LGD+外部支持（`src/lgd_scorer.py`/`src/external_support_scorer.py`）、WP-M4-01 → 五维集中度（`src/concentration_scorer.py`）、WP-M4-02 → 传染矩阵（`src/contagion_engine.py`）、WP-M4-03 → SRI（`src/sri_calculator.py`）、WP-M4-04 → 组合压力测试（`src/stress_scorer.py`）、WP-X-05 → 展望监控（`src/outlook_engine.py`）**；其余路径/阶段仍由 LLM 按引擎文档编排。引擎文档为规范源，scorer 为其可执行实现，二者由 `tests/test_engine_doc_parity.py` 对账。
+**可执行编排器（v0.7.8）**：`src/pipeline.py` 现以代码驱动上述四段链。它从 `pipeline-contract.md` 读取阶段定义（不硬编码阶段名/边），复用 `src/path_sheet.py` 校验路径单，并仅对已接线路径调用编码引擎——**WP-M0-01 → 旗舰聚合（`src/composite_scorer.py`）、WP-M0-02 → LGD+外部支持（`src/lgd_scorer.py`/`src/external_support_scorer.py`）、WP-M4-01 → 五维集中度（`src/concentration_scorer.py`）、WP-M4-02 → 传染矩阵（`src/contagion_engine.py`）、WP-M4-03 → SRI（`src/sri_calculator.py`）、WP-M4-04 → 组合压力测试（`src/stress_scorer.py`）、WP-X-04 → ESG/治理扫描（`src/governance_scorer.py`/`src/esg_scorer.py`）、WP-X-05 → 展望监控（`src/outlook_engine.py`）**；其余路径/阶段仍由 LLM 按引擎文档编排。引擎文档为规范源，scorer 为其可执行实现，二者由 `tests/test_engine_doc_parity.py` 对账。
 
 ## 单一事实源规则
 

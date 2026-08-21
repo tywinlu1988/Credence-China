@@ -233,7 +233,7 @@ def _gen_agents_md(v: str) -> str:
 
 四段产物（工作路径单 / 分析产物 / 交付单 / 质检裁决）的字段形状与链式边的单一事实源为 `engine/pipeline-contract.md`。
 
-**可执行编排器**：`src/pipeline.py` 以代码驱动四段链，从 `pipeline-contract.md` 读阶段定义，仅对已接线路径调用编码引擎——**WP-M0-01 → 旗舰聚合（`src/composite_scorer.py`）、WP-M0-02 → LGD+外部支持（`src/lgd_scorer.py`/`src/external_support_scorer.py`）、WP-M4-01 → 五维集中度（`src/concentration_scorer.py`）、WP-M4-02 → 传染矩阵（`src/contagion_engine.py`）、WP-M4-03 → SRI（`src/sri_calculator.py`）、WP-M4-04 → 组合压力测试（`src/stress_scorer.py`）、WP-X-05 → 展望监控（`src/outlook_engine.py`）**；其余路径仍由 LLM 按引擎文档编排。
+**可执行编排器**：`src/pipeline.py` 以代码驱动四段链，从 `pipeline-contract.md` 读阶段定义，仅对已接线路径调用编码引擎——**WP-M0-01 → 旗舰聚合（`src/composite_scorer.py`）、WP-M0-02 → LGD+外部支持（`src/lgd_scorer.py`/`src/external_support_scorer.py`）、WP-M4-01 → 五维集中度（`src/concentration_scorer.py`）、WP-M4-02 → 传染矩阵（`src/contagion_engine.py`）、WP-M4-03 → SRI（`src/sri_calculator.py`）、WP-M4-04 → 组合压力测试（`src/stress_scorer.py`）、WP-X-04 → ESG/治理扫描（`src/governance_scorer.py`/`src/esg_scorer.py`）、WP-X-05 → 展望监控（`src/outlook_engine.py`）**；其余路径仍由 LLM 按引擎文档编排。
 
 ## 单一事实源规则
 
@@ -372,7 +372,7 @@ def _gen_readme_md(v: str) -> str:
   - `credit-qa-verifier` — 四段链终态质检（质量门 + 强制检查）
 - `engine/` — {len(CORE_DOCS)} 份方法论文档（阈值/权重/评级映射的单一事实源）
 - `templates/` — {_template_range()} 报告模板
-- `src/` — 可执行编排器与 8 个编码引擎（composite_scorer 旗舰聚合、lgd_scorer LGD 评估、external_support_scorer 外部支持评估、concentration_scorer 五维集中度、contagion_engine 传染矩阵、sri_calculator SRI、stress_scorer 组合压力测试、outlook_engine 展望监控）
+- `src/` — 可执行编排器与 10 个编码引擎（composite_scorer 旗舰聚合、lgd_scorer LGD 评估、external_support_scorer 外部支持评估、concentration_scorer 五维集中度、contagion_engine 传染矩阵、sri_calculator SRI、stress_scorer 组合压力测试、governance_scorer 治理扫描、esg_scorer ESG 扫描、outlook_engine 展望监控）
 - `adapters/` — 按工具的深度适配说明
 """
 
