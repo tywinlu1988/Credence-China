@@ -6,9 +6,28 @@
   tests/test_governance_scorer.py 回读该行断言锚点文本存在。
 - D3：Strength 统一枚举 LOW/LOW_MID/MID/MID_HIGH/HIGH/VETO 六档有序。
   文档信号强度映射：🔴 强 → HIGH，🟡 中 → MID（本规则集仅这两档）。
-- D6：无阈值项不新造——RULES 只收机械阈值规则（33 条）；事件型/判断型
+- D6：无阈值项不新造——RULES 只收机械阈值规则（38 条）；事件型/判断型
   信号（非标审计意见/核心资产划转/政府态度转变等）经 T2 events 输入，
   不在本规则库内。
+
+机械阈值收尾扫描（I-4 留痕）：GFR 全文阈值行已逐行核对，排除清单及理由——
+- 判断限定词/无阈值不新造（D6）：:31② 背靠背条款、:40 毛利率>行业均值+15pp
+  （"且无合理解释"）、:49 存货跌价准备不足、:61 关键审计事项、:63 大所签收
+  小项目、:88 集中减持（"集中"无阈值）、:98 董事长/CFO 关系、:102 薪酬脱钩、
+  :109-111 独董不独立/审计委员会/内审、:114 分红异常（"无合理解释"）、
+  :122 反收购条款、:153 应收应付对冲（"相近"无阈值 → JUDGMENT_EVENTS）、
+  :162 互保/连环担保、:62 或-clause（违约/危机前 2 年内更换，需危机时点判断
+  ——FIN-15 仅收主句机械轨）；
+- 事件型（布尔事实/文本证据，经 events 或 LLM 输入）：:59/:60 非标审计意见/
+  持续经营段落、:65 审计师突然辞任、:89 实控人占用资金（金额维度 v5 机械轨
+  已覆盖）、:91 实控人刑事/行政处罚、:113 股权融资失败/IPO 终止、:125 ESG
+  治理维度负面（与 ESG 引擎跨通道，去重口径见 pipeline._run_x004 护栏）、
+  :152 资金占用专项审计意见、:206-208/:210-211/:213-215 逃废债事件行
+  （:209 三件套 → DEBT-01 机械项已收 + v6 事件轨聚合）；
+- §7-§9 操作风险三章信号表（:433-440/:502-536/:620-630）：事件台账 + 速查
+  强度分级体系（:452-456/:552-556/:675-679），非"检测条件→红旗"阈值行；
+  一票否决联动已由 v8-v11 覆盖（§10.3 :714-717），强度分级映射属后续
+  工作包范围（本 WP 未点名），排除留痕。
 
 T2（本文件下半部）：叠加合成 stack_severity（§6.2 矩阵 :318-323 + 通用
 红旗计数叠加 :325-338，双口径并行、D5 取最严）+ 11 条一票否决 VETO_RULES
@@ -135,11 +154,11 @@ def _check_rel06(m: dict) -> bool:
 
 
 # --------------------------------------------------------------------------
-# 规则库（33 条；id 前缀：FIN=§1 财务 / GOV=§2 治理 / REL=§3 关联 / DEBT=§4 逃废债）
+# 规则库（38 条；id 前缀：FIN=§1 财务 / GOV=§2 治理 / REL=§3 关联 / DEBT=§4 逃废债）
 # --------------------------------------------------------------------------
 
 RULES: tuple = (
-    # ---- §1 财务欺诈红旗（12 条） ----
+    # ---- §1 财务欺诈红旗（15 条） ----
     SignalRule(  # :29 🔴 强
         "FIN-01", "governance-fraud-risk.md:29", Strength.HIGH,
         lambda m: m["ar_growth"] > 1.3 * m["revenue_growth"],
@@ -151,6 +170,13 @@ RULES: tuple = (
         lambda m: m["cfo_to_net_profit"] < 0.7,
         "经营现金流与净利润持续背离", "现金流量表 + 利润表",
         ("cfo_to_net_profit",),
+    ),
+    SignalRule(  # :31① 🟡 中（收入确认激进①；行业均值由调用方输入——不新造
+        # 数值，D6；"2 倍以上"严格 >。② 背靠背条款为判断型，未收）
+        "FIN-13", "governance-fraud-risk.md:31", Strength.MID,
+        lambda m: m["ar_turnover_days"] > 2 * m["industry_avg_ar_turnover_days"],
+        "应收账款周转天数 > 行业均值 2 倍", "年报收入确认政策附注",
+        ("ar_turnover_days", "industry_avg_ar_turnover_days"),
     ),
     SignalRule(  # :32 🟡 中
         "FIN-03", "governance-fraud-risk.md:32", Strength.MID,
@@ -200,11 +226,25 @@ RULES: tuple = (
         "受限资产占比过高", "年报所有权受限资产说明",
         ("restricted_assets_share",),
     ),
+    SignalRule(  # :52 🟡 中（"持续"由调用方预聚合为单值增速输入；固定资产/
+        # 在建工程口径由调用方合并预聚合）
+        "FIN-14", "governance-fraud-risk.md:52", Strength.MID,
+        lambda m: m["fixed_asset_growth"] > 2 * m["cfo_growth"],
+        "长期资产与现金流不匹配", "年报 + 现金流量表",
+        ("fixed_asset_growth", "cfo_growth"),
+    ),
     SignalRule(  # :53 🟡 中
         "FIN-11", "governance-fraud-risk.md:53", Strength.MID,
         lambda m: m["goodwill_to_net_assets"] > 0.30,
         "商誉占比过高", "年报商誉附注",
         ("goodwill_to_net_assets",),
+    ),
+    SignalRule(  # :62 🔴 强（仅收主句机械轨"近 5 年 ≥3 次"；或-clause
+        # "最近一次更换在违约/危机前 2 年内"需危机时点判断 → 判断型未收）
+        "FIN-15", "governance-fraud-risk.md:62", Strength.HIGH,
+        lambda m: m["auditor_changes_5y"] >= 3,
+        "频繁更换审计师", "年报 / 临时公告",
+        ("auditor_changes_5y",),
     ),
     SignalRule(  # :64 🔴 强
         "FIN-12", "governance-fraud-risk.md:64", Strength.HIGH,
@@ -212,7 +252,7 @@ RULES: tuple = (
         "审计费用异常变动", "董事会关于审计费用的公告",
         ("audit_fee_growth",),
     ),
-    # ---- §2 管理层/治理红旗（10 条；质押两档独立成条） ----
+    # ---- §2 管理层/治理红旗（11 条；质押两档独立成条） ----
     SignalRule(  # :86 🔴 强（60% 档）
         "GOV-01", "governance-fraud-risk.md:86", Strength.HIGH,
         lambda m: m["pledge_ratio"] > 0.60,
@@ -249,6 +289,12 @@ RULES: tuple = (
         "总经理任期异常短", "年报高管变动历史",
         ("gm_recent_tenure_years",),
     ),
+    SignalRule(  # :101 🟡 中（董秘是信息披露第一责任人）
+        "GOV-11", "governance-fraud-risk.md:101", Strength.MID,
+        lambda m: m["board_secretary_changes_3y"] >= 2,
+        "董事会秘书频繁更换", "年报 / 公告",
+        ("board_secretary_changes_3y",),
+    ),
     SignalRule(  # :108 🔴 强
         "GOV-07", "governance-fraud-risk.md:108", Strength.HIGH,
         _check_gov07,
@@ -261,7 +307,8 @@ RULES: tuple = (
         "再融资频率异常", "公告 / 年报",
         ("refinancing_3y_total", "market_cap"),
     ),
-    SignalRule(  # :123 🔴 强
+    SignalRule(  # :123 🔴 强（measured 机械轨；另有 events 事件轨，见
+        # compute_governance——双轨并集取一次）
         "GOV-09", "governance-fraud-risk.md:123", Strength.HIGH,
         lambda m: bool(m["disclosure_violation_within_3y"]),
         "信息披露违规记录", "证监会/交易所公告",
@@ -273,7 +320,7 @@ RULES: tuple = (
         "重大诉讼/仲裁", "年报重大诉讼仲裁章节",
         ("litigation_amount", "net_assets"),
     ),
-    # ---- §3 关联交易异常（9 条；关联收入/担保两档独立成条） ----
+    # ---- §3 关联交易异常（10 条；关联收入/担保两档独立成条） ----
     SignalRule(  # :140 🔴 强（20% 档）
         "REL-01", "governance-fraud-risk.md:140", Strength.HIGH,
         lambda m: m["related_txn_to_revenue"] > 0.20,
@@ -321,6 +368,13 @@ RULES: tuple = (
         lambda m: m["guarantee_to_net_assets"] > 0.50,
         "对外担保/净资产 > 50%", "年报对外担保情况",
         ("guarantee_to_net_assets",),
+    ),
+    SignalRule(  # :160 🔴 强（对单一关联方担保 > 该关联方净资产 50%，
+        # 分母为被担保方净资产，区别于 REL-08 的发行人净资产口径）
+        "REL-10", "governance-fraud-risk.md:160", Strength.HIGH,
+        lambda m: m["single_related_guarantee"] > 0.50 * m["related_party_net_assets"],
+        "对单一关联方提供大额担保", "年报关联担保明细",
+        ("single_related_guarantee", "related_party_net_assets"),
     ),
     SignalRule(  # :161 🔴 强（100% 档，担保风险实质性暴露）
         "REL-09", "governance-fraud-risk.md:161", Strength.HIGH,
@@ -407,6 +461,25 @@ def altman_z(x1, x2, x3, x4, x5) -> float:
     Z < 1.81 为高风险区（ALTMAN_Z_HIGH_RISK_THRESHOLD）。
     """
     return 1.2 * x1 + 1.4 * x2 + 3.3 * x3 + 0.6 * x4 + 1.0 * x5
+
+
+def cash_conversion_cycle(dso_days, dio_days, dpo_days) -> dict:
+    """现金转化周期（:75）：CCC = DSO + DIO - DPO（应收+存货-应付周转天数）。
+
+    CCC < 0 命中（持续负 CCC 可能为拖欠供应商或财务操纵）。"且非行业特性"
+    为判断限定词（D6：不新造数值）——命中附注「非行业特性需 LLM 确认/
+    参考行业均值 ± 50%」（:75 参考范围列原文口径），是否成立由 LLM/调用方
+    结合行业特性复核。返回 {"ccc", "hit", "note"}。
+    """
+    ccc = dso_days + dio_days - dpo_days
+    hit = ccc < 0
+    note = (
+        "CCC < 0 命中（governance-fraud-risk.md:75）——非行业特性需 LLM 确认"
+        "/参考行业均值 ± 50%（D6：判断限定词不新造数值）"
+        if hit
+        else "CCC ≥ 0 未命中（governance-fraud-risk.md:75）"
+    )
+    return {"ccc": ccc, "hit": hit, "note": note}
 
 
 def core_earnings(cfo, non_recurring, net_profit) -> float:
@@ -555,11 +628,18 @@ VETO_RULES: tuple = (
 # T2：D6 判断型事件（无阈值不新造——LLM 判断输入 + 注记，🟠 关注 → LOW_MID）
 # --------------------------------------------------------------------------
 
-# (event_key, 名称, doc_anchor)；🟠 关注介于 🟡 中与低强度之间 → LOW_MID，
-# 计入 red_flags 但不计入通用红旗面数（面数口径 strength≥MID，见 §6.2 :338）。
+# (event_key, 名称, doc_anchor, strength, d6_reason)；🟠 关注介于 🟡 中与
+# 低强度之间 → LOW_MID，计入 red_flags 但不计入通用红旗面数（面数口径
+# strength≥MID，见 §6.2 :338）；🟡 中 → MID（D3 映射），计入通用红旗面数。
 JUDGMENT_EVENTS: tuple = (
-    ("exchange_inquiry", "交易所问询函/监管关注", "governance-fraud-risk.md:126"),
-    ("litigation_surge", "被申请仲裁/诉讼频率骤增", "governance-fraud-risk.md:127"),
+    ("exchange_inquiry", "交易所问询函/监管关注",
+     "governance-fraud-risk.md:126", Strength.LOW_MID, "无阈值不新造"),
+    ("litigation_surge", "被申请仲裁/诉讼频率骤增",
+     "governance-fraud-risk.md:127", Strength.LOW_MID, "无阈值不新造"),
+    # :153 🟡 中——同一关联方大额应收+应付"金额相近"无阈值定义（D6），
+    # LLM 判断输入 + 注记，不新造数值阈值
+    ("related_ar_ap_offset", "应收应付对冲异常（同一关联方大额应收+应付金额相近）",
+     "governance-fraud-risk.md:153", Strength.MID, "相近无阈值定义"),
 )
 
 
@@ -616,6 +696,13 @@ def stack_severity(flags: list) -> StackResult:
 
     T1 带入项：note 以 DATA_NOTE_PREFIX 开头的占位条目一律过滤，
     不计入任何计数/分级。
+
+    M-2 注记（latent，无数值影响）：两档规则对（GOV-01/02 质押 60%/80%、
+    REL-01/02 关联收入 20%/50%、REL-08/09 担保 50%/100%）高档命中时低档
+    同中，通用红旗面数按 2 面计——与 D5「同一事件计一次」存在口径张力。
+    两档对视为同一信号的两档：当前计数叠加取最严结论不受单对双计影响
+    （高档命中本身已致矩阵高档 cap B），无数值影响；未来若影响计数需
+    按对去重。
     """
     effective = [f for f in flags if not f.note.startswith(DATA_NOTE_PREFIX)]
     vetoes = [f for f in effective if f.strength >= Strength.VETO]
@@ -705,10 +792,14 @@ def compute_governance(measured: dict, events: dict) -> GovernanceResult:
     持续性修饰语由调用方预聚合为单值输入（T4 适配器 docstring 引用本口径）。
 
     events 契约：事件型输入——
+    - GOV-09 事件轨：``disclosure_violation_within_3y`` → 布尔/文本证据
+      （truthy 命中，与 measured 机械轨并集取一次——v5/v7 双轨先例；
+      信披违规本来就是 LLM 事件型输入的自然通道）；
     - 否决证据：VETO_RULES 各 event_key → 布尔或文本证据（truthy 触发）；
       v5/v7 另有机械轨，与事件轨并行取并集；
     - D6 判断项：JUDGMENT_EVENTS 各键 → LLM 判断输入（truthy 计入
-      red_flags 并带注记，不计入通用红旗面数）；
+      red_flags 并带注记；🟠 关注 → LOW_MID 不计入通用红旗面数，
+      🟡 中 → MID 计入面数）；
     - willingness（可选）：§4.3 四项 0/1 信号子 dict
       {"transfer","gov_support","hollowing","history"}——四键缺一即
       raise（失败可观测）；整体缺省 → repayment_willingness=None + 注记。
@@ -720,6 +811,20 @@ def compute_governance(measured: dict, events: dict) -> GovernanceResult:
         notes.append(
             f"{missing_n} 条信号规则缺输入留 data_note（前缀过滤，不计入计数/分级）"
         )
+
+    # GOV-09 事件轨（:123 信披违规）：events["disclosure_violation_within_3y"]
+    # truthy 即命中，与 measured 机械轨并集取一次（v5/v7 双轨先例；该键为
+    # LLM 事件型输入的自然通道——pipeline §6.3 去重护栏依赖本轨成立）。
+    gov09_event_val = events.get("disclosure_violation_within_3y")
+    gov09_measured_hit = any(f.note.startswith("GOV-09 命中") for f in flags)
+    if gov09_event_val and not gov09_measured_hit:
+        flags.append(RedFlag(
+            name="信息披露违规记录",
+            strength=Strength.HIGH,
+            evidence=f"disclosure_violation_within_3y={gov09_event_val!r}",
+            source="events（GOV-09 事件轨）",
+            note="GOV-09 命中（governance-fraud-risk.md:123，events 事件轨）",
+        ))
 
     # 否决检测：事件轨 ∪ 机械轨
     veto_triggers = []
@@ -752,18 +857,23 @@ def compute_governance(measured: dict, events: dict) -> GovernanceResult:
                 note=f"{rule.id} 一票否决命中（{rule.doc_anchor}）",
             ))
 
-    # D6 判断型事件：LLM 判断输入计入 red_flags + 注记（不计入面数）
-    for key, name, anchor in JUDGMENT_EVENTS:
+    # D6 判断型事件：LLM 判断输入计入 red_flags + 注记
+    # （🟠 关注 → LOW_MID 不计入面数；🟡 中 → MID 计入面数，:338 口径）
+    for key, name, anchor, strength, d6_reason in JUDGMENT_EVENTS:
         val = events.get(key)
         if val:
+            counted_note = (
+                "不计入通用红旗面数" if strength < Strength.MID
+                else "🟡 中 → MID，计入通用红旗面数"
+            )
             flags.append(RedFlag(
                 name=name,
-                strength=Strength.LOW_MID,  # 🟠 关注（介于中与低之间）
+                strength=strength,
                 evidence=f"{key}={val!r}",
                 source="LLM 判断输入（events）",
                 note=(
-                    f"{key} 判断事件计入（{anchor}）——D6 注记：无阈值不新造，"
-                    "LLM 判断输入按事件计入，不计入通用红旗面数"
+                    f"{key} 判断事件计入（{anchor}）——D6 注记：{d6_reason}"
+                    f"（D6），LLM 判断输入按事件计入，{counted_note}"
                 ),
             ))
 

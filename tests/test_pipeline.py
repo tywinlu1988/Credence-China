@@ -664,3 +664,47 @@ def test_t9_13b_x004_veto_none_passthrough():
     assert gov["veto_triggers"] == ["v1"]
     assert gov["risk_grade"] == "严重" and gov["rating_cap"] == "CCC"
     assert gov["l4_cap"] is None
+
+
+def test_t9_13c_x004_cross_engine_dedup_disclosure():
+    """§6.3 跨引擎去重护栏（I-2）：同一信披违规事件双通道上报——gov 侧
+    GOV-09 信号存在（measured/gov_events 的 disclosure_violation_within_3y
+    为 truthy）且 esg_events 含 category=disclosure_violation → 保留严重
+    路径（gov cap B），剔除 ESG 侧重复项 + notes 注明。"""
+    from src.pipeline import _run_x004
+
+    inputs = _x004_inputs()
+    inputs["measured"] = dict(inputs["measured"], disclosure_violation_within_3y=True)
+    out = _run_x004(inputs)
+    gov, esg = out["governance"], out["esg"]
+    # gov 通道保留：GOV-09 命中（🔴 强 → §6.2 高档 cap B）
+    assert any(f["note"].startswith("GOV-09 命中") for f in gov["red_flags"])
+    assert gov["rating_cap"] == "B"
+    # ESG 侧重复项剔除：trigger_events 无 disclosure_violation，无 negative_flag
+    assert esg["trigger_events"] == []
+    assert esg["flags"] == [] and esg["notch_adjustment"] == 0
+    assert esg["signal_strength"] == "无信号"
+    assert any(
+        "§6.3 去重" in n and "信披违规经 GFR 通道" in n and "ESG 侧不重复扣减" in n
+        for n in esg["notes"]
+    )
+    # gov_events 事件轨同样触发护栏且 gov 侧真实命中（N-1 修复：
+    # compute_governance 消费该 events 键——双通道不再同时丢失）
+    inputs2 = _x004_inputs()
+    inputs2["gov_events"] = {"disclosure_violation_within_3y": True}
+    out2 = _run_x004(inputs2)
+    gov2, esg2 = out2["governance"], out2["esg"]
+    assert any(f["note"].startswith("GOV-09 命中") for f in gov2["red_flags"])
+    assert gov2["rating_cap"] == "B"
+    assert esg2["trigger_events"] == []
+    assert any("§6.3 去重" in n for n in esg2["notes"])
+
+
+def test_t9_13d_x004_no_dedup_without_gov_disclosure():
+    """护栏不误伤：gov 侧无信披违规信号时，ESG disclosure_violation 事件正常计入。"""
+    from src.pipeline import _run_x004
+
+    esg = _run_x004(_x004_inputs())["esg"]
+    assert len(esg["trigger_events"]) == 1
+    assert esg["trigger_events"][0]["category"] == "disclosure_violation"
+    assert not any("§6.3 去重" in n for n in esg["notes"])

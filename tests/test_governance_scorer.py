@@ -27,6 +27,7 @@ from src.governance_scorer import (
     Strength,
     altman_z,
     beneish_m,
+    cash_conversion_cycle,
     compute_governance,
     core_earnings,
     evaluate_signals,
@@ -52,6 +53,7 @@ ANCHORS = {
     # §1 财务（:29-:64）
     "FIN-01": "收入增速 × 1.3",
     "FIN-02": "连续8个季度CFO/净利润 < 0.7",
+    "FIN-13": "应收账款周转天数 > 行业均值2倍",
     "FIN-03": "Q4收入占全年 > 40%",
     "FIN-04": "季度末关联交易收入占比激增 > 50%",
     "FIN-05": "非经常性损益/净利润 > 50%",
@@ -60,7 +62,9 @@ ANCHORS = {
     "FIN-08": "货币资金余额×活期利率",
     "FIN-09": "其他应收款/总资产 > 5%",
     "FIN-10": "受限资产/总资产 > 30%",
+    "FIN-14": "固定资产/在建工程增速持续 > CFO增速 × 2",
     "FIN-11": "商誉/净资产 > 30%",
+    "FIN-15": "近5年更换审计师≥3次",
     "FIN-12": "审计费用单年增长 > 50%",
     # §2 治理（:86-:124）
     "GOV-01": "已质押比例 > 60%",
@@ -69,6 +73,7 @@ ANCHORS = {
     "GOV-04": "近3年CFO/财务总监更换≥2次",
     "GOV-05": "3名以上核心高管",
     "GOV-06": "连续3任总经理任期均<2年",
+    "GOV-11": "近3年更换董秘≥2次",
     "GOV-07": "独立董事 < 董事会总人数的1/3",
     "GOV-08": "累计金额 > 当前市值50%",
     "GOV-09": "信息披露违规",
@@ -82,6 +87,7 @@ ANCHORS = {
     "REL-06": "关联方其他应收款/总资产 > 3%",
     "REL-07": "账龄>1年",
     "REL-08": "对外担保余额 / 净资产 > 50%",
+    "REL-10": "对单一关联方担保金额 > 该关联方净资产50%",
     "REL-09": "对外担保总额 / 净资产 > 100%",
     # §4 逃废债（:209/:212）
     "DEBT-01": "母公司负债率突破90%",
@@ -118,7 +124,7 @@ def test_strength_enum_values_and_ordering():
 # --------------------------------------------------------------------------
 
 def test_rules_count_and_unique_ids():
-    assert len(RULES) == 33  # 12 财务 + 10 治理 + 9 关联 + 2 逃废债（两档各计一条）
+    assert len(RULES) == 38  # 15 财务 + 11 治理 + 10 关联 + 2 逃废债（两档各计一条）
     ids = [r.id for r in RULES]
     assert len(set(ids)) == len(ids)
     assert set(ids) == set(ANCHORS), "规则集与锚点表不一致（漏规则或漏锚点）"
@@ -182,6 +188,31 @@ def test_fin07_rd_capitalization_jump():
     )
 
 
+def test_fin13_ar_turnover_vs_industry():
+    """应收周转天数 > 行业均值 2 倍（严格）：恰 2 倍不命中，超出命中（:31①）。"""
+    base = {"ar_turnover_days": 120, "industry_avg_ar_turnover_days": 60}
+    assert "FIN-13" not in _hit_ids(base)
+    assert "FIN-13" in _hit_ids(
+        {"ar_turnover_days": 121, "industry_avg_ar_turnover_days": 60}
+    )
+
+
+def test_fin14_fixed_asset_vs_cfo_growth():
+    """固定资产/在建工程增速 > CFO 增速 × 2（严格）：恰 2 倍不命中（:52）。"""
+    assert "FIN-14" not in _hit_ids(
+        {"fixed_asset_growth": 0.20, "cfo_growth": 0.10}
+    )
+    assert "FIN-14" in _hit_ids(
+        {"fixed_asset_growth": 0.21, "cfo_growth": 0.10}
+    )
+
+
+def test_fin15_auditor_changes_boundary():
+    """近 5 年换审计师 ≥3 次（闭区间）：2 次不命中，3 次命中（:62 主句机械轨）。"""
+    assert "FIN-15" not in _hit_ids({"auditor_changes_5y": 2})
+    assert "FIN-15" in _hit_ids({"auditor_changes_5y": 3})
+
+
 def test_fin08_cash_interest_mismatch():
     """货币资金×活期利率 vs 利息收入：差异恰 30% 不命中，超出命中（:48）。
 
@@ -225,6 +256,12 @@ def test_gov06_gm_tenures():
     assert "GOV-06" in _hit_ids({"gm_recent_tenure_years": (1.5, 1.0, 1.9)})
     assert "GOV-06" not in _hit_ids({"gm_recent_tenure_years": (1.5, 1.0, 2.0)})
     assert "GOV-06" not in _hit_ids({"gm_recent_tenure_years": (1.5, 1.0)})
+
+
+def test_gov11_board_secretary_changes_boundary():
+    """近 3 年换董秘 ≥2 次（闭区间）：1 次不命中，2 次命中（:101）。"""
+    assert "GOV-11" not in _hit_ids({"board_secretary_changes_3y": 1})
+    assert "GOV-11" in _hit_ids({"board_secretary_changes_3y": 2})
 
 
 def test_gov07_independent_directors_boundary():
@@ -272,6 +309,15 @@ def test_rel06_related_other_receivables():
     )
 
 
+def test_rel10_single_related_guarantee():
+    """对单一关联方担保 > 该关联方净资产 50%（严格；分母为被担保方净资产，:160）。"""
+    base = {"single_related_guarantee": 0.50, "related_party_net_assets": 1.0}
+    assert "REL-10" not in _hit_ids(base)
+    assert "REL-10" in _hit_ids(
+        {"single_related_guarantee": 0.51, "related_party_net_assets": 1.0}
+    )
+
+
 def test_rel_guarantee_two_tiers():
     """担保/净资产 49/51/101 三值两档（:159/:161）。"""
     assert "REL-08" not in _hit_ids({"guarantee_to_net_assets": 0.49})
@@ -291,14 +337,30 @@ def test_debt_boundaries():
 
 
 # --------------------------------------------------------------------------
-# 4 公式（:73/:74/:76）+ parity 锚点
+# 4 公式（:73/:74/:75/:76）+ parity 锚点
 # --------------------------------------------------------------------------
 
 def test_doc_states_formula_anchors():
     assert "-2.22" in DOC_LINES[72]                       # :73 Beneish
     assert "1.2X1 + 1.4X2 + 3.3X3 + 0.6X4 + 1.0X5" in DOC_LINES[73]  # :74 Altman
     assert "1.81" in DOC_LINES[73]
+    assert "CCC < 0" in DOC_LINES[74]                     # :75 现金转化周期
+    assert "参考行业均值 ± 50%" in DOC_LINES[74]
     assert "持续 < 0.5" in DOC_LINES[75]                  # :76 Core Earnings
+
+
+def test_cash_conversion_cycle():
+    """CCC = DSO+DIO-DPO（:75）：负值命中并附 LLM 确认注记；恰 0 不命中（严格 <）。"""
+    hit = cash_conversion_cycle(30, 40, 80)               # CCC = -10
+    assert hit["ccc"] == -10
+    assert hit["hit"] is True
+    assert "governance-fraud-risk.md:75" in hit["note"]
+    assert "非行业特性需 LLM 确认" in hit["note"]
+    assert "± 50%" in hit["note"]
+    zero = cash_conversion_cycle(30, 30, 60)              # CCC = 0
+    assert zero["ccc"] == 0 and zero["hit"] is False
+    pos = cash_conversion_cycle(60, 30, 60)               # CCC = 30
+    assert pos["ccc"] == 30 and pos["hit"] is False
 
 
 def test_altman_z_formula_and_threshold():
@@ -378,8 +440,8 @@ def test_evaluate_signals_hit_flag_fields():
 def test_evaluate_signals_missing_metric_leaves_data_note():
     flags = evaluate_signals({"pledge_ratio": 0.61})
     notes = [f for f in flags if f.note.startswith(DATA_NOTE_PREFIX)]
-    # 33 条规则中，仅 GOV-01/GOV-02 输入齐备（命中/未命中各一），其余 31 条留 data_note
-    assert len(notes) == 31
+    # 38 条规则中，仅 GOV-01/GOV-02 输入齐备（命中/未命中各一），其余 36 条留 data_note
+    assert len(notes) == 36
     gov03 = next(f for f in notes if "GOV-03" in f.note)
     assert "controller_changed_within_3y" in gov03.note
     assert "不静默按 0 处理" in gov03.note
@@ -567,8 +629,8 @@ def test_compute_governance_clean_inputs_normal():
     assert res.rating_cap is None
     assert res.l4_cap == 10
     assert res.veto_triggers == []
-    # 空 measured → 33 条规则全留 data_note，合成层过滤后不计数
-    assert sum(1 for f in res.red_flags if f.note.startswith(DATA_NOTE_PREFIX)) == 33
+    # 空 measured → 38 条规则全留 data_note，合成层过滤后不计数
+    assert sum(1 for f in res.red_flags if f.note.startswith(DATA_NOTE_PREFIX)) == 38
     assert any("data_note" in n for n in res.notes)
 
 
@@ -671,6 +733,44 @@ def test_count_upgrade_end_to_end():
     assert three.risk_grade == "高"
 
 
+def test_gov09_events_track_union_with_measured():
+    """GOV-09 双轨（N-1 修复）：events["disclosure_violation_within_3y"] 为
+    compute_governance 真实消费的事件轨，与 measured 机械轨并集取一次。
+
+    - events-only → GOV-09 命中（HIGH）→ §6.2 高档 cap B（信披违规不再
+      因 measured 缺键而从 gov 通道消失）；
+    - measured-only → 同效（机械轨）；
+    - 双轨同真 → 并集取一次，counted_flags=1（不双计）。
+    """
+    events_only = compute_governance(
+        {}, {"disclosure_violation_within_3y": "交易所纪律处分（虚假记载）"}
+    )
+    hits = [f for f in events_only.red_flags if f.note.startswith("GOV-09 命中")]
+    assert len(hits) == 1
+    assert hits[0].strength == Strength.HIGH
+    assert "events 事件轨" in hits[0].note
+    assert "governance-fraud-risk.md:123" in hits[0].note
+    assert "交易所纪律处分" in hits[0].evidence
+    assert events_only.rating_cap == "B" and events_only.risk_grade == "高"
+
+    measured_only = compute_governance(
+        {"disclosure_violation_within_3y": True}, {}
+    )
+    assert measured_only.rating_cap == "B"
+    assert any(
+        f.note.startswith("GOV-09 命中") for f in measured_only.red_flags
+    )
+
+    both = compute_governance(
+        {"disclosure_violation_within_3y": True},
+        {"disclosure_violation_within_3y": True},
+    )
+    gov09_hits = [f for f in both.red_flags if f.note.startswith("GOV-09 命中")]
+    assert len(gov09_hits) == 1                       # 并集取一次，不双计
+    assert stack_severity(both.red_flags).counted_flags == 1
+    assert both.rating_cap == "B"
+
+
 def test_d6_judgment_event_counted_with_note():
     """D6 注记项："诉讼频率骤增"为 LLM 判断输入，按事件计入 red_flags 并带注记，
     但不计入通用红旗面数（🟠 关注 → LOW_MID < MID）。"""
@@ -689,8 +789,33 @@ def test_d6_judgment_event_counted_with_note():
     )
     assert res2.risk_grade == "正常"
     assert res2.rating_cap is None
-    keys = {k for k, _, _ in JUDGMENT_EVENTS}
-    assert keys == {"litigation_surge", "exchange_inquiry"}
+    keys = {k for k, *_ in JUDGMENT_EVENTS}
+    assert keys == {"litigation_surge", "exchange_inquiry", "related_ar_ap_offset"}
+
+
+def test_d6_judgment_event_related_ar_ap_offset_mid():
+    """:153 应收应付对冲异常（I-3 补收）：🟡 中 → MID，LLM 判断输入 + 注记
+    「相近无阈值定义（D6）」，计入通用红旗面数（strength≥MID，:338 口径）。"""
+    res = compute_governance(
+        {}, {"related_ar_ap_offset": "关联方 A 应收 2.1 亿/应付 2.0 亿"}
+    )
+    judged = [f for f in res.red_flags if "related_ar_ap_offset" in f.note]
+    assert len(judged) == 1
+    assert judged[0].strength == Strength.MID
+    assert "相近无阈值定义（D6）" in judged[0].note
+    assert "governance-fraud-risk.md:153" in judged[0].note
+    assert "应收 2.1 亿" in judged[0].evidence
+    # 计入面数：1 面 MID → §6.2 正常档无影响，但 counted_flags=1
+    assert res.risk_grade == "正常"
+    stack = stack_severity(res.red_flags)
+    assert stack.counted_flags == 1
+
+
+def test_doc_states_judgment_event_anchor_153():
+    """:153 parity：应收应付对冲异常行含「金额相近」判断表述。"""
+    assert "应收应付对冲异常" in DOC_LINES[152]
+    assert "金额相近" in DOC_LINES[152]
+    assert "🟡 中" in DOC_LINES[152]
 
 
 def test_data_density_field():

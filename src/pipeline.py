@@ -485,20 +485,55 @@ def _run_x004(inputs: dict) -> dict:
     - ``"industry"``（可选，默认 ""）：附录A 行业名原文（如 "城投"）；
       未收录 → 行业敏感性修正（×1.5）不适用 + 注记（不 raise）。
 
+    §6.3 跨引擎去重护栏（esg-framework.md:523「与 GFR 重叠不重复扣减、
+    取最大传导路径」）：已知共享事件为信披违规——GFR 通道（GOV-09
+    :123，3 年内信披违规 → 🔴 强 → 矩阵高档 cap B）与 ESG 通道
+    （disclosure_violation → G3 映射 -0.5 子级 flag）可同时命中同一事件。
+    护栏：gov 侧信披违规信号存在（GOV-09 双轨任一命中通道——``measured``
+    机械轨或 ``gov_events`` 事件轨的 ``disclosure_violation_within_3y``
+    为 truthy；compute_governance 对两轨均消费、并集取一次）且
+    ``esg_events`` 含 ``category="disclosure_violation"`` 时，保留严重
+    路径（gov cap B）、剔除 ESG 侧该类重复事件并在 esg.notes 注明
+    「§6.3 去重：信披违规经 GFR 通道，ESG 侧不重复扣减」。**其他跨通道重叠（如 :125 ESG 治理维度
+    负面各行）由调用方保证只喂一条通道**——本适配器仅护栏上述已知共享
+    事件，不做全量跨通道对账。
+
     返回 ``{"governance", "esg"}``——两引擎输出 asdict 直传。序列化口径
     （T2 带入项）：GovernanceResult 的 (risk_grade, l4_cap, rating_cap,
     outlook_flag) 是通用红旗计数叠加与 §6.2 矩阵**两条并行规则的独立输出**，
     调用方不得以 risk_grade 反查矩阵行；一票否决触发时 l4_cap=None
     原样直传（不得默认填数值）。
     """
-    gov = compute_governance(inputs["measured"], inputs.get("gov_events") or {})
+    measured = inputs["measured"]
+    gov_events = inputs.get("gov_events") or {}
+    esg_dicts = list(inputs.get("esg_events") or [])
+    gov = compute_governance(measured, gov_events)
+
+    # §6.3 跨引擎去重护栏（仅已知共享事件：信披违规；其余由调用方保证单通道）
+    gov_disclosure = bool(
+        measured.get("disclosure_violation_within_3y")
+        or gov_events.get("disclosure_violation_within_3y")
+    )
+    dedup_notes = []
+    if gov_disclosure:
+        kept = [e for e in esg_dicts if e.get("category") != "disclosure_violation"]
+        dropped = len(esg_dicts) - len(kept)
+        if dropped:
+            esg_dicts = kept
+            dedup_notes.append(
+                f"§6.3 去重：信披违规经 GFR 通道（GOV-09 :123，严重路径 cap B），"
+                f"ESG 侧不重复扣减——剔除 {dropped} 条 disclosure_violation 事件"
+            )
+
     esg = compute_esg(
-        [EsgEvent(**e) for e in inputs.get("esg_events") or []],
+        [EsgEvent(**e) for e in esg_dicts],
         inputs.get("elasticity") or {},
         inputs.get("industry") or "",
         tables=load_esg_tables(),
     )
-    return {"governance": asdict(gov), "esg": asdict(esg)}
+    out = {"governance": asdict(gov), "esg": asdict(esg)}
+    out["esg"]["notes"].extend(dedup_notes)
+    return out
 
 
 # 已接线（wired）编码引擎登记表：path_id → 运行该路径编码引擎的可调用对象。
