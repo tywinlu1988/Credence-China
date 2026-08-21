@@ -5,7 +5,7 @@
 >
 > **A methodology-first credit analysis engine for China's fixed-income market** — a vertical **domain-methodology skill pack** delivered as **Agent Skills** (`SKILL.md`), installable into Claude Code / Codex / Cursor / Gemini / OpenCode.
 
-**版本 Version** `v0.12.2-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
+**版本 Version** `v0.12.3-release` · **许可 License** 源码可见 · 限商用 Source-available · Non-commercial（见 [LICENSE](LICENSE)） · **覆盖 Coverage** 13 行业 industries · 系统智能层 System-intelligence (contagion / concentration / SRI) · **CI** [![CI](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml/badge.svg)](https://github.com/tywinlu1988/Credence-China/actions/workflows/ci.yml)
 
 [中文](#中文) · [English](#english)
 
@@ -60,7 +60,7 @@ npx github:tywinlu1988/Credence-China
 git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
-可安装的发行包在 `version/v0.12.2-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
+可安装的发行包在 `version/v0.12.3-release/`（浏览/拷贝即用，包内 `INSTALL.md` 有分工具说明）；方法论源码在 `dev/`。
 
 ### 快速上手
 
@@ -96,7 +96,7 @@ git clone https://github.com/tywinlu1988/Credence-China.git
 - ~~**v0.12.0**~~（已发布）：编码引擎扩线首波——WP-M0-02 双引擎（LGD 评估 + 外部支持评估）接线，确定性+可审计。
 - ~~**v0.12.1**~~（已发布）：还债版——集团/战投 capacity 四档量化表补建（引擎类型分派）+ 技术债清零（文档漂移/冻结区/引擎打磨/仓库卫生）。
 - ~~**v0.12.2**~~（已发布）：WP-M4-04 压力测试引擎——§九 压力传导+§E 场景矩阵+E.10 债券市值，M4 组合风控集群全编码化。
-- **v0.12.3（规划中）**：WP-X-04 ESG/治理扫描双引擎——GFR 信号规则库+一票否决 + ESG 事件映射链。
+- ~~**v0.12.3**~~（已发布）：WP-X-04 ESG/治理扫描双引擎——GFR 信号规则库+一票否决 + ESG 事件映射链。
 - 版本历史与发布物见 [Releases](https://github.com/tywinlu1988/Credence-China/releases)。
 
 ### 仓库地图
@@ -106,7 +106,7 @@ dev/          方法论与技能的开发源（engine/ 29 份 · .claude/skills/
 src/          可执行编排器 + 10 个编码引擎（pipeline.py · lgd_scorer.py · external_support_scorer.py 等）
 scripts/      build_dist.py（dev/ → 发行包组装器）· consistency_check.py（一致性校验）
 tests/        回归测试（517 项）
-version/      当前可安装发行包 version/v0.12.2-release/（历史快照见 git 标签）
+version/      当前可安装发行包 version/v0.12.3-release/（历史快照见 git 标签）
 validation/   能力验证证据（验证方法论 + 16 条端到端走查 + 2 份行业方法论参照）
 docs/         版本管理策略 · Codex 深度适配
 AGENTS.md     跨 CLI 通用入口（任何 agent CLI 从这里开始）
@@ -184,7 +184,7 @@ Engine docs (dev/engine/) are the single source of truth; coded engines (src/) p
 - ~~**v0.12.0**~~ (released): coded-engine expansion wave 1 — WP-M0-02 dual engines (LGD + external support), deterministic and auditable.
 - ~~**v0.12.1**~~ (released): debt repayment — group/strategic capacity threshold tables (engine type dispatch) + technical-debt clearance.
 - ~~**v0.12.2**~~ (released): WP-M4-04 stress engine — concentration stress + scenario matrix + bond MV; full M4 cluster coded.
-- **v0.12.3 (planned)**: WP-X-04 ESG/governance dual engines — GFR signal rules + veto + ESG event mapping chain.
+- ~~**v0.12.3**~~ (released): WP-X-04 ESG/governance dual engines — GFR signal rules + veto + ESG event mapping chain.
 - History & artifacts: [Releases](https://github.com/tywinlu1988/Credence-China/releases).
 
 ### Quickstart
@@ -211,7 +211,7 @@ Download the latest `vX.Y.Z-release.zip` from [Releases](https://github.com/tywi
 git clone https://github.com/tywinlu1988/Credence-China.git
 ```
 
-The installable package is at `version/v0.12.2-release/` (browse/copy and use; see `INSTALL.md` inside for per-tool setup); methodology source lives in `dev/`.
+The installable package is at `version/v0.12.3-release/` (browse/copy and use; see `INSTALL.md` inside for per-tool setup); methodology source lives in `dev/`.
 
 ### Repository map
 
@@ -220,7 +220,7 @@ dev/          methodology & skill source (engine/ 29 docs · .claude/skills/ 4-s
 src/          executable orchestrator + 10 coded engines (pipeline.py · lgd_scorer.py · external_support_scorer.py et al.)
 scripts/      build_dist.py (dev/ → release-package assembler) · consistency_check.py
 tests/        regression tests (517)
-version/      current installable package version/v0.12.2-release/ (history via git tags)
+version/      current installable package version/v0.12.3-release/ (history via git tags)
 validation/   capability evidence (validation methodology + 16 end-to-end walkthroughs + 2 industry references)
 docs/         versioning strategy · Codex deep-dive adapter
 AGENTS.md     cross-CLI universal entry (start here from any agent CLI)
